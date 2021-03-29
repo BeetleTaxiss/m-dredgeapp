@@ -22,7 +22,7 @@
     border: 1px solid #e0e6ed;
 }
 #cd-simple .clock-val {
-    font-size: 35px;
+    font-size: 45px;
     color: #4361ee;
     margin-bottom: 0;
 }
@@ -60,7 +60,7 @@
     margin: 0 0 12px 0;
 }
 #cd-circle .clock-val {
-    font-size: 25px;
+    font-size: 35px;
     color: #4361ee;
     margin-bottom: 0;
 }

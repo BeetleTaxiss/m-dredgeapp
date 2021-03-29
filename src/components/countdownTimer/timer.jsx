@@ -7,7 +7,7 @@ const Timer = ({ circle, shift }) => {
     <div id={circle ? "cd-circle" : "cd-simple"}>
       {/* SHIFT PROP IS AN ARRARY CONTAINING TIMER LEGEND AND VALUE PROPERTIES */}
       {shift.map((time, i) => (
-        <div key={i} className="countdown">
+        <div key={i} className="countdown" style={{ justifySelf: "center" }}>
           <div className="clock-count-container">
             <h1 className="clock-val">{time.value && time.value}</h1>
           </div>

@@ -31,6 +31,7 @@ export const useCountDown = (setDisplayTimer, setDisplayTimeline) => {
     const { from, to } = shiftDuration;
 
     const loggedShiftStart = moment().format("hh:mm");
+    const LogShiftTime = moment();
 
     let shiftStart = new Date(from);
     let shiftEnd = new Date(to);
@@ -54,6 +55,8 @@ export const useCountDown = (setDisplayTimer, setDisplayTimeline) => {
         text: "Shift started",
       },
     ]);
+
+    sessionStorage.setItem("prevTime", LogShiftTime);
 
     return { hours, minutes, seconds };
   };

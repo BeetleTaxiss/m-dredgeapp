@@ -25,11 +25,18 @@ export const CountdownTimer = () => {
       <div className="widget-content-area">
         <div
           className="container"
-          style={{ display: "flex", flexDirection: "column", gap: "3rem" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "3rem",
+            paddingTop: "3rem",
+            marginTop: "128px",
+            // alignItems: "center",
+          }}
         >
           {/* ON SHIFT DURATION CALCULATED, TIMER IS DISPLAYED AND SHIFT CALCULATOR DISAPPEARS */}
           {displayTimer ? (
-            <Timer circle shift={shift} />
+            <Timer shift={shift} />
           ) : (
             <ShiftCalculator
               shiftDuration={shiftDuration}

@@ -1193,6 +1193,20 @@ code { color: #e7515a; }
         margin-right: 5px;
         stroke-width: 1.8px;
     }
+    /* Test CSS */
+    .topbar-nav.header nav#topbar ul.menu-categories li.menu a>.menuItem-conatiner> #svg> {
+        width: 19px;
+        height: 19px;
+        color: #515365;
+        vertical-align: text-top;
+        margin-right: 5px;
+        stroke-width: 1.8px;
+    }
+      .topbar-nav.header nav#topbar ul.menu-categories li.menu.active>a >.menuItem-conatiner>#svg>{
+          color: #4361ee;
+      }
+
+    /* END OF TEST CSS */
     .topbar-nav.header nav#topbar ul.menu-categories li.menu > .dropdown-toggle svg.feather-chevron-down {
         align-self: center;
     }
