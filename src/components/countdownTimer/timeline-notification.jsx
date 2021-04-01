@@ -4,7 +4,10 @@ import { Link } from "react-router-dom";
 const TimelineNotification = ({ timelineItems }) => {
   return (
     <div className="row">
-      <div className="widget-content widget-content-area pb-1">
+      <div
+        className="widget-content widget-content-area pb-1"
+        style={{ padding: "2rem" }}
+      >
         <div className="mt-container mx-auto">
           <div className="timeline-line">
             {timelineItems.map((item, i) => (

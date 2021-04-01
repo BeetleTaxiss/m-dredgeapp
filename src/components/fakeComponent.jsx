@@ -1,5 +1,5 @@
 import React from "react";
-import { CountdownTimer } from "./countdownTimer/countdownTimer.js";
+import { CountdownTimer } from "./countdownTimer/countdown-timer.js";
 
 const FakeComponent = () => {
   return (

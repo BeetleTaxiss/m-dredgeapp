@@ -1,6 +1,6 @@
 import React from "react";
 import Breadcrumbs from "./breadcrumbs";
-import DropdownFilter from "./dropdownFilter";
+import DropdownFilter from "./dropdown-filter";
 
 const PageHeader = () => {
   const breadCrumbsData = [

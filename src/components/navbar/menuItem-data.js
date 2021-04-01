@@ -14,7 +14,7 @@ export const topNavBarData = [
       icon: dashboardIcon,
       menuItem: "Dashboard",
       dropdown: dropdownIcon,
-      link: "#",
+      link: "/dashboard",
     },
     subMenuItems: [{ link: "#", text: "Dashboard" }],
   },
@@ -28,9 +28,8 @@ export const topNavBarData = [
       link: "#",
     },
     subMenuItems: [
-      { link: "#", text: "Notes" },
-      { link: "#", text: "Chat" },
-      { link: "#", text: "Mailbox" },
+      { link: "/users", text: "Users" },
+      { link: "/units", text: "Set Units" },
     ],
   },
   // END OF SINGLE MENU ITEM DATA
@@ -40,12 +39,13 @@ export const topNavBarData = [
       icon: accountantIcon,
       menuItem: "Account",
       dropdown: dropdownIcon,
-      link: "/account",
+      link: "#",
     },
     subMenuItems: [
-      { link: "#", text: "Notes" },
-      { link: "#", text: "Chat" },
-      { link: "#", text: "Mailbox" },
+      { link: "/postexpense", text: "Post Expenses" },
+      { link: "/expensereport", text: "Expense Report" },
+      { link: "/placeorder", text: "Place Order" },
+      { link: "/vieworders", text: "View Orders" },
     ],
   },
   // END OF SINGLE MENU ITEM DATA
@@ -73,9 +73,9 @@ export const topNavBarData = [
       link: "#",
     },
     subMenuItems: [
-      { link: "#", text: "Notes" },
-      { link: "#", text: "Chat" },
-      { link: "#", text: "Mailbox" },
+      { link: "/placeorder", text: "Place Order" },
+      { link: "/vieworders", text: "View Orders" },
+      // { link: "#", text: "M" },
     ],
   },
   // END OF SINGLE MENU ITEM DATA

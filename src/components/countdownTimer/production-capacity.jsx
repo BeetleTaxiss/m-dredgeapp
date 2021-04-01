@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import moment, { min } from "moment";
+import moment from "moment";
 import axios from "axios";
 
 const ProductionCapacity = ({ setTimeLine, setTimelineItem }) => {

@@ -1,6 +1,6 @@
 import React from "react";
-import HeaderNavbar from "./headerNavbar";
-import TopNavbar from "./topNav";
+import HeaderNavbar from "./header-navbar";
+import TopNavbar from "./top-nav";
 
 const Navbar = () => {
   return (

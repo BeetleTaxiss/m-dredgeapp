@@ -1,15 +1,20 @@
 import { Route, Switch } from "react-router";
-import { CountdownTimer } from "./components/countdownTimer/countdownTimer";
-import FakeComponent from "./components/fakeComponent";
-import Homepage from "./pages/homepage";
-import LoginPage from "./pages/loginPage.js";
+import Homepage from "./pages/home-page";
+import LoginPage from "./pages/login-page.js";
 import Pages from "./pages/pages";
 
 function App() {
   return (
     <div className="App">
       <Switch>
-        <Route path="/account" component={Pages} />
+        <Route path="/singleexpensereport" component={Pages} />
+        <Route path="/expensereport" component={Pages} />
+        <Route path="/postexpense" component={Pages} />
+        <Route path="/units" component={Pages} />
+        <Route path="/users" component={Pages} />
+        <Route path="/orderreceipt" component={Pages} />
+        <Route path="/placeorder" component={Pages} />
+        <Route path="/vieworders" component={Pages} />
         <Route path="/production" component={Pages} />
         <Route path="/dashboard" component={Homepage} />
         <Route exact path="/" component={LoginPage} />

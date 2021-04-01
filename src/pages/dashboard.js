@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import TotalOrders from "../components/cards/total-orders";
 import TotalRevenue from "../components/cards/total-revenue";
 import TotalStockpile from "../components/cards/total-stockpile";
-import PageHeader from "../components/page-header/pageHeader";
+import PageHeader from "../components/page-header/page-header";
 
 export const Dashboard = () => {
   return (
@@ -23,12 +23,11 @@ export const Dashboard = () => {
             {/* BEGINNING OF TOTAL ORDERS COMPONENT */}
             <TotalOrders />
             {/* END OF TOTAL ORDERS COMPONENT */}
-
             {/* BEGINNING OF TOTAL REVENUE COMPONENT */}
             <TotalRevenue />
             {/* END OF TOTAL REVENUE COMPONENT */}
-            <TotalStockpile />
             {/* BEGINNING OF TOTAL STOCKPILE COMPONENT */}
+            <TotalStockpile />
             {/* END OF TOTAL STOCKPILE COMPONENT */}
 
             <div className="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
