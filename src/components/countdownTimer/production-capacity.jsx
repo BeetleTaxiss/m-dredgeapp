@@ -39,16 +39,37 @@ const ProductionCapacity = ({ setTimeLine, setTimelineItem }) => {
       minutes = logObject.getUTCMinutes(),
       seconds = logObject.getSeconds();
 
-    // BEGINNING OF PRODUCTION CAPACITY CALCULATION
-    const MAX_PRODUCTION_OUTPUT_PER_HOUR = 10000;
-    const MAX_PRODUCTION_CAPACITY_PER_HOUR = 100 / 100;
+    /**
+     * ------------------------------------------------------------------------------
+     * -----------------BEGINNING OF PRODUCTION CAPACITY CALCULATION-----------------
+     * ------------------------------------------------------------------------------
+     * */
+    const MAX_PRODUCTION_OUTPUT = 10000;
+    const SECONDS = 3600;
+    const MAX_PRODUCTION_OUTPUT_PER_SECONDS = MAX_PRODUCTION_OUTPUT / SECONDS;
+    const MAX_PRODUCTION_CAPACITY_PER_SECONDS = 100 / 100;
     const PRODUCTION_CAPACITY = progress[""] / 100;
+    const PRODUCTION_TIME = durationInMilliseconds / 1000;
 
-    const calcProductionOutput = Math.floor(
-      (PRODUCTION_CAPACITY * MAX_PRODUCTION_OUTPUT_PER_HOUR) /
-        MAX_PRODUCTION_CAPACITY_PER_HOUR
+    /**
+     * MAX PRODUCTION OUTPUT AT PRODUCTION TIME
+     */
+
+    const MAX_PRODUCTION_CAPACITY_AT_PRODUCTION_TIME = parseFloat(
+      MAX_PRODUCTION_OUTPUT_PER_SECONDS * PRODUCTION_TIME
     );
-    console.log("Output: ", calcProductionOutput);
+
+    /**
+     * Production Output at Production Capacity
+     */
+
+    const calcProductionOutput =
+      (PRODUCTION_CAPACITY * MAX_PRODUCTION_CAPACITY_AT_PRODUCTION_TIME) /
+      MAX_PRODUCTION_CAPACITY_PER_SECONDS;
+
+    const productionOutputForUser = Math.round(calcProductionOutput);
+
+    console.log("Output: ", productionOutputForUser);
 
     // END OF PRODUCTION CAPACITY CALCULATION
 
@@ -83,7 +104,7 @@ const ProductionCapacity = ({ setTimeLine, setTimelineItem }) => {
         timeSpent: `${hours ? hours : "0"} hrs : ${
           minutes ? minutes : "0"
         } mins :  ${seconds ? seconds : "0"} secs `,
-        productionOutput: `Production output per hour: ${calcProductionOutput}cm³ `,
+        productionOutput: `Production output per hour: ${productionOutputForUser}cm³ `,
       },
     ]);
 

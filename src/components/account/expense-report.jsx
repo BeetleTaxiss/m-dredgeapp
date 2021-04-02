@@ -5,7 +5,10 @@ import ExpenseReportTablefooter from "./expense-report-tablefooter";
 import ViewordersSearchbar from "./expense-report-searchbar";
 import ExpenseReportTablepaiginaition from "./expense-report-tablepaiginaition";
 
-const viewOrdersData = {
+/**
+ * Expense Report Data structure
+ */
+const expenseReportData = {
   tableHeader: [
     {
       text: "Expenses",
@@ -124,13 +127,15 @@ const ExpenseReport = () => {
               aria-describedby="default-ordering_info"
             >
               {/* BEGINNING OF VIEW ORDERS TABLE HEADER */}
-              <ExpenseReportTablehead content={viewOrdersData.tableHeader} />
+              <ExpenseReportTablehead content={expenseReportData.tableHeader} />
               {/* END OF VIEW ORDERS TABLE HEADER */}
               {/* BEGINNING OF VIEW ORDERS TABLE BODY */}
-              <ExpenseReportTablebody content={viewOrdersData.tableBody} />
+              <ExpenseReportTablebody content={expenseReportData.tableBody} />
               {/* END OF VIEW ORDERS TABLE BODY */}
               {/* BEGINNING OF VIEW ORDERS TABLE FOOTER*/}
-              <ExpenseReportTablefooter content={viewOrdersData.tableFooter} />
+              <ExpenseReportTablefooter
+                content={expenseReportData.tableFooter}
+              />
               {/* END OF VIEW ORDERS TABLE FOOTER*/}
             </table>
           </div>
