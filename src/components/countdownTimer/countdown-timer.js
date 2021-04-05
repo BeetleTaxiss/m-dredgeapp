@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { useCountDown } from "../../hooks/useCountDown";
 import Timer from "./timer";
 import ShiftCalculator from "./shift-calculator";
 import TimelineNotification from "./timeline-notification";
 import ProductionCapacity from "./production-capacity";
 import PageWrapper from "../general/page-wrapper";
+import { functionUtils } from "../../hooks/function-utils";
 
 export const CountdownTimer = () => {
   // DISPLAY STATES FOR TIMER, PRODUCTION-CAPACITY AND TIMELINE COMPONENTS
   const [displayTimer, setDisplayTimer] = useState(false);
   const [displayTimeLine, setDisplayTimeLine] = useState(false);
 
-  // CUSTOM COUNTDOWN HOOK
+  /**
+   * Custom CountDown function which takes the "setState" functions from the above useState hooks to display a countdown time after calculating the duration of a shift and returns a shift array, shift duration and timeline item objects to be used in child components. Functions such as handle change are used to set the values of form inputs in the shift Calculator.
+   */
   const {
     shift,
     shiftDuration,
@@ -19,7 +21,7 @@ export const CountdownTimer = () => {
     handleChange,
     calculateShift,
     setTimelineItems,
-  } = useCountDown(setDisplayTimer, setDisplayTimeLine);
+  } = functionUtils.CountDown(setDisplayTimer, setDisplayTimeLine);
 
   return (
     <PageWrapper>

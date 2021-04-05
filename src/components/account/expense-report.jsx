@@ -2,11 +2,11 @@ import React from "react";
 import ExpenseReportTablehead from "./expense-report-tablehead";
 import ExpenseReportTablebody from "./expense-report-body";
 import ExpenseReportTablefooter from "./expense-report-tablefooter";
-import ViewordersSearchbar from "./expense-report-searchbar";
+import ExpenseReportSearchbar from "./expense-report-searchbar";
 import ExpenseReportTablepaiginaition from "./expense-report-tablepaiginaition";
 
 /**
- * Expense Report Data structure
+ * Expense Report Data object which is divided into table header, body and footer properties
  */
 const expenseReportData = {
   tableHeader: [
@@ -116,7 +116,7 @@ const ExpenseReport = () => {
           className="dataTables_wrapper container-fluid dt-bootstrap4"
         >
           {/* BEGINNING OF VIEW ORDERS SEARCH BAR */}
-          <ViewordersSearchbar />
+          <ExpenseReportSearchbar />
           {/* END OF VIEW ORDERS SEARCH BAR */}
           <div className="table-responsive">
             <table

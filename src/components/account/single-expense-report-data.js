@@ -1,3 +1,7 @@
+/**
+ * Single Expense Report Data object to create dynamic single expense reports which is divided into the header, body and footer sections
+ */
+
 export const expenseReportData = {
   header: {
     logoSection: {

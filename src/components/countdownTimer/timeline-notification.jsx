@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 const TimelineNotification = ({ timelineItems }) => {
   return (
@@ -25,14 +24,6 @@ const TimelineNotification = ({ timelineItems }) => {
                       }}
                     >
                       <p className="t-meta-time">{item.productionOutput}</p>
-                      {/* <hr
-                        style={{
-                          height: "0.5px",
-                          margin: "0",
-                          backgroundColor: "#3b3f5c",
-                          width: "80%",
-                        }}
-                      /> */}
                       <p className="t-meta-time">Time since last input:</p>
                       <p className="t-meta-time">{item.timeSpent}</p>
                     </span>

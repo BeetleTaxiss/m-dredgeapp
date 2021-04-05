@@ -4,6 +4,9 @@ import UsersList from "./users-list";
 import "./users.css";
 
 const Users = () => {
+  /**
+   * Form state to be made avaliable to handle Input Change function and passed down to the Modal component used in updating a user or adding new user entriees
+   *  */
   const formState = {
     name: "",
     image: "",
@@ -11,7 +14,9 @@ const Users = () => {
     email: "",
     phone: "",
   };
-
+  /**
+   * Data for building the user list display divided into table header/legend and users information
+   */
   const userListData = {
     header: {
       name: "Name",

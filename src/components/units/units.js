@@ -1,28 +1,40 @@
 import React, { useState } from "react";
-import useHandleInputChange from "../../hooks/useHandleInputChange";
 import { FormDetails } from "../orders/order-form-details";
-import { orderUtils } from "../orders/orders-utils";
+import { functionUtils } from "../../hooks/function-utils";
 import WidgetHeader from "../general/widget-header";
 import UnitsList from "./unit-list";
 import UpdateUnit from "./update-unit";
 
 const Units = () => {
+  /**
+   * States to conditionally render unit list and either the add unit or update unit components
+   */
   const [displayUnitList, setDisplayUnitList] = useState(false);
   const [displayUnit, setDisplayUnit] = useState(false);
-  // FORM STATE TO BE INPUTTED IN USEHANDLEINPUTCHANGE HOOK
+  /**
+   * Form state to be made avaliable to handle Input Change function
+   *  */
+
   const formState = {
     product: "",
     description: "",
     unit: "",
     measurement: "",
   };
-  // USEHANDLEINPUTCHANGE HOOK FOR HANDLING INPUT CHANGES
-  const { formInput, handleChange, setFormInput } = useHandleInputChange(
-    formState
-  );
-  console.log("form state ", formInput);
+  /**
+   *  Handle Input Change function for handling input changes across multiple form if required, in this usecase we are interested in the input values of the product, product description, product unit and it's measurement
+   *  */
 
-  // FORMDATA BASED ON VARIABLES FROM THE FORM INPUT STATE
+  const {
+    formInput,
+    handleChange,
+    setFormInput,
+  } = functionUtils.HandleInputChange(formState);
+  console.log("form state ", formInput);
+  /**
+   * Form Data for building the form input display
+   */
+
   const unitFormData = [
     {
       id: "t-text",
@@ -94,7 +106,7 @@ const Units = () => {
                     ))}
                     <button
                       onClick={() =>
-                        orderUtils.handleUnitUpdate(
+                        functionUtils.handleUnitUpdate(
                           formInput,
                           setDisplayUnitList,
                           setFormInput
@@ -124,7 +136,7 @@ const Units = () => {
                     ))}
                     <button
                       onClick={() =>
-                        orderUtils.handleUnitFormSubmit(
+                        functionUtils.handleUnitFormSubmit(
                           formInput,
                           setDisplayUnitList,
                           setFormInput

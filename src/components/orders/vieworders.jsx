@@ -5,6 +5,9 @@ import ViewordersTablefooter from "./vieworders-tablefooter";
 import ViewordersSearchbar from "./vieworders-searchbar";
 import ViewordersTablepaiginaition from "./vieworders-tablepaiginaition";
 
+/**
+ * Orders List Data object which is divided into table header, body and footer properties
+ */
 const viewOrdersData = {
   tableHeader: [
     {

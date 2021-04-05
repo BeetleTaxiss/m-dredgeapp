@@ -9,6 +9,9 @@ import PostExpense from "./post-expense";
 import SingleExpenseReport from "./single-expense-report";
 
 const Account = () => {
+  /**
+   * Conditional page display to set which sub page is shown and this is made possible with the url property from useRouteMatch
+   */
   const { url } = useRouteMatch();
   return (
     <PageWrapper>

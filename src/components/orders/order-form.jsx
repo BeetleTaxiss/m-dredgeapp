@@ -1,22 +1,29 @@
 import React from "react";
-import useHandleInputChange from "../../hooks/useHandleInputChange";
 import { useFormData } from "../../hooks/useFormData";
 import { FormDetails } from "./order-form-details";
-import { orderUtils } from "./orders-utils";
+import { functionUtils } from "../../hooks/function-utils";
 import WidgetHeader from "../general/widget-header";
 
 const OrderForm = () => {
-  // FORM STATE TO BE INPUTTED IN USEHANDLEINPUTCHANGE HOOK
+  /**
+   * Form state to be made avaliable to handle Input Change function
+   *  */
   const formState = {
     buckets: "",
     truckRegNo: "",
     truckSize: "",
   };
-  // USEHANDLEINPUTCHANGE HOOK FOR HANDLING INPUT CHANGES
-  const { formInput, handleChange } = useHandleInputChange(formState);
+  /**
+   *  Handle Input Change function for handling input changes across multiple form if required, in this case we are retriving the number of buckets, truck registration number and truck size the user inputs
+   *  */
+  const { formInput, handleChange } = functionUtils.HandleInputChange(
+    formState
+  );
   console.log("form state ", formInput);
 
-  // USEFORMDATA HOOK FOR RETRIVING FORMDATA BASED ON VARIABLES FROM THE FORM INPUT STATE
+  /**
+   * useFormData hook for retriving form data based on variables from the form input state
+   *  */
   const { formData } = useFormData(formInput);
 
   return (
@@ -42,7 +49,7 @@ const OrderForm = () => {
                     />
                   ))}
                   <button
-                    onClick={() => orderUtils.handleFormSubmit(formInput)}
+                    onClick={() => functionUtils.handleFormSubmit(formInput)}
                     className="mt-4 btn btn-primary"
                   >
                     Place Order

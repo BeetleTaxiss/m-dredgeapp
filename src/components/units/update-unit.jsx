@@ -1,11 +1,13 @@
 import React from "react";
-import useHandleInputChange from "../../hooks/useHandleInputChange";
+import { functionUtils } from "../../hooks/function-utils";
 
 const updateUnit = (name, email, image, jobDesc, phone) => {
   console.log("Unit Updated", name, email, image, jobDesc, phone);
 };
 const UpdateUnit = ({ formState, state, setState }) => {
-  const { handleChange, formInput } = useHandleInputChange(formState);
+  const { handleChange, formInput } = functionUtils.HandleInputChange(
+    formState
+  );
   console.log(formInput);
   const { product, description, unit, measurement } = formInput;
 

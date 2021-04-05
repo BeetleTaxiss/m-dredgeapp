@@ -1,5 +1,5 @@
 import React from "react";
-import useHandleInputChange from "../../hooks/useHandleInputChange";
+import { functionUtils } from "../../hooks/function-utils";
 
 const AddUser = (name, email, image, jobDesc, phone) => {
   console.log("User Added Twice", name, email, image, jobDesc, phone);
@@ -10,7 +10,12 @@ const UpdateUser = (name, email, image, jobDesc, phone) => {
 };
 
 const Modal = ({ formState }) => {
-  const { handleChange, formInput } = useHandleInputChange(formState);
+  /**
+   *  Handle Input Change function for handling input changes across multiple form if required, in this case we are interested in the values of the user name, email, job description and phone number for the purpose of updating an existing user or the addition of a new user
+   *  */
+  const { handleChange, formInput } = functionUtils.HandleInputChange(
+    formState
+  );
   console.log(formInput);
   const { name, email, image, jobDesc, phone } = formInput;
   return (

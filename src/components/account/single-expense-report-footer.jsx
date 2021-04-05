@@ -5,7 +5,7 @@ export const SingleExpenseReportFooterNote = () => {
     <div className="inv--note">
       <div className="row mt-4">
         <div className="col-sm-12 col-12 order-sm-0 order-1">
-          <p>Note: Thank you for doing Business with us.</p>
+          <p>Note: Structed Business makes everyone happy.</p>
         </div>
       </div>
     </div>

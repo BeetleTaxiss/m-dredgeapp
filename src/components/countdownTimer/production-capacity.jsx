@@ -1,134 +1,45 @@
-import React, { useState } from "react";
-import moment from "moment";
-import axios from "axios";
+import React from "react";
+
+import { functionUtils } from "../../hooks/function-utils.js";
 
 const ProductionCapacity = ({ setTimeLine, setTimelineItem }) => {
-  // STATE FOR PRODUCTION CAPACITY FORM INPUT
-  const [progress, setProgress] = useState({});
-
-  // HANDLE CHANGE FUNCTION TO TRACK CHANGES IN FORM INPUTS
-  const handleChange = ({ currentTarget: { name, value } }) =>
-    setProgress((state) => ({
-      ...state,
-      [name]: value,
-    }));
-
-  // FUNCTION TO POST THE PRODUCTION CAPACITY AND TIME STAMP FOR A GIVEN INPUT BY THE PRODUCTION MANAGER/USER
-  const getTimeAndProductionStamp = async (e) => {
-    e.preventDefault();
-    const loggedProductionTime = moment().format("hh:mm");
-    const LogTime = moment();
-    // SET SESSION VARIABLES AND ADD PREV TIME
-
-    const LoggedTimeNew = sessionStorage.setItem("New Time", LogTime);
-    const getNewLoggedTime = sessionStorage.getItem("New Time");
-    const getPrevLoggedTime = sessionStorage.getItem("prevTime");
-
-    console.log("New logged time: ", getNewLoggedTime);
-    console.log("Prev Logged Time: ", getPrevLoggedTime);
-
-    let prevLoggedTime = new Date(getPrevLoggedTime);
-    let newLoggedTime = new Date(getNewLoggedTime);
-    // DIFFERENCE BETWEEN SHIFT VALUES TO GET SHIFT DURATION IN MILLISECONDS
-    let durationInMilliseconds =
-      newLoggedTime.getTime() - prevLoggedTime.getTime();
-    console.log("Difference: ", durationInMilliseconds);
-    // PROCESS TO CONVERT SHIFT DURATION ABOVE TO HOURS, MINUTES AND SECONDS
-    let logObject = new Date(durationInMilliseconds);
-    let hours = logObject.getUTCHours(),
-      minutes = logObject.getUTCMinutes(),
-      seconds = logObject.getSeconds();
-
-    /**
-     * ------------------------------------------------------------------------------
-     * -----------------BEGINNING OF PRODUCTION CAPACITY CALCULATION-----------------
-     * ------------------------------------------------------------------------------
-     * */
-    const MAX_PRODUCTION_OUTPUT = 10000;
-    const SECONDS = 3600;
-    const MAX_PRODUCTION_OUTPUT_PER_SECONDS = MAX_PRODUCTION_OUTPUT / SECONDS;
-    const MAX_PRODUCTION_CAPACITY_PER_SECONDS = 100 / 100;
-    const PRODUCTION_CAPACITY = progress[""] / 100;
-    const PRODUCTION_TIME = durationInMilliseconds / 1000;
-
-    /**
-     * MAX PRODUCTION OUTPUT AT PRODUCTION TIME
-     */
-
-    const MAX_PRODUCTION_CAPACITY_AT_PRODUCTION_TIME = parseFloat(
-      MAX_PRODUCTION_OUTPUT_PER_SECONDS * PRODUCTION_TIME
-    );
-
-    /**
-     * Production Output at Production Capacity
-     */
-
-    const calcProductionOutput =
-      (PRODUCTION_CAPACITY * MAX_PRODUCTION_CAPACITY_AT_PRODUCTION_TIME) /
-      MAX_PRODUCTION_CAPACITY_PER_SECONDS;
-
-    const productionOutputForUser = Math.round(calcProductionOutput);
-
-    console.log("Output: ", productionOutputForUser);
-
-    // END OF PRODUCTION CAPACITY CALCULATION
-
-    // POST URL
-    const PRODUCTION_CAPACITY_URL = "/production";
-    // PRODUCTION AND TIME STAMP VALUES USING MOMENT.JS TO GET ACCURATE TIME
-    const productionStamp = {
-      time: moment(),
-      capacity: progress[""],
-    };
-    // FORM POST METHOD TO WEB SERVER
-    axios
-      .post(PRODUCTION_CAPACITY_URL, productionStamp)
-      .then((res) => console.log(res));
-
-    setTimelineItem((state) => [
-      ...state,
-      {
-        time: loggedProductionTime,
-        dotColor: `${
-          progress[""] < 35
-            ? "danger"
-            : progress[""] < 50
-            ? "warning"
-            : progress[""] < 70
-            ? "secondary"
-            : progress[""] > 70
-            ? "success"
-            : "secondary"
-        }`,
-        text: `Production running at ${progress[""]}%`,
-        timeSpent: `${hours ? hours : "0"} hrs : ${
-          minutes ? minutes : "0"
-        } mins :  ${seconds ? seconds : "0"} secs `,
-        productionOutput: `Production output per hour: ${productionOutputForUser}cm³ `,
-      },
-    ]);
-
-    const LoggedTimePrev = sessionStorage.setItem("prevTime", getNewLoggedTime);
-  };
+  /**
+   * Form state to be made avaliable to handle Input Change function
+   *  */
+  const formState = {};
+  /**
+   *  Handle Input Change function for handling input changes across multiple forms if required, in this case we are concerned about the range count input field
+   *  */
+  const { formInput, handleChange } = functionUtils.HandleInputChange(
+    formState
+  );
 
   return (
     <div className="custom-progress progress-up" style={{ width: "100%" }}>
       <div className="range-count">
         <span className="range-count-number">
-          {progress[""] ? progress[""] : 0}
+          {formInput[""] ? formInput[""] : (formInput[""] = 0)}
         </span>
         <span className="range-count-unit">%</span>
       </div>
-      <form onSubmit={getTimeAndProductionStamp}>
+      <form onSubmit={(e) => e.preventDefault()}>
         <input
           type="range"
           min="0"
           max="100"
           className="custom-range progress-range-counter"
-          value={progress[""]}
+          value={formInput[""]}
           onChange={handleChange}
         />
-        <input type="submit" name="txt" className="mt-4 btn btn-primary" />
+        <button
+          onClick={() =>
+            functionUtils.getTimeAndProductionStamp(formInput, setTimelineItem)
+          }
+          name="txt"
+          className="mt-4 btn btn-primary"
+        >
+          Add Production Capacity
+        </button>
       </form>
     </div>
   );

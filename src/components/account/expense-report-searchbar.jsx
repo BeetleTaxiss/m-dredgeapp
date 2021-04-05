@@ -1,6 +1,6 @@
 import React from "react";
 
-const ViewordersSearchbar = () => {
+const ExpenseReportSearchbar = () => {
   return (
     <div className="dt--top-section">
       <div className="row">
@@ -53,4 +53,4 @@ const ViewordersSearchbar = () => {
   );
 };
 
-export default ViewordersSearchbar;
+export default ExpenseReportSearchbar;

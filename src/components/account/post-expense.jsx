@@ -1,12 +1,13 @@
 import React from "react";
-import useHandleInputChange from "../../hooks/useHandleInputChange";
 import { FormDetails } from "../orders/order-form-details";
-import { orderUtils } from "../orders/orders-utils";
+import { functionUtils } from "../../hooks/function-utils";
 import WidgetHeader from "../general/widget-header";
 import moment from "moment";
 
 const PostExpense = () => {
-  // FORM STATE TO BE INPUTTED IN USEHANDLEINPUTCHANGE HOOK
+  /**
+   * Form state to be made avaliable to handle Input Change function
+   *  */
   const formState = {
     expenseType: "",
     description: "",
@@ -14,13 +15,19 @@ const PostExpense = () => {
     date: moment().format("dd/mm/yy hh:mm:ss"),
   };
 
-  // USEHANDLEINPUTCHANGE HOOK FOR HANDLING INPUT CHANGES
-  const { formInput, handleChange, setFormInput } = useHandleInputChange(
-    formState
-  );
-  console.log("form state ", formInput);
+  /**
+   *  Handle Input Change function for handling input changes across multiple form if required, in this case we are retriving the expense type, expense description and expense amount the user inputs. The date is auto generated.
+   *  */
 
-  // FORMDATA BASED ON VARIABLES FROM THE FORM INPUT STATE
+  const {
+    formInput,
+    handleChange,
+    setFormInput,
+  } = functionUtils.HandleInputChange(formState);
+
+  /**
+   * Form Data for building the form input display
+   */
   const formData = [
     {
       id: "t-text",
@@ -75,7 +82,7 @@ const PostExpense = () => {
                   ))}
                   <button
                     onClick={() =>
-                      orderUtils.handlePostExpense(formInput, setFormInput)
+                      functionUtils.handlePostExpense(formInput, setFormInput)
                     }
                     className="mt-4 btn btn-primary"
                   >

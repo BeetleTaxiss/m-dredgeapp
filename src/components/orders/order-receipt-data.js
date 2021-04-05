@@ -1,3 +1,6 @@
+/**
+ * Order Receipt Data object to create dynamic single order receipts which are divided into the header, body and footer sections
+ */
 export const orderReceiptData = {
   header: {
     logoSection: {

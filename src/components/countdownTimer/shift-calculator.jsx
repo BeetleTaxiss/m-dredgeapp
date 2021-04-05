@@ -2,6 +2,8 @@ import React from "react";
 
 const ShiftCalculator = ({ calculateShift, handleChange, shiftDuration }) => {
   // SHIFT CALCULATOR TAKES THE INPUTS OF A USER AND FINDS A DIFFERENCE OF THE GIVEN INPUTS TO ASCERTAIN THE DURATION OF A SINGLE SHIFT. ON SUBMIT, THE COUNTDOWN TIMER IS DISPLAYED AND SHIFT CALCULATOR IS REMOVED FROM THE USER INTERFACE
+
+  // onLoad event listener is enabled to clear the local storage from any values stored (previous time especially) to avoid bugs
   window.addEventListener("load", () => {
     sessionStorage.clear();
   });

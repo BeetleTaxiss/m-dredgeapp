@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import moment from "moment";
 
 export const useCountDown = (setDisplayTimer, setDisplayTimeline) => {
   // COUNTER STATE FOR TIMER
-  const [counter, setCounter] = useState({
+  const [counter, setCounter] = React.useState({
     hours: "00",
     minutes: "00",
     seconds: "00",
   });
 
   // SHIFT DURATION STATE FOR DATE-TIME FORM INPUT
-  const [shiftDuration, setShiftDuration] = useState({
+  const [shiftDuration, setShiftDuration] = React.useState({
     from: "",
     to: "",
   });
 
   // TIMELINE STATE
-  const [timelineItems, setTimelineItems] = useState([]);
+  const [timelineItems, setTimelineItems] = React.useState([]);
 
   // COUNTER REF TO HELP CLEAR COUNTER WHEN TIMER VALUE IS === 0
-  const counterId = useRef(null);
+  const counterId = React.useRef(null);
 
   // HANDLE CHANGE FUNCTION TO TRACK CHANGES IN FORM INPUTS
   const handleChange = ({ currentTarget: { name, value } }) =>
@@ -121,7 +121,7 @@ export const useCountDown = (setDisplayTimer, setDisplayTimeline) => {
   };
 
   // ON MOUNT SIDE EFFECT WHICH STARTS COUNT DOWN TIMER AND REPEATS EVERY ONE SECOND
-  useEffect(() => {
+  React.useEffect(() => {
     counterId.current = setInterval(countDownTimer, 1000);
     return () => {
       clear();
@@ -129,7 +129,7 @@ export const useCountDown = (setDisplayTimer, setDisplayTimeline) => {
   });
 
   // LOGIC TO CLEAR SET INTERVAL ONCE ALL TIMER VALUES ARE EQUAL TO ZERO
-  useEffect(() => {
+  React.useEffect(() => {
     if (counter.minutes === 0 && counter.seconds === 0 && counter.hours === 0) {
       clear();
     }

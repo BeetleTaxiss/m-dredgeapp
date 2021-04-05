@@ -6,7 +6,7 @@ import SingleExpenseReportFooter, {
   SingleExpenseReportFooterNote,
 } from "./single-expense-report-footer";
 import SingleExpenseReportHeader from "./single-expense-report-header";
-import SingleExpenseReportIntro from "./single-expense-report-intro";
+// import SingleExpenseReportIntro from "./single-expense-report-intro";
 const SingleExpenseReport = () => {
   return (
     <div className="row invoice  layout-spacing layout-top-spacing">
