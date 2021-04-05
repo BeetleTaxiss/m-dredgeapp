@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import RecentOrders from "../components/cards/recent-orders";
+import Summary from "../components/cards/summary";
 import TotalOrders from "../components/cards/total-orders";
 import TotalRevenue from "../components/cards/total-revenue";
 import TotalStockpile from "../components/cards/total-stockpile";
@@ -29,7 +31,8 @@ export const Dashboard = () => {
             {/* BEGINNING OF TOTAL STOCKPILE COMPONENT */}
             <TotalStockpile />
             {/* END OF TOTAL STOCKPILE COMPONENT */}
-
+            <RecentOrders />
+            <Summary />
             <div className="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
               <div className="widget widget-chart-three">
                 <div className="widget-heading">

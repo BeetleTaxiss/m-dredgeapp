@@ -37,6 +37,7 @@ code { color: #e7515a; }
     margin-left: 25px;
 }
 .main-container {
+    margin-top: 125px;
     min-height: auto;
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
@@ -48,6 +49,11 @@ code { color: #e7515a; }
     -ms-flex-pack: start;
     justify-content: flex-start;
 
+}
+@media (max-width: 991px){
+.main-container{
+    margin-top: 4rem;
+}
 }
 #container.fixed-header { margin-top: 56px; }
 #content {
@@ -1425,7 +1431,7 @@ code { color: #e7515a; }
         padding: 12px 17px 12px 17px;
         max-height: 64px;
     }
-    #content { padding-top: 65px; margin-top: 0; }
+    #content { padding-top: 0px; margin-top: 0; }
     .navbar { padding: 10px 0 10px 0; margin: 0 16px; }
     .navbar .navbar-item .nav-item.user-profile-dropdown a.user .media .media-body { display: none; }
     .navbar .nav-logo { display: none; }

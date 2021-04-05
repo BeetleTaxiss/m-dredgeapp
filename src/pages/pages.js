@@ -5,6 +5,7 @@ import AdminDashboard from "../components/admin/admin-dashboard";
 import { CountdownTimer } from "../components/countdownTimer/countdown-timer";
 import Navbar from "../components/navbar/navbar";
 import OrderDashboard from "../components/orders/order-dashboard";
+import Revenue from "../components/revenue/revenue";
 
 const Pages = () => {
   const { url } = useRouteMatch();
@@ -14,6 +15,10 @@ const Pages = () => {
       <Switch>
         {url === "/production" ? (
           <CountdownTimer />
+        ) : url === "/singlerevenuereport" ? (
+          <Revenue />
+        ) : url === "/revenuereport" ? (
+          <Revenue />
         ) : url === "/postexpense" ? (
           <Account />
         ) : url === "/singleexpensereport" ? (

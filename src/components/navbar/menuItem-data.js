@@ -46,6 +46,7 @@ export const topNavBarData = [
       { link: "/expensereport", text: "Expense Report" },
       { link: "/placeorder", text: "Place Order" },
       { link: "/vieworders", text: "View Orders" },
+      { link: "/revenuereport", text: "Revenue Report" },
     ],
   },
   // END OF SINGLE MENU ITEM DATA

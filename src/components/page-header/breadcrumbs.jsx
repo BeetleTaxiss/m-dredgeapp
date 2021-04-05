@@ -10,6 +10,7 @@ const Breadcrumbs = ({ items }) => {
             key={i}
             className={`breadcrumb-item ${item.active && "active"}`}
             aria-current={item.active && "page"}
+            style={{ display: !item.text && "none" }}
           >
             <Link to={item.link}>{item.text}</Link>
           </li>

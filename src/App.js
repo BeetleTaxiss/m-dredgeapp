@@ -7,6 +7,8 @@ function App() {
   return (
     <div className="App">
       <Switch>
+        <Route path="/singlerevenuereport" component={Pages} />
+        <Route path="/revenuereport" component={Pages} />
         <Route path="/singleexpensereport" component={Pages} />
         <Route path="/expensereport" component={Pages} />
         <Route path="/postexpense" component={Pages} />
