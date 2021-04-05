@@ -56,13 +56,9 @@ export const topNavBarData = [
       icon: productionIcon,
       menuItem: "Production",
       dropdown: dropdownIcon,
-      link: "/production",
+      link: "#",
     },
-    subMenuItems: [
-      { link: "#", text: "Notes" },
-      { link: "#", text: "Chat" },
-      { link: "#", text: "Mailbox" },
-    ],
+    subMenuItems: [{ link: "/production", text: "Start Production" }],
   },
   // END OF SINGLE MENU ITEM DATA
   // BEGINNING OF SINGLE MENU ITEM DATA

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const TaskAction = () => {
+const TaskAction = ({ links }) => {
   return (
     <div className="task-action">
       <div className="dropdown">
@@ -37,15 +37,11 @@ const TaskAction = () => {
           aria-labelledby="pendingTask"
           style={{ willChange: "transform" }}
         >
-          <Link className="dropdown-item" to="javascript:void(0);">
-            This Week
-          </Link>
-          <Link className="dropdown-item" to="javascript:void(0);">
-            Last Week
-          </Link>
-          <Link className="dropdown-item" to="javascript:void(0);">
-            Last Month
-          </Link>
+          {links?.map((item, i) => (
+            <Link key={i} className="dropdown-item" to={item.link}>
+              {item.text}
+            </Link>
+          ))}
         </div>
       </div>
     </div>

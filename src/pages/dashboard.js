@@ -6,6 +6,11 @@ import TotalOrders from "../components/cards/total-orders";
 import TotalRevenue from "../components/cards/total-revenue";
 import TotalStockpile from "../components/cards/total-stockpile";
 import PageHeader from "../components/page-header/page-header";
+import RecentSummary from "../components/cards/recent-summary";
+import {
+  recentExpensesData,
+  recentRevenueData,
+} from "../components/cards/recent-summary-data";
 
 export const Dashboard = () => {
   return (
@@ -33,6 +38,8 @@ export const Dashboard = () => {
             {/* END OF TOTAL STOCKPILE COMPONENT */}
             <RecentOrders />
             <Summary />
+            <RecentSummary data={recentExpensesData} />
+            <RecentSummary data={recentRevenueData} />
             <div className="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
               <div className="widget widget-chart-three">
                 <div className="widget-heading">

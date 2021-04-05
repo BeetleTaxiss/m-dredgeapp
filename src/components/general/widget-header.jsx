@@ -1,13 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import TaskAction from "./task-action";
 
-const WidgetHeader = ({ title, dropdown }) => {
+const WidgetHeader = ({ title, dropdown, links }) => {
   return (
-    <div className="widget-heading">
+    <div
+      className="widget-heading"
+      style={{ display: "flex", justifyContent: "space-between" }}
+    >
       <h5 className="">{title}</h5>
 
-      {dropdown ? <TaskAction /> : null}
+      {dropdown ? <TaskAction links={links} /> : null}
     </div>
   );
 };
