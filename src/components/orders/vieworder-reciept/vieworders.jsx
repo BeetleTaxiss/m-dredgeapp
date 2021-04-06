@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { BASE_API_URL } from "../../../hooks/API";
 import ViewordersTablehead from "./vieworders-tablehead";
 import ViewordersTableBody from "./vieworders-body";
 import ViewordersTablefooter from "./vieworders-tablefooter";
@@ -10,6 +11,13 @@ import ViewordersTablepaiginaition from "./vieworders-tablepaiginaition";
  */
 const viewOrdersData = {
   tableHeader: [
+    {
+      text: "Date",
+      className: "sorting",
+      ariaLabel: "Start date: activate to sort column ascending",
+      // ariaSort: "descending",
+      width: "81px",
+    },
     {
       text: "Truck No",
       className: "sorting",
@@ -38,15 +46,9 @@ const viewOrdersData = {
       ariaSort: "descending",
       width: "31px",
     },
+
     {
-      text: "Date",
-      className: "sorting",
-      ariaLabel: "Start date: activate to sort column ascending",
-      // ariaSort: "descending",
-      width: "81px",
-    },
-    {
-      text: "Serial No",
+      text: "Order Ref",
       className: "sorting",
       ariaLabel: "Salary: activate to sort column ascending",
       // ariaSort: "descending",
@@ -126,15 +128,24 @@ const viewOrdersData = {
     },
   ],
   tableFooter: [
+    "Date",
     "Truck No",
     "Order size",
     "Order cost",
     "Order Volume",
-    "Date",
-    "Serial No",
+    "Order Ref",
   ],
 };
 const ViewOrders = () => {
+  const [ordersList, setOrdersList] = useState();
+  useEffect(() => {
+    fetch(`${BASE_API_URL}/api/v1/order/list.php`)
+      .then((res) => res.json())
+      .then((data) => setOrdersList(data.data))
+      // .then((data) => console.log("API DATA: ", data.data))
+      .catch((err) => console.log("API ERROR: ", err));
+    return () => {};
+  }, []);
   return (
     <div className="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
       <div className="widget-content widget-content-area br-6">
@@ -157,7 +168,7 @@ const ViewOrders = () => {
               <ViewordersTablehead content={viewOrdersData.tableHeader} />
               {/* END OF VIEW ORDERS TABLE HEADER */}
               {/* BEGINNING OF VIEW ORDERS TABLE BODY */}
-              <ViewordersTableBody content={viewOrdersData.tableBody} />
+              <ViewordersTableBody content={ordersList} />
               {/* END OF VIEW ORDERS TABLE BODY */}
               {/* BEGINNING OF VIEW ORDERS TABLE FOOTER*/}
               <ViewordersTablefooter content={viewOrdersData.tableFooter} />

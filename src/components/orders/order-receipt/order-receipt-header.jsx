@@ -1,7 +1,7 @@
 import React from "react";
 import { orderReceiptData } from "./order-receipt-data";
 
-const OrderReceiptHeader = () => {
+const OrderReceiptHeader = ({ date, orderRef }) => {
   const { header } = orderReceiptData;
   return (
     <div className="inv--head-section inv--detail-section">
@@ -21,20 +21,22 @@ const OrderReceiptHeader = () => {
 
         <div className="col-sm-6 text-sm-right">
           <p className="inv-list-number">
-            <span className="inv-title">Receipt : </span>{" "}
-            <span className="inv-number">{header.ReferenceNumber}</span>
+            <span className="inv-title">Reference : </span>{" "}
+            <span className="inv-number">{orderRef}</span>
           </p>
         </div>
 
         <div className="col-sm-6 align-self-center mt-3">
           {header.contactSection.map((item, i) => (
-            <p className="inv-street-addr">{item}</p>
+            <p key={i} className="inv-street-addr">
+              {item}
+            </p>
           ))}
         </div>
         <div className="col-sm-6 align-self-center mt-3 text-sm-right">
           <p className="inv-created-date">
             <span className="inv-title">Date : </span>{" "}
-            <span className="inv-date">{header.date}</span>
+            <span className="inv-date">{date}</span>
           </p>
         </div>
       </div>

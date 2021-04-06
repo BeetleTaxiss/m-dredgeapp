@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "./invoice-preview.css";
 import OrderReceiptBody from "./order-receipt-body";
 import OrderReceiptFooter, {
@@ -8,6 +8,11 @@ import OrderReceiptFooter, {
 import OrderReceiptHeader from "./order-receipt-header";
 import OrderReceiptIntro from "./order-receipt-intro";
 const OrderReceipt = () => {
+  const { state } = useLocation();
+  const [order, setOrder] = useState();
+  useEffect(() => {
+    setOrder(state);
+  }, [order, state]);
   return (
     <div className="row invoice  layout-spacing layout-top-spacing">
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -20,17 +25,25 @@ const OrderReceipt = () => {
                     <div className="invoice-00001">
                       <div className="content-section">
                         {/* BEGINNING OF ORDER RECEIPT HEADER */}
-                        <OrderReceiptHeader />
+                        <OrderReceiptHeader
+                          date={order?.date_in}
+                          orderRef={order?.order_ref}
+                        />
                         {/* END OF ORDER RECEIPT HEADER */}
                         {/* BEGINNING OF ORDER RECEIPT INTRO*/}
-                        <OrderReceiptIntro />
+                        <OrderReceiptIntro truckNo={order?.truck_no} />
                         {/* END OF ORDER RECEIPT INTRO*/}
                         {/* BEGINNING OF ORDER RECEIPT BODY*/}
-                        <OrderReceiptBody />
+                        <OrderReceiptBody
+                          product={order?.product}
+                          qty={order?.qty}
+                          price={order?.unit_price}
+                          amount={order?.total_price}
+                        />
                         {/* END OF ORDER RECEIPT BODY*/}
 
                         {/* BEGINNING OF ORDER RECEIPT FOOTER*/}
-                        <OrderReceiptFooter />
+                        <OrderReceiptFooter amount={order?.total_price} />
                         {/* END OF ORDER RECEIPT FOOTER*/}
                         {/* BEGINNING OF ORDER RECEIPT FOOTER NOTE*/}
                         <OrderReceiptFooterNote />

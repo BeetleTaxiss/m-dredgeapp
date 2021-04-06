@@ -9,6 +9,7 @@ const OrderForm = () => {
    * Form state to be made avaliable to handle Input Change function
    *  */
   const formState = {
+    products: {},
     buckets: "",
     truckRegNo: "",
     truckSize: "",

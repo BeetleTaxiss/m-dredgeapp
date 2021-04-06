@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { UpdateModal } from "./update-modal";
 
 const deleteUser = (content) => {
   console.log("User deleted: ", content);
@@ -51,7 +52,7 @@ const UserListHeader = ({ content }) => (
   </div>
 );
 
-const User = ({ content }) => (
+const User = ({ content, setUpdateUser }) => (
   <div className="items">
     <div className="item-content">
       <div className="user-profile">
@@ -64,29 +65,32 @@ const User = ({ content }) => (
             <span className="new-control-indicator"></span>
           </label>
         </div>
-        <img src={content.metaInfo.image} alt="avatar" />
+        <img src="assets/img/profile-5.jpeg" alt="avatar" />
         <div className="user-meta-info">
-          <p className="user-name" data-name={content.metaInfo.name}>
-            {content.metaInfo.name}
+          <p className="user-name" data-name={content.user}>
+            {content.user}
           </p>
         </div>
       </div>
       <div className="user-location">
-        <p className="info-title">{content.jobDesc.fieldName}: </p>
-        <p className="usr-location" data-location={content.jobDesc.fieldInfo}>
-          {content.jobDesc.fieldInfo}
+        <p className="info-title">Job Description: </p>
+        <p
+          className="usr-location"
+          data-location={content.user_type === 1 ? "Admin" : "Regular"}
+        >
+          {content.user_type === 1 ? "Admin" : "Regular"}
         </p>
       </div>
       <div className="user-email">
-        <p className="info-title">{content.contact1.fieldName}: </p>
-        <p className="usr-email-addr" data-email={content.contact1.fieldInfo}>
-          {content.contact1.fieldInfo}
+        <p className="info-title">Email: </p>
+        <p className="usr-email-addr" data-email={content.email}>
+          {content.email}
         </p>
       </div>
       <div className="user-phone">
-        <p className="info-title">{content.contact2.fieldName}: </p>
-        <p className="usr-ph-no" data-phone={content.contact2.fieldInfo}>
-          {content.contact2.fieldInfo}
+        <p className="info-title">Phone: </p>
+        <p className="usr-ph-no" data-phone={content.phone}>
+          {content.phone}
         </p>
       </div>
       <div className="action-btn">
@@ -101,6 +105,7 @@ const User = ({ content }) => (
           strokeLinecap="round"
           strokeLinejoin="round"
           className="feather feather-edit-2 edit"
+          onClick={() => setUpdateUser(true)}
         >
           <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
         </svg>
@@ -116,7 +121,7 @@ const User = ({ content }) => (
           strokeLinecap="round"
           strokeLinejoin="round"
           className="feather feather-user-minus delete"
-          onClick={() => deleteUser(content.metaInfo.name)}
+          onClick={() => deleteUser(content.id)}
         >
           <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
           <circle cx="8.5" cy="7" r="4"></circle>
@@ -126,7 +131,8 @@ const User = ({ content }) => (
     </div>
   </div>
 );
-const UsersList = ({ userListData }) => {
+const UsersList = ({ userList, userListData, state }) => {
+  const [updateUser, setUpdateUser] = useState(false);
   return (
     <div className="searchable-items list">
       {/* BEGIN USER LIST HEADER */}
@@ -134,10 +140,15 @@ const UsersList = ({ userListData }) => {
       {/* END USER LIST HEADER */}
 
       {/* BEGIN USER */}
-      {userListData.users.map((user, i) => (
-        <User key={i} content={user} />
+      {userList.map((user, i) => (
+        <User key={i} content={user} setUpdateUser={setUpdateUser} />
       ))}
       {/* END USER*/}
+      <UpdateModal
+        updateUser={updateUser}
+        setUpdateUser={setUpdateUser}
+        formState={state}
+      />
     </div>
   );
 };

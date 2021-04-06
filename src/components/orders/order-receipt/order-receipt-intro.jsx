@@ -1,6 +1,6 @@
 import React from "react";
 import { orderReceiptData } from "./order-receipt-data";
-const OrderReceiptIntro = () => {
+const OrderReceiptIntro = ({ truckNo }) => {
   const { truckDetails } = orderReceiptData;
   return (
     <div className="inv--detail-section inv--customer-detail-section">
@@ -14,7 +14,7 @@ const OrderReceiptIntro = () => {
         </div>
 
         <div className="col-xl-8 col-lg-7 col-md-6 col-sm-4">
-          <p className="inv-customer-name">{truckDetails.truckNumber}</p>
+          <p className="inv-customer-name">{truckNo}</p>
         </div>
 
         <div className="col-xl-4 col-lg-5 col-md-6 col-sm-8 col-12 order-sm-0 order-1">

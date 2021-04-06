@@ -1,8 +1,6 @@
 import React from "react";
-import { orderReceiptData } from "./order-receipt-data";
 
-const OrderReceiptBody = () => {
-  const { body } = orderReceiptData;
+const OrderReceiptBody = ({ product, qty, price, amount }) => {
   return (
     <div className="inv--product-table-section">
       <div className="table-responsive">
@@ -23,15 +21,13 @@ const OrderReceiptBody = () => {
             </tr>
           </thead>
           <tbody>
-            {body.map((item) => (
-              <tr key={item.sn}>
-                <td>{item.sn}</td>
-                <td>{item.product}</td>
-                <td className="text-right">{item.quantity}</td>
-                <td className="text-right">₦{item.price}</td>
-                <td className="text-right">₦{item.amount}</td>
-              </tr>
-            ))}
+            <tr>
+              <td>1</td>
+              <td>{product}</td>
+              <td className="text-right">{qty}</td>
+              <td className="text-right">₦{price}</td>
+              <td className="text-right">₦{amount}</td>
+            </tr>
           </tbody>
         </table>
       </div>

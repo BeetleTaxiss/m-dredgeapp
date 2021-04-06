@@ -11,8 +11,7 @@ export const OrderReceiptFooterNote = () => {
     </div>
   );
 };
-const OrderReceiptFooter = () => {
-  const { footer } = orderReceiptData;
+const OrderReceiptFooter = ({ amount }) => {
   return (
     <div className="inv--total-amounts">
       <div className="row mt-4">
@@ -24,13 +23,13 @@ const OrderReceiptFooter = () => {
                 <p className="">Sub Total: </p>
               </div>
               <div className="col-sm-4 col-5">
-                <p className="">₦{footer.subtotal}</p>
+                <p className="">₦{amount}</p>
               </div>
               <div className="col-sm-8 col-7 grand-total-title">
                 <h4 className="">Grand Total : </h4>
               </div>
               <div className="col-sm-4 col-5 grand-total-amount">
-                <h4 className="">₦{footer.total}</h4>
+                <h4 className="">₦{amount}</h4>
               </div>
             </div>
           </div>

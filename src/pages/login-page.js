@@ -1,7 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { FormDetails } from "../components/orders/order-form-details";
+import { functionUtils } from "../hooks/function-utils";
 
 const LoginPage = () => {
+  const [user, setUsername] = useState({
+    user: "",
+  });
+  const [password, setPassword] = useState({
+    password: "",
+  });
+  const [errors, setErrors] = useState({
+    user: "",
+    password: "",
+  });
+  const history = useHistory();
+  const location = useLocation();
+  const handleChange = functionUtils.SignInFormChange(
+    errors,
+    setErrors,
+    setUsername,
+    setPassword
+  );
+  const handleSubmit = functionUtils.SignInFormSubmit(
+    errors,
+    user,
+    password,
+    history,
+    location
+  );
+  console.log(user.user);
+  console.log(password.password);
+  const item1 = {
+    id: "username",
+    type: "text",
+    name: "user",
+    value: user.user,
+    className: "form-control",
+    required: true,
+  };
+  const item2 = {
+    id: "password",
+    type: "text",
+    name: "password",
+    value: password.password,
+    required: true,
+    className: "form-control",
+    holder: "Password",
+  };
   return (
     <section className="form">
       <div className="form-container outer">
@@ -12,7 +59,10 @@ const LoginPage = () => {
                 <h1 className="">Sign In</h1>
                 <p className="">Log in to your account to continue.</p>
 
-                <form className="text-left">
+                <form
+                  className="text-left"
+                  onSubmit={(e) => e.preventDefault()}
+                >
                   <div className="form">
                     <div id="username-field" className="field-wrapper input">
                       <label htmlFor="username">USERNAME</label>
@@ -31,13 +81,18 @@ const LoginPage = () => {
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                       </svg>
-                      <input
+                      <FormDetails
+                        item={item1}
+                        handleChange={handleChange}
+                        errors={errors.user}
+                      />
+                      {/* <input
                         id="username"
                         name="username"
                         type="text"
                         className="form-control"
                         placeholder="e.g John_Doe"
-                      />
+                      /> */}
                     </div>
 
                     <div
@@ -75,13 +130,19 @@ const LoginPage = () => {
                         ></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                       </svg>
-                      <input
+
+                      <FormDetails
+                        item={item2}
+                        handleChange={handleChange}
+                        errors={errors.password}
+                      />
+                      {/* <input
                         id="password"
                         name="password"
                         type="password"
                         className="form-control"
                         placeholder="Password"
-                      />
+                      /> */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -102,7 +163,8 @@ const LoginPage = () => {
                     <div className="d-sm-flex justify-content-between">
                       <div className="field-wrapper">
                         <button
-                          type="submit"
+                          onClick={handleSubmit}
+                          // type="submit"
                           className="btn btn-primary"
                           value=""
                         >

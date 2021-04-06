@@ -1,165 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { functionUtils } from "../../hooks/function-utils";
-
-const AddUser = (name, email, image, jobDesc, phone) => {
-  console.log("User Added Twice", name, email, image, jobDesc, phone);
-};
-
-const UpdateUser = (name, email, image, jobDesc, phone) => {
-  console.log("User Updated", name, email, image, jobDesc, phone);
-};
-
-const Modal = ({ formState }) => {
-  /**
-   *  Handle Input Change function for handling input changes across multiple form if required, in this case we are interested in the values of the user name, email, job description and phone number for the purpose of updating an existing user or the addition of a new user
-   *  */
-  const { handleChange, formInput } = functionUtils.HandleInputChange(
-    formState
-  );
-  console.log(formInput);
-  const { name, email, image, jobDesc, phone } = formInput;
-  return (
-    <div
-      className="modal fade"
-      id="addContactModal"
-      tabIndex="-1"
-      aria-labelledby="addContactModalTitle"
-      style={{ display: "none" }}
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-dialog-centered" role="document">
-        <div className="modal-content">
-          <div className="modal-body">
-            <i className="flaticon-cancel-12 close" data-dismiss="modal"></i>
-            <div className="add-contact-box">
-              <div className="add-contact-content">
-                {/* BEGIN MOAL FORM */}
-                <form id="addContactModalTitle">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="contact-name">
-                        <i className="flaticon-user-11"></i>
-                        <input
-                          name="name"
-                          type="text"
-                          id="c-name"
-                          className="form-control"
-                          placeholder="Name"
-                          onChange={handleChange}
-                          value={name}
-                        />
-                        <span
-                          className="validation-text"
-                          style={{ display: "none" }}
-                        ></span>
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="contact-email">
-                        <i className="flaticon-mail-26"></i>
-                        <input
-                          name="email"
-                          type="text"
-                          id="c-email"
-                          className="form-control"
-                          placeholder="Email"
-                          onChange={handleChange}
-                          value={email}
-                        />
-                        <span
-                          className="validation-text"
-                          style={{ display: "none" }}
-                        ></span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="contact-occupation">
-                        <i className="flaticon-fill-area"></i>
-                        <input
-                          name="jobDesc"
-                          type="text"
-                          id="c-location"
-                          className="form-control"
-                          placeholder="Job Description"
-                          onChange={handleChange}
-                          value={jobDesc}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <div className="contact-phone">
-                        <i className="flaticon-telephone"></i>
-                        <input
-                          name="phone"
-                          type="text"
-                          id="c-phone"
-                          className="form-control"
-                          placeholder="Phone"
-                          onChange={handleChange}
-                          value={phone}
-                        />
-                        <span
-                          className="validation-text"
-                          style={{ display: " none" }}
-                        ></span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row">
-                    {/* <div className="col-md-12">
-                    <div className="contact-location">
-                      <i className="flaticon-location-1"></i>
-                      <input
-                        type="text"
-                        id="c-location"
-                        
-                        className="form-control"
-                        placeholder="Job Description"
-                      />
-                    </div>
-                  </div> */}
-                  </div>
-                </form>
-                {/* END MODAL FORM */}
-              </div>
-            </div>
-          </div>
-          <div className="modal-footer">
-            <button
-              id="btn-edit"
-              className="float-left btn"
-              style={{ display: "none" }}
-              onClick={() => UpdateUser(name, email, image, jobDesc, phone)}
-            >
-              Save
-            </button>
-
-            <button className="btn" data-dismiss="modal">
-              {" "}
-              <i className="flaticon-delete-1"></i> Discard
-            </button>
-
-            <button
-              id="btn-add"
-              className="btn"
-              style={{}}
-              onClick={() => AddUser(name, email, image, jobDesc, phone)}
-            >
-              Add
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { AddModal } from "./add-modal";
 
 const SearchBar = ({ state }) => {
+  const [addUser, setAddUser] = useState(false);
+  console.log("Set Add User", setAddUser);
+  // console.log(addUser);
   return (
     <div className="row">
       <div className="col-xl-4 col-lg-5 col-md-5 col-sm-7 filtered-list-search layout-spacing align-self-center">
@@ -204,6 +50,7 @@ const SearchBar = ({ state }) => {
             strokeLinecap="round"
             strokeLinejoin="round"
             className="feather feather-user-plus"
+            onClick={() => setAddUser(true)}
           >
             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
             <circle cx="8.5" cy="7" r="4"></circle>
@@ -259,7 +106,8 @@ const SearchBar = ({ state }) => {
         </div>
 
         {/* BEGIN Modal */}
-        <Modal formState={state} />
+        <AddModal formState={state} addUser={addUser} setAddUser={setAddUser} />
+        {/* <Modal addUser formState={state} /> */}
         {/* END MODAL */}
       </div>
     </div>

@@ -1,6 +1,42 @@
 import React from "react";
 import moment from "moment";
 import axios from "axios";
+import { BASE_API_URL } from "./API";
+
+// Validate Form entries
+export const validateForm = (errors) => {
+  let valid = true;
+  Object.values(errors).forEach((val) => val.length > 0 && (valid = false));
+  return valid;
+};
+
+// Login function to
+const Login = async (user, password) => {
+  const data = JSON.stringify({ user, password });
+  console.log("Data: ", data);
+  console.log("Username: ", user);
+  console.log("Password: ", password);
+  return await axios
+    .post(`${BASE_API_URL}/api/v1/user/login.php`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      if (response.data) {
+        const data = response.data.data;
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            id: data.id,
+            username: data.user,
+            userType: data.user_type,
+          })
+        );
+      }
+      return response.data;
+    });
+};
 
 // GENERATE RANDOM SERIAL NUMBER FUNCTION
 export const generateSerial = () => {
@@ -459,5 +495,84 @@ export const functionUtils = {
     //   unit: "",
     //   measurement: "",
     // });
+  },
+  /** 8.
+   * ----------------------------------------------------------------------------------------------------------
+   * ----------------------------------- Sign-In Form Submit---------------------------------------------------
+   * @param  {errors} errors
+   * @param  {user} user
+   * @param  {password} password
+   * @param  {setUser} setUser
+   * @param  {history} history
+   * @param  {loaction} location
+   * ----------------------------------------------------------------------------------------------------------
+   */
+  SignInFormSubmit: (errors, user, password, history, location) => {
+    const handleSubmit = (event) => {
+      event.preventDefault();
+
+      if (validateForm(errors)) {
+        console.info("Valid Form");
+      } else {
+        console.error("Invalid Form");
+      }
+
+      try {
+        Login(user.user, password.password).then((response) => {
+          console.log("login object", response);
+          console.log("login object", user.user);
+          console.log("login object", password.password);
+          const { state } = location;
+          if (response.data) {
+            history.push({
+              pathname: state?.from || `/dashboard`,
+              state: response.data,
+            });
+            // history.push(state?.from || `/dashboard/${user.user}`);
+          }
+        });
+      } catch (error) {
+        console.error("Error in creating User Docs", error);
+      }
+    };
+    return handleSubmit;
+  },
+  /** 9.
+   * ----------------------------------------------------------------------------------------------------------
+   * ----------------------------------------Sign-In Form Change-----------------------------------------------
+   * @param  {errors} errors
+   * @param  {setErrors} setErrors
+   * @param  {setUsername} setUsername
+   * @param  {setPassword} setPassword
+   * ----------------------------------------------------------------------------------------------------------
+   */
+  SignInFormChange: (errors, setErrors, setUsername, setPassword) => {
+    const handleChange = (event) => {
+      const { name, value } = event.target;
+
+      switch (name) {
+        case "user":
+          errors.user =
+            value.length < 5
+              ? "Full Name must be at least 5 characters long!"
+              : "";
+          break;
+        case "password":
+          errors.password =
+            value.length < 4
+              ? "Password must be at least 8 characters long!"
+              : "";
+          break;
+        default:
+          break;
+      }
+
+      event.target.name === "user"
+        ? setUsername({ [name]: value })
+        : event.target.name === "password"
+        ? setPassword({ [name]: value })
+        : alert("Wrong form Selection");
+    };
+    return handleChange;
   },
 };
