@@ -514,8 +514,20 @@
 .widget-activity-four .mt-container {
     position: relative;
     height: 326px;
-    overflow: auto;
+    overflow: auto!important;
     padding-right: 12px;    
+}
+.widget-activity-four .mt-container::-webkit-scrollbar {
+    width: 0.1em;
+}
+
+.widget-activity-four .mt-container::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.widget-activity-four .mt-container::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
 }
 .widget-activity-four .widget-content {
     padding: 0 8px 0 20px;

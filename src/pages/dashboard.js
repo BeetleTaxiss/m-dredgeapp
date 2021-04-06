@@ -8,9 +8,15 @@ import TotalStockpile from "../components/cards/total-stockpile";
 import PageHeader from "../components/page-header/page-header";
 import RecentSummary from "../components/cards/recent-summary";
 import {
+  detailedStats,
   recentExpensesData,
+  recentPumpingActivitiesData,
   recentRevenueData,
+  currentProductionData,
 } from "../components/cards/recent-summary-data";
+import ActivitiesSummary from "../components/cards/activities-summary";
+import DetailedStatistics from "../components/cards/detailed-statistics";
+import CurrentActivity from "../components/cards/current-activity";
 
 export const Dashboard = () => {
   return (
@@ -40,6 +46,9 @@ export const Dashboard = () => {
             <Summary />
             <RecentSummary data={recentExpensesData} />
             <RecentSummary data={recentRevenueData} />
+            <ActivitiesSummary data={recentPumpingActivitiesData} />
+            <DetailedStatistics data={detailedStats} />
+            <CurrentActivity data={currentProductionData} />
             <div className="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
               <div className="widget widget-chart-three">
                 <div className="widget-heading">

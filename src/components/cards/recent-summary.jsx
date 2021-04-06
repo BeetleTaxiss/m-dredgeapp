@@ -4,10 +4,8 @@ const RecentSummaryHeader = ({ content }) => (
   <thead>
     <tr>
       {content.map((item, i) => (
-        <th>
-          <div key={i} className="th-content">
-            {item}
-          </div>
+        <th key={i}>
+          <div className="th-content">{item}</div>
         </th>
       ))}
     </tr>

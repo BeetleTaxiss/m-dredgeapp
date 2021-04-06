@@ -1,7 +1,7 @@
 import React from "react";
-import TaskAction from "./task-action";
+import TaskAction, { TaskActionArrow } from "./task-action";
 
-const WidgetHeader = ({ title, dropdown, links }) => {
+const WidgetHeader = ({ title, dropdown, links, arrow, link }) => {
   return (
     <div
       className="widget-heading"
@@ -10,6 +10,7 @@ const WidgetHeader = ({ title, dropdown, links }) => {
       <h5 className="">{title}</h5>
 
       {dropdown ? <TaskAction links={links} /> : null}
+      {arrow ? <TaskActionArrow link={link} /> : null}
     </div>
   );
 };

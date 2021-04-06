@@ -105,3 +105,68 @@ export const recentRevenueData = {
     },
   ],
 };
+
+export const recentPumpingActivitiesData = {
+  widgetHeader: {
+    title: "Recent Pumping",
+    link: "/vieworders",
+  },
+  taskAction: "/vieworders",
+  activities: [
+    {
+      status: { color: "success", comment: "Completed" },
+      activity: "Pumping finished",
+      time: "Just Now",
+    },
+    {
+      status: { color: "warning", comment: "Repairs" },
+      activity: "Equipment malfunctioning ",
+      time: "2 hours ago",
+    },
+    {
+      status: { color: "primary", comment: "Pending" },
+      activity: "Pumping started",
+      time: "08:23am",
+    },
+    {
+      status: { color: "primary", comment: "Pending" },
+      activity: "Pumping started",
+      time: "08:23am",
+    },
+    {
+      status: { color: "primary", comment: "Pending" },
+      activity: "Pumping started",
+      time: "08:23am",
+    },
+    {
+      status: { color: "primary", comment: "Pending" },
+      activity: "Pumping started",
+      time: "08:23am",
+    },
+    {
+      status: { color: "primary", comment: "Pending" },
+      activity: "Pumping started",
+      time: "08:23am",
+    },
+    {
+      status: { color: "primary", comment: "Pending" },
+      activity: "Pumping started",
+      time: "08:23am",
+    },
+  ],
+};
+
+export const detailedStats = [
+  { followers: true, stats: "4,000", legend: "Stockpile" },
+  { linkk: true, stats: "2,000", legend: "Wet sand" },
+  { chat: true, stats: "14,000", legend: "Gallons of water" },
+];
+
+export const currentProductionData = {
+  link: "/production",
+  user: "Nathan Bassey",
+  image: "assets/img/profile-19.jpeg",
+  date: "Monday, Apr 21",
+  productionInfo: `Current Production Information:
+  Wet sand: 23000 cm³ Water: 14000 cm³.Equipment: Helment, Rubber shoes, Excavator`,
+};
