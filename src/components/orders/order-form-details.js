@@ -22,14 +22,13 @@ export const FormDetails = ({
             type={type}
             className={className}
             name={name}
-            placeholder={holder}
             onChange={handleChange}
             value={value}
             {...otherProps}
           >
-            {otherProps?.options?.map((option, i) => (
-              <option key={i} value={option.value}>
-                {option.text}
+            {otherProps?.options?.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.product}
               </option>
             ))}
           </select>
@@ -49,5 +48,31 @@ export const FormDetails = ({
         />
       )}
     </>
+  );
+};
+
+export const SelectInput = ({
+  item: { id, type, className, name, value, ...otherProps },
+  handleChange,
+}) => {
+  console.log("Select Input: ", value);
+  return (
+    <div style={{ marginBottom: "2rem", padding: "0 0 0 0" }}>
+      <select
+        id={id}
+        type={type}
+        className={className}
+        name={name}
+        onChange={handleChange}
+        value={value}
+        {...otherProps}
+      >
+        {otherProps?.options?.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option.product}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };

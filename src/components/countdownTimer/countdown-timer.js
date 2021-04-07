@@ -34,8 +34,6 @@ export const CountdownTimer = () => {
               flexDirection: "column",
               gap: "3rem",
               padding: "3rem",
-              // marginTop: "128px",
-              // alignItems: "center",
             }}
           >
             {/* ON SHIFT DURATION CALCULATED, TIMER IS DISPLAYED AND SHIFT CALCULATOR DISAPPEARS */}

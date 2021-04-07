@@ -1,31 +1,69 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useFormData } from "../../hooks/useFormData";
-import { FormDetails } from "./order-form-details";
+import { FormDetails, SelectInput } from "./order-form-details";
 import { functionUtils } from "../../hooks/function-utils";
 import WidgetHeader from "../general/widget-header";
+import { BASE_API_URL } from "../../hooks/API";
 
 const OrderForm = () => {
-  /**
-   * Form state to be made avaliable to handle Input Change function
-   *  */
-  const formState = {
-    products: {},
-    buckets: "",
-    truckRegNo: "",
-    truckSize: "",
-  };
-  /**
-   *  Handle Input Change function for handling input changes across multiple form if required, in this case we are retriving the number of buckets, truck registration number and truck size the user inputs
-   *  */
-  const { formInput, handleChange } = functionUtils.HandleInputChange(
-    formState
-  );
-  console.log("form state ", formInput);
+  const [product, setProduct] = useState();
 
-  /**
-   * useFormData hook for retriving form data based on variables from the form input state
-   *  */
+  useEffect(() => {
+    const request = axios
+      .get(`${BASE_API_URL}/api/v1/product/list.php`)
+      .then((res) => {
+        console.log(res.data);
+        const data = res.data.data;
+        const newArray = data.unshift({ product: "Select Product", id: 0 });
+        console.log("New Array", newArray);
+        setFormInput((state) => ({
+          ...state,
+          products: data,
+          "unit-price": data[0],
+        }));
+        console.log("New Array: ", data);
+      });
+  }, []);
+  console.log("Product2 : ", product);
+  // CALCULATE THE COST OF AN ORDER BASED ON GIVEN BUCKET NUMBER VALUE AND BUCKET PRICE
+
+  const [formInput, setFormInput] = React.useState({
+    products: [],
+    product: "Select Product",
+    qty: "",
+    "total-price": 0,
+    "unit-price": 0,
+    "truck-no": "",
+  });
+
+  const handleChange = ({ currentTarget: { name, value } }) => {
+    setFormInput((state) => ({
+      ...state,
+      [name]: value,
+    }));
+    // FILTER
+    const data = formInput.products;
+    const productItem = data.filter(
+      (product) => product.id === formInput.product
+    );
+
+    console.log("Product Item: ", productItem[0]);
+    // CALCULATION
+    const orderCost = formInput?.qty * productItem[0].price;
+    console.log("Bucket Qty: ", formInput?.qty);
+    console.log("Bucket price: ", productItem[0].price);
+    console.log(orderCost);
+    setProduct(orderCost);
+    setFormInput((state) => ({
+      ...state,
+      "total-price": product,
+    }));
+  };
+
   const { formData } = useFormData(formInput);
+  console.log("ADD ORDER PAGE: ", formInput.product);
+  console.log("Product : ", product);
 
   return (
     <div id="basic" className="col-lg-12 layout-spacing">
@@ -42,6 +80,7 @@ const OrderForm = () => {
                 <div className="form-group">
                   {/* SUB-TITLE FOR THE FORM */}
                   <p>Fill in order details</p>
+
                   {formData?.map((item, i) => (
                     <FormDetails
                       key={i}
@@ -50,7 +89,9 @@ const OrderForm = () => {
                     />
                   ))}
                   <button
-                    onClick={() => functionUtils.handleFormSubmit(formInput)}
+                    onClick={() =>
+                      functionUtils.handleOrderFormSubmit(formInput)
+                    }
                     className="mt-4 btn btn-primary"
                   >
                     Place Order

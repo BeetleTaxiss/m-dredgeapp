@@ -285,13 +285,21 @@ export const functionUtils = {
   getTimeAndProductionStamp: async (formInput, setTimelineItem) => {
     // Variable to get the accurate time a given production capacity is logged and it's then formated to hours and minutes display and finally used to set the time value property of the timeline item state
     const loggedProductionTime = moment().format("hh:mm");
+
     // Variable to set the new time/time a production capacity is inputed which is used to calculate the difference between two logged duration on the timeline and saved to session storage
     const LogTime = moment();
     // Set new logged time in session storage and get previous logged time
     sessionStorage.setItem("New Time", LogTime);
     const getNewLoggedTime = sessionStorage.getItem("New Time");
     const getPrevLoggedTime = sessionStorage.getItem("prevTime");
-
+    const prevloggedProductionTimeToServer = moment(getPrevLoggedTime).format(
+      "hh:mm:ss"
+    );
+    const prevloggedProductionDateToServer = moment(getPrevLoggedTime).format(
+      "dd/MM/YY"
+    );
+    const newloggedProductionTimeToServer = moment().format("hh:mm:ss");
+    const newloggedProductionDateToServer = moment().format("dd/MM/YY");
     console.log("New logged time: ", getNewLoggedTime);
     console.log("Prev Logged Time: ", getPrevLoggedTime);
     // Convert logged time values to useful time values for calculations
@@ -306,7 +314,54 @@ export const functionUtils = {
       minutes = logObject.getUTCMinutes(),
       seconds = logObject.getSeconds();
     console.log("Difference: ", durationInMilliseconds);
+    console.log("Start Time in Hours: ", prevloggedProductionTimeToServer);
+    console.log("Start Date : ", prevloggedProductionDateToServer);
+    /**
+     * --------------------------------------------------------------------------------------------------------
+     * ---------------------------- GET PRODUCT VARIABLES FROM SERVER--------------------------------
+     * --------------------------------------------------------------------------------------------------------
+     * */
+    const PRODUCT_URL = `${BASE_API_URL}/api/v1/product/list.php`;
 
+    let request = await axios.get(PRODUCT_URL, { id: 1 });
+
+    const productResponse = await request?.data?.data[0];
+
+    console.log("Product Details: ", productResponse);
+    /**
+     * --------------------------------------------------------------------------------------------------------
+     * ---------------------------- SEND ADD MARKER DATA TO SERVER--------------------------------
+     * --------------------------------------------------------------------------------------------------------
+     * */
+
+    const PREV_PRODUCTION_CAPACITY_URL = `${BASE_API_URL}/api/v1/production/add-marker.php`;
+    // PRODUCTION AND TIME STAMP VALUES USING MOMENT.JS TO GET ACCURATE TIME
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = JSON.parse(user.id);
+    const userName = user.username;
+    const productId = JSON.parse(productResponse.id);
+    const productName = productResponse.product;
+
+    console.log("User details: ", user);
+    console.log("User Id: ", userId);
+
+    const productionCapacityStamp = {
+      user: userName,
+      "user-id": userId,
+      "product-id": productId,
+      product: productName,
+      "production-capacity": formInput[""],
+      "start-time": prevloggedProductionTimeToServer,
+      "production-date": prevloggedProductionDateToServer,
+    };
+    // FORM POST METHOD TO WEB SERVER
+    const productionRequest = await axios.post(
+      PREV_PRODUCTION_CAPACITY_URL,
+      productionCapacityStamp
+    );
+    // Prev Production Values
+    const productionResponse = await productionRequest.data;
+    console.log("ADD MARKER", productionResponse);
     /**
      * --------------------------------------------------------------------------------------------------------
      * ----------------------------BEGINNING OF PRODUCTION CAPACITY CALCULATION--------------------------------
@@ -341,17 +396,30 @@ export const functionUtils = {
     -----------------------------------------------------------------------------------------------------------
      */
 
-    // Send Data to Server
-    const PRODUCTION_CAPACITY_URL = "/production";
+    /*---------------------------------------------------------------------------------------------------------
+     *-----------------------------------END MARKER AND SEND PRODUCTION DATA TO SERVER ------------------------
+    -----------------------------------------------------------------------------------------------------------
+     */
+    const PRODUCTION_CAPACITY_URL = `${BASE_API_URL}/api/v1/production/stop-marker.php`;
     // PRODUCTION AND TIME STAMP VALUES USING MOMENT.JS TO GET ACCURATE TIME
+    const productionId = productionResponse["production-id"];
+    const batchNo = productionResponse["batch-no"];
     const productionStamp = {
-      time: moment(),
-      capacity: formInput[""],
+      "product-id": productId,
+      "production-id": productionId,
+      "batch-no": batchNo,
+      "end-time": newloggedProductionTimeToServer,
+      "production-date": newloggedProductionDateToServer,
+      "total-qty-pumped": calcProductionOutput,
+      "duration-pumped-in-seconds": PRODUCTION_TIME,
     };
     // FORM POST METHOD TO WEB SERVER
-    axios
-      .post(PRODUCTION_CAPACITY_URL, productionStamp)
-      .then((res) => console.log(res));
+    if (batchNo && productionId) {
+      await axios
+        .post(PRODUCTION_CAPACITY_URL, productionStamp)
+        .then((res) => console.log("STOP MARKER: ", res.data));
+    }
+
     /**
      * Timeline items for notifications. When production capacity falls bellow or above a range of percentages (35%, 50%, 70%),then the timeline item's dot should reflect the rough estimate of the production capacity in colors either danger(red) or warning(yellow) for bellow 50% and secondary(blue) or success(green) for above 50%
      */
@@ -380,14 +448,13 @@ export const functionUtils = {
     // Set the previous time of the shift while shift is running to help ascertain difference in shift durations when production capacity is being calculated
     sessionStorage.setItem("prevTime", getNewLoggedTime);
   },
-
   /** 4.
    * ----------------------------------------------------------------------------------------------------------
    * ------------------------------------HANDLE ORDER FORM SUBMIT FUNCTION-------------------------------------
    * @param  {formInput} formInput
    * ----------------------------------------------------------------------------------------------------------
    */
-  handleFormSubmit: (formInput) => {
+  handleOrderFormSubmit: (formInput) => {
     // DESTRUCTURE GENERATE SERIAL NUMBER TO GET RANDOM SERIAL NUMBER
     const { randomSerial } = generateSerial();
 
@@ -441,6 +508,25 @@ export const functionUtils = {
       "Truck Size: ",
       truckSize
     );
+  },
+  /** 5.
+   * -----------------------------------------------DELETE ORDER-----------------------------------------------
+   * @param  {order_id} order_id
+   * @param  {order_ref} order_ref
+   * ----------------------------------------------------------------------------------------------------------
+   */
+  handleDeleteOrder: async (id, order_ref) => {
+    const request = await axios.post(
+      `${BASE_API_URL}/api/v1/order/delete.php`,
+      { "order-id": id, "order-ref": order_ref }
+    );
+    const response = request.data;
+    if (response.error === false) {
+      // window.refresh();
+    }
+    console.log("Order deleted? ", response);
+    console.log("Order Id ", id);
+    console.log("Order Ref ", order_ref);
   },
   /** 5.
    * ----------------------------------------------------------------------------------------------------------
