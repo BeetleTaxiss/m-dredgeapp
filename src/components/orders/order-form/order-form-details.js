@@ -12,7 +12,7 @@ export const FormDetails = ({
   handleChange,
   errors,
 }) => {
-  console.log("Select value: ", value);
+  // console.log("Select value: ", value);
   return (
     <>
       {type === "select" ? (

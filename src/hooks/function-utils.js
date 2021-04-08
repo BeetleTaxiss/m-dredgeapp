@@ -454,60 +454,53 @@ export const functionUtils = {
    * @param  {formInput} formInput
    * ----------------------------------------------------------------------------------------------------------
    */
-  handleOrderFormSubmit: (formInput) => {
-    // DESTRUCTURE GENERATE SERIAL NUMBER TO GET RANDOM SERIAL NUMBER
-    const { randomSerial } = generateSerial();
+  handleOrderChange: (products, setTotalPrice, qtyValue, selectValue) => {
+    // Get form values with document,getById
 
-    // VARAIABLES TO MIMICK CONSTANT VALUES GOTTEN FROM THE DATABASE
-    const orderValueConstants = {
-      bucketPrice: 3000,
-      bucketvalue: 1.5,
-      time: moment().format("MM/DD/YY  hh:mm:ss"),
-      serialNumber: randomSerial,
+    // Filter Products Array to get single product
+    const product = products.filter((product) => product.id === selectValue);
+    console.log("Product: ", product);
+    // Calculate the cost of an order
+    const orderCost = qtyValue * product[0].price;
+    console.log("Order Cost: ", orderCost);
+    // Set the value of an order to the UI
+    setTotalPrice(orderCost);
+
+    return {
+      product,
     };
-
-    // DESTRUCTURED VARIABLES FROM MIMICKED DATABASE
-    const {
-      bucketPrice,
-      bucketvalue,
-      serialNumber,
-      time,
-    } = orderValueConstants;
-
-    // CONVERSION OF BUCKET INPUT VALUE TO INTEGER
-    const bucketNumber = parseInt(formInput?.buckets);
-
-    // TRUCK INPUT VALUES
-    const truckRegistrationNumber = formInput?.truckRegNo;
-    const truckSize = formInput?.truckSize;
-
-    // DESTRUCTED CALCULATED VALUES GOTTEN FROM CALCULATION FUNCTION
-    const { orderCost, orderVolume } = calculateOrderCost(
-      bucketPrice,
-      bucketvalue,
-      bucketNumber
-    );
-
-    console.log(
-      "form submitted",
-      "bucket number: ",
-      bucketNumber,
-      " price: ",
-      bucketPrice,
-      "order cost: ₦",
-      orderCost,
-      " order size: ",
-      orderVolume,
-      "cm³",
-      " time and date: ",
-      time,
-      " serial number: ",
-      serialNumber,
-      " Truck Registration Number: ",
-      truckRegistrationNumber,
-      "Truck Size: ",
-      truckSize
-    );
+  },
+  /**
+   * @param  {} handleOrderChange
+   * @param  {} totalPrice
+   */
+  handleOrderSubmit: (
+    handleOrderChange,
+    totalPrice,
+    qtyValue,
+    truckNoValue,
+    selectValue
+  ) => {
+    const { product } = handleOrderChange();
+    console.log("Submitted Product", product);
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log("User Object: ", user);
+    const addOrderData = {
+      "product-id": selectValue,
+      product: product[0].product,
+      user: user.username,
+      "user-id": user.id,
+      qty: qtyValue,
+      unit: product[0].unit,
+      "unit-price": product[0].price,
+      measurement: product[0].measurement,
+      "total-price": totalPrice,
+      "truck-no": truckNoValue,
+      description: product[0].description,
+    };
+    axios
+      .post(`${BASE_API_URL}/api/v1/order/add.php`, addOrderData)
+      .then((res) => console.log("ADD ORDER: ", res.data));
   },
   /** 5.
    * -----------------------------------------------DELETE ORDER-----------------------------------------------

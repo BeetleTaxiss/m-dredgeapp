@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { FormDetails } from "../components/orders/order-form-details";
+import { FormDetails } from "../components/orders/order-form/order-form-details";
 import { functionUtils } from "../hooks/function-utils";
 
 const LoginPage = () => {

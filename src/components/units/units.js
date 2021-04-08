@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormDetails } from "../orders/order-form-details";
+import { FormDetails } from "../orders/order-form/order-form-details";
 import { functionUtils } from "../../hooks/function-utils";
 import WidgetHeader from "../general/widget-header";
 import UnitsList from "./unit-list";

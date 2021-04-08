@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouteMatch } from "react-router";
 import PageWrapper from "../general/page-wrapper";
-import OrderForm from "./order-form";
+import OrderForm from "./order-form/order-form";
 import OrderReceipt from "./order-receipt/order-receipt";
 import ViewOrders from "./vieworder-reciept/vieworders";
 
