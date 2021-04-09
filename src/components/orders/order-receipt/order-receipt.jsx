@@ -160,7 +160,7 @@ const OrderReceipt = () => {
               res.data.message === "Order already dispatched"
                 ? ""
                 : `Click on the link to view your dispatch list`,
-            link = "<a href='/vieworders'>View Dispatch List</a>";
+            link = "<a href='/dispatchlist'>View Dispatch List</a>";
           successAlert(title, text, link);
           document.getElementById("edit-order").disabled = true;
         }
