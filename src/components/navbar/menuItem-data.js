@@ -72,7 +72,7 @@ export const topNavBarData = [
     subMenuItems: [
       { link: "/placeorder", text: "Place Order" },
       { link: "/vieworders", text: "View Orders" },
-      // { link: "#", text: "M" },
+      { link: "/dispatchlist", text: "View Dispatch List" },
     ],
   },
   // END OF SINGLE MENU ITEM DATA

@@ -31,6 +31,8 @@ const Pages = () => {
           <OrderDashboard />
         ) : url === "/orderreceipt" ? (
           <OrderDashboard />
+        ) : url === "/dispatchlist" ? (
+          <OrderDashboard />
         ) : url === "/users" ? (
           <AdminDashboard />
         ) : url === "/units" ? (

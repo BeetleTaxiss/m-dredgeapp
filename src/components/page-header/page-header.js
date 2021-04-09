@@ -10,6 +10,8 @@ const PageHeader = () => {
       ? "View Orders"
       : url === "/orderreceipt"
       ? "Order Invoice"
+      : url === "/dispatchlist"
+      ? "Dispatch List"
       : url === "/placeorder"
       ? "Make Order"
       : url === "/production"

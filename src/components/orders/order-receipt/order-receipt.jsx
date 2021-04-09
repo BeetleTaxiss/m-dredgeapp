@@ -11,6 +11,7 @@ import OrderReceiptIntro from "./order-receipt-intro";
 import FormModal from "../../general/modal/form-modal";
 import { useUpdateOrderFormData } from "../../../hooks/useFormData";
 import { BASE_API_URL } from "../../../hooks/API";
+import Swal from "sweetalert2";
 const OrderReceipt = () => {
   const { state } = useLocation();
   const [order, setOrder] = useState();
@@ -45,7 +46,9 @@ const OrderReceipt = () => {
   const handleUpdateOrder = () => {
     const qtyValue = document.getElementById("qty").value;
     const truckNoValue = document.getElementById("truckNo").value;
-    console.log("Submitted Order", order);
+    console.log(" Order", order);
+    const orderId = order.id;
+    const orderRef = order.order_ref;
     const user = order.user;
     const userId = order.user_id;
     const productId = order.product_id;
@@ -58,6 +61,8 @@ const OrderReceipt = () => {
       product: product,
       user: user,
       "user-id": userId,
+      "order-id": orderId,
+      "order-ref": orderRef,
       qty: qtyValue,
       unit: productUnit,
       "unit-price": unitPrice,
@@ -65,6 +70,7 @@ const OrderReceipt = () => {
       "total-price": totalPrice,
       "truck-no": truckNoValue,
     };
+    console.log("Submitted Update Order", updateOrderData);
     if (error || !error) {
       setLoading(true);
       document.getElementById("loading-btn").disabled = true;
@@ -77,9 +83,11 @@ const OrderReceipt = () => {
           setError(true);
           setShowModal(true);
           setErrorMsg(res.data.message);
+          updateErrorAlert(res.data.message);
         } else {
           setError(false);
           setShowModal(true);
+          updateSuccessAlert();
           setOrder(res.data.data);
           document.getElementById("qty").value = "";
           document.getElementById("truckNo").value = "";
@@ -90,6 +98,73 @@ const OrderReceipt = () => {
       setLoading(false);
       document.getElementById("loading-btn").disabled = false;
     }
+  };
+
+  const updateSuccessAlert = () => {
+    Swal.fire({
+      icon: "success",
+      title: "Order Updated Successfully",
+      text:
+        "Your order has been updated, you can close this pop-up and keep browsing",
+    });
+  };
+  const updateErrorAlert = (errorMsg) => {
+    Swal.fire({
+      icon: "error",
+      title: "Order Not Updated",
+      text: `Your order was not updated, the reason is:  ${errorMsg}`,
+    });
+  };
+  const successAlert = (title, text, link) => {
+    Swal.fire({
+      icon: "success",
+      title: title,
+      text: text,
+      footer: link,
+    });
+  };
+  const errorAlert = (title, text) => {
+    Swal.fire({
+      icon: "error",
+      title: title,
+      text: text,
+    });
+  };
+
+  const dispatchOrder = () => {
+    const orderId = order.id;
+    const orderRef = order.order_ref;
+    const user = order.user;
+    const userId = order.user_id;
+    const dispatchData = {
+      "order-id": orderId,
+      "order-ref": orderRef,
+      user: user,
+      "user-id": userId,
+    };
+    axios
+      .post(`${BASE_API_URL}/api/v1/order/dispatch.php`, dispatchData)
+      .then((res) => {
+        console.log("Dispatch Resquest", res.data);
+        if (res.data.error) {
+          setErrorMsg(res.data.message);
+          const title = "Order  dispatch failed",
+            text = `Your order was not dispatched, the reason is:  ${errorMsg}`;
+          errorAlert(title, text);
+        } else {
+          const title =
+              res.data.message === "Order already dispatched"
+                ? res.data.message
+                : "Your Order has been dispatched successfully",
+            text =
+              res.data.message === "Order already dispatched"
+                ? ""
+                : `Click on the link to view your dispatch list`,
+            link = "<a href='/vieworders'>View Dispatch List</a>";
+          successAlert(title, text, link);
+          document.getElementById("edit-order").disabled = true;
+        }
+      });
   };
 
   const { formData } = useUpdateOrderFormData(totalPrice);
@@ -135,7 +210,10 @@ const OrderReceipt = () => {
               </div>
             </div>
             {/* BEGINNING OF ORDER RECIEPT LINKS */}
-            <OrderReceiptLinks setShowModal={setShowModal} />
+            <OrderReceiptLinks
+              setShowModal={setShowModal}
+              dispatchOrder={dispatchOrder}
+            />
             {/* END OF ORDER RECIEPT LINKS */}
           </div>
         </div>
@@ -159,13 +237,18 @@ const OrderReceipt = () => {
   );
 };
 
-export const OrderReceiptLinks = ({ setShowModal }) => (
+export const OrderReceiptLinks = ({ setShowModal, dispatchOrder }) => (
   <div className="col-xl-3">
     <div className="invoice-actions-btn">
       <div className="invoice-action-btn">
         <div className="row">
           <div className="col-xl-12 col-md-3 col-sm-6">
-            <Link to="#" className="btn btn-primary btn-send">
+            <Link
+              id="dispatch-order"
+              onClick={() => dispatchOrder()}
+              to="#"
+              className="btn btn-primary btn-send"
+            >
               Dispatch Order
             </Link>
           </div>
@@ -185,6 +268,7 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
           </div>
           <div className="col-xl-12 col-md-3 col-sm-6">
             <Link
+              id="edit-order"
               to="#"
               onClick={() => setShowModal(true)}
               className="btn btn-dark btn-edit"

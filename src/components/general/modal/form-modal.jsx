@@ -36,13 +36,13 @@ const FormModal = ({
             </div>
           </div>
         ))}
-        {errorMsg && `An Error occured while updating your order: ${errorMsg}`}
         <LoadingButton
           handleSubmit={handleSubmit}
           loading={loading}
           text="Update Order"
         />
       </form>
+      {/* {errorMsg} */}
     </ModalBackdrop>
   );
 };
