@@ -1,6 +1,6 @@
 import React from "react";
 
-const LoadingButton = ({ handleSubmit, loading, text }) => {
+const LoadingButton = ({ handleSubmit, loading, text, setLoad }) => {
   return (
     <button
       id="loading-btn"

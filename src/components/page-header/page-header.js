@@ -5,6 +5,7 @@ import DropdownFilter from "./dropdown-filter";
 
 const PageHeader = () => {
   const { url } = useRouteMatch();
+  console.log("Page Header: ", url);
   const page =
     url === "/vieworders"
       ? "View Orders"
@@ -12,6 +13,8 @@ const PageHeader = () => {
       ? "Order Invoice"
       : url === "/dispatchlist"
       ? "Dispatch List"
+      : url === "/loader"
+      ? "Load Orders"
       : url === "/placeorder"
       ? "Make Order"
       : url === "/production"

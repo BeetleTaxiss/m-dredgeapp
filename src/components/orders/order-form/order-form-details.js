@@ -33,6 +33,21 @@ export const FormDetails = ({
             ))}
           </select>
         </div>
+      ) : type === "textarea" ? (
+        <textarea
+          id={id}
+          type={type}
+          name={name}
+          placeholder={holder}
+          className={className}
+          onChange={handleChange}
+          value={value}
+          disabled={otherProps.disabled}
+          {...otherProps}
+          style={{ marginBottom: "2rem" }}
+          cols={5}
+          rows={5}
+        />
       ) : (
         <input
           id={id}

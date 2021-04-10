@@ -1,6 +1,7 @@
 import React from "react";
 import Skeleton from "react-loading-skeleton";
-const CustomTableListBody = ({ content }) => {
+import { Link } from "react-router-dom";
+const CustomTableListBody = ({ content, setLoad }) => {
   return (
     <tbody>
       {content ? (
@@ -8,9 +9,22 @@ const CustomTableListBody = ({ content }) => {
           <tr key={item.id}>
             {item.fields.map((field, id) => (
               <td key={id} className={field.class}>
-                <span className={field.itemClass}>
-                  {field.item && field.item}
-                </span>
+                {field.link ? (
+                  <Link
+                    className={field.itemClass}
+                    onClick={() => {
+                      setLoad(field.load);
+                      field.link(true);
+                    }}
+                    to="#"
+                  >
+                    {field.linkText}
+                  </Link>
+                ) : (
+                  <span className={field.itemClass}>
+                    {field.item && field.item}
+                  </span>
+                )}
               </td>
             ))}
           </tr>

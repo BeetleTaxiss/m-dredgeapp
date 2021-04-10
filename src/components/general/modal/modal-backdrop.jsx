@@ -1,19 +1,37 @@
 import React from "react";
 import "./modal.scss";
-const ModalBackdrop = ({ children, showModal, setShowModal, setLoading }) => {
+const ModalBackdrop = ({
+  children,
+  showModal,
+  setShowModal,
+  setLoading,
+  noClickOutside,
+}) => {
   return (
     <div
       className="modal backdrop"
       style={{ display: showModal ? "block" : "none " }}
     >
-      <div
-        className="modalBackdrop"
-        onClick={() => {
-          setShowModal(false);
-          setLoading(false);
-          document.getElementById("loading-btn").disabled = false;
-        }}
-      ></div>
+      {noClickOutside ? (
+        <div
+          onClick={() => {
+            setShowModal(true);
+            setLoading(false);
+            document.getElementById("loading-btn").disabled = false;
+            console.log("Outside Modal Clicked !!!");
+          }}
+          className="modalBackdrop"
+        ></div>
+      ) : (
+        <div
+          className="modalBackdrop"
+          onClick={() => {
+            setShowModal(false);
+            setLoading(false);
+            document.getElementById("loading-btn").disabled = false;
+          }}
+        ></div>
+      )}
       <div
         className="modal-dialog modal-dialog-centered"
         role="document"

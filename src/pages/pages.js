@@ -3,12 +3,14 @@ import { Switch, useRouteMatch } from "react-router";
 import Account from "../components/account/account";
 import AdminDashboard from "../components/admin/admin-dashboard";
 import { CountdownTimer } from "../components/countdownTimer/countdown-timer";
+import LoaderDashboard from "../components/loader/loader-dashboard";
 import Navbar from "../components/navbar/navbar";
 import OrderDashboard from "../components/orders/order-dashboard";
 import Revenue from "../components/revenue/revenue";
 
 const Pages = () => {
   const { url } = useRouteMatch();
+  console.log("Pages: ", url);
   return (
     <>
       <Navbar />
@@ -33,6 +35,8 @@ const Pages = () => {
           <OrderDashboard />
         ) : url === "/dispatchlist" ? (
           <OrderDashboard />
+        ) : url === "/loader" ? (
+          <LoaderDashboard />
         ) : url === "/users" ? (
           <AdminDashboard />
         ) : url === "/units" ? (

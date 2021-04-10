@@ -35,40 +35,40 @@ const DispatchOrderList = () => {
               fields: [
                 {
                   orderId: orderId,
-                  class: "text-center",
+                  class: "text-left",
                   itemClass: "text-center",
                   item: product,
                 },
                 {
                   orderId: orderId,
-                  class: "text-center",
+                  class: "text-left",
                   itemClass: "text-center",
                   item: orderRef,
                 },
                 {
                   orderId: orderId,
-                  class: "text-center",
+                  class: "text-left",
                   itemClass: "text-center",
-                  item: loaded !== 0 ? "pending" : "Loaded",
+                  item: loaded === "0" ? "pending" : "Loaded",
                 },
                 {
                   orderId: orderId,
-                  class: "text-center",
+                  class: "text-left",
                   itemClass: "text-center",
-                  item: inspected !== 0 ? "pending" : "Inspected",
+                  item: inspected === "0" ? "pending" : "Inspected",
                 },
                 {
                   orderId: orderId,
-                  class: "text-center",
+                  class: "text-left",
                   itemClass: "text-center",
-                  item: cleared !== 0 ? "pending" : "Cleared",
+                  item: cleared === "0" ? "pending" : "Cleared",
                 },
                 {
                   orderId: orderId,
                   class: "text-center",
                   itemClass: "text-center",
                   item:
-                    loaded && inspected && cleared !== 0
+                    loaded && inspected && cleared === "0"
                       ? "Not Completed"
                       : "Completed",
                 },

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
 import { FormDetails } from "../../orders/order-form/order-form-details";
 import LoadingButton from "../loading-button";
 import ModalBackdrop from "./modal-backdrop";
@@ -15,12 +16,16 @@ const FormModal = ({
   setShowModal,
   handleSubmit,
   handleChange,
+  Btntext,
+  noClickOutside,
+  closeBtn,
 }) => {
   return (
     <ModalBackdrop
       setLoading={setLoading}
       showModal={showModal}
       setShowModal={setShowModal}
+      noClickOutside={noClickOutside}
     >
       <h2 id="formModal-title">{formTitle}</h2>
       <p id="formModal-subtitle">{formSubtitle}</p>
@@ -36,11 +41,25 @@ const FormModal = ({
             </div>
           </div>
         ))}
-        <LoadingButton
-          handleSubmit={handleSubmit}
-          loading={loading}
-          text="Update Order"
-        />
+        <div style={{ display: "flex", gap: "2rem" }}>
+          <LoadingButton
+            handleSubmit={handleSubmit}
+            loading={loading}
+            text={Btntext}
+          />
+          {closeBtn && (
+            <Link
+              to="#"
+              onClick={() => {
+                setShowModal(false);
+                console.log("Modal State: ", showModal);
+              }}
+              className="mt-4 btn btn-danger"
+            >
+              Close
+            </Link>
+          )}
+        </div>
       </form>
       {/* {errorMsg} */}
     </ModalBackdrop>

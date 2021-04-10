@@ -121,6 +121,7 @@ const OrderReceipt = () => {
       title: title,
       text: text,
       footer: link,
+      showConfirmButton: false,
     });
   };
   const errorAlert = (title, text) => {
@@ -128,6 +129,7 @@ const OrderReceipt = () => {
       icon: "error",
       title: title,
       text: text,
+      showConfirmButton: false,
     });
   };
 
@@ -229,8 +231,9 @@ const OrderReceipt = () => {
           setLoading={setLoading}
           errorMsg={errorMsg}
           status={error}
-          handleSubmit={handleUpdateOrder}
+          handleSubmit={() => handleUpdateOrder()}
           handleChange={handleChange}
+          Btntext="Update Order"
         />
       )}
     </div>
