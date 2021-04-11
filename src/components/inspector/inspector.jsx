@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
-const Loader = () => {
+const Inspector = () => {
   const [bodyData, setBodyData] = useState(null);
   const [load, setLoad] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -28,12 +28,13 @@ const Loader = () => {
             const total_volume = item.total_volume;
             const userDetails = JSON.parse(localStorage.getItem("user"));
             const userId = userDetails.id;
-            const comment = "";
+            const userName = userDetails.username;
+
             const loadingData = {
               "order-id": orderId,
               "order-ref": orderRef,
               "user-id": userId,
-              comment: comment,
+              user: userName,
             };
             console.log(
               "Body Items: ",
@@ -46,7 +47,6 @@ const Loader = () => {
               total_volume,
               userDetails,
               userId,
-              comment,
               "Load Data: ",
               loadingData
             );
@@ -89,7 +89,7 @@ const Loader = () => {
                   class: "text-center",
                   itemClass: "btn btn-primary",
                   link: setShowModal,
-                  linkText: "Process Order",
+                  linkText: "Inspect Order",
                 },
               ],
             };
@@ -148,23 +148,22 @@ const Loader = () => {
   //   console.log("TextArea: ", comment);
   // };
   // Load Prompter/ Popup
-  const loadOrder = () => {
+  const InspectOrder = () => {
     const comment = document.getElementById("comment").value;
-    load.comment = comment;
     console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
-    axios.put(`${BASE_API_URL}/api/v1/order/load.php`, load).then((res) => {
+    axios.post(`${BASE_API_URL}/api/v1/order/inspect.php`, load).then((res) => {
       console.log("LOAD API RESPONSE: ", res.data);
       if (res.data.error) {
-        const title = "Order Loading failed",
+        const title = "Inspection failed",
           message = res.data.message;
         errorAlert(title, message);
       } else {
         document.getElementById("loading-btn").disabled = true;
-        const title = "Loaded Successfully",
+        const title = "Inspection Successful",
           message = res.data.message,
-          link = "<a href='/loader'>View Loading List</a>";
+          link = "<a href='/inspect'>View Inspection List</a>";
         successAlert(title, message, link);
         setShowModal(false);
       }
@@ -184,7 +183,7 @@ const Loader = () => {
         setLoading={setLoading}
         errorMsg={errorMsg}
         status={error}
-        handleSubmit={loadOrder}
+        handleSubmit={InspectOrder}
         Btntext="Load Order"
         noClickOutside
         closeBtn
@@ -193,4 +192,4 @@ const Loader = () => {
   );
 };
 
-export default Loader;
+export default Inspector;

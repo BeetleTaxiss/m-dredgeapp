@@ -3,6 +3,7 @@ import { Switch, useRouteMatch } from "react-router";
 import Account from "../components/account/account";
 import AdminDashboard from "../components/admin/admin-dashboard";
 import { CountdownTimer } from "../components/countdownTimer/countdown-timer";
+import InspectorDashboard from "../components/inspector/inspector-dashboard";
 import LoaderDashboard from "../components/loader/loader-dashboard";
 import Navbar from "../components/navbar/navbar";
 import OrderDashboard from "../components/orders/order-dashboard";
@@ -37,6 +38,8 @@ const Pages = () => {
           <OrderDashboard />
         ) : url === "/loader" ? (
           <LoaderDashboard />
+        ) : url === "/inspect" ? (
+          <InspectorDashboard />
         ) : url === "/users" ? (
           <AdminDashboard />
         ) : url === "/units" ? (

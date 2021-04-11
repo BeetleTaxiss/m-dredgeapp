@@ -87,4 +87,15 @@ export const topNavBarData = [
     subMenuItems: [{ link: "/loader", text: "Load Orders" }],
   },
   // END OF SINGLE MENU ITEM DATA
+  // BEGINNING OF SINGLE MENU ITEM DATA
+  {
+    menuItem: {
+      icon: ordersIcon,
+      menuItem: "Inspect",
+      dropdown: dropdownIcon,
+      link: "#",
+    },
+    subMenuItems: [{ link: "/inspect", text: "Inspect Orders" }],
+  },
+  // END OF SINGLE MENU ITEM DATA
 ];
