@@ -8,6 +8,7 @@ import LoaderDashboard from "../components/loader/loader-dashboard";
 import Navbar from "../components/navbar/navbar";
 import OrderDashboard from "../components/orders/order-dashboard";
 import Revenue from "../components/revenue/revenue";
+import SecurityDashboard from "../components/security/security-dashboard";
 
 const Pages = () => {
   const { url } = useRouteMatch();
@@ -40,6 +41,8 @@ const Pages = () => {
           <LoaderDashboard />
         ) : url === "/inspect" ? (
           <InspectorDashboard />
+        ) : url === "/security" ? (
+          <SecurityDashboard />
         ) : url === "/users" ? (
           <AdminDashboard />
         ) : url === "/units" ? (

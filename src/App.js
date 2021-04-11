@@ -16,6 +16,7 @@ function App() {
         <Route path="/users" component={Pages} />
         <Route path="/loader" component={Pages} />
         <Route path="/inspect" component={Pages} />
+        <Route path="/security" component={Pages} />
         <Route path="/dispatchlist" component={Pages} />
         <Route path="/orderreceipt" component={Pages} />
         <Route path="/placeorder" component={Pages} />

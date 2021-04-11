@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
-const Inspector = () => {
+const Security = () => {
   const [bodyData, setBodyData] = useState(null);
   const [load, setLoad] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -103,7 +103,7 @@ const Inspector = () => {
   );
 
   const loaderListData = {
-    tableTitle: "Inspection List",
+    tableTitle: "Clearance List",
     header: [
       { class: "", title: "Product" },
       { class: "", title: "Order Ref" },
@@ -148,22 +148,22 @@ const Inspector = () => {
   //   console.log("TextArea: ", comment);
   // };
   // Load Prompter/ Popup
-  const InspectOrder = () => {
+  const clearOrder = () => {
     const comment = document.getElementById("comment").value;
     console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
-    axios.post(`${BASE_API_URL}/api/v1/order/inspect.php`, load).then((res) => {
+    axios.post(`${BASE_API_URL}/api/v1/order/clear.php`, load).then((res) => {
       console.log("LOAD API RESPONSE: ", res.data);
       if (res.data.error) {
-        const title = "Inspection failed",
+        const title = "Clearance failed",
           message = res.data.message;
         errorAlert(title, message);
       } else {
         document.getElementById("loading-btn").disabled = true;
-        const title = "Inspection Successful",
+        const title = "Clearance Successful",
           message = res.data.message,
-          link = "<a href='/inspect'>View Inspection List</a>";
+          link = "<a href='/security'>View Clearance List</a>";
         successAlert(title, message, link);
         setShowModal(false);
       }
@@ -183,7 +183,7 @@ const Inspector = () => {
         setLoading={setLoading}
         errorMsg={errorMsg}
         status={error}
-        handleSubmit={InspectOrder}
+        handleSubmit={clearOrder}
         Btntext="Load Order"
         noClickOutside
         closeBtn
@@ -192,4 +192,4 @@ const Inspector = () => {
   );
 };
 
-export default Inspector;
+export default Security;

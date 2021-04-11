@@ -103,7 +103,7 @@ const Loader = () => {
   );
 
   const loaderListData = {
-    tableTitle: "Dispatch List",
+    tableTitle: "Loading List",
     header: [
       { class: "", title: "Product" },
       { class: "", title: "Order Ref" },
