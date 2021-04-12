@@ -48,27 +48,51 @@ const DispatchOrderList = () => {
                 {
                   orderId: orderId,
                   class: "text-left",
-                  itemClass: "text-center",
+                  itemClass:
+                    loaded === "0"
+                      ? "shadow-none badge badge-warning"
+                      : "shadow-none badge badge-primary",
                   item: loaded === "0" ? "pending" : "Loaded",
                 },
                 {
                   orderId: orderId,
                   class: "text-left",
-                  itemClass: "text-center",
+                  itemClass:
+                    inspected === "0"
+                      ? "shadow-none badge badge-warning"
+                      : "shadow-none badge badge-primary",
                   item: inspected === "0" ? "pending" : "Inspected",
                 },
                 {
                   orderId: orderId,
                   class: "text-left",
-                  itemClass: "text-center",
+                  itemClass:
+                    cleared === "0"
+                      ? "shadow-none badge badge-warning"
+                      : "shadow-none badge badge-primary",
                   item: cleared === "0" ? "pending" : "Cleared",
                 },
                 {
                   orderId: orderId,
                   class: "text-center",
-                  itemClass: "text-center",
+                  itemClass:
+                    loaded && inspected && cleared === "0"
+                      ? "shadow-none badge badge-warning"
+                      : loaded && inspected === "0" && cleared === "1"
+                      ? "shadow-none badge badge-warning"
+                      : inspected && cleared === "0" && loaded === "1"
+                      ? "shadow-none badge badge-warning"
+                      : loaded && cleared === "0" && inspected === "1"
+                      ? "shadow-none badge badge-warning"
+                      : "shadow-none badge badge-success",
                   item:
                     loaded && inspected && cleared === "0"
+                      ? "Not Completed"
+                      : loaded && inspected === "0" && cleared === "1"
+                      ? "Not Completed"
+                      : inspected && cleared === "0" && loaded === "1"
+                      ? "Not Completed"
+                      : loaded && cleared === "0" && inspected === "1"
                       ? "Not Completed"
                       : "Completed",
                 },

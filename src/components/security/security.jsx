@@ -14,7 +14,9 @@ const Security = () => {
   useEffect(
     () =>
       axios
-        .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, { loaded: "0" })
+        .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, {
+          params: { loaded: 1, inspected: 1, cleared: 0 },
+        })
         .then((res) => {
           let body = [];
           console.log("Table Body: ", res.data.data);
@@ -89,7 +91,7 @@ const Security = () => {
                   class: "text-center",
                   itemClass: "btn btn-primary",
                   link: setShowModal,
-                  linkText: "Inspect Order",
+                  linkText: "Clear Order",
                 },
               ],
             };
@@ -153,7 +155,7 @@ const Security = () => {
     console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
-    axios.post(`${BASE_API_URL}/api/v1/order/clear.php`, load).then((res) => {
+    axios.put(`${BASE_API_URL}/api/v1/order/clear.php`, load).then((res) => {
       console.log("LOAD API RESPONSE: ", res.data);
       if (res.data.error) {
         const title = "Clearance failed",

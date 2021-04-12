@@ -14,7 +14,13 @@ const Loader = () => {
   useEffect(
     () =>
       axios
-        .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, { loaded: "0" })
+        .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, {
+          params: {
+            loaded: 0,
+            inspected: 0,
+            cleared: 0,
+          },
+        })
         .then((res) => {
           let body = [];
           console.log("Table Body: ", res.data.data);
@@ -28,6 +34,9 @@ const Loader = () => {
             const total_volume = item.total_volume;
             const userDetails = JSON.parse(localStorage.getItem("user"));
             const userId = userDetails.id;
+            const loaded = item.loaded;
+            const inspected = item.inspected;
+            const cleared = item.security;
             const comment = "";
             const loadingData = {
               "order-id": orderId,
@@ -48,7 +57,8 @@ const Loader = () => {
               userId,
               comment,
               "Load Data: ",
-              loadingData
+              loadingData,
+              { loaded, inspected, cleared }
             );
             const currentDispatch = {
               id: dispatchId,

@@ -1,140 +1,182 @@
 import React, { useEffect, useState } from "react";
-//FOR JSON POST/GET
-import { RequestHandlerJSON } from "pushmebyx";
-import SearchBar from "./searchbar";
-import UsersList from "./users-list";
+import axios from "axios";
+import Swal from "sweetalert2";
 import "./users.css";
 import { BASE_API_URL } from "../../hooks/API";
+import Contacts from "../general/contacts/contacts";
 
 const Users = () => {
-  const [userList, setUserList] = useState([]);
-  useEffect(() => {
-    fetch(`${BASE_API_URL}/api/v1/user/list.php`)
-      .then((res) => res.json())
-      .then((data) => setUserList(data.data))
-      // .then((data) => console.table("API DATA: ", data.data))
-      .catch((err) => console.log("Error occurred: ", err));
-    return () => {};
-  }, []);
-  /**
-   * Form state to be made avaliable to handle Input Change function and passed down to the Modal component used in updating a user or adding new user entriees
-   *  */
-  const formState = {
-    name: "",
-    image: "",
-    jobDesc: "",
-    email: "",
-    phone: "",
-    password: "",
-    passwordConfirm: "",
-  };
-  const addUserState = {
-    name: "",
-    image: "",
-    jobDesc: "",
-    email: "",
-    phone: "",
-    password: "",
-    passwordConfirm: "",
-  };
+  const [userList, setUserList] = useState(null);
+  const [user, setUser] = useState(null);
+  useEffect(() =>
+    axios.get(`${BASE_API_URL}/api/v1/user/list.php`).then((res) => {
+      console.log("User List Data: ", res.data);
+      const data = res.data.data;
+      let body = [];
+      data.map((item, i) => {
+        const userName = item.user;
+        const userImage = "assets/img/profile-5.jpeg";
+        const userType = item.user_type;
+        const userEmail = item.email;
+        const userPhoneNo = item.phone;
+        const userPassword = item.password;
+        const currentUser = {
+          metaInfo: { name: userName, image: userImage },
+          fields: [
+            {
+              fieldName: "Job description",
+              fieldInfo:
+                userType === "2"
+                  ? "Super Admin"
+                  : userType === "3"
+                  ? "Admin"
+                  : userType === "4"
+                  ? "Loader"
+                  : userType === "5"
+                  ? "Production Master"
+                  : userType === "6"
+                  ? "Loading Inspector"
+                  : userType === "7"
+                  ? "Security"
+                  : userType === "8"
+                  ? "Operation Staff"
+                  : "Select position",
+              fieldClass: "user-meta-info",
+            },
+            {
+              fieldName: "Phone",
+              fieldInfo: userPhoneNo,
+              fieldClass: "user-meta-info",
+            },
+            {
+              fieldName: "Email",
+              fieldInfo: userEmail,
+              fieldClass: "user-meta-info",
+            },
+            {
+              fieldName: "Password",
+              fieldInfo: userPassword,
+              fieldClass: "user-meta-info",
+            },
+            {
+              fieldName: "Confirm Password",
+              fieldInfo: "",
+              fieldClass: "user-meta-info",
+            },
+          ],
+          user: item,
+          setUser: setUser,
+          suspend: warningAlert1,
+          enable: warningAlert2,
+        };
+        return (body = body.concat(currentUser));
+      });
+      setUserList(body);
+      console.log("Users Main data: ", body);
+      console.log("Users Main DATA: ", userList);
+    })
+  );
   /**
    * Data for building the user list display divided into table header/legend and users information
    */
   const userListData = {
-    header: {
-      name: "Name",
-      usertype: "Job Description",
-      contact1: "Email",
-      contact2: "Phone",
-    },
-    users: [
-      {
-        metaInfo: { name: "Alan Linda", image: "assets/img/profile-5.jpeg" },
-        jobDesc: {
-          fieldName: "Job description",
-          fieldInfo: "Production Master",
-        },
-        contact1: {
-          fieldName: "Email",
-          fieldInfo: "alan@gmail.com",
-        },
-        contact2: {
-          fieldName: "Phone",
-          fieldInfo: "+23470672428",
-        },
-        password: {
-          fieldName: "Password",
-          fieldInfo: "qwerodgnkdg",
-        },
-        passwordConfirm: {
-          fieldName: "Confirm Password",
-          fieldInfo: "qwerodgnkdg",
-        },
-      },
-      {
-        metaInfo: { name: "Alan Linda", image: "assets/img/profile-5.jpeg" },
-        jobDesc: {
-          fieldName: "Job description",
-          fieldInfo: "Production Master",
-        },
-        contact1: {
-          fieldName: "Email",
-          fieldInfo: "alan@gmail.com",
-        },
-        contact2: {
-          fieldName: "Phone",
-          fieldInfo: "+23470672428",
-        },
-        password: {
-          fieldName: "Password",
-          fieldInfo: "qwerodgnkdg",
-        },
-        passwordConfirm: {
-          fieldName: "Confirm Password",
-          fieldInfo: "qwerodgnkdg",
-        },
-      },
-      {
-        metaInfo: { name: "Alan Linda", image: "assets/img/profile-5.jpeg" },
-        jobDesc: {
-          fieldName: "Job description",
-          fieldInfo: "Production Master",
-        },
-        contact1: {
-          fieldName: "Email",
-          fieldInfo: "alan@gmail.com",
-        },
-        contact2: {
-          fieldName: "Phone",
-          fieldInfo: "+23470672428",
-        },
-        password: {
-          fieldName: "Password",
-          fieldInfo: "qwerodgnkdg",
-        },
-        passwordConfirm: {
-          fieldName: "Confirm Password",
-          fieldInfo: "qwerodgnkdg",
-        },
-      },
+    searchBar: {},
+    header: [
+      { field: "Name", class: "text-left" },
+      { field: "Job Description", class: "text-left" },
+      { field: "Phone", class: "text-left" },
+      { field: "Email", class: "text-left" },
     ],
+    contacts: userList,
   };
-  return (
-    <div className="col-lg-12">
-      <div className="widget-content searchable-container list">
-        {/* BEGIN TOP SEARCH BAR */}
-        <SearchBar state={addUserState} />
-        {/* END TOP SEARCH BAR */}
 
-        {/* BEGINNING OF USERS LIST */}
-        <UsersList
-          state={formState}
-          userListData={userListData}
-          userList={userList}
-        />
-        {/* END OF USERS LIST */}
-      </div>
-    </div>
+  // Delete User Function
+  const deleteContact = () => {};
+
+  // Suspend User Function
+  const suspendContact = (suspendUserData) => {
+    axios
+      .put(`${BASE_API_URL}/api/v1/user/suspend.php`, suspendUserData)
+      .then((res) => {
+        console.log("Suspend User Data", res.data);
+        if (res.data.error) {
+          const title = "Suspension Failed",
+            text = res.data.message;
+          errorAlert(title, text);
+        } else {
+          const title = "User Suspended",
+            text = res.data.message;
+          successAlert(title, text);
+        }
+      });
+  };
+  const enableContact = (enableUserData) => {
+    axios
+      .put(`${BASE_API_URL}/api/v1/user/enable.php`, enableUserData)
+      .then((res) => {
+        console.log("Enable User Data", res.data);
+        if (res.data.error) {
+          const title = "Enablement Failed",
+            text = res.data.message;
+          errorAlert(title, text);
+        } else {
+          const title = "User Enabled",
+            text = res.data.message;
+          successAlert(title, text);
+        }
+      });
+  };
+
+  const successAlert = (title, text, link) => {
+    Swal.fire({
+      icon: "success",
+      title: title,
+      text: text,
+      footer: link,
+      showConfirmButton: false,
+    });
+  };
+  const errorAlert = (title, text) => {
+    Swal.fire({
+      icon: "error",
+      title: title,
+      text: text,
+      showConfirmButton: false,
+    });
+  };
+
+  const title = "Are you sure you want to Delete this order ?";
+
+  const warningAlert1 = (title, userName, userId) => {
+    Swal.fire({
+      icon: "warning",
+      title: title,
+    }).then(() => {
+      const suspendUserData = {
+        user: userName,
+        "user-id": userId,
+      };
+      suspendContact(suspendUserData);
+    });
+  };
+  const warningAlert2 = (title, userName, userId) => {
+    Swal.fire({
+      icon: "warning",
+      title: title,
+    }).then(() => {
+      const enableUserData = {
+        user: userName,
+        "user-id": userId,
+      };
+      enableContact(enableUserData);
+    });
+  };
+
+  console.log("Individual User State", user);
+
+  return (
+    // <h1>Contact List</h1>
+    <Contacts content={userListData} />
   );
 };
 
