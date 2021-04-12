@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const HeaderNavbar = () => {
+const HeaderNavbar = ({ setShowMenu }) => {
   return (
     <div className="header-container">
       <header className="header navbar navbar-expand-sm">
         <Link
-          to="javascript:void(0);"
+          to="#"
+          onClick={() => setShowMenu((prev) => !prev)}
           className="sidebarCollapse"
           data-placement="bottom"
         >
@@ -109,7 +110,7 @@ const HeaderNavbar = () => {
                   className="dropdown-item"
                   data-img-value="flag-de"
                   data-value="German"
-                  to="javascript:void(0);"
+                  to="#"
                 >
                   <img
                     src="assets/img/flag-de.svg"
@@ -122,7 +123,7 @@ const HeaderNavbar = () => {
                   className="dropdown-item"
                   data-img-value="flag-sp"
                   data-value="Spanish"
-                  to="javascript:void(0);"
+                  to="#"
                 >
                   <img
                     src="assets/img/flag-sp.svg"
@@ -135,7 +136,7 @@ const HeaderNavbar = () => {
                   className="dropdown-item"
                   data-img-value="flag-fr"
                   data-value="French"
-                  to="javascript:void(0);"
+                  to="#"
                 >
                   <img
                     src="assets/img/flag-fr.svg"
@@ -148,7 +149,7 @@ const HeaderNavbar = () => {
                   className="dropdown-item"
                   data-img-value="flag-ca"
                   data-value="English"
-                  to="javascript:void(0);"
+                  to="#"
                 >
                   <img
                     src="assets/img/flag-ca.svg"
@@ -163,7 +164,7 @@ const HeaderNavbar = () => {
 
           <li className="nav-item dropdown message-dropdown">
             <Link
-              to="javascript:void(0);"
+              to="#"
               className="nav-link dropdown-toggle"
               id="messageDropdown"
               data-toggle="dropdown"
@@ -254,7 +255,7 @@ const HeaderNavbar = () => {
 
           <li className="nav-item dropdown notification-dropdown">
             <Link
-              to="javascript:void(0);"
+              to="#"
               className="nav-link dropdown-toggle"
               id="notificationDropdown"
               data-toggle="dropdown"
@@ -437,7 +438,7 @@ const HeaderNavbar = () => {
 
           <li className="nav-item dropdown user-profile-dropdown order-lg-0 order-1">
             <Link
-              to="javascript:void(0);"
+              to="#"
               className="nav-link dropdown-toggle user"
               id="user-profile-dropdown"
               data-toggle="dropdown"

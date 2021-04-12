@@ -14,8 +14,8 @@ const Security = () => {
   useEffect(
     () =>
       axios
-        .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, {
-          params: { loaded: 1, inspected: 1, cleared: 0 },
+        .get(`${BASE_API_URL}/api/v1/order/dispatch-list-cleared.php`, {
+          params: { status: "0" },
         })
         .then((res) => {
           let body = [];

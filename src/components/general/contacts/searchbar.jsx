@@ -1,6 +1,6 @@
 import React from "react";
 
-const SearchBar = ({ content }) => {
+const SearchBar = ({ content, setShowModal }) => {
   return (
     <div className="row">
       <div className="col-xl-4 col-lg-5 col-md-5 col-sm-7 filtered-list-search layout-spacing align-self-center">
@@ -45,7 +45,7 @@ const SearchBar = ({ content }) => {
             strokeLinecap="round"
             strokeLinejoin="round"
             className="feather feather-user-plus"
-            // onClick={() => setAddUser(true)}
+            onClick={() => setShowModal(true)}
           >
             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
             <circle cx="8.5" cy="7" r="4"></circle>

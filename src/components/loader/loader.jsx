@@ -14,11 +14,9 @@ const Loader = () => {
   useEffect(
     () =>
       axios
-        .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, {
+        .get(`${BASE_API_URL}/api/v1/order/dispatch-list-loaded.php`, {
           params: {
-            loaded: 0,
-            inspected: 0,
-            cleared: 0,
+            status: "0",
           },
         })
         .then((res) => {

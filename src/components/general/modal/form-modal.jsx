@@ -51,7 +51,7 @@ const FormModal = ({
             <Link
               to="#"
               onClick={() => {
-                setShowModal(false);
+                setShowModal((prev) => !prev);
                 console.log("Modal State: ", showModal);
               }}
               className="mt-4 btn btn-danger"

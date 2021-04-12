@@ -55,6 +55,12 @@ code { color: #e7515a; }
     margin-top: 4rem;
 }
 }
+@media (max-width: 991px){
+ .topbar-nav.header.navbar.showMenu {
+    width: 255px;
+    left: 0;
+}
+}
 #container.fixed-header { margin-top: 56px; }
 #content {
     margin-top: 0;

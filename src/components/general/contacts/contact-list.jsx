@@ -49,7 +49,15 @@ const Contact = ({ content }) => (
           strokeLinecap="round"
           strokeLinejoin="round"
           className="feather feather-edit-2 edit"
-          // onClick={}
+          onClick={() => {
+            console.log("Individual User Data: ", content.user);
+            content.setUser(content.user);
+            document.getElementById("user-add-user").value = content.user.user;
+            document.getElementById("user-id-add-user").value = content.user.id;
+            document.getElementById("password-add-user").value =
+              content.user.password;
+            content.setShowUpdateModal(true);
+          }}
         >
           <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
         </svg>
@@ -65,7 +73,15 @@ const Contact = ({ content }) => (
           strokeLinecap="round"
           strokeLinejoin="round"
           className="feather feather-user-minus delete"
-          // onClick={() => deleteContact(content.id)}
+          onClick={() => {
+            console.log("Individual User Data: ", content.user);
+            content.setUser(content.user);
+            content.delete(
+              `Are you sure you want to delete ${content.metaInfo.name} ?`,
+              content.user.user,
+              content.user.id
+            );
+          }}
         >
           <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
           <circle cx="8.5" cy="7" r="4"></circle>

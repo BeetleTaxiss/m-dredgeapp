@@ -2,9 +2,12 @@ import React from "react";
 import { MenuItem, MobileLogo } from "./menuItem";
 import { topNavBarData } from "./menuItem-data";
 
-const TopNavbar = () => {
+const TopNavbar = ({ showMenu, showSubMenu, setShowSubMenu }) => {
   return (
-    <div className="topbar-nav header navbar" role="banner">
+    <div
+      className={`topbar-nav header navbar ${showMenu && "showMenu"}`}
+      role="banner"
+    >
       <nav id="topbar">
         {/* BEGINNING OF MOBILE LOGO */}
         <MobileLogo />
@@ -12,7 +15,14 @@ const TopNavbar = () => {
         {/* BEGINNING OF MENU BAR */}
         <ul className="list-unstyled menu-categories" id="topAccordion">
           {topNavBarData &&
-            topNavBarData.map((item, i) => <MenuItem key={i} item={item} />)}
+            topNavBarData.map((item, i) => (
+              <MenuItem
+                key={i}
+                item={item}
+                showSubMenu={showSubMenu}
+                setShowSubMenu={setShowSubMenu}
+              />
+            ))}
         </ul>
         {/* END OF MENU BAR */}
       </nav>

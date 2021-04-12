@@ -1,10 +1,20 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { systemSettings } from "../state/store";
 import { FormDetails } from "../components/orders/order-form/order-form-details";
+import { BASE_API_URL } from "../hooks/API";
 import { functionUtils } from "../hooks/function-utils";
 
 const LoginPage = () => {
+  // SET APP SETTINGS TO GLOBAL PULLSTATE
+
+  axios.get(`${BASE_API_URL}/api/v1/system/app-settings.php`).then((res) => {
+    console.log(res.data);
+    systemSettings.update((s) => (s = false));
+  });
+
   const [user, setUsername] = useState({
     user: "",
   });
@@ -15,6 +25,7 @@ const LoginPage = () => {
     user: "",
     password: "",
   });
+
   const history = useHistory();
   const location = useLocation();
   const handleChange = functionUtils.SignInFormChange(

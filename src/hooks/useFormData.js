@@ -76,3 +76,96 @@ export const useUpdateOrderFormData = (totalPrice) => {
 
   return { formData };
 };
+export const useAddContactFormData = (selectOptions) => {
+  const formData = [
+    {
+      id: "user-add-user",
+      type: "text",
+      name: "user",
+      holder: "User name",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "select-add-user",
+      type: "select",
+      name: "job description",
+      className: "form-control",
+      options: selectOptions,
+      required: true,
+    },
+    {
+      id: "email-add-user",
+      type: "email",
+      name: "email",
+      holder: "User email",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "phone-add-user",
+      type: "text",
+      name: "phone",
+      holder: "User phone number",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "password-add-user",
+      type: "password",
+      name: "password",
+      holder: "Set user password",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "confirm-password-add-user",
+      type: "password",
+      name: "confirm password",
+      holder: "confirm user password",
+      className: "form-control",
+      required: true,
+    },
+  ];
+
+  return { formData };
+};
+export const useUpdateContactFormData = () => {
+  const updateFormData = [
+    {
+      id: "user-add-user",
+      type: "text",
+      name: "user",
+      holder: "User name",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "user-id-add-user",
+      type: "text",
+      name: "user id",
+      holder: "User Identification",
+      className: "form-control",
+      hidden: "hidden",
+      required: true,
+    },
+    {
+      id: "password-add-user",
+      type: "password",
+      name: "password",
+      holder: "Set user password",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "new-password-add-user",
+      type: "password",
+      name: "new password",
+      holder: "Set new user password",
+      className: "form-control",
+      required: true,
+    },
+  ];
+
+  return { updateFormData };
+};

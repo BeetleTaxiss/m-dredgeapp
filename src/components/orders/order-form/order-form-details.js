@@ -28,7 +28,8 @@ export const FormDetails = ({
           >
             {otherProps?.options?.map((option) => (
               <option key={option.id} value={option.id}>
-                {option.product}
+                {option.product && option.product}
+                {option.user_type && option.user_type}
               </option>
             ))}
           </select>

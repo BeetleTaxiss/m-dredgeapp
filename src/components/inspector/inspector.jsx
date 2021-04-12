@@ -14,12 +14,9 @@ const Inspector = () => {
   useEffect(() => {
     const random = Math.random(90 * 23);
     axios
-      .get(
-        `${BASE_API_URL}/api/v1/order/dispatch-list.php?loaded=1&rnd=${random}`
-        //   {
-        //   params: { loaded: 1 },
-        // }
-      )
+      .get(`${BASE_API_URL}/api/v1/order/dispatch-list-inspected.php`, {
+        params: { status: "0" },
+      })
       .then((res) => {
         let body = [];
         console.log("Table Body: ", res.data);

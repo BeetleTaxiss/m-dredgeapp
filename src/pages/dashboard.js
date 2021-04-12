@@ -28,9 +28,6 @@ export const Dashboard = () => {
   return (
     // BEGIN MAIN CONTAINER
     <div className="main-container" id="container">
-      <div className="overlay"></div>
-      <div className="search-overlay"></div>
-
       {/* BEGIN CONTENT PART */}
       <div id="content" className="main-content">
         <div className="layout-px-spacing">

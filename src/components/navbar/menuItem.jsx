@@ -12,14 +12,14 @@ export const MobileLogo = () => (
     <li className="nav-item theme-text">
       <Link to="index.html" className="nav-link">
         {" "}
-        CORK{" "}
+        M-Dredge{" "}
       </Link>
     </li>
   </ul>
 );
 
 // TOP NAV BAR MENU ITEM COMPONENT
-export const MenuItem = ({ item }) => {
+export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
   const { icon, menuItem, dropdown, link } = item.menuItem;
   return (
     <li className="menu single-menu active">
@@ -29,6 +29,7 @@ export const MenuItem = ({ item }) => {
         aria-expanded="true"
         className="dropdown-toggle autodroprown"
         style={{ alignItems: "center" }}
+        onClick={() => setShowSubMenu(true)}
       >
         {/* MENU ITEM CONTAINER */}
         <div
@@ -50,7 +51,7 @@ export const MenuItem = ({ item }) => {
       {item.subMenuItems && (
         // MENU ITEM SUB-MENU ITEM
         <ul
-          className="collapse submenu list-unstyled"
+          className={`collapse ${showSubMenu && "show"} submenu list-unstyled`}
           id="dashboard"
           data-parent="#topAccordion"
         >
