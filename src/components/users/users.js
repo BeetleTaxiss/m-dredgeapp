@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import md5 from "md5";
 import "./users.css";
 import { BASE_API_URL } from "../../hooks/API";
 import { systemSettings } from "../../state/store";
@@ -109,7 +110,10 @@ const Users = () => {
     let userName = document.getElementById("user-add-user").value,
       userId = document.getElementById("user-id-add-user").value,
       userPassword = document.getElementById("password-add-user").value,
-      newUserPassword = document.getElementById("new-password-add-user").value;
+      newUserPassword = md5(
+        document.getElementById("new-password-add-user").value
+      );
+    console.log("Hashed Password: ", newUserPassword);
     const changePasswordData = {
       user: userName,
       "user-id": userId,
@@ -140,10 +144,10 @@ const Users = () => {
       newUserType = document.getElementById("select-add-user").value,
       newUserEmail = document.getElementById("email-add-user").value,
       newUserPhoneNo = document.getElementById("phone-add-user").value,
-      newUserPassword = document.getElementById("password-add-user").value,
-      newUserConfirmPassword = document.getElementById(
-        "confirm-password-add-user"
-      ).value;
+      newUserPassword = md5(document.getElementById("password-add-user").value),
+      newUserConfirmPassword = md5(
+        document.getElementById("confirm-password-add-user").value
+      );
     const addUserData = {
       user: newUserName,
       "user-type": newUserType,
