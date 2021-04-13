@@ -22,6 +22,7 @@ function App() {
         <Route path="/placeorder" component={Pages} />
         <Route path="/vieworders" component={Pages} />
         <Route path="/production" component={Pages} />
+        <Route path="/profile" component={Pages} />
         <Route path="/dashboard" component={Homepage} />
         <Route exact path="/" component={LoginPage} />
       </Switch>

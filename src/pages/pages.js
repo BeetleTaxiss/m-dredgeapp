@@ -7,6 +7,7 @@ import InspectorDashboard from "../components/inspector/inspector-dashboard";
 import LoaderDashboard from "../components/loader/loader-dashboard";
 import Navbar from "../components/navbar/navbar";
 import OrderDashboard from "../components/orders/order-dashboard";
+import Profile from "../components/profile/profile";
 import Revenue from "../components/revenue/revenue";
 import SecurityDashboard from "../components/security/security-dashboard";
 
@@ -17,7 +18,9 @@ const Pages = () => {
     <>
       <Navbar />
       <Switch>
-        {url === "/production" ? (
+        {url === "/profile" ? (
+          <Profile />
+        ) : url === "/production" ? (
           <CountdownTimer />
         ) : url === "/singlerevenuereport" ? (
           <Revenue />

@@ -37,6 +37,8 @@ const PageHeader = () => {
       ? "Users"
       : url === "/units"
       ? "Create Unit"
+      : url === "/profile"
+      ? "Account settings"
       : null;
   const breadCrumbsData = [
     { text: "Dashboard", link: "/dashboard" },

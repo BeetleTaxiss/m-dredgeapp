@@ -169,3 +169,39 @@ export const useUpdateContactFormData = () => {
 
   return { updateFormData };
 };
+export const useUserChangePasswordFormData = (userName) => {
+  const updatePasswordFormText = {
+    formTitle: "Update your password",
+    formSubtitle: "Has your password been leaked? Change it here",
+    Btntext: "Update Password",
+  };
+  const updatePasswordFormData = [
+    {
+      id: "user-update-user",
+      type: "text",
+      name: "user",
+      holder: "User name",
+      className: "form-control",
+      value: userName,
+      required: true,
+    },
+    {
+      id: "password-update-user",
+      type: "password",
+      name: "password",
+      holder: "Your old password",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "new-password-update-user",
+      type: "password",
+      name: "new password",
+      holder: "Set your new password",
+      className: "form-control",
+      required: true,
+    },
+  ];
+
+  return { updatePasswordFormData, updatePasswordFormText };
+};
