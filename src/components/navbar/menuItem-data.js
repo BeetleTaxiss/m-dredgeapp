@@ -31,7 +31,7 @@ export const topNavBarData = [
     },
     subMenuItems: [
       { link: "/users", text: "Users" },
-      { link: "/units", text: "Set Units" },
+      { link: "/products", text: "Set Products" },
     ],
   },
   // END OF SINGLE MENU ITEM DATA

@@ -58,7 +58,7 @@ const Pages = () => {
           <SecurityDashboard />
         ) : url === "/users" ? (
           <AdminDashboard />
-        ) : url === "/units" ? (
+        ) : url === "/products" ? (
           <AdminDashboard />
         ) : null}
       </Switch>

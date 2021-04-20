@@ -45,8 +45,8 @@ const PageHeader = () => {
       ? "Single Revenue Report"
       : url === "/users"
       ? "Users"
-      : url === "/units"
-      ? "Create Unit"
+      : url === "/products"
+      ? "Add products"
       : url === "/profile"
       ? "Account settings"
       : null;
