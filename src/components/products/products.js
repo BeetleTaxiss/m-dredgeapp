@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { FormDetails } from "../orders/order-form/order-form-details";
-import { functionUtils } from "../../hooks/function-utils";
 import WidgetHeader from "../general/widget-header";
-import ProductsList from "./products-list";
-import UpdateProduct from "./update-product";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
+import AddUpdateProduct from "./add-update-product";
 
 const Units = () => {
   const [productsList, setProductsList] = useState();
+  const [showUpdateProduct, setShowUpdateProduct] = useState(false);
+  const [loading, setloading] = useState(false);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -133,6 +132,39 @@ const Units = () => {
   //     }
   //   });
   // };
+  const handleAddProduct = () => {
+    const product_name = document.getElementById("product").value;
+    const product_unit = document.getElementById("product-unit").value;
+    const product_price = document.getElementById("product-price").value;
+    const product_measurement = document.getElementById("product-measurement")
+      .value;
+    const product_description = document.getElementById("product-description")
+      .value;
+    const addProductData = {
+      product: product_name,
+      unit: product_unit,
+      price: product_price,
+      measurement: product_measurement,
+      description: product_description,
+    };
+    console.log("Add product API values: ", addProductData);
+    axios
+      .post(`${BASE_API_URL}/api/v1/product/add.php`, addProductData)
+      .then((res) => {
+        console.log("Add product response data: ", res.data);
+        if (res.data.error) {
+          let title = "Server Error Response",
+            text = res.data.message;
+          errorAlert(title, text);
+        } else {
+          let title = "Product Added Successfully",
+            text = res.data.message,
+            link = `<a href="/products">View Product List</a>`;
+          successAlert(title, text, link);
+        }
+      });
+  };
+  const handleUpdateProduct = () => {};
   /** Product List Table Data */
   const productListTableData = {
     tableTitle: "",
@@ -147,6 +179,92 @@ const Units = () => {
 
     body: productsList,
   };
+  const addUpdateFormData = {
+    addProductformData: [
+      {
+        id: "product",
+        type: "text",
+        name: "product",
+        holder: "Product Name",
+        className: "form-control",
+        required: true,
+      },
+      {
+        id: "product-price",
+        type: "text",
+        name: "price",
+        holder: "Product's Price",
+        className: "form-control",
+        required: true,
+      },
+      {
+        id: "product-unit",
+        type: "text",
+        name: "unit",
+        holder: "Product's Unit",
+        className: "form-control",
+        required: true,
+      },
+      {
+        id: "product-measurement",
+        type: "text",
+        name: "measurement",
+        holder: "Product's Measurement",
+        className: "form-control",
+        required: true,
+      },
+      {
+        id: "product-description",
+        type: "textarea",
+        name: "description",
+        holder: "Product Description",
+        className: "form-control",
+        required: false,
+      },
+    ],
+    updateProductformData: [
+      {
+        id: "update-product",
+        type: "text",
+        name: "product",
+        holder: "Product Name",
+        className: "form-control",
+        required: true,
+      },
+      {
+        id: "update-product-price",
+        type: "text",
+        name: "price",
+        holder: "Product's Price",
+        className: "form-control",
+        required: true,
+      },
+      {
+        id: "update-product-unit",
+        type: "text",
+        name: "unit",
+        holder: "Product's Unit",
+        className: "form-control",
+        required: true,
+      },
+      {
+        id: "update-product-measurement",
+        type: "text",
+        name: "measurement",
+        holder: "Product's Measurement",
+        className: "form-control",
+        required: true,
+      },
+      {
+        id: "update-product-description",
+        type: "textarea",
+        name: "description",
+        holder: "Product Description",
+        className: "form-control",
+        required: false,
+      },
+    ],
+  };
 
   /** Products Component */
   const ProductsComponent = () => {
@@ -159,6 +277,13 @@ const Units = () => {
             className="widget-content widget-content-area searchable-container list"
             style={{ display: "grid", padding: "2rem", gap: "2rem" }}
           >
+            <AddUpdateProduct
+              showUpdateProduct={showUpdateProduct}
+              content={addUpdateFormData}
+              loading={loading}
+              handleAddSubmit={handleAddProduct}
+              handleUpdateSubmit={handleUpdateProduct}
+            />
             <CustomTableList content={productListTableData} />
           </div>
         </div>
