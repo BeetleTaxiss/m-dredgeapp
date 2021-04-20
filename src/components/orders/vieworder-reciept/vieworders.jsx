@@ -6,6 +6,7 @@ import ViewordersTableBody from "./vieworders-body";
 import ViewordersTablefooter from "./vieworders-tablefooter";
 import ViewordersSearchbar from "./vieworders-searchbar";
 import ViewordersTablepaiginaition from "./vieworders-tablepaiginaition";
+import "./vieworders.scss";
 
 /**
  * Orders List Data object which is divided into table header, body and footer properties
@@ -142,7 +143,10 @@ const ViewOrders = () => {
   useEffect(() => {
     fetch(`${BASE_API_URL}/api/v1/order/list.php`)
       .then((res) => res.json())
-      .then((data) => setOrdersList(data.data))
+      .then((data) => {
+        console.log("Orders List Data: ", data.data);
+        setOrdersList(data.data);
+      })
       // .then((data) => console.log("API DATA: ", data.data))
       .catch((err) => console.log("API ERROR: ", err));
     return () => {};

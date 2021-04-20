@@ -15,6 +15,7 @@ export const topNavBarData = [
       menuItem: "Dashboard",
       dropdown: dropdownIcon,
       link: "/dashboard",
+      class: "dashboard",
     },
     subMenuItems: [{ link: "#", text: "Dashboard" }],
   },
@@ -26,6 +27,7 @@ export const topNavBarData = [
       menuItem: "Admin",
       dropdown: dropdownIcon,
       link: "#",
+      class: "admin",
     },
     subMenuItems: [
       { link: "/users", text: "Users" },
@@ -40,6 +42,7 @@ export const topNavBarData = [
       menuItem: "Account",
       dropdown: dropdownIcon,
       link: "#",
+      class: "accountant",
     },
     subMenuItems: [
       { link: "/postexpense", text: "Post Expenses" },
@@ -57,8 +60,16 @@ export const topNavBarData = [
       menuItem: "Production",
       dropdown: dropdownIcon,
       link: "#",
+      class: "production",
     },
-    subMenuItems: [{ link: "/production", text: "Start Production" }],
+    subMenuItems: [
+      { link: "/production", text: "Start Production" },
+      { link: "/productionlist", text: "Production List" },
+      { link: "/wetsand", text: "Wet Sand" },
+      { link: "/stockpile", text: "Stockpiled sand" },
+      { link: "/stock", text: "Stock List" },
+      { link: "/stockupdate", text: "Stock Update" },
+    ],
   },
   // END OF SINGLE MENU ITEM DATA
   // BEGINNING OF SINGLE MENU ITEM DATA
@@ -68,6 +79,7 @@ export const topNavBarData = [
       menuItem: "Orders",
       dropdown: dropdownIcon,
       link: "#",
+      class: "orders",
     },
     subMenuItems: [
       { link: "/placeorder", text: "Place Order" },
@@ -83,6 +95,7 @@ export const topNavBarData = [
       menuItem: "Loader",
       dropdown: dropdownIcon,
       link: "#",
+      class: "loader",
     },
     subMenuItems: [{ link: "/loader", text: "Load Orders" }],
   },
@@ -94,6 +107,7 @@ export const topNavBarData = [
       menuItem: "Inspect",
       dropdown: dropdownIcon,
       link: "#",
+      class: "inspect",
     },
     subMenuItems: [{ link: "/inspect", text: "Inspect Orders" }],
   },
@@ -105,6 +119,7 @@ export const topNavBarData = [
       menuItem: "Clearance",
       dropdown: dropdownIcon,
       link: "#",
+      class: "clearance",
     },
     subMenuItems: [{ link: "/security", text: "Clear Orders" }],
   },

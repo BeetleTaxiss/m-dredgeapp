@@ -124,14 +124,14 @@ export const useCountDown = (setDisplayTimer, setDisplayTimeline) => {
   React.useEffect(() => {
     counterId.current = setInterval(countDownTimer, 1000);
     return () => {
-      clear();
+      // clear();
     };
   });
 
   // LOGIC TO CLEAR SET INTERVAL ONCE ALL TIMER VALUES ARE EQUAL TO ZERO
   React.useEffect(() => {
     if (counter.minutes === 0 && counter.seconds === 0 && counter.hours === 0) {
-      clear();
+      // clear();
     }
   }, [counter]);
 

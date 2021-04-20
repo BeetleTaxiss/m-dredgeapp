@@ -14,8 +14,12 @@ const Security = () => {
   useEffect(
     () =>
       axios
-        .get(`${BASE_API_URL}/api/v1/order/dispatch-list-cleared.php`, {
-          params: { status: "0" },
+        .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, {
+          params: {
+            loaded: "1",
+            inspected: "1",
+            cleared: "0",
+          },
         })
         .then((res) => {
           let body = [];
@@ -28,15 +32,25 @@ const Security = () => {
             const qty = item.qty;
             const total_price = item.total_price;
             const total_volume = item.total_volume;
+            const truck_Number = item.truck_no;
             const userDetails = JSON.parse(localStorage.getItem("user"));
             const userId = userDetails.id;
             const userName = userDetails.username;
+            const inspectorComment = item.inspector_comment;
 
             const loadingData = {
               "order-id": orderId,
               "order-ref": orderRef,
               "user-id": userId,
               user: userName,
+            };
+            const loadingDisplayData = {
+              product: product,
+              qty: qty,
+              volume: total_volume,
+              truckNo: truck_Number,
+              price: total_price,
+              inspectorComment: inspectorComment,
             };
             console.log(
               "Body Items: ",
@@ -88,6 +102,7 @@ const Security = () => {
                 {
                   orderId: orderId,
                   load: loadingData,
+                  loadDisplay: loadingDisplayData,
                   class: "text-center",
                   itemClass: "btn btn-primary",
                   link: setShowModal,
@@ -117,16 +132,6 @@ const Security = () => {
 
     body: bodyData,
   };
-  const formData = [
-    {
-      id: "comment",
-      type: "textarea",
-      name: "comment",
-      holder: "Order Cost",
-      className: "form-control",
-      required: true,
-    },
-  ];
 
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -145,14 +150,9 @@ const Security = () => {
       showConfirmButton: false,
     });
   };
-  // const handleChange = () => {
-  //   const comment = document.getElementById("comment").value;
-  //   console.log("TextArea: ", comment);
-  // };
+
   // Load Prompter/ Popup
   const clearOrder = () => {
-    const comment = document.getElementById("comment").value;
-    console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
     axios.put(`${BASE_API_URL}/api/v1/order/clear.php`, load).then((res) => {
@@ -176,9 +176,6 @@ const Security = () => {
     <>
       <CustomTableList setLoad={setLoad} content={loaderListData} />
       <FormModal
-        formTitle="Update Your Order"
-        formSubtitle="Gave the wrong details? Change them below"
-        formData={formData}
         showModal={showModal}
         setShowModal={setShowModal}
         loading={loading}
@@ -186,9 +183,12 @@ const Security = () => {
         errorMsg={errorMsg}
         status={error}
         handleSubmit={clearOrder}
-        Btntext="Load Order"
+        Btntext="Clearance Finished"
         noClickOutside
         closeBtn
+        listItems
+        cols={5}
+        rows={3}
       />
     </>
   );

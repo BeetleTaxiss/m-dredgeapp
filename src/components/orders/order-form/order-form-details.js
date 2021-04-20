@@ -11,12 +11,22 @@ export const FormDetails = ({
   },
   handleChange,
   errors,
+  cols,
+  rows,
+  noMargin,
 }) => {
   // console.log("Select value: ", value);
   return (
     <>
       {type === "select" ? (
-        <div style={{ marginBottom: "2rem", padding: "0 0 0 0" }}>
+        <div
+          style={{
+            width: noMargin ? "33%" : "auto",
+            marginTop: noMargin ? "1rem" : "",
+            marginBottom: noMargin ? "0rem" : "2rem",
+            padding: "0 0 0 0",
+          }}
+        >
           <select
             id={id}
             type={type}
@@ -46,8 +56,8 @@ export const FormDetails = ({
           disabled={otherProps.disabled}
           {...otherProps}
           style={{ marginBottom: "2rem" }}
-          cols={5}
-          rows={5}
+          cols={cols ? cols : 5}
+          rows={rows ? rows : 5}
         />
       ) : (
         <input

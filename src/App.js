@@ -4,6 +4,7 @@ import LoginPage from "./pages/login-page.js";
 import Pages from "./pages/pages";
 
 function App() {
+  window.onclose = () => localStorage.clear();
   return (
     <div className="App">
       <Switch>
@@ -22,6 +23,11 @@ function App() {
         <Route path="/placeorder" component={Pages} />
         <Route path="/vieworders" component={Pages} />
         <Route path="/production" component={Pages} />
+        <Route path="/productionlist" component={Pages} />
+        <Route path="/wetsand" component={Pages} />
+        <Route path="/stockpile" component={Pages} />
+        <Route path="/stock" component={Pages} />
+        <Route path="/stockupdate" component={Pages} />
         <Route path="/profile" component={Pages} />
         <Route path="/dashboard" component={Homepage} />
         <Route exact path="/" component={LoginPage} />

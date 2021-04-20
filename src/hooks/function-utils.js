@@ -1,8 +1,31 @@
 import React from "react";
 import moment from "moment";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { BASE_API_URL } from "./API";
+import TimelineNotification from "../components/production/timeline-notification";
+import { render } from "react-dom";
+import { batch } from "pullstate";
+import { Link } from "react-router-dom";
 
+// Alerts
+const successAlert = (title, text, link, showBtn) => {
+  Swal.fire({
+    icon: "success",
+    title: title,
+    text: text,
+    footer: link,
+    showConfirmButton: showBtn ? true : false,
+  });
+};
+const errorAlert = (title, text) => {
+  Swal.fire({
+    icon: "error",
+    title: title,
+    text: text,
+    showConfirmButton: false,
+  });
+};
 // Validate Form entries
 export const validateForm = (errors) => {
   let valid = true;
@@ -86,7 +109,7 @@ export const functionUtils = {
     /**
      *handle change function matches the name of an input field to its value and calls a setState function to save input value to the formState object. The input name has to be exactly the same with its formInput state property name.
      */
-    const handleChange = ({ currentTarget: { name, value } }) =>
+    const handleCapacityChange = ({ currentTarget: { name, value } }) =>
       setFormInput((state) => ({
         ...state,
         [name]: value,
@@ -96,7 +119,7 @@ export const functionUtils = {
      */
     return {
       formInput,
-      handleChange,
+      handleCapacityChange,
       setFormInput,
     };
   },
@@ -108,15 +131,19 @@ export const functionUtils = {
    * Custom CountDown function which takes the "setState" functions from the above useState hooks to display a countdown time after calculating the duration of a shift and returns a shift array, shift duration and timeline item objects to be used in child components. Functions such as handle change are used to set the values of form inputs in the shift Calculator.
    * ----------------------------------------------------------------------------------------------------------
    */
-  CountDown: (setDisplayTimer, setDisplayTimeline) => {
+  CountDown: (
+    setDisplayTimer,
+    setDisplayTimeline,
+    formInput,
+    products,
+    setProductionDetails,
+    timelineItems,
+    setTimelineItem
+  ) => {
     /**
      * Counter state for countdown timer which tracks time in hours, minutes and seconds
      *  */
-    const [counter, setCounter] = React.useState({
-      hours: "00",
-      minutes: "00",
-      seconds: "00",
-    });
+    const [counter, setCounter] = React.useState();
     /**
      * Shift duration state to track the "from" and "to" input values from the shift duration form in the shift duration component.
      */
@@ -127,8 +154,16 @@ export const functionUtils = {
     /**
      *  Handle Input Change function for handling input changes in the shift duration component
      *  */
-    const handleChange = ({ currentTarget: { name, value } }) =>
+    const handleChange = ({ currentTarget: { name, value } }) => {
       setShiftDuration((state) => ({ ...state, [name]: value }));
+
+      const selectValue = document.getElementById("select").value;
+      console.log("Select Value: ", selectValue);
+
+      // Filter Products Array to get single product
+      const product = products.filter((product) => product.id === selectValue);
+      console.log("Product: ", product);
+    };
     /**
      * Counter timer Ref and function to help clear counter when timer values === 0
      */
@@ -137,7 +172,7 @@ export const functionUtils = {
     /**
      * Used to set timeline notifications after the start or end of a shift and during shift duration when production capacity is inputted by the production manager
      */
-    const [timelineItems, setTimelineItems] = React.useState([]);
+
     /**
      * ----------------------------------------------------------------------------------------------------------
      *----------------------------calculateShift embeded function----------------------------------------------
@@ -146,10 +181,11 @@ export const functionUtils = {
      * Shift calculator function which sets the duration of a single shift
      *---------------------------------------------------------------------------------------------------------
      */
-    const calculateShift = (e) => {
-      e.preventDefault();
+    const calculateShift = () => {
+      // e.preventDefault();
       // Variable to get the accurate time a shift started then formated to hours and minutes display and finally used to set the time value property of the timeline item state
       const loggedShiftStart = moment().format("hh:mm");
+      const loggedShiftStartDate = moment().format("dd/mm/yy");
       // Variable to set the previous time in the session storage which will help in calculating the duration between two production capacity inputs by the production manager and the logged to the timeline
       const prevLoggedShiftTime = moment();
       // Destructured shift duration state to access the to and from properties which will be used as the values for the date-time input fields in the shift Calculator component
@@ -164,18 +200,76 @@ export const functionUtils = {
         hours = shiftObject.getUTCHours(),
         minutes = shiftObject.getUTCMinutes(),
         seconds = shiftObject.getSeconds();
-      // Once the singular time values are gotten, they are set to the component's state using the setCounter function which will start the count down timer. Once this is done, the shift Calculator component is removed from the UI and the countdown timer, production capacity calculator and timeline notifications are shown by setting their respective display states to true while showing an inital timeline notification saying the shift has started.
-      setCounter({ hours, minutes, seconds });
-      setDisplayTimer(true);
-      setDisplayTimeline(true);
-      setTimelineItems((state) => [
-        ...state,
-        {
-          time: loggedShiftStart,
-          dotColor: "primary",
-          text: "Shift started",
-        },
-      ]);
+
+      // Add Marker Values to be sent to the server
+      const selectValue = document.getElementById("select").value;
+      console.log("Select Value: ", selectValue);
+
+      // Filter Products Array to get single product
+      const product = products.filter((product) => product.id === selectValue);
+      console.log("Product: ", product);
+      const productId = product[0].id,
+        productName = product[0].product;
+      const userDetails = JSON.parse(localStorage.getItem("user"));
+      const userId = parseInt(userDetails.id),
+        userName = userDetails.username;
+      const productionCapacityOnStart = parseInt(formInput[""]);
+      const pumping_distance_in_meters = 1200;
+      const addMarkerData = {
+        user: userName,
+        "user-id": userId,
+        "product-id": productId,
+        product: productName,
+        "production-capacity": productionCapacityOnStart,
+        "start-time": loggedShiftStart,
+        "production-date": loggedShiftStartDate,
+        "pumping-distance-in-meters": pumping_distance_in_meters,
+      };
+      console.log("add Marker Values: ", addMarkerData);
+      try {
+        axios
+          .post(
+            `${BASE_API_URL}/api/v1/production/add-marker.php`,
+            addMarkerData
+          )
+          .then((res) => {
+            alert("Axios Working");
+            console.log("Add Marker Data: ", res.data);
+            if (res.data.error) {
+              let title = "Shift failed",
+                text = res.data.message;
+              errorAlert(title, text);
+            } else {
+              // Once the singular time values are gotten, they are set to the component's state using the setCounter function which will start the count down timer. Once this is done, the shift Calculator component is removed from the UI and the countdown timer, production capacity calculator and timeline notifications are shown by setting their respective display states to true while showing an inital timeline notification saying the shift has started.
+
+              setDisplayTimer(true);
+              setDisplayTimeline(true);
+
+              timelineItems = timelineItems.concat({
+                time: loggedShiftStart,
+                dotColor: "primary",
+                text: "Shift started",
+              });
+              setTimelineItem(timelineItems);
+              console.log("timeline Items: ", timelineItems);
+              res.data["initial_production_capacity"] = formInput[""];
+              res.data["product_id"] = productId;
+              res.data["product_name"] = productName;
+              setProductionDetails(res.data);
+              setCounter({ hours, minutes, seconds });
+
+              functionUtils.showTimeLine(
+                timelineItems,
+                "timeline-notification-single"
+              );
+            }
+          });
+      } catch (error) {
+        let title = "Shift failed",
+          text = error;
+        errorAlert(title, text);
+      }
+
       // Set the previous time/start time of the shift on shift start to help ascertain difference in shift durations when production capacity is being calculated
       sessionStorage.setItem("prevTime", prevLoggedShiftTime);
     };
@@ -184,96 +278,76 @@ export const functionUtils = {
      * Logic to count down shift duration to Zero (0) as calculated in the above calculateShift function
      * --------------------------------------------------------------------------------------------------------
      */
-    const countDownTimer = () => {
+    const countDownTimer = (counter) => {
       // Variable to get the accurate time a shift ended then formated to hours and minutes display and finally used to set the time value property of the timeline item state
       const loggedShiftEnd = moment().format("hh:mm");
+      let hours = null;
+      let minutes = null;
+      let seconds = null;
 
       // TIMER LOGIC WHICH MIMICKS AN ACTIVE CLOCK
       if (counter.seconds > 0) {
-        setCounter((count) => ({
-          ...count,
-          seconds: count.seconds - 1,
-        }));
+        seconds = counter.seconds - 1;
       } else if (counter.seconds === 0 && counter.minutes > 0) {
-        setCounter((count) => ({
-          ...count,
-          minutes: count.minutes - 1,
-          seconds: 60,
-        }));
+        minutes = counter.minutes - 1;
+        seconds = 60;
       } else if (counter.minutes === 0 && counter.hours > 0) {
-        setCounter((count) => ({
-          ...count,
-          hours: count.hours - 1,
-          minutes: 60,
-        }));
+        hours = counter.hours - 1;
+        minutes = 60;
       } else if (counter.hours === 0) {
-        setCounter((count) => ({
-          ...count,
-          hours: 0,
-        }));
+        hours = 0;
       } else if (counter.hours === 0 && counter.minutes === 0) {
-        setCounter((count) => ({
-          ...count,
-          hours: 0,
-          minutes: 0,
-        }));
+        hours = 0;
+        minutes = 0;
       } else if (
         counter.hours === 0 &&
         counter.minutes === 0 &&
         counter.seconds === 0
       ) {
-        setCounter((count) => ({
-          ...count,
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-        }));
-        setDisplayTimeline((state) => [
-          ...state,
-          {
-            time: loggedShiftEnd,
-            dotColor: "primary",
-            text: "Shift ended",
-          },
-        ]);
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
       }
+      return { hours, minutes, seconds };
     };
-    // On Timer component mount, side effect starts countDownTimer function and repeats every one second with the help of a setinterval function until all time values are equals to zero
-    React.useEffect(() => {
-      counterId.current = setInterval(countDownTimer, 1000);
-      return () => {
-        clear();
-      };
-    });
-    // Side effect which clears the interval function and stops the countDownTimer when all time values are zero simultaneously
-    React.useEffect(() => {
-      if (
-        counter.minutes === 0 &&
-        counter.seconds === 0 &&
-        counter.hours === 0
-      ) {
-        clear();
-      }
-    }, [counter]);
-
-    // SHIFT DISPLAY ARRAY WHICH IS MAPPED OVER TO PRODUCE TIMER VALUES. IT CONTAINS A TIMER LEGEND AND VALUE
-    const shift = [
-      { legend: "Hours", value: counter.hours },
-      { legend: "Mins", value: counter.minutes },
-      { legend: "Secs", value: counter.seconds },
-    ];
 
     // NECESSARY VALUES COMPONENTS NEED FOR THE CUSTOM COUNTDOWN HOOK TO FUNCTION
     return {
-      shift,
+      // shift,
       shiftDuration,
-      timelineItems,
+      // timelineItems,
       handleChange,
       calculateShift,
-      setTimelineItems,
+      // setTimelineItems,
+      counter,
+      setCounter,
+      countDownTimer,
     };
   },
+  /**HANDLE INPUT CHANGE WITH GETELEMENNT BY ID */
+  handleInputChangeWithID: (elementId, updatedElementId) => {
+    let value;
 
+    if (document.getElementById(elementId) !== null) {
+      value = document.getElementById(elementId).value;
+      document.getElementById(updatedElementId).innerHTML = value;
+    }
+    console.log("Element Value: ", value);
+    return value;
+  },
+  /**Render Time Line Items Dynamically */
+  showTimeLine: (timelineItems, targetLayer) => {
+    const TimeLineView = <TimelineNotification timelineItems={timelineItems} />;
+    console.log(
+      "Check if timeline is targeted: ",
+      document.getElementById(targetLayer)
+    );
+    /** render to layer */
+    render(TimeLineView, document.getElementById(targetLayer));
+  },
+  /**Global Variable to track the timeline state and use it to update the final timeline entry when the countdown timer has exhausted it's values */
+  globalTimeline: null,
+  newTimelineItems: null,
   /** 3.
    * ----------------------------------------------------------------------------------------------------------
    * ---------------------------------getTimeAndProductionStamp------------------------------------------------
@@ -282,9 +356,15 @@ export const functionUtils = {
    * @param {setTimelineItem} formInput
    * ----------------------------------------------------------------------------------------------------------
    */
-  getTimeAndProductionStamp: async (formInput, setTimelineItem) => {
+  getTimeAndProductionStamp: async (
+    currentProductionCapacity,
+    timelineItems,
+    productionDetails,
+    products
+  ) => {
     // Variable to get the accurate time a given production capacity is logged and it's then formated to hours and minutes display and finally used to set the time value property of the timeline item state
     const loggedProductionTime = moment().format("hh:mm");
+    /**Global updated Timeline Array */
 
     // Variable to set the new time/time a production capacity is inputed which is used to calculate the difference between two logged duration on the timeline and saved to session storage
     const LogTime = moment();
@@ -298,8 +378,8 @@ export const functionUtils = {
     const prevloggedProductionDateToServer = moment(getPrevLoggedTime).format(
       "dd/MM/YY"
     );
-    const newloggedProductionTimeToServer = moment().format("hh:mm:ss");
-    const newloggedProductionDateToServer = moment().format("dd/MM/YY");
+    const endloggedProductionTimeToServer = moment().format("hh:mm:ss");
+    const newloggedProductionDateToServer = moment().format("dd/MM/YYYY");
     console.log("New logged time: ", getNewLoggedTime);
     console.log("Prev Logged Time: ", getPrevLoggedTime);
     // Convert logged time values to useful time values for calculations
@@ -318,61 +398,40 @@ export const functionUtils = {
     console.log("Start Date : ", prevloggedProductionDateToServer);
     /**
      * --------------------------------------------------------------------------------------------------------
-     * ---------------------------- GET PRODUCT VARIABLES FROM SERVER--------------------------------
-     * --------------------------------------------------------------------------------------------------------
-     * */
-    const PRODUCT_URL = `${BASE_API_URL}/api/v1/product/list.php`;
-
-    let request = await axios.get(PRODUCT_URL, { id: 1 });
-
-    const productResponse = await request?.data?.data[0];
-
-    console.log("Product Details: ", productResponse);
-    /**
-     * --------------------------------------------------------------------------------------------------------
      * ---------------------------- SEND ADD MARKER DATA TO SERVER--------------------------------
      * --------------------------------------------------------------------------------------------------------
      * */
 
-    const PREV_PRODUCTION_CAPACITY_URL = `${BASE_API_URL}/api/v1/production/add-marker.php`;
-    // PRODUCTION AND TIME STAMP VALUES USING MOMENT.JS TO GET ACCURATE TIME
-    const user = JSON.parse(localStorage.getItem("user"));
-    const userId = JSON.parse(user.id);
-    const userName = user.username;
-    const productId = JSON.parse(productResponse.id);
-    const productName = productResponse.product;
-
-    console.log("User details: ", user);
-    console.log("User Id: ", userId);
-
-    const productionCapacityStamp = {
-      user: userName,
-      "user-id": userId,
-      "product-id": productId,
-      product: productName,
-      "production-capacity": formInput[""],
-      "start-time": prevloggedProductionTimeToServer,
-      "production-date": prevloggedProductionDateToServer,
-    };
-    // FORM POST METHOD TO WEB SERVER
-    const productionRequest = await axios.post(
-      PREV_PRODUCTION_CAPACITY_URL,
-      productionCapacityStamp
-    );
-    // Prev Production Values
-    const productionResponse = await productionRequest.data;
-    console.log("ADD MARKER", productionResponse);
     /**
      * --------------------------------------------------------------------------------------------------------
      * ----------------------------BEGINNING OF PRODUCTION CAPACITY CALCULATION--------------------------------
      * --------------------------------------------------------------------------------------------------------
      * */
+
+    let productDetailsActive = false;
+    let productDetailsStateless;
+    if (productDetailsActive === false) {
+      productDetailsStateless = productionDetails;
+      productDetailsActive = true;
+    }
+
+    /** Temporary / New production capacity */
+    const temporaryProductionCapacity = document.getElementById(
+      "current-production-capacity"
+    ).value;
+
+    console.log("Old Production Capacity", currentProductionCapacity);
+
     // Production Capacity (in percentage) and time variables
     const MAX_PRODUCTION_OUTPUT = 10000;
     const SECONDS = 3600;
+    const DISTANCE_BENCHMARK = 1000;
+    const pumping_distance_in_meters = 1200;
+    const calDistance = DISTANCE_BENCHMARK / pumping_distance_in_meters;
     const MAX_PRODUCTION_OUTPUT_PER_SECONDS = MAX_PRODUCTION_OUTPUT / SECONDS;
     const MAX_PRODUCTION_CAPACITY = 100 / 100;
-    const PRODUCTION_CAPACITY = formInput[""] / 100;
+    let PRODUCTION_CAPACITY = currentProductionCapacity / 100;
+
     const PRODUCTION_TIME = durationInMilliseconds / 1000;
     /**
      * MAX PRODUCTION OUTPUT AT PRODUCTION TIME
@@ -383,70 +442,195 @@ export const functionUtils = {
     /**
      * Production Output at Inputted Production Capacity by Production manager
      */
-    const calcProductionOutput =
+    const calcProductionOutputPerDistance =
       (PRODUCTION_CAPACITY * MAX_PRODUCTION_CAPACITY_AT_PRODUCTION_TIME) /
       MAX_PRODUCTION_CAPACITY;
+    const calcProductionOutput = calcProductionOutputPerDistance * calDistance;
 
     const productionOutputForUser = Math.round(calcProductionOutput);
 
     console.log("Output: ", productionOutputForUser);
+    console.log("Calculated Production Capacity: ", PRODUCTION_CAPACITY);
 
     /*---------------------------------------------------------------------------------------------------------
      *-----------------------------------END OF PRODUCTION CAPACITY CALCULATION--------------------------------
     -----------------------------------------------------------------------------------------------------------
      */
 
-    /*---------------------------------------------------------------------------------------------------------
-     *-----------------------------------END MARKER AND SEND PRODUCTION DATA TO SERVER ------------------------
-    -----------------------------------------------------------------------------------------------------------
-     */
-    const PRODUCTION_CAPACITY_URL = `${BASE_API_URL}/api/v1/production/stop-marker.php`;
-    // PRODUCTION AND TIME STAMP VALUES USING MOMENT.JS TO GET ACCURATE TIME
-    const productionId = productionResponse["production-id"];
-    const batchNo = productionResponse["batch-no"];
-    const productionStamp = {
-      "product-id": productId,
-      "production-id": productionId,
-      "batch-no": batchNo,
-      "end-time": newloggedProductionTimeToServer,
-      "production-date": newloggedProductionDateToServer,
-      "total-qty-pumped": calcProductionOutput,
-      "duration-pumped-in-seconds": PRODUCTION_TIME,
-    };
-    // FORM POST METHOD TO WEB SERVER
-    if (batchNo && productionId) {
-      await axios
-        .post(PRODUCTION_CAPACITY_URL, productionStamp)
-        .then((res) => console.log("STOP MARKER: ", res.data));
-    }
-
     /**
      * Timeline items for notifications. When production capacity falls bellow or above a range of percentages (35%, 50%, 70%),then the timeline item's dot should reflect the rough estimate of the production capacity in colors either danger(red) or warning(yellow) for bellow 50% and secondary(blue) or success(green) for above 50%
      */
-    setTimelineItem((state) => [
-      ...state,
-      {
+    const updatedTimelineItems = (
+      timelineItems,
+      currentProductionCapacity,
+      newTimelineItems
+    ) => {
+      console.log("Previous Timeline Array: ", timelineItems);
+      timelineItems = timelineItems.concat({
         time: loggedProductionTime,
         dotColor: `${
-          formInput[""] < 35
+          currentProductionCapacity < 35
             ? "danger"
-            : formInput[""] < 50
+            : currentProductionCapacity < 50
             ? "warning"
-            : formInput[""] < 70
+            : currentProductionCapacity < 70
             ? "secondary"
-            : formInput[""] > 70
+            : currentProductionCapacity > 70
             ? "success"
             : "secondary"
         }`,
-        text: `Production running at ${formInput[""]}%`,
+        text: `Production running at ${currentProductionCapacity}%`,
         timeSpent: `${hours ? hours : "0"} hrs : ${
           minutes ? minutes : "0"
         } mins :  ${seconds ? seconds : "0"} secs `,
         productionOutput: `Production output per hour: ${productionOutputForUser}cm³ `,
-      },
-    ]);
-    // Set the previous time of the shift while shift is running to help ascertain difference in shift durations when production capacity is being calculated
-    sessionStorage.setItem("prevTime", getNewLoggedTime);
+      });
+
+      console.log("Mutated Timeline Array: ", timelineItems);
+      functionUtils.showTimeLine(timelineItems, "timeline-notification-single");
+      functionUtils.globalTimeline = timelineItems;
+    };
+
+    const userDetails = JSON.parse(localStorage.getItem("user"));
+    const userId = parseInt(userDetails.id);
+    const userName = userDetails.username;
+    const productId = parseInt(productDetailsStateless.product_id);
+    const productName = productDetailsStateless.product_name;
+    const production_id = productDetailsStateless.production_id;
+    const batch_no = productDetailsStateless.batch_no;
+    /**Add Stop Production Data */
+    const addStopMarkerData = {
+      user: userName,
+      "user-id": userId,
+      "product-id": productId,
+      product: productName,
+      "production-capacity": temporaryProductionCapacity,
+      "start-time": prevloggedProductionTimeToServer,
+      "production-id": production_id,
+      "batch-no": batch_no,
+      "end-time": endloggedProductionTimeToServer,
+      "total-qty-pumped": calcProductionOutput,
+      "duration-pumped-in-seconds": PRODUCTION_TIME,
+      "pumping-distance-in-meters": pumping_distance_in_meters,
+      "production-date": prevloggedProductionDateToServer,
+    };
+
+    /** Stop Marker production data */
+
+    const stopMarkerData = {
+      "product-id": productId,
+      "production-id": production_id,
+      "batch-no": batch_no,
+      "end-time": endloggedProductionTimeToServer,
+      "total-qty-pumped": calcProductionOutput,
+      "duration-pumped-in-seconds": PRODUCTION_TIME,
+    };
+    let restartMarker = null;
+    const restartStopMarker = () => {
+      restartMarker = setTimeout(
+        () => document.getElementById("stop-marker").click(),
+        20000
+      );
+      return restartMarker;
+    };
+
+    let stopStartProductionBtnId = document.getElementById("stop-start-marker");
+    let stopProductionBtnId = document.getElementById("stop-marker");
+    if (stopStartProductionBtnId) {
+      console.log("Stop start marker working");
+      console.log("Button clicked: ", stopStartProductionBtnId);
+
+      const response = await axios
+        .post(
+          `${BASE_API_URL}/api/v1/production/stop-add-marker.php`,
+          addStopMarkerData
+        )
+        .catch((error) => {
+          const title = "Error Response",
+            text = error;
+          errorAlert(title, text);
+        });
+
+      console.log("Add Stop Marker Response Data: ", response.data);
+      if (response.data.error) {
+        const title = "Server Error Response",
+          text = response.data.message;
+        errorAlert(title, text);
+      } else {
+        productDetailsStateless.production_id = response.data.production_id;
+        productDetailsStateless.batch_no = response.data.batch_no;
+        /**
+         * Timeline items for notifications. When production capacity falls bellow or above a range of percentages (35%, 50%, 70%),then the timeline item's dot should reflect the rough estimate of the production capacity in colors either danger(red) or warning(yellow) for bellow 50% and secondary(blue) or success(green) for above 50%
+         */
+        updatedTimelineItems(
+          timelineItems,
+          currentProductionCapacity,
+          functionUtils.newTimelineItems
+        );
+
+        currentProductionCapacity = temporaryProductionCapacity;
+        // Set the previous time of the shift while shift is running to help ascertain difference in shift durations when production capacity is being calculated
+        sessionStorage.setItem("prevTime", getNewLoggedTime);
+      }
+    } else if (stopProductionBtnId) {
+      /** Axios call to end production Marker once timer runs out */
+      console.log("Stop Marker working");
+      console.log("Button  clicked stop", stopProductionBtnId);
+
+      axios
+        .put(
+          `${BASE_API_URL}/api/v1/production/stop-marker.php`,
+          stopMarkerData
+        )
+        .then((res) => {
+          console.log("Stop marker response: ", res.data);
+          if (res.data.error) {
+            const title = "Server Error Response",
+              text = res.data.message;
+            errorAlert(title, text);
+            restartStopMarker();
+          } else {
+            const title = "Shift ended Successfully",
+              text = `Start new shift? Click the link below: ${res.data.message}`,
+              link = "<a href='/production'>Start New Production</a>";
+            successAlert(title, text, link);
+            clearTimeout(restartMarker);
+            document.getElementById("stop-marker").id = "stop-start-marker";
+          }
+        })
+        .catch((error) => {
+          console.log("Error occurred", error);
+          const title = "Network Error",
+            text = `Network not available, try switching on your network/data: ${error}`;
+          errorAlert(title, text);
+          restartStopMarker();
+        });
+    }
+
+    /*---------------------------------------------------------------------------------------------------------
+     *-----------------------------------END MARKER AND SEND PRODUCTION DATA TO SERVER ------------------------
+    -----------------------------------------------------------------------------------------------------------
+     */
+
+    return timelineItems;
+  },
+
+  /**End Timeline function which takes timeline values and adds it's item to the previous timeline array by using the global timeline variable*/
+  endTimeline: (endTimelineItem, timelineItems) => {
+    console.log("End TimeLine Item: ", endTimelineItem);
+    if (functionUtils.globalTimeline === null) {
+      functionUtils.globalTimeline = timelineItems;
+    }
+    functionUtils.globalTimeline = functionUtils.globalTimeline.concat(
+      endTimelineItem
+    );
+    console.log("Global timeline: ", functionUtils.globalTimeline);
+    functionUtils.showTimeLine(
+      functionUtils.globalTimeline,
+      "timeline-notification-single"
+    );
+    // alert("How many times ran?", console.log("Alert ran 1 time"));
+    // return globalTimeline;
   },
   /** 4.
    * ----------------------------------------------------------------------------------------------------------

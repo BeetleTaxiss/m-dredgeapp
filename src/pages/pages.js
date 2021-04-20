@@ -2,7 +2,6 @@ import React from "react";
 import { Switch, useRouteMatch } from "react-router";
 import Account from "../components/account/account";
 import AdminDashboard from "../components/admin/admin-dashboard";
-import { CountdownTimer } from "../components/countdownTimer/countdown-timer";
 import InspectorDashboard from "../components/inspector/inspector-dashboard";
 import LoaderDashboard from "../components/loader/loader-dashboard";
 import Navbar from "../components/navbar/navbar";
@@ -10,6 +9,7 @@ import OrderDashboard from "../components/orders/order-dashboard";
 import Profile from "../components/profile/profile";
 import Revenue from "../components/revenue/revenue";
 import SecurityDashboard from "../components/security/security-dashboard";
+import ProductionDashboard from "../components/production/production-dashboard";
 
 const Pages = () => {
   const { url } = useRouteMatch();
@@ -21,7 +21,17 @@ const Pages = () => {
         {url === "/profile" ? (
           <Profile />
         ) : url === "/production" ? (
-          <CountdownTimer />
+          <ProductionDashboard />
+        ) : url === "/productionlist" ? (
+          <ProductionDashboard />
+        ) : url === "/wetsand" ? (
+          <ProductionDashboard />
+        ) : url === "/stockpile" ? (
+          <ProductionDashboard />
+        ) : url === "/stock" ? (
+          <ProductionDashboard />
+        ) : url === "/stockupdate" ? (
+          <ProductionDashboard />
         ) : url === "/singlerevenuereport" ? (
           <Revenue />
         ) : url === "/revenuereport" ? (

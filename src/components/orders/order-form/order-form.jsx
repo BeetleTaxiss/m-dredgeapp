@@ -10,7 +10,7 @@ import LoadingButton from "../../general/loading-button";
 const OrderForm = () => {
   const [order, setOrder] = useState();
   const [products, setProducts] = useState();
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState("₦" + 0);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -18,15 +18,19 @@ const OrderForm = () => {
   useEffect(() =>
     axios.get(`${BASE_API_URL}/api/v1/product/list.php`).then((res) => {
       console.log(res.data);
-      const data = res.data.data;
-      const newArray = data.unshift({
-        id: "0",
-        product: "Select Product",
-        price: 0,
-      });
-      console.log("New Array", newArray);
-      console.log("New Data", data);
-      setProducts(data);
+      if (res.data.error) {
+        console.log("Products Erro: ", res.data.error);
+      } else {
+        const data = res.data.data;
+        const newArray = data.unshift({
+          id: "0",
+          product: "Select Product",
+          price: 0,
+        });
+        console.log("New Array", newArray);
+        console.log("New Data", data);
+        setProducts(data);
+      }
     }, [])
   );
 
@@ -57,6 +61,7 @@ const OrderForm = () => {
     const qtyValue = document.getElementById("qty").value;
     const truckNoValue = document.getElementById("truckNo").value;
     const selectValue = document.getElementById("select").value;
+    const commentValue = document.getElementById("comment").value;
     const { product } = handleOrderChange();
     console.log("Submitted Product", product);
     const user = JSON.parse(localStorage.getItem("user"));
@@ -73,7 +78,9 @@ const OrderForm = () => {
       "total-price": totalPrice,
       "truck-no": truckNoValue,
       description: product[0].description,
+      comment: commentValue,
     };
+    console.log("Add Order Data: ", addOrderData);
     if (error || !error) {
       setLoading(true);
       document.getElementById("loading-btn").disabled = true;
@@ -93,6 +100,7 @@ const OrderForm = () => {
           document.getElementById("qty").value = "";
           document.getElementById("truckNo").value = "";
           document.getElementById("select").value = 0;
+          document.getElementById("comment").value = "";
           setTotalPrice(0);
         }
       });

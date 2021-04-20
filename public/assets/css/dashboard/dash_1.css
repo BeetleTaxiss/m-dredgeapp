@@ -798,13 +798,17 @@
     =====================
 */
 
+.widget.widget-account-invoice-three{
+    box-shadow: none !important;
+}
+
 .widget-account-invoice-three {
     padding: 0;
     border-top-right-radius: 25px;
     border-top-left-radius: 25px;
-    background: #fdfdfd;
+    background: transparent;
     border: none;
-    border: 1px solid #e0e6ed;
+    /* border: 1px solid #e0e6ed; */
     box-shadow: 0 0 40px 0 rgb(94 92 154 / 6%);
 }
 .widget-account-invoice-three .widget-heading {
@@ -812,7 +816,7 @@
     border-radius: 15px;
     background-color: #6b0f1a;
     background-image: linear-gradient(315deg, #6b0f1a 0%, #4361ee 74%);
-    min-height: 213px;
+    min-height: 239px;
     height: 100%;
     
 }
@@ -820,16 +824,52 @@
     display: flex;
     justify-content: space-between;
 }
+.widget-account-invoice-three .widget-heading .wallet-comment {
+    display: none;
+    /* justify-content:; */
+    margin-top: 37px;
+}
+.widget-account-invoice-three .widget-heading .wallet-comment .usr-name-comment {
+   width: 100%;
+}
+.widget-account-invoice-three .widget-heading .wallet-comment .usr-name-comment #span-comment {
+    display: inline-block;
+    color: #fff;
+    background: rgb(0 0 0 / 40%);
+    padding: 5px 12px 5px 12px;
+    border-radius: 21px;
+    position: relative;
+    font-size: 15px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    
+}
 .widget-account-invoice-three .widget-heading .wallet-usr-info span {
     display: inline-block;
     color: #fff;
     background: rgb(0 0 0 / 40%);
-    padding: 5px 12px 5px 6px;
+    padding: 5px 12px 5px 12px;
     border-radius: 21px;
     position: relative;
-    font-size: 13px;
+    font-size: 15px;
     letter-spacing: 1px;
     cursor: pointer;
+}
+.widget-account-invoice-three .widget-heading .wallet-usr-info #span-pending{
+    display: none;
+    padding-left: 22px;
+}
+.widget-account-invoice-three .widget-heading .wallet-usr-info #span-pending:before {
+    content: '';
+    position: absolute;
+    height: 6px;
+    width: 6px;
+    background: white;
+    border-radius: 50%;
+    left: 9px;
+    top: 13px;
 }
 .widget-account-invoice-three .widget-heading .add {
     align-self: center;
@@ -869,12 +909,13 @@
 .widget-account-invoice-three .widget-amount {
     text-align: center;
     margin-top: -48px;
+    background-color: transparent;
 }
 .widget-account-invoice-three .widget-amount .w-a-info {
     display: inline-block;
     padding: 12px 23px;
     background: #fff;
-    text-align: left;
+    text-align: center;
     border-radius: 6px;
     width: 40%;
     -webkit-box-shadow: 0px 8px 20px rgba(0,0,0,0.06);

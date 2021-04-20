@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import HeaderNavbar from "./header-navbar";
 import TopNavbar from "./top-nav";
 import { BASE_API_URL } from "../../hooks/API";
+import "./navbar.scss";
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);

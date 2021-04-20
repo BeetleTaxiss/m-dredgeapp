@@ -37,6 +37,14 @@ export const useFormData = (formInput, totalPrice) => {
       disabled: "disabled",
       required: true,
     },
+    {
+      id: "comment",
+      type: "textarea",
+      name: "comment",
+      holder: "Comment if necessary",
+      className: "form-control",
+      required: false,
+    },
   ];
 
   return { formData };

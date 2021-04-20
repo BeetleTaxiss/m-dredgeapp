@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FormDetails } from "../../orders/order-form/order-form-details";
+import ListSingleViewCard from "../list-single-view-card/list-single-view-card";
 import LoadingButton from "../loading-button";
 import ModalBackdrop from "./modal-backdrop";
 
@@ -19,6 +20,9 @@ const FormModal = ({
   Btntext,
   noClickOutside,
   closeBtn,
+  listItems,
+  cols,
+  rows,
 }) => {
   return (
     <ModalBackdrop
@@ -27,21 +31,38 @@ const FormModal = ({
       setShowModal={setShowModal}
       noClickOutside={noClickOutside}
     >
-      <h2 id="formModal-title">{formTitle}</h2>
-      <p id="formModal-subtitle">{formSubtitle}</p>
+      {formTitle && <h2 id="formModal-title">{formTitle}</h2>}
+      {formSubtitle && <p id="formModal-subtitle">{formSubtitle}</p>}
+      {listItems && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            padding: "1.5rem 1.5rem 0",
+          }}
+        >
+          <ListSingleViewCard />
+        </div>
+      )}
       <form id="formModal" onSubmit={(e) => e.preventDefault()}>
-        {formData.map((item, i) => (
-          <div key={item.id} className="row">
-            <div className="col-md-12">
-              <div className="">
-                <i className="flaticon-location-1"></i>
-                <FormDetails item={item} handleChange={handleChange} />
-                <span className="validation-text"></span>
+        {formData &&
+          formData.map((item, i) => (
+            <div key={item.id} className="row">
+              <div className="col-md-12">
+                <div className="">
+                  <i className="flaticon-location-1"></i>
+                  <FormDetails
+                    item={item}
+                    handleChange={handleChange}
+                    rows={rows}
+                    cols={cols}
+                  />
+                  <span className="validation-text"></span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        <div style={{ display: "flex", gap: "2rem" }}>
+          ))}
+        <div style={{ display: "flex", justifyContent: "center", gap: "2rem" }}>
           <LoadingButton
             handleSubmit={handleSubmit}
             loading={loading}

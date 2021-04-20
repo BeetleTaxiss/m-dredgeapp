@@ -20,6 +20,7 @@ const DispatchOrderList = () => {
             const loaded = item.loaded;
             const inspected = item.inspected;
             const cleared = item.security;
+            const processing = item.processing;
             console.log(
               "Body Items: ",
               dispatchId,
@@ -28,7 +29,8 @@ const DispatchOrderList = () => {
               product,
               loaded,
               inspected,
-              cleared
+              cleared,
+              processing
             );
             const currentDispatch = {
               id: dispatchId,
@@ -49,10 +51,19 @@ const DispatchOrderList = () => {
                   orderId: orderId,
                   class: "text-left",
                   itemClass:
-                    loaded === "0"
+                    processing === "1"
+                      ? "shadow-none badge badge-secondary"
+                      : loaded === "0"
                       ? "shadow-none badge badge-warning"
                       : "shadow-none badge badge-primary",
-                  item: loaded === "0" ? "pending" : "Loaded",
+                  item:
+                    processing === "1"
+                      ? "processing"
+                      : loaded === "0"
+                      ? "pending"
+                      : "Loaded",
+                  loaded: loaded,
+                  processing: processing,
                 },
                 {
                   orderId: orderId,

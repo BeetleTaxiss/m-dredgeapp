@@ -29,7 +29,7 @@ export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
         aria-expanded="true"
         className="dropdown-toggle autodroprown"
         style={{ alignItems: "center" }}
-        onClick={() => setShowSubMenu(true)}
+        onClick={() => setShowSubMenu((prev) => !prev)}
       >
         {/* MENU ITEM CONTAINER */}
         <div
@@ -51,7 +51,9 @@ export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
       {item.subMenuItems && (
         // MENU ITEM SUB-MENU ITEM
         <ul
-          className={`collapse ${showSubMenu && "show"} submenu list-unstyled`}
+          className={`${item.menuItem.class} submenu list-unstyled ${
+            showSubMenu && "show"
+          }`}
           id="dashboard"
           data-parent="#topAccordion"
         >

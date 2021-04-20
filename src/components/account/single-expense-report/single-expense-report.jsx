@@ -57,7 +57,7 @@ export const SingleExpenseReportLinks = () => (
       <div className="invoice-action-btn">
         <div className="row">
           <div className="col-xl-12 col-md-3 col-sm-6">
-            <Link to="javascript:void(0);" className="btn btn-primary btn-send">
+            <Link to="#" className="btn btn-primary btn-send">
               Send Invoice
             </Link>
           </div>
@@ -71,15 +71,12 @@ export const SingleExpenseReportLinks = () => (
             </Link>
           </div>
           <div className="col-xl-12 col-md-3 col-sm-6">
-            <Link
-              to="javascript:void(0);"
-              className="btn btn-success btn-download"
-            >
+            <Link to="#" className="btn btn-success btn-download">
               Download
             </Link>
           </div>
           <div className="col-xl-12 col-md-3 col-sm-6">
-            <Link to="apps_invoice-edit.html" className="btn btn-dark btn-edit">
+            <Link to="#" className="btn btn-dark btn-edit">
               Edit
             </Link>
           </div>

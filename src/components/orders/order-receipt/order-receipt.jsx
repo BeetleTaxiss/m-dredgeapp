@@ -12,6 +12,7 @@ import FormModal from "../../general/modal/form-modal";
 import { useUpdateOrderFormData } from "../../../hooks/useFormData";
 import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
+import { FormDetails } from "../order-form/order-form-details";
 const OrderReceipt = () => {
   const { state } = useLocation();
   const [order, setOrder] = useState();
@@ -76,7 +77,7 @@ const OrderReceipt = () => {
       document.getElementById("loading-btn").disabled = true;
     }
     axios
-      .post(`${BASE_API_URL}/api/v1/order/update.php`, updateOrderData)
+      .put(`${BASE_API_URL}/api/v1/order/update.php`, updateOrderData)
       .then((res) => {
         console.log("UPDATE ORDER: ", res.data);
         if (res.data.error) {
@@ -138,11 +139,13 @@ const OrderReceipt = () => {
     const orderRef = order.order_ref;
     const user = order.user;
     const userId = order.user_id;
+    const comment = document.getElementById("comment").value;
     const dispatchData = {
       "order-id": orderId,
       "order-ref": orderRef,
       user: user,
       "user-id": userId,
+      comment: comment,
     };
     axios
       .post(`${BASE_API_URL}/api/v1/order/dispatch.php`, dispatchData)
@@ -168,6 +171,17 @@ const OrderReceipt = () => {
         }
       });
   };
+
+  const dispatchFormData = [
+    {
+      id: "comment",
+      type: "textarea",
+      name: "comment",
+      holder: "Comment if necessary",
+      className: "form-control",
+      required: false,
+    },
+  ];
 
   const { formData } = useUpdateOrderFormData(totalPrice);
   return (
@@ -212,10 +226,15 @@ const OrderReceipt = () => {
               </div>
             </div>
             {/* BEGINNING OF ORDER RECIEPT LINKS */}
-            <OrderReceiptLinks
-              setShowModal={setShowModal}
-              dispatchOrder={dispatchOrder}
-            />
+            <div className="col-xl-3">
+              <DispatchComment
+                rows={5}
+                cols={3}
+                content={dispatchFormData}
+                dispatchOrder={dispatchOrder}
+              />
+              <OrderReceiptLinks setShowModal={setShowModal} />
+            </div>
             {/* END OF ORDER RECIEPT LINKS */}
           </div>
         </div>
@@ -240,12 +259,51 @@ const OrderReceipt = () => {
   );
 };
 
-export const OrderReceiptLinks = ({ setShowModal, dispatchOrder }) => (
-  <div className="col-xl-3">
+export const OrderReceiptLinks = ({ setShowModal }) => (
+  <div className="">
     <div className="invoice-actions-btn">
       <div className="invoice-action-btn">
         <div className="row">
-          <div className="col-xl-12 col-md-3 col-sm-6">
+          <div className="col-xl-12 col-md-4 col-sm-6">
+            <Link
+              onClick={() => window.print()}
+              to="#"
+              className="btn btn-secondary btn-print  action-print"
+            >
+              Print
+            </Link>
+          </div>
+          <div className="col-xl-12 col-md-4 col-sm-6">
+            <Link to="#" className="btn btn-success btn-download">
+              Download
+            </Link>
+          </div>
+          <div className="col-xl-12 col-md-4 col-sm-6">
+            <Link
+              id="edit-order"
+              to="#"
+              onClick={() => setShowModal(true)}
+              className="btn btn-dark btn-edit"
+            >
+              Edit
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+export const DispatchComment = ({ content, rows, cols, dispatchOrder }) => (
+  <div className="mb-4">
+    <div className="invoice-actions-btn">
+      <div className="invoice-action-btn">
+        <div className="row">
+          <div className="col-xl-12 ">
+            {content.map((item) => (
+              <FormDetails key={item.id} item={item} rows={rows} cols={cols} />
+            ))}
+          </div>
+          <div className="col-xl-12">
             <Link
               id="dispatch-order"
               onClick={() => dispatchOrder()}
@@ -255,6 +313,7 @@ export const OrderReceiptLinks = ({ setShowModal, dispatchOrder }) => (
               Dispatch Order
             </Link>
           </div>
+          {/* 
           <div className="col-xl-12 col-md-3 col-sm-6">
             <Link
               onClick={() => window.print()}
@@ -278,7 +337,7 @@ export const OrderReceiptLinks = ({ setShowModal, dispatchOrder }) => (
             >
               Edit
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

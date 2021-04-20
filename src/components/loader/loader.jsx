@@ -14,9 +14,11 @@ const Loader = () => {
   useEffect(
     () =>
       axios
-        .get(`${BASE_API_URL}/api/v1/order/dispatch-list-loaded.php`, {
+        .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, {
           params: {
-            status: "0",
+            loaded: "0",
+            inspected: "0",
+            cleared: "0",
           },
         })
         .then((res) => {
@@ -30,18 +32,37 @@ const Loader = () => {
             const qty = item.qty;
             const total_price = item.total_price;
             const total_volume = item.total_volume;
+            const truck_Number = item.truck_no;
             const userDetails = JSON.parse(localStorage.getItem("user"));
+            const userName = userDetails.username;
             const userId = userDetails.id;
             const loaded = item.loaded;
             const inspected = item.inspected;
             const cleared = item.security;
             const comment = "";
+            const dispatcherComment = item.dispatcher_comment;
+
             const loadingData = {
               "order-id": orderId,
               "order-ref": orderRef,
               "user-id": userId,
               comment: comment,
             };
+            const loadingDisplayData = {
+              product: product,
+              qty: qty,
+              volume: total_volume,
+              truckNo: truck_Number,
+              price: total_price,
+              dispatchComment: dispatcherComment,
+            };
+            const isProcessing = {
+              "order-id": orderId,
+              "order-ref": orderRef,
+              user: userName,
+              "user-id": userId,
+            };
+
             console.log(
               "Body Items: ",
               dispatchId,
@@ -56,7 +77,8 @@ const Loader = () => {
               comment,
               "Load Data: ",
               loadingData,
-              { loaded, inspected, cleared }
+              { loaded, inspected, cleared },
+              loadingDisplayData
             );
             const currentDispatch = {
               id: dispatchId,
@@ -94,9 +116,12 @@ const Loader = () => {
                 {
                   orderId: orderId,
                   load: loadingData,
+                  loadDisplay: loadingDisplayData,
                   class: "text-center",
                   itemClass: "btn btn-primary",
                   link: setShowModal,
+                  isProcessing: isProcessing,
+                  processing: Processing,
                   linkText: "Process Order",
                 },
               ],
@@ -128,11 +153,26 @@ const Loader = () => {
       id: "comment",
       type: "textarea",
       name: "comment",
-      holder: "Order Cost",
+      holder: "Comment if necessary",
       className: "form-control",
-      required: true,
+      required: false,
     },
   ];
+
+  const Processing = (load) => {
+    axios
+      .put(`${BASE_API_URL}/api/v1/order/processing.php`, load)
+      .then((res) => {
+        console.log("PROCESSING API RESPONSE: ", res.data);
+        if (res.data.error) {
+          console.log(res.data.message);
+        } else {
+          console.log(res.data.message);
+          document.getElementById("span-pending").style.display =
+            "inline-block";
+        }
+      });
+  };
 
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -151,10 +191,7 @@ const Loader = () => {
       showConfirmButton: false,
     });
   };
-  // const handleChange = () => {
-  //   const comment = document.getElementById("comment").value;
-  //   console.log("TextArea: ", comment);
-  // };
+
   // Load Prompter/ Popup
   const loadOrder = () => {
     const comment = document.getElementById("comment").value;
@@ -166,25 +203,25 @@ const Loader = () => {
       console.log("LOAD API RESPONSE: ", res.data);
       if (res.data.error) {
         const title = "Order Loading failed",
-          message = res.data.message;
-        errorAlert(title, message);
+          text = res.data.message;
+        console.log("Order loading failed: ", text);
+        errorAlert(title, text);
       } else {
         document.getElementById("loading-btn").disabled = true;
         const title = "Loaded Successfully",
-          message = res.data.message,
+          text = res.data.message,
           link = "<a href='/loader'>View Loading List</a>";
-        successAlert(title, message, link);
+        successAlert(title, text, link);
         setShowModal(false);
       }
     });
   };
 
+  console.log("Load DATA: ", load);
   return (
     <>
       <CustomTableList setLoad={setLoad} content={loaderListData} />
       <FormModal
-        formTitle="Update Your Order"
-        formSubtitle="Gave the wrong details? Change them below"
         formData={formData}
         showModal={showModal}
         setShowModal={setShowModal}
@@ -193,9 +230,12 @@ const Loader = () => {
         errorMsg={errorMsg}
         status={error}
         handleSubmit={loadOrder}
-        Btntext="Load Order"
+        Btntext="Loading completed"
         noClickOutside
         closeBtn
+        listItems
+        cols={5}
+        rows={3}
       />
     </>
   );

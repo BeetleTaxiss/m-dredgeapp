@@ -12,10 +12,13 @@ const Inspector = () => {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   useEffect(() => {
-    const random = Math.random(90 * 23);
     axios
-      .get(`${BASE_API_URL}/api/v1/order/dispatch-list-inspected.php`, {
-        params: { status: "0" },
+      .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, {
+        params: {
+          loaded: "1",
+          inspected: "0",
+          cleared: "0",
+        },
       })
       .then((res) => {
         let body = [];
@@ -28,15 +31,26 @@ const Inspector = () => {
           const qty = item.qty;
           const total_price = item.total_price;
           const total_volume = item.total_volume;
+          const truck_Number = item.truck_no;
           const userDetails = JSON.parse(localStorage.getItem("user"));
           const userId = userDetails.id;
           const userName = userDetails.username;
+          const loaderComment = item.loader_comment;
 
           const loadingData = {
             "order-id": orderId,
             "order-ref": orderRef,
             "user-id": userId,
             user: userName,
+            comment: "",
+          };
+          const loadingDisplayData = {
+            product: product,
+            qty: qty,
+            volume: total_volume,
+            truckNo: truck_Number,
+            price: total_price,
+            loaderComment: loaderComment,
           };
           console.log("DISPATCH DATA: ", res.data);
           console.log(
@@ -89,6 +103,7 @@ const Inspector = () => {
               {
                 orderId: orderId,
                 load: loadingData,
+                loadDisplay: loadingDisplayData,
                 class: "text-center",
                 itemClass: "btn btn-primary",
                 link: setShowModal,
@@ -101,6 +116,7 @@ const Inspector = () => {
         });
         setBodyData(body);
         console.log("BODY ARRAY: ", body);
+        console.log("BODY Data: ", bodyData);
       });
   }, [bodyData]);
 
@@ -117,14 +133,15 @@ const Inspector = () => {
 
     body: bodyData,
   };
+  console.log("List Data: ", loaderListData);
   const formData = [
     {
       id: "comment",
       type: "textarea",
       name: "comment",
-      holder: "Order Cost",
+      holder: "Comment if necessary",
       className: "form-control",
-      required: true,
+      required: false,
     },
   ];
 
@@ -152,6 +169,7 @@ const Inspector = () => {
   // Load Prompter/ Popup
   const InspectOrder = () => {
     const comment = document.getElementById("comment").value;
+    load.comment = comment;
     console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
@@ -176,8 +194,6 @@ const Inspector = () => {
     <>
       <CustomTableList setLoad={setLoad} content={loaderListData} />
       <FormModal
-        formTitle="Update Your Order"
-        formSubtitle="Gave the wrong details? Change them below"
         formData={formData}
         showModal={showModal}
         setShowModal={setShowModal}
@@ -186,9 +202,12 @@ const Inspector = () => {
         errorMsg={errorMsg}
         status={error}
         handleSubmit={InspectOrder}
-        Btntext="Load Order"
+        Btntext="Inspection Completed"
         noClickOutside
         closeBtn
+        listItems
+        cols={5}
+        rows={3}
       />
     </>
   );

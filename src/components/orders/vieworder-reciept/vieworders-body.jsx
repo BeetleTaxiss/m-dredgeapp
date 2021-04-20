@@ -17,7 +17,11 @@ const ViewordersTableBody = ({ content }) => {
     <tbody>
       {content ? (
         content?.map((item, i) => (
-          <tr key={item.id} role="row">
+          <tr
+            key={item.id}
+            role="row"
+            className={`${item.dispatched === "1" ? "dispatched" : ""}`}
+          >
             <td>{item.date_in}</td>
             <td>{item.truck_no}</td>
             <td>{item.qty}</td>

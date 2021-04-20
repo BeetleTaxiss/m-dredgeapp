@@ -1,0 +1,36 @@
+.list-unstyled.menu-categories {
+
+ .menu.single-menu.active {
+  .dashboard.submenu.list-unstyled:not(.show) {
+   display: none
+  }
+
+  .admin.submenu.list-unstyled:not(.show) {
+   display: none
+  }
+
+  .accountant.submenu.list-unstyled:not(.show) {
+   display: none
+  }
+
+  .orders.submenu.list-unstyled:not(.show) {
+   display: none
+  }
+
+  .production.submenu.list-unstyled:not(.show) {
+   display: none
+  }
+
+  .loader.submenu.list-unstyled:not(.show) {
+   display: none
+  }
+
+  .inspect.submenu.list-unstyled:not(.show) {
+   display: none
+  }
+
+  .clearance.submenu.list-unstyled:not(.show) {
+   display: none
+  }
+ }
+}
