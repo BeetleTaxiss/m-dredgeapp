@@ -60,6 +60,16 @@ export const topNavBarData = [
       { link: "/postexpense", text: "Post Expenses" },
       { link: "/expensereport", text: "Expense Report" },
       { link: "/revenuereport", text: "Revenue Report" },
+      {
+        link: "#",
+        text: "Account",
+        class: "sub-sub-submenu-list",
+        subItem: [
+          { link: "/addaccount", text: "Add Account" },
+          { link: "/accountlist", text: "Account List" },
+          { link: "/chartlist", text: "Chart List" },
+        ],
+      },
     ],
   },
   // END OF SINGLE MENU ITEM DATA

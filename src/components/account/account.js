@@ -4,6 +4,9 @@ import PieChart from "../cards/pie-chart";
 import RecentOrders from "../cards/recent-orders";
 import Summary from "../cards/summary";
 import PageWrapper from "../general/page-wrapper";
+import AccountList from "./account-actions/account-list";
+import AddAccount from "./account-actions/add-account";
+import ChartList from "./charts/chart-list";
 import ExpenseReport from "./expense-report/expense-report";
 import PostExpense from "./post-expense";
 import SingleExpenseReport from "./single-expense-report/single-expense-report";
@@ -21,6 +24,12 @@ const Account = () => {
         <ExpenseReport />
       ) : url === "/singleexpensereport" ? (
         <SingleExpenseReport />
+      ) : url === "/chartlist" ? (
+        <ChartList />
+      ) : url === "/accountlist" ? (
+        <AccountList />
+      ) : url === "/addaccount" ? (
+        <AddAccount />
       ) : null}
       {/* <RecentOrders />
       <PieChart />

@@ -8,6 +8,9 @@ function App() {
   return (
     <div className="App">
       <Switch>
+        <Route path="/accountlist" component={Pages} />
+        <Route path="/addaccount" component={Pages} />
+        <Route path="/chartlist" component={Pages} />
         <Route path="/singlerevenuereport" component={Pages} />
         <Route path="/revenuereport" component={Pages} />
         <Route path="/singleexpensereport" component={Pages} />
