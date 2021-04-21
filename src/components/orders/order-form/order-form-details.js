@@ -41,6 +41,7 @@ export const FormDetails = ({
               <option key={option.id} value={option.id}>
                 {option.product && option.product}
                 {option.user_type && option.user_type}
+                {option.machinery_name && option.machinery_name}
               </option>
             ))}
           </select>

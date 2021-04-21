@@ -13,6 +13,11 @@ function App() {
         <Route path="/singleexpensereport" component={Pages} />
         <Route path="/expensereport" component={Pages} />
         <Route path="/postexpense" component={Pages} />
+        <Route path="/operations" component={Pages} />
+        <Route path="/addfuel" component={Pages} />
+        <Route path="/fuelissue" component={Pages} />
+        <Route path="/fuelissuelist" component={Pages} />
+        <Route path="/fuelupdatelist" component={Pages} />
         <Route path="/products" component={Pages} />
         <Route path="/users" component={Pages} />
         <Route path="/loader" component={Pages} />

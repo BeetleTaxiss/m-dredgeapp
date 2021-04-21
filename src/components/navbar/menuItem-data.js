@@ -32,6 +32,18 @@ export const topNavBarData = [
     subMenuItems: [
       { link: "/users", text: "Users" },
       { link: "/products", text: "Set Products" },
+      {
+        link: "#",
+        text: "Operations",
+        class: "sub-sub-submenu-list",
+        subItem: [
+          { link: "/operations", text: "Set Machinery Items" },
+          { link: "/addfuel", text: "Add Fuel" },
+          { link: "/fuelissue", text: "Dispense Fuel" },
+          { link: "/fuelissuelist", text: "Fuel issue List" },
+          { link: "/fuelupdatelist", text: "Fuel Update List" },
+        ],
+      },
     ],
   },
   // END OF SINGLE MENU ITEM DATA
@@ -47,8 +59,6 @@ export const topNavBarData = [
     subMenuItems: [
       { link: "/postexpense", text: "Post Expenses" },
       { link: "/expensereport", text: "Expense Report" },
-      { link: "/placeorder", text: "Place Order" },
-      { link: "/vieworders", text: "View Orders" },
       { link: "/revenuereport", text: "Revenue Report" },
     ],
   },

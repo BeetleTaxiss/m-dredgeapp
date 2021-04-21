@@ -89,24 +89,36 @@ const CustomTableListBody = ({ content, setLoad }) => {
                   </Link>
                 ) : field.editScroll ? (
                   <ScrollLink
-                    className="menu-links"
+                    id="edit-btn-icon"
+                    className="edit-btn-icon"
+                    style={{
+                      backgroundColor: "transparent",
+                      border: "none",
+                    }}
                     to={field.scrollLocation}
                     activeClass="active"
                     smooth={true}
                     duration={500}
                     onClick={() => {
-                      field.onClick && field.updateFormField();
                       return field.onClick ? field.onClick() : null;
                     }}
                   >
                     <EditIcon />
                   </ScrollLink>
                 ) : field.edit ? (
-                  <EditIcon
+                  <button
+                    id="edit-btn-icon"
+                    className="edit-btn-icon"
+                    style={{
+                      backgroundColor: "transparent",
+                      border: "none",
+                    }}
                     onClick={() => {
                       return field.onClick ? field.onClick() : null;
                     }}
-                  />
+                  >
+                    <EditIcon id="edit-btn-icon" />
+                  </button>
                 ) : field.delete ? (
                   <DeleteIcon
                     onClick={() => {

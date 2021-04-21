@@ -9,7 +9,7 @@ import AddUpdateProduct from "./add-update-product";
 
 import "./product.css";
 
-const Units = () => {
+const Products = () => {
   const [productsList, setProductsList] = useState();
   const [showUpdateProduct, setShowUpdateProduct] = useState(false);
   const [loading, setloading] = useState(false);
@@ -41,6 +41,8 @@ const Units = () => {
                   measurement = item.measurement;
 
                 const productItemData = {
+                  user: user_name,
+                  user_id: user_id,
                   product: product,
                   product_id: product_id,
                   description: description,
@@ -90,10 +92,9 @@ const Units = () => {
                       itemClass: "text-center",
                       editScroll: true,
                       scrollLocation: "update-form",
-                      updateFormField: () =>
-                        handleUpdateFormFields(productItemData),
-                      productItemData: productItemData,
-                      onClick: () => setShowUpdateProduct(true),
+                      onClick: () => {
+                        handleUpdateFormFields(productItemData);
+                      },
                     },
                     {
                       class: "text-left",
@@ -137,6 +138,8 @@ const Units = () => {
       source.cancel();
     };
   }, []);
+
+  useEffect(() => {}, [showUpdateProduct]);
 
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
@@ -218,16 +221,20 @@ const Units = () => {
       });
   };
   const handleUpdateProduct = () => {
-    const product_name = document.getElementById("update-product").value;
-    const product_unit = document.getElementById("update-product-unit").value;
-    const product_price = document.getElementById("update-product-price").value;
-    const product_measurement = document.getElementById(
-      "update-product-measurement"
-    ).value;
-    const product_description = document.getElementById(
-      "update-product-description"
-    ).value;
+    const user = document.getElementById("user").value;
+    const user_id = document.getElementById("user-id").value;
+    const product_id = document.getElementById("product-id").value;
+    const product_name = document.getElementById("product").value;
+    const product_unit = document.getElementById("product-unit").value;
+    const product_price = document.getElementById("product-price").value;
+    const product_measurement = document.getElementById("product-measurement")
+      .value;
+    const product_description = document.getElementById("product-description")
+      .value;
     const updateProductData = {
+      user: user,
+      "user-id": user_id,
+      "product-id": product_id,
       product: product_name,
       unit: product_unit,
       price: product_price,
@@ -236,7 +243,7 @@ const Units = () => {
     };
     console.log("Update product API values: ", updateProductData);
     axios
-      .post(`${BASE_API_URL}/api/v1/product/update.php`, updateProductData)
+      .put(`${BASE_API_URL}/api/v1/product/update.php`, updateProductData)
       .then((res) => {
         console.log("Add product response data: ", res.data);
         if (res.data.error) {
@@ -252,33 +259,25 @@ const Units = () => {
       });
   };
   const handleUpdateFormFields = (productItemData) => {
-    if (document.getElementById("update-product") !== null) {
-      document.getElementById("update-product").value =
-        productItemData?.product;
-    }
-    if (document.getElementById("update-product-unit") !== null) {
-      document.getElementById("update-product-unit").value =
-        productItemData?.unit;
-    }
-    if (document.getElementById("update-product-price") !== null) {
-      document.getElementById("update-product-price").value =
-        productItemData?.price;
-    }
-    if (document.getElementById("update-product-measurement") !== null) {
-      document.getElementById("update-product-measurement").value =
-        productItemData?.measurement;
-    }
-    if (document.getElementById("update-product-description") !== null) {
-      document.getElementById("update-product-description").value =
-        productItemData?.description;
+    if (
+      document.getElementById("add-form-btn") !== null &&
+      document.getElementById("edit-btn-icon") !== null
+    ) {
+      document.getElementsByClassName("edit-btn-icon").disabled = true;
+      console.log(document.getElementById("add-form-btn"));
+    } else {
+      document.getElementById("user").value = productItemData.user;
+      document.getElementById("user-id").value = productItemData.user_id;
+      document.getElementById("product-id").value = productItemData.product_id;
+      document.getElementById("product").value = productItemData.product;
+      document.getElementById("product-unit").value = productItemData.unit;
+      document.getElementById("product-price").value = productItemData.price;
+      document.getElementById("product-measurement").value =
+        productItemData.measurement;
+      document.getElementById("product-description").value =
+        productItemData.description;
     }
     console.log("Update State", showUpdateProduct);
-    console.log("Product Item 2", productItemData);
-    console.log("Field: ", document.getElementById("update-product"));
-    console.log(
-      "Field 2: ",
-      document.getElementById("update-product-description")
-    );
   };
   /** Product List Table Data */
   const productListTableData = {
@@ -295,92 +294,75 @@ const Units = () => {
 
     body: productsList,
   };
-  const addUpdateFormData = {
-    addProductformData: [
-      {
-        id: "product",
-        type: "text",
-        name: "product",
-        holder: "Product Name",
-        className: `form-control ${showUpdateProduct && "form-hidden"}`,
-        required: true,
-      },
-      {
-        id: "product-price",
-        type: "text",
-        name: "price",
-        holder: "Product's Price",
-        className: `form-control ${showUpdateProduct && "form-hidden"}`,
-        required: true,
-      },
-      {
-        id: "product-unit",
-        type: "text",
-        name: "unit",
-        holder: "Product's Unit",
-        className: `form-control ${showUpdateProduct && "form-hidden"}`,
-        required: true,
-      },
-      {
-        id: "product-measurement",
-        type: "text",
-        name: "measurement",
-        holder: "Product's Measurement",
-        className: `form-control ${showUpdateProduct && "form-hidden"}`,
-        required: true,
-      },
-      {
-        id: "product-description",
-        type: "textarea",
-        name: "description",
-        holder: "Product Description",
-        className: `form-control ${showUpdateProduct && "form-hidden"}`,
-        required: false,
-      },
-    ],
-    updateProductformData: [
-      {
-        id: "update-product",
-        type: "text",
-        name: "product",
-        holder: "Product Name",
-        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
-        required: true,
-      },
-      {
-        id: "update-product-price",
-        type: "text",
-        name: "price",
-        holder: "Product's Price",
-        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
-        required: true,
-      },
-      {
-        id: "update-product-unit",
-        type: "text",
-        name: "unit",
-        holder: "Product's Unit",
-        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
-        required: true,
-      },
-      {
-        id: "update-product-measurement",
-        type: "text",
-        name: "measurement",
-        holder: "Product's Measurement",
-        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
-        required: true,
-      },
-      {
-        id: "update-product-description",
-        type: "textarea",
-        name: "description",
-        holder: "Product Description",
-        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
-        required: false,
-      },
-    ],
-  };
+  const addUpdateProductformData = [
+    {
+      id: "user",
+      type: "text",
+      name: "user",
+      holder: "",
+      className: "form-control",
+      hidden: true,
+      required: false,
+    },
+    {
+      id: "user-id",
+      type: "text",
+      name: "user-id",
+      holder: "",
+      className: "form-control",
+      hidden: true,
+      required: false,
+    },
+    {
+      id: "product-id",
+      type: "text",
+      name: "product-id",
+      holder: "",
+      className: "form-control",
+      hidden: true,
+      required: false,
+    },
+    {
+      id: "product",
+      type: "text",
+      name: "product",
+      holder: "Product Name",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "product-price",
+      type: "text",
+      name: "price",
+      holder: "Product's Price",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "product-unit",
+      type: "text",
+      name: "unit",
+      holder: "Product's Unit",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "product-measurement",
+      type: "text",
+      name: "measurement",
+      holder: "Product's Measurement",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "product-description",
+      type: "textarea",
+      name: "description",
+      holder: "Product Description",
+      className: "form-control",
+      required: false,
+    },
+  ];
 
   /** Products Component */
   const ProductsComponent = () => {
@@ -395,8 +377,9 @@ const Units = () => {
             style={{ display: "grid", padding: "2rem", gap: "2rem" }}
           >
             <AddUpdateProduct
+              onClick={() => setShowUpdateProduct((prev) => !prev)}
               showUpdateProduct={showUpdateProduct}
-              content={addUpdateFormData}
+              content={addUpdateProductformData}
               loading={loading}
               handleAddSubmit={handleAddProduct}
               handleUpdateSubmit={handleUpdateProduct}
@@ -410,4 +393,4 @@ const Units = () => {
   return <ProductsComponent />;
 };
 
-export default Units;
+export default Products;

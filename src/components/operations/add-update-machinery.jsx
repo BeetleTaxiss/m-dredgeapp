@@ -3,7 +3,7 @@ import LoadingButton from "../general/loading-button";
 import { FormDetails } from "../orders/order-form/order-form-details";
 const AddUpdateProduct = ({
   content,
-  showUpdateProduct,
+  showUpdateMachinery,
   onClick,
   handleAddSubmit,
   handleUpdateSubmit,
@@ -23,20 +23,20 @@ const AddUpdateProduct = ({
               }}
             >
               <p>
-                {showUpdateProduct
-                  ? "Update product information"
-                  : "Add new product information"}
+                {showUpdateMachinery
+                  ? "Update machinery item information"
+                  : "Add new machinery item information"}
               </p>
               <button
-                id={showUpdateProduct ? "update-form-btn" : "add-form-btn"}
+                id={showUpdateMachinery ? "update-form-btn" : "add-form-btn"}
                 className="btn btn-success mb-3"
                 onClick={() => {
                   return onClick ? onClick() : null;
                 }}
               >
-                {showUpdateProduct
-                  ? "Go to add Products"
-                  : "Go to update products"}
+                {showUpdateMachinery
+                  ? "Go to add Machinery Item"
+                  : "Go to update Machinery Item"}
               </button>
             </div>
 
@@ -45,10 +45,14 @@ const AddUpdateProduct = ({
             ))}
             <LoadingButton
               handleSubmit={
-                showUpdateProduct ? handleUpdateSubmit : handleAddSubmit
+                showUpdateMachinery ? handleUpdateSubmit : handleAddSubmit
               }
               loading={loading}
-              text={showUpdateProduct ? "Update Product" : "Add Product"}
+              text={
+                showUpdateMachinery
+                  ? "Update Machinery Item"
+                  : "Add Machinery Item"
+              }
             />
           </div>
         </form>

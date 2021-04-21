@@ -60,6 +60,16 @@ const Pages = () => {
           <AdminDashboard />
         ) : url === "/products" ? (
           <AdminDashboard />
+        ) : url === "/operations" ? (
+          <AdminDashboard />
+        ) : url === "/addfuel" ? (
+          <AdminDashboard />
+        ) : url === "/fuelissue" ? (
+          <AdminDashboard />
+        ) : url === "/fuelissuelist" ? (
+          <AdminDashboard />
+        ) : url === "/fuelupdatelist" ? (
+          <AdminDashboard />
         ) : null}
       </Switch>
     </>

@@ -59,8 +59,29 @@ export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
         >
           {item.subMenuItems.map((subItem, i) => {
             return (
-              <li key={i} className="active">
-                <Link to={subItem.link}> {subItem.text} </Link>
+              <li key={i} className={subItem.class}>
+                <Link to={subItem.link}>
+                  {subItem.text}
+
+                  {subItem.subItem && (
+                    <ion-icon
+                      className="feather feather-chevron-down"
+                      src={dropdown}
+                    />
+                  )}
+                </Link>
+                <ul
+                  className="collapse list-unstyled sub-submenu"
+                  id="datatable"
+                  data-parent="#data-parent"
+                >
+                  {subItem.subItem &&
+                    subItem.subItem.map((item, i) => (
+                      <li key={i} className={item.class}>
+                        <Link to={item.link}> {item.text} </Link>
+                      </li>
+                    ))}
+                </ul>
               </li>
             );
           })}
