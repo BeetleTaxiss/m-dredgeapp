@@ -60,11 +60,12 @@ const AccountList = () => {
                       class: "text-left",
                       itemClass: "text-center",
                       delete: true,
-                      onClick: () => {},
-                      // warningAlert(
-                      //   `Are you sure you want to delete this product: ${product}`,
-                      //   deleteProductItemData
-                      // ),
+                      onClick: () => {
+                        warningAlert(
+                          `Are you sure you want to delete this account: ${account_name}`,
+                          account_id
+                        );
+                      },
                     },
                   ],
                 };
@@ -97,6 +98,15 @@ const AccountList = () => {
     };
   }, []);
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
+  const successAlert = (title, text, link) => {
+    Swal.fire({
+      icon: "success",
+      title: title,
+      text: text,
+      footer: link,
+      showConfirmButton: false,
+    });
+  };
   const errorAlert = (title, text) => {
     Swal.fire({
       icon: "error",
@@ -104,6 +114,41 @@ const AccountList = () => {
       text: text,
       showConfirmButton: false,
     });
+  };
+  const warningAlert = (title, account_id) => {
+    Swal.fire({
+      icon: "warning",
+      title: title,
+    }).then((value) => {
+      if (value.isConfirmed) {
+        handleDeleteAccount(account_id);
+      }
+    });
+  };
+
+  const handleDeleteAccount = (id) => {
+    const userDetails = JSON.parse(localStorage.getItem("user")),
+      user_name = userDetails.username,
+      user_id = userDetails.id;
+    axios
+      .post(`${BASE_API_URL}/api/v1/account/account-delete.php`, {
+        user: user_name,
+        "user-id": user_id,
+        "account-id": id,
+      })
+      .then((res) => {
+        console.log("Delete response data: ", res.data);
+        if (res.data.error) {
+          let title = "Server Error",
+            text = res.data.message;
+          errorAlert(title, text);
+        } else {
+          let title = "Account deleted Successfully",
+            text = res.data.message,
+            link = `<a href="/accountlist">View Account List</a>`;
+          successAlert(title, text, link);
+        }
+      });
   };
 
   /** Account List Table Data */
