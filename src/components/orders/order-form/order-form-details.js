@@ -10,6 +10,7 @@ export const FormDetails = ({
     ...otherProps
   },
   handleChange,
+  visibility,
   errors,
   cols,
   rows,
@@ -55,7 +56,9 @@ export const FormDetails = ({
           value={value}
           disabled={otherProps.disabled}
           {...otherProps}
-          style={{ marginBottom: "2rem" }}
+          style={{
+            marginBottom: "2rem",
+          }}
           cols={cols ? cols : 5}
           rows={rows ? rows : 5}
         />

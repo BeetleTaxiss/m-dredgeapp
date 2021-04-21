@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { Element } from "react-scroll";
 import WidgetHeader from "../general/widget-header";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import AddUpdateProduct from "./add-update-product";
+
+import "./product.css";
 
 const Units = () => {
   const [productsList, setProductsList] = useState();
@@ -27,12 +30,32 @@ const Units = () => {
             } else {
               const productsListItems = res.data.data;
               productsListItems.map((item) => {
+                const userDetails = JSON.parse(localStorage.getItem("user")),
+                  user_name = userDetails.username,
+                  user_id = userDetails.id;
                 const product = item.product,
                   product_id = item.id,
                   description = item.description,
                   price = item.price,
                   unit = item.unit,
                   measurement = item.measurement;
+
+                const productItemData = {
+                  product: product,
+                  product_id: product_id,
+                  description: description,
+                  price: price,
+                  unit: unit,
+                  measurement: measurement,
+                };
+
+                const deleteProductItemData = {
+                  user: user_name,
+                  "user-id": user_id,
+                  product: product,
+                  "product-id": product_id,
+                };
+
                 const currentProductItem = {
                   id: product_id,
                   fields: [
@@ -62,14 +85,25 @@ const Units = () => {
                       itemClass: "text-center",
                       item: description,
                     },
-
                     {
-                      class: "text-center",
-                      itemClass: "btn btn-primary",
-                      // toStockpile: toStockpileData,
-                      // warningAlert: warningAlert,
-                      link: true,
-                      linkText: "Stockpile",
+                      class: "text-left",
+                      itemClass: "text-center",
+                      editScroll: true,
+                      scrollLocation: "update-form",
+                      updateFormField: () =>
+                        handleUpdateFormFields(productItemData),
+                      productItemData: productItemData,
+                      onClick: () => setShowUpdateProduct(true),
+                    },
+                    {
+                      class: "text-left",
+                      itemClass: "text-center",
+                      delete: true,
+                      onClick: () =>
+                        warningAlert(
+                          `Are you sure you want to delete this product: ${product}`,
+                          deleteProductItemData
+                        ),
                     },
                   ],
                 };
@@ -83,6 +117,7 @@ const Units = () => {
             }
           })
           .catch((error) => {
+            console.log("API error: ", error);
             let title = "Network Error",
               text = error;
             errorAlert(title, text);
@@ -122,16 +157,34 @@ const Units = () => {
     });
   };
 
-  // const warningAlert = (title, toStockpile) => {
-  //   Swal.fire({
-  //     icon: "warning",
-  //     title: title,
-  //   }).then((value) => {
-  //     if (value.isConfirmed) {
-  //       handleStockpile(toStockpile);
-  //     }
-  //   });
-  // };
+  const warningAlert = (title, deleteItem) => {
+    Swal.fire({
+      icon: "warning",
+      title: title,
+    }).then((value) => {
+      if (value.isConfirmed) {
+        handleDeleteProductItem(deleteItem);
+      }
+    });
+  };
+
+  const handleDeleteProductItem = (deleteItem) => {
+    axios
+      .post(`${BASE_API_URL}/api/v1/product/delete.php`, deleteItem)
+      .then((res) => {
+        console.log("Delete product response data: ", res.data);
+        if (res.data.error) {
+          let title = "Server Error Response",
+            text = res.data.message;
+          errorAlert(title, text);
+        } else {
+          let title = "Product Deleted Successfully",
+            text = res.data.message,
+            link = `<a href="/products">View Product List</a>`;
+          successAlert(title, text, link);
+        }
+      });
+  };
   const handleAddProduct = () => {
     const product_name = document.getElementById("product").value;
     const product_unit = document.getElementById("product-unit").value;
@@ -164,7 +217,69 @@ const Units = () => {
         }
       });
   };
-  const handleUpdateProduct = () => {};
+  const handleUpdateProduct = () => {
+    const product_name = document.getElementById("update-product").value;
+    const product_unit = document.getElementById("update-product-unit").value;
+    const product_price = document.getElementById("update-product-price").value;
+    const product_measurement = document.getElementById(
+      "update-product-measurement"
+    ).value;
+    const product_description = document.getElementById(
+      "update-product-description"
+    ).value;
+    const updateProductData = {
+      product: product_name,
+      unit: product_unit,
+      price: product_price,
+      measurement: product_measurement,
+      description: product_description,
+    };
+    console.log("Update product API values: ", updateProductData);
+    axios
+      .post(`${BASE_API_URL}/api/v1/product/update.php`, updateProductData)
+      .then((res) => {
+        console.log("Add product response data: ", res.data);
+        if (res.data.error) {
+          let title = "Server Error Response",
+            text = res.data.message;
+          errorAlert(title, text);
+        } else {
+          let title = "Product Updated Successfully",
+            text = res.data.message,
+            link = `<a href="/products">View Product List</a>`;
+          successAlert(title, text, link);
+        }
+      });
+  };
+  const handleUpdateFormFields = (productItemData) => {
+    if (document.getElementById("update-product") !== null) {
+      document.getElementById("update-product").value =
+        productItemData?.product;
+    }
+    if (document.getElementById("update-product-unit") !== null) {
+      document.getElementById("update-product-unit").value =
+        productItemData?.unit;
+    }
+    if (document.getElementById("update-product-price") !== null) {
+      document.getElementById("update-product-price").value =
+        productItemData?.price;
+    }
+    if (document.getElementById("update-product-measurement") !== null) {
+      document.getElementById("update-product-measurement").value =
+        productItemData?.measurement;
+    }
+    if (document.getElementById("update-product-description") !== null) {
+      document.getElementById("update-product-description").value =
+        productItemData?.description;
+    }
+    console.log("Update State", showUpdateProduct);
+    console.log("Product Item 2", productItemData);
+    console.log("Field: ", document.getElementById("update-product"));
+    console.log(
+      "Field 2: ",
+      document.getElementById("update-product-description")
+    );
+  };
   /** Product List Table Data */
   const productListTableData = {
     tableTitle: "",
@@ -174,6 +289,7 @@ const Units = () => {
       { class: "", title: "Unit" },
       { class: "", title: "Measurement" },
       { class: "", title: "Description" },
+      { class: "", title: "" },
       { class: "", title: "" },
     ],
 
@@ -186,7 +302,7 @@ const Units = () => {
         type: "text",
         name: "product",
         holder: "Product Name",
-        className: "form-control",
+        className: `form-control ${showUpdateProduct && "form-hidden"}`,
         required: true,
       },
       {
@@ -194,7 +310,7 @@ const Units = () => {
         type: "text",
         name: "price",
         holder: "Product's Price",
-        className: "form-control",
+        className: `form-control ${showUpdateProduct && "form-hidden"}`,
         required: true,
       },
       {
@@ -202,7 +318,7 @@ const Units = () => {
         type: "text",
         name: "unit",
         holder: "Product's Unit",
-        className: "form-control",
+        className: `form-control ${showUpdateProduct && "form-hidden"}`,
         required: true,
       },
       {
@@ -210,7 +326,7 @@ const Units = () => {
         type: "text",
         name: "measurement",
         holder: "Product's Measurement",
-        className: "form-control",
+        className: `form-control ${showUpdateProduct && "form-hidden"}`,
         required: true,
       },
       {
@@ -218,7 +334,7 @@ const Units = () => {
         type: "textarea",
         name: "description",
         holder: "Product Description",
-        className: "form-control",
+        className: `form-control ${showUpdateProduct && "form-hidden"}`,
         required: false,
       },
     ],
@@ -228,7 +344,7 @@ const Units = () => {
         type: "text",
         name: "product",
         holder: "Product Name",
-        className: "form-control",
+        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
         required: true,
       },
       {
@@ -236,7 +352,7 @@ const Units = () => {
         type: "text",
         name: "price",
         holder: "Product's Price",
-        className: "form-control",
+        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
         required: true,
       },
       {
@@ -244,7 +360,7 @@ const Units = () => {
         type: "text",
         name: "unit",
         holder: "Product's Unit",
-        className: "form-control",
+        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
         required: true,
       },
       {
@@ -252,7 +368,7 @@ const Units = () => {
         type: "text",
         name: "measurement",
         holder: "Product's Measurement",
-        className: "form-control",
+        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
         required: true,
       },
       {
@@ -260,7 +376,7 @@ const Units = () => {
         type: "textarea",
         name: "description",
         holder: "Product Description",
-        className: "form-control",
+        className: `form-control ${!showUpdateProduct && "form-hidden"}`,
         required: false,
       },
     ],
@@ -270,6 +386,7 @@ const Units = () => {
   const ProductsComponent = () => {
     return (
       <div id="basic" className="col-lg-12 layout-spacing">
+        <Element id="update-form" name="update-form" />
         <div className="statbox widget box box-shadow">
           {/* HEADER TITLE FOR THE FORM */}
           <WidgetHeader title="Set Product Values" />

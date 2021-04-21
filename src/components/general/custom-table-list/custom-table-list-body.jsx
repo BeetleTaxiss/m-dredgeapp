@@ -1,7 +1,9 @@
 import React from "react";
 import Skeleton from "react-loading-skeleton";
 import { Link } from "react-router-dom";
-
+import { Link as ScrollLink } from "react-scroll";
+import { ReactComponent as EditIcon } from "../../../assets/editIcon.svg";
+import { ReactComponent as DeleteIcon } from "../../../assets/deleteIcon.svg";
 const CustomTableListBody = ({ content, setLoad }) => {
   return (
     <tbody>
@@ -85,6 +87,32 @@ const CustomTableListBody = ({ content, setLoad }) => {
                   >
                     {field.linkText}
                   </Link>
+                ) : field.editScroll ? (
+                  <ScrollLink
+                    className="menu-links"
+                    to={field.scrollLocation}
+                    activeClass="active"
+                    smooth={true}
+                    duration={500}
+                    onClick={() => {
+                      field.onClick && field.updateFormField();
+                      return field.onClick ? field.onClick() : null;
+                    }}
+                  >
+                    <EditIcon />
+                  </ScrollLink>
+                ) : field.edit ? (
+                  <EditIcon
+                    onClick={() => {
+                      return field.onClick ? field.onClick() : null;
+                    }}
+                  />
+                ) : field.delete ? (
+                  <DeleteIcon
+                    onClick={() => {
+                      return field.onClick ? field.onClick() : null;
+                    }}
+                  />
                 ) : (
                   <span className={field.itemClass}>
                     {field.item && field.item}

@@ -1,3 +1,7 @@
 .switch.align-self-center{
  align-self: flex-start!important;
 }
+
+/* .form-control.form-hidden{
+ visibility: hidden;
+} */

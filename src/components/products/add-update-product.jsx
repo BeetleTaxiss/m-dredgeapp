@@ -14,11 +14,16 @@ const AddUpdateProduct = ({
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
             {/* SUB-TITLE FOR THE FORM */}
-            <p>Fill in order details</p>
+            <p>
+              {showUpdateProduct
+                ? "Update product information"
+                : "Add new product information"}
+            </p>
 
             {showUpdateProduct
               ? updateProductformData?.map((item, i) => (
                   <FormDetails
+                    visibility={showUpdateProduct}
                     key={i}
                     item={item}
                     // handleChange={handleOrderChange}

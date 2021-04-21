@@ -45,12 +45,12 @@ const ProductionList = () => {
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: batch,
+                      item: production_date,
                     },
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: production_date,
+                      item: batch,
                     },
                     {
                       class: "text-left",
@@ -141,8 +141,8 @@ const ProductionList = () => {
   const productionListTableData = {
     tableTitle: "Production List",
     header: [
-      { class: "", title: "Batch No" },
       { class: "", title: "Date" },
+      { class: "", title: "Batch No" },
       { class: "", title: "Start Time" },
       { class: "", title: "End Time" },
       { class: "", title: "Qty pumped(cm³)" },
