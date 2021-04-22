@@ -46,12 +46,12 @@ const AccountList = () => {
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: account_name,
+                      item: chart_id,
                     },
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: chart_id,
+                      item: account_name,
                     },
                     {
                       class: "text-left",
@@ -280,8 +280,8 @@ const AccountList = () => {
   const accountListTableData = {
     tableTitle: "Account List",
     header: [
-      { class: "", title: "Account" },
       { class: "", title: "Chart Id" },
+      { class: "", title: "Account" },
       { class: "", title: "Description" },
       { class: "", title: "" },
       { class: "", title: "" },

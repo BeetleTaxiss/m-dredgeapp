@@ -71,13 +71,10 @@ export const topNavBarData = [
         ],
       },
       {
-        link: "/chartlist",
-        text: "Chart List",
+        link: "#",
+        text: "Chart",
         class: "sub-sub-submenu-list",
-        subItem: [
-          { link: "/addaccount", text: "Add Account" },
-          { link: "/accountlist", text: "Account List" },
-        ],
+        subItem: [{ link: "/chartlist", text: "Chart List" }],
       },
     ],
   },
