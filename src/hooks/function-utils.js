@@ -147,6 +147,13 @@ export const functionUtils = {
     /**
      * Shift duration state to track the "from" and "to" input values from the shift duration form in the shift duration component.
      */
+    let time = moment().format("hh:mm");
+    const [selectedDate, setSelectedDate] = React.useState();
+
+    const handleDateChange = (date) => {
+      setSelectedDate(date);
+    };
+
     const [shiftDuration, setShiftDuration] = React.useState({
       from: "",
       to: "",
@@ -214,7 +221,8 @@ export const functionUtils = {
       const userId = parseInt(userDetails.id),
         userName = userDetails.username;
       const productionCapacityOnStart = parseInt(formInput[""]);
-      const pumping_distance_in_meters = 1200;
+      const pumping_distance_in_meters = document.getElementById("distance")
+        .value;
       const addMarkerData = {
         user: userName,
         "user-id": userId,
@@ -318,6 +326,8 @@ export const functionUtils = {
       // timelineItems,
       handleChange,
       calculateShift,
+      selectedDate,
+      handleDateChange,
       // setTimelineItems,
       counter,
       setCounter,

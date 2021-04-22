@@ -15,6 +15,7 @@ export const FormDetails = ({
   cols,
   rows,
   noMargin,
+  displayHalf,
 }) => {
   // console.log("Select value: ", value);
   return (
@@ -22,9 +23,9 @@ export const FormDetails = ({
       {type === "select" ? (
         <div
           style={{
-            width: noMargin ? "33%" : "auto",
-            marginTop: noMargin ? "1rem" : "",
-            marginBottom: noMargin ? "0rem" : "2rem",
+            width: noMargin ? "33%" : displayHalf ? "100%" : "auto",
+            marginTop: noMargin ? "1rem" : displayHalf ? "0rem" : "",
+            marginBottom: noMargin || displayHalf ? "0rem" : "2rem",
             padding: "0 0 0 0",
           }}
         >
@@ -77,7 +78,10 @@ export const FormDetails = ({
           value={value}
           disabled={otherProps.disabled}
           {...otherProps}
-          style={{ marginBottom: "2rem" }}
+          style={{
+            marginBottom: displayHalf ? "0rem" : "2rem",
+            width: noMargin ? "33%" : displayHalf ? "100%" : "auto",
+          }}
         />
       )}
     </>

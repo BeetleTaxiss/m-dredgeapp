@@ -6,7 +6,7 @@ const ProductionCapacity = ({
   formInput,
   handleChange,
 }) => {
-  console.log("Rnage Count: ", document.getElementById("range-count-number"));
+  console.log("Range Count: ", document.getElementById("range-count-number"));
   // if (document.getElementById("range-count-number") === "undefined%") {
   //   document.getElementById("range-count-number").innerHTML = 0;
   // }
@@ -24,7 +24,7 @@ const ProductionCapacity = ({
           min="0"
           max="100"
           id="current-production-capacity"
-          className="custom-range progress-range-counter"
+          className="custom-range progress-range-counter slider"
           onChange={handleChange}
         />
         <button

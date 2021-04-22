@@ -8,6 +8,7 @@ import PageWrapper from "../general/page-wrapper";
 import { functionUtils } from "../../hooks/function-utils";
 import { BASE_API_URL } from "../../hooks/API";
 import moment from "moment";
+import "./production.scss";
 
 export const Production = () => {
   // DISPLAY STATES FOR TIMER, PRODUCTION-CAPACITY AND TIMELINE COMPONENTS
@@ -96,6 +97,8 @@ export const Production = () => {
     handleChange,
     calculateShift,
     setTimelineItems,
+    selectedDate,
+    handleDateChange,
     counter,
     setCounter,
   } = functionUtils.CountDown(
@@ -135,6 +138,16 @@ export const Production = () => {
       required: true,
     },
   ];
+  const distanceFormData = [
+    {
+      id: "distance",
+      type: "text",
+      name: "distance",
+      className: "form-control",
+      holder: "Pumping Distance",
+      required: true,
+    },
+  ];
   console.log("timeline Items 2: ", timelineItems);
   console.log("Counter State: ", counter);
   console.log("Production Details: ", productionDetails);
@@ -165,8 +178,11 @@ export const Production = () => {
                 calculateShift={calculateShift}
                 setTimeline={setDisplayTimeLine}
                 selectProductData={selectProductFormData}
+                distanceFormData={distanceFormData}
                 formInput={formInput}
                 handleCapacityChange={handleCapacityChange}
+                selectedDate={selectedDate}
+                handleDateChange={handleDateChange}
               />
             )}
 
