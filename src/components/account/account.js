@@ -5,6 +5,7 @@ import RecentOrders from "../cards/recent-orders";
 import Summary from "../cards/summary";
 import PageWrapper from "../general/page-wrapper";
 import AccountList from "./account-actions/account-list";
+import PostAccount from "./account-actions/account-post";
 import AddAccount from "./account-actions/add-account";
 import ChartList from "./charts/chart-list";
 import ExpenseReport from "./expense-report/expense-report";
@@ -30,6 +31,8 @@ const Account = () => {
         <AccountList />
       ) : url === "/addaccount" ? (
         <AddAccount />
+      ) : url === "/postaccount" ? (
+        <PostAccount />
       ) : null}
       {/* <RecentOrders />
       <PieChart />

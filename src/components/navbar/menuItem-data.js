@@ -66,8 +66,17 @@ export const topNavBarData = [
         class: "sub-sub-submenu-list",
         subItem: [
           { link: "/addaccount", text: "Add Account" },
+          { link: "/postaccount", text: "Post Account" },
           { link: "/accountlist", text: "Account List" },
-          { link: "/chartlist", text: "Chart List" },
+        ],
+      },
+      {
+        link: "/chartlist",
+        text: "Chart List",
+        class: "sub-sub-submenu-list",
+        subItem: [
+          { link: "/addaccount", text: "Add Account" },
+          { link: "/accountlist", text: "Account List" },
         ],
       },
     ],

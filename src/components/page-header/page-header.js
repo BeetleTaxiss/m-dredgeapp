@@ -37,6 +37,8 @@ const PageHeader = () => {
       ? "Account List"
       : url === "/addaccount"
       ? "Add Account"
+      : url === "/postaccount"
+      ? "Post Account"
       : url === "/chartlist"
       ? "Chart List"
       : url === "/expensereport"

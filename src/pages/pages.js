@@ -38,6 +38,8 @@ const Pages = () => {
           <Revenue />
         ) : url === "/accountlist" ? (
           <Account />
+        ) : url === "/postaccount" ? (
+          <Account />
         ) : url === "/addaccount" ? (
           <Account />
         ) : url === "/chartlist" ? (

@@ -9,6 +9,7 @@ function App() {
     <div className="App">
       <Switch>
         <Route path="/accountlist" component={Pages} />
+        <Route path="/postaccount" component={Pages} />
         <Route path="/addaccount" component={Pages} />
         <Route path="/chartlist" component={Pages} />
         <Route path="/singlerevenuereport" component={Pages} />
