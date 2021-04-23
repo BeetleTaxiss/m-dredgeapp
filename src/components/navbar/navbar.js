@@ -52,12 +52,19 @@ const Navbar = () => {
 
   /**this is a sample of the user menu permissions */
   const userMenu = {
-    
+  
     dashboard:{
       dashboard: {
           text: "Dashboard",
           link: "/dashboard",
       },
+      recentOrders: {
+        text: "Recent Orders",
+        link: "/dashboard",
+        usePageWrapper: false,
+        showInMenu:false
+    },
+      
   }, 
     order: {
         placeOrder: {

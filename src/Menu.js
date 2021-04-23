@@ -159,7 +159,12 @@ export const createUserMenu = (userMenu) => {
                 /** this will hold the current submenu item */
                 let currentSubMenuItem = null;
 
-                if (globalMenu[menuLocation][page] && globalMenu[menuLocation][page] !== null && typeof globalMenu[menuLocation][page] === "object") {
+                console.log(globalMenu[menuLocation][page]["showInMenu"], "show in menu");
+
+                if (globalMenu[menuLocation][page] && 
+                    globalMenu[menuLocation][page] !== null && 
+                    typeof globalMenu[menuLocation][page] === "object"
+                    ) {
                     /** get the current page we are allowing user to view **/
                     let currentPage = globalMenu[menuLocation][page];
 
@@ -195,9 +200,18 @@ export const createUserMenu = (userMenu) => {
                         }
                     }
                 }
-
-                /** assign the currentSubmenuObject to the subMenuItems array */
-                subMenuItems = subMenuItems.concat(currentSubMenuItem);
+    
+                /** 
+                 * assign the `currentSubMenuItem` to the `subMenuItems` array 
+                 * check for `showInMenu` property of the `currentSubMenuItem` and if its false
+                 * we will hide this menu from the menu bar.
+                 * @Note: this menu will still be part of the route define for this user
+                 * but it will simply not be available on the menu bar.. This option is mostly use 
+                 * for populating our dashboard items, but it can also be use for any menu item
+                 */
+                if (globalMenu[menuLocation][page]["showInMenu"]!==false) {
+                    subMenuItems = subMenuItems.concat(currentSubMenuItem);
+                }
             })
         }
         /** assign the submenu Items created to the subMenuObject **/
@@ -212,7 +226,7 @@ export const createUserMenu = (userMenu) => {
 }
 
 /**
- * This central menu definition within our application
+ * This is the central menu definition within our application
  * @note: the user permission will also follow this format
  * to assign permissions to users within the application
  */

@@ -11,6 +11,7 @@ import PageWrapper from "./components/general/page-wrapper";
 
 export default function App() {
 
+    /** Im using a mock data here. We will load this from userPermission list */
     const userMenu = {
 
         dashboard:{
@@ -18,7 +19,14 @@ export default function App() {
                 text: "Dashboard",
                 link: "/dashboard",
             },
-        },    
+            recentOrders: {
+                text: "Recent Orders",
+                link: "/dashboard",
+                usePageWrapper: false,
+                showInMenu:false
+            },
+        },  
+
 
         order: {
             placeOrder: {
