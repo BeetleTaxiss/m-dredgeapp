@@ -1,8 +1,8 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { MenuItem, MobileLogo } from "./menuItem";
-import { topNavBarData } from "./menuItem-data";
+// import { topNavBarData } from "./menuItem-data";
 
-const TopNavbar = ({ showMenu, showSubMenu, setShowSubMenu }) => {
+const TopNavbar = ({ showMenu, showSubMenu, setShowSubMenu, topNavBarData }) => {
   return (
     <div
       className={`topbar-nav header navbar ${showMenu && "showMenu"}`}

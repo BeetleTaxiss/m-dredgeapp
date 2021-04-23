@@ -41,8 +41,10 @@ const LoginPage = () => {
     history,
     location
   );
+  
   console.log(user.user);
   console.log(password.password);
+
   const item1 = {
     id: "username",
     type: "text",

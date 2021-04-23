@@ -50,6 +50,7 @@ export const Dashboard = () => {
                   <TotalStockpile />
                   <RecentOrders />
                   <Summary />
+                  <ActivitiesSummary data={recentPumpingActivitiesData} />
                   <DetailedStatistics data={detailedStats} />
                   <RecentSummary data={recentExpensesData} />
                   <RecentSummary data={recentRevenueData} />

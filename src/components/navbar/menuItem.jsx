@@ -20,7 +20,9 @@ export const MobileLogo = () => (
 
 // TOP NAV BAR MENU ITEM COMPONENT
 export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
-  const { icon, menuItem, dropdown, link } = item.menuItem;
+  //const { icon, menuItem, dropdown, link } = item.menuItem;
+  const { icon, menuItem, dropdown, link } = item;
+
   return (
     <li className="menu single-menu active">
       <Link
@@ -58,6 +60,7 @@ export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
           data-parent="#topAccordion"
         >
           {item.subMenuItems.map((subItem, i) => {
+            console.log(subItem.subItem, "Sub Item");
             return (
               <li key={i} className={subItem.class}>
                 <Link to={subItem.link}>
