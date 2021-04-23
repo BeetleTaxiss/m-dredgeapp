@@ -138,7 +138,10 @@ export const functionUtils = {
     products,
     setProductionDetails,
     timelineItems,
-    setTimelineItem
+    setTimelineItem,
+    setSelectedDate,
+    selectedDate,
+    selectedEndDate
   ) => {
     /**
      * Counter state for countdown timer which tracks time in hours, minutes and seconds
@@ -147,12 +150,6 @@ export const functionUtils = {
     /**
      * Shift duration state to track the "from" and "to" input values from the shift duration form in the shift duration component.
      */
-    let time = moment().format("hh:mm");
-    const [selectedDate, setSelectedDate] = React.useState();
-
-    const handleDateChange = (date) => {
-      setSelectedDate(date);
-    };
 
     const [shiftDuration, setShiftDuration] = React.useState({
       from: "",
@@ -196,10 +193,32 @@ export const functionUtils = {
       // Variable to set the previous time in the session storage which will help in calculating the duration between two production capacity inputs by the production manager and the logged to the timeline
       const prevLoggedShiftTime = moment();
       // Destructured shift duration state to access the to and from properties which will be used as the values for the date-time input fields in the shift Calculator component
-      const { from, to } = shiftDuration;
+      const endDate = document.getElementById("enddateFlatpickr").value;
+      console.log("End value: ", endDate);
+      let newEndTime;
+      if (selectedEndDate.length >= 5) {
+        console.log("String not altered");
+        newEndTime = selectedEndDate;
+      } else {
+        newEndTime = "0" + selectedEndDate;
+      }
+      let newEndDate = endDate + `T${newEndTime}`;
+
+      // New Start Date
+      const startDate = document.getElementById("enddateFlatpickr").value;
+      console.log("Start value: ", startDate);
+      let newStartTime;
+      if (selectedDate.length >= 5) {
+        console.log("String not altered");
+        newStartTime = selectedDate;
+      } else {
+        newStartTime = "0" + selectedDate;
+      }
+      let newStartDate = startDate + `T${newStartTime}`;
+
       // Convert Shift duration form input values to date-time values which can be used in calculations
-      let shiftStart = new Date(from),
-        shiftEnd = new Date(to),
+      let shiftStart = new Date(newStartDate),
+        shiftEnd = new Date(newEndDate),
         // Calaculated difference between both shift duration form values and get the result in milliseconds
         durationInMilliseconds = shiftEnd.getTime() - shiftStart.getTime(),
         // Process to retrive single time values in hours, minutes and seconds from shift duration
@@ -207,6 +226,24 @@ export const functionUtils = {
         hours = shiftObject.getUTCHours(),
         minutes = shiftObject.getUTCMinutes(),
         seconds = shiftObject.getSeconds();
+      console.log(
+        "New start date: ",
+        newStartDate,
+        "New End date: ",
+        newEndDate
+      );
+      console.log("Shift start: ", shiftStart);
+      console.log("Shift end: ", shiftEnd);
+      console.log("Duration in milliseconds: ", durationInMilliseconds);
+      console.log("New Shift Object: ", shiftObject);
+      console.log(
+        "Hours: ",
+        hours,
+        " Minutes: ",
+        minutes,
+        " seconds: ",
+        seconds
+      );
 
       // Add Marker Values to be sent to the server
       const selectValue = document.getElementById("select").value;
@@ -241,7 +278,7 @@ export const functionUtils = {
             addMarkerData
           )
           .then((res) => {
-            alert("Axios Working");
+            // alert("Axios Working");
             console.log("Add Marker Data: ", res.data);
             if (res.data.error) {
               let title = "Shift failed",
@@ -262,6 +299,9 @@ export const functionUtils = {
               console.log("timeline Items: ", timelineItems);
               res.data["initial_production_capacity"] = formInput[""];
               res.data["product_id"] = productId;
+              res.data[
+                "pumping_distance_in_meters"
+              ] = pumping_distance_in_meters;
               res.data["product_name"] = productName;
               setProductionDetails(res.data);
               setCounter({ hours, minutes, seconds });
@@ -326,8 +366,6 @@ export const functionUtils = {
       // timelineItems,
       handleChange,
       calculateShift,
-      selectedDate,
-      handleDateChange,
       // setTimelineItems,
       counter,
       setCounter,
@@ -430,13 +468,21 @@ export const functionUtils = {
       "current-production-capacity"
     ).value;
 
+    /**
+     * Set pumping and elevation values to their respective elements so it displays
+     */
+    document.getElementById("distance").value =
+      productDetailsStateless.pumping_distance_in_meters;
+
     console.log("Old Production Capacity", currentProductionCapacity);
+    console.log("New Production Capacity", temporaryProductionCapacity);
 
     // Production Capacity (in percentage) and time variables
     const MAX_PRODUCTION_OUTPUT = 10000;
     const SECONDS = 3600;
     const DISTANCE_BENCHMARK = 1000;
-    const pumping_distance_in_meters = 1200;
+    const pumping_distance_in_meters =
+      productDetailsStateless.pumping_distance_in_meters;
     const calDistance = DISTANCE_BENCHMARK / pumping_distance_in_meters;
     const MAX_PRODUCTION_OUTPUT_PER_SECONDS = MAX_PRODUCTION_OUTPUT / SECONDS;
     const MAX_PRODUCTION_CAPACITY = 100 / 100;
@@ -461,6 +507,7 @@ export const functionUtils = {
 
     console.log("Output: ", productionOutputForUser);
     console.log("Calculated Production Capacity: ", PRODUCTION_CAPACITY);
+    console.log("Pumping distance in meters: ", pumping_distance_in_meters);
 
     /*---------------------------------------------------------------------------------------------------------
      *-----------------------------------END OF PRODUCTION CAPACITY CALCULATION--------------------------------
@@ -499,6 +546,7 @@ export const functionUtils = {
       console.log("Mutated Timeline Array: ", timelineItems);
       functionUtils.showTimeLine(timelineItems, "timeline-notification-single");
       functionUtils.globalTimeline = timelineItems;
+      console.log("Global timeline items: ", functionUtils.globalTimeline);
     };
 
     const userDetails = JSON.parse(localStorage.getItem("user"));
@@ -524,7 +572,7 @@ export const functionUtils = {
       "pumping-distance-in-meters": pumping_distance_in_meters,
       "production-date": prevloggedProductionDateToServer,
     };
-
+    console.log("Old Pumping in meters: ", addStopMarkerData);
     /** Stop Marker production data */
 
     const stopMarkerData = {
@@ -546,6 +594,17 @@ export const functionUtils = {
 
     let stopStartProductionBtnId = document.getElementById("stop-start-marker");
     let stopProductionBtnId = document.getElementById("stop-marker");
+    /**
+     * New Pumping distance in meters
+     */
+    let new_pumping_distance_in_meters;
+    if (document.getElementById("distance").value === "") {
+      new_pumping_distance_in_meters = pumping_distance_in_meters;
+    } else {
+      new_pumping_distance_in_meters = document.getElementById("distance")
+        .value;
+    }
+
     if (stopStartProductionBtnId) {
       console.log("Stop start marker working");
       console.log("Button clicked: ", stopStartProductionBtnId);
@@ -569,16 +628,18 @@ export const functionUtils = {
       } else {
         productDetailsStateless.production_id = response.data.production_id;
         productDetailsStateless.batch_no = response.data.batch_no;
+        productDetailsStateless.pumping_distance_in_meters = new_pumping_distance_in_meters;
+        console.log("Product Details stateless: ", productDetailsStateless);
         /**
          * Timeline items for notifications. When production capacity falls bellow or above a range of percentages (35%, 50%, 70%),then the timeline item's dot should reflect the rough estimate of the production capacity in colors either danger(red) or warning(yellow) for bellow 50% and secondary(blue) or success(green) for above 50%
          */
+        currentProductionCapacity = temporaryProductionCapacity;
         updatedTimelineItems(
           timelineItems,
           currentProductionCapacity,
           functionUtils.newTimelineItems
         );
 
-        currentProductionCapacity = temporaryProductionCapacity;
         // Set the previous time of the shift while shift is running to help ascertain difference in shift durations when production capacity is being calculated
         sessionStorage.setItem("prevTime", getNewLoggedTime);
       }
@@ -621,8 +682,8 @@ export const functionUtils = {
      *-----------------------------------END MARKER AND SEND PRODUCTION DATA TO SERVER ------------------------
     -----------------------------------------------------------------------------------------------------------
      */
-
-    return timelineItems;
+    console.log("Global timeline items 2: ", functionUtils.globalTimeline);
+    return functionUtils.globalTimeline;
   },
 
   /**End Timeline function which takes timeline values and adds it's item to the previous timeline array by using the global timeline variable*/

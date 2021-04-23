@@ -46,6 +46,7 @@ const SearchBar = ({ content, setShowModal }) => {
             strokeLinejoin="round"
             className="feather feather-user-plus"
             onClick={() => setShowModal(true)}
+            style={{ marginRight: "10px" }}
           >
             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
             <circle cx="8.5" cy="7" r="4"></circle>
@@ -53,11 +54,11 @@ const SearchBar = ({ content, setShowModal }) => {
             <line x1="23" y1="11" x2="17" y2="11"></line>
           </svg>
 
-          <div
+          {/* <div
             className="switch align-self-center"
             style={{
               display: "flex",
-              minWidth: "100px",
+              minWidth: "40px",
               alignSelf: "flex-start!important",
             }}
           >
@@ -97,7 +98,7 @@ const SearchBar = ({ content, setShowModal }) => {
               <rect x="14" y="14" width="7" height="7"></rect>
               <rect x="3" y="14" width="7" height="7"></rect>
             </svg>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

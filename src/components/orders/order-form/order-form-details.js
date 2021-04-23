@@ -16,6 +16,7 @@ export const FormDetails = ({
   rows,
   noMargin,
   displayHalf,
+  color,
 }) => {
   // console.log("Select value: ", value);
   return (
@@ -40,12 +41,16 @@ export const FormDetails = ({
           >
             {otherProps?.options?.map((option) => (
               <option key={option.id} value={option.id}>
-                {option.product && option.product}
+                {option.product && option.description
+                  ? option.product
+                  : option.product
+                  ? option.product
+                  : option.description
+                  ? option.description
+                  : null}
                 {option.user_type && option.user_type}
                 {option.machinery_name && option.machinery_name}
-                {/* {option.account_type && option.account_type} */}
                 {option.account && option.account}
-                {option.description && option.description}
               </option>
             ))}
           </select>
@@ -80,7 +85,11 @@ export const FormDetails = ({
           {...otherProps}
           style={{
             marginBottom: displayHalf ? "0rem" : "2rem",
-            width: noMargin ? "33%" : displayHalf ? "100%" : "auto",
+            width: noMargin ? "33%" : displayHalf ? "100%" : "100%",
+            color: color && color,
+            fontSize: color && "1.2rem",
+            fontWeight: color && "700",
+            textAlign: color && "center",
           }}
         />
       )}

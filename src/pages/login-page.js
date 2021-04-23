@@ -41,6 +41,21 @@ const LoginPage = () => {
     history,
     location
   );
+  const showPassword = () => {
+    let passwordType = document.getElementById("password").getAttribute("type");
+    document
+      .getElementById("password")
+      .setAttribute(
+        "type",
+        `${
+          passwordType === "password"
+            ? "text"
+            : passwordType === "text"
+            ? "password"
+            : "password"
+        }`
+      );
+  };
   console.log(user.user);
   console.log(password.password);
   const item1 = {
@@ -53,7 +68,7 @@ const LoginPage = () => {
   };
   const item2 = {
     id: "password",
-    type: "text",
+    type: "password",
     name: "password",
     value: password.password,
     required: true,
@@ -112,12 +127,12 @@ const LoginPage = () => {
                     >
                       <div className="d-flex justify-content-between">
                         <label htmlFor="password">PASSWORD</label>
-                        <Link
+                        {/* <Link
                           to="auth_pass_recovery_boxed.html"
                           className="forgot-pass-link"
                         >
                           Forgot Password?
-                        </Link>
+                        </Link> */}
                       </div>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -165,6 +180,9 @@ const LoginPage = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         id="toggle-password"
+                        onClick={() => {
+                          showPassword();
+                        }}
                         className="feather feather-eye"
                       >
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -183,12 +201,7 @@ const LoginPage = () => {
                         </button>
                       </div>
                     </div>
-                    <p className="signup-link">
-                      Not registered ?{" "}
-                      <Link to="auth_register_boxed.html">
-                        Create an account
-                      </Link>
-                    </p>
+                    <p className="signup-link"></p>
                   </div>
                 </form>
               </div>

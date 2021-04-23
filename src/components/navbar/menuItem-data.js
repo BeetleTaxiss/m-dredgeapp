@@ -57,7 +57,7 @@ export const topNavBarData = [
       class: "accountant",
     },
     subMenuItems: [
-      { link: "/postexpense", text: "Post Expenses" },
+      // { link: "/postexpense", text: "Post Expenses" },
       { link: "/expensereport", text: "Expense Report" },
       { link: "/revenuereport", text: "Revenue Report" },
       {

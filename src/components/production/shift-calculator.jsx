@@ -1,11 +1,7 @@
+import React, { useState } from "react";
 import moment from "moment";
-import React from "react";
 import { FormDetails } from "../orders/order-form/order-form-details";
-import DateFnsUtils from "@date-io/date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-} from "@material-ui/pickers";
+import TimeKeeper from "react-timekeeper";
 
 const ShiftCalculator = ({
   calculateShift,
@@ -17,7 +13,11 @@ const ShiftCalculator = ({
   handleCapacityChange,
   selectedDate,
   handleDateChange,
+  selectedEndDate,
+  handleEndDateChange,
 }) => {
+  const [showPicker, setShowPicker] = useState(false);
+  const [showEndPicker, setEndShowPicker] = useState(false);
   // SHIFT CALCULATOR TAKES THE INPUTS OF A USER AND FINDS A DIFFERENCE OF THE GIVEN INPUTS TO ASCERTAIN THE DURATION OF A SINGLE SHIFT. ON SUBMIT, THE COUNTDOWN TIMER IS DISPLAYED AND SHIFT CALCULATOR IS REMOVED FROM THE USER INTERFACE
 
   // onLoad event listener is enabled to clear the local storage from any values stored (previous time especially) to avoid bugs
@@ -26,7 +26,6 @@ const ShiftCalculator = ({
   });
   console.log("Products Array: ", selectProductData);
   let date = moment().format("YYYY-MM-DD");
-  let time = moment().format("hh:mm");
   console.log("Date: ", date);
   return (
     <div className="shift-calculator">
@@ -76,7 +75,7 @@ const ShiftCalculator = ({
                 backgroundColor: "rgba(235, 237, 242, 0.5)",
               }}
             >
-              {distanceFormData.map((item, i) => (
+              {distanceFormData.distance.map((item, i) => (
                 <FormDetails
                   displayHalf
                   key={i}
@@ -119,7 +118,7 @@ const ShiftCalculator = ({
                   style={{
                     marginTop: "0.5rem",
                   }}
-                  id="dateTimeFlatpickr"
+                  id="startdateFlatpickr"
                   className="form-control flatpickr flatpickr-input active"
                   type="date"
                   name="from"
@@ -140,9 +139,10 @@ const ShiftCalculator = ({
                   style={{
                     marginTop: "0.5rem",
                   }}
-                  id="dateTimeFlatpickr"
+                  id="enddateFlatpickr"
                   className="form-control flatpickr flatpickr-input active"
                   type="date"
+                  // type="datetime-local"
                   name="to"
                   min={date}
                   value={date}
@@ -151,46 +151,57 @@ const ShiftCalculator = ({
             </span>
             {/* Second Span */}
             <span
+              className="timepicker-btn"
               style={{
                 display: "flex",
                 alignItems: "center",
+                position: "relative",
                 justifyContent: "center",
                 gap: "2rem",
                 width: "100%",
               }}
             >
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardTimePicker
-                  margin="normal"
-                  // id="time-picker"
-                  id="dateTimeFlatpickr"
-                  // label="Time picker"
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  KeyboardButtonProps={{
-                    "aria-label": "change time",
+              <span className={showPicker ? "timepicker-modal" : "timepicker"}>
+                <TimeKeeper
+                  time={selectedDate}
+                  onChange={(newTime) => handleDateChange(newTime.formatted24)}
+                  onDoneClick={(finalTime, e) => {
+                    setShowPicker((prev) => !prev);
+                    handleDateChange(finalTime.formatted24);
+                    if (selectedDate.length >= 5) {
+                      console.log("String not altered");
+                    } else {
+                      selectedDate = "0" + selectedDate;
+                    }
+                    document.getElementById(
+                      "startdateTimeFlatpickr"
+                    ).value = selectedDate;
+                    console.log("Logged start time: ", selectedDate);
                   }}
+                  switchToMinuteOnHourSelect
+                  hour24Mode
                 />
-              </MuiPickersUtilsProvider>
-              {/* <label
+              </span>
+              <label
                 className="input-label"
                 htmlFor="from"
                 style={{
                   width: "45%",
                 }}
-              > */}
-              {/* Start Time: */}
+              >
+                {/* Start Time: */}
 
-              {/* <input
-                  id="dateTimeFlatpickr"
+                <input
+                  id="startdateTimeFlatpickr"
                   className="form-control flatpickr flatpickr-input active"
                   type="time"
                   name="from"
-                  min={time}
-                  // onChange={handleChange}
-                  // value={shiftDuration.from}
-                /> */}
-              {/* </label> */}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowPicker(true);
+                  }}
+                />
+              </label>
               <label
                 className="input-label"
                 htmlFor="to"
@@ -198,15 +209,42 @@ const ShiftCalculator = ({
                   width: "45%",
                 }}
               >
+                <span
+                  className={
+                    showEndPicker ? "end-timepicker-modal" : "end-timepicker"
+                  }
+                >
+                  <TimeKeeper
+                    time={selectedEndDate}
+                    onChange={(newTime) =>
+                      handleEndDateChange(newTime.formatted24)
+                    }
+                    onDoneClick={(finalTime, e) => {
+                      handleEndDateChange(finalTime.formatted24);
+                      if (selectedEndDate.length >= 5) {
+                        console.log("String not altered");
+                      } else {
+                        selectedEndDate = "0" + selectedEndDate;
+                      }
+                      document.getElementById(
+                        "enddateTimeFlatpickr"
+                      ).value = selectedEndDate;
+                      setEndShowPicker((prev) => !prev);
+                    }}
+                    switchToMinuteOnHourSelect
+                    hour24Mode
+                  />
+                </span>
                 {/* End Time: */}
                 <input
-                  id="dateTimeFlatpickr"
+                  id="enddateTimeFlatpickr"
                   className="form-control flatpickr flatpickr-input active"
                   type="time"
                   name="to"
-                  min={time}
-                  onChange={handleChange}
-                  value={shiftDuration.to}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setEndShowPicker(true);
+                  }}
                 />
               </label>
             </span>

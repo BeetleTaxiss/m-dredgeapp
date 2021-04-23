@@ -11,7 +11,7 @@ const Contacts = ({
   const contactList = { header, contacts };
   return (
     <div className="col-lg-12">
-      <div className="widget-content searchable-container list">
+      <div className="widget-content searchable-container grid">
         {/* BEGIN TOP SEARCH BAR */}
         <SearchBar setShowModal={setShowModal} content={searchBar} />
         {/* END TOP SEARCH BAR */}

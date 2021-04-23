@@ -231,7 +231,7 @@ const Loader = () => {
         status={error}
         handleSubmit={loadOrder}
         Btntext="Loading completed"
-        noClickOutside
+        // noClickOutside
         closeBtn
         listItems
         cols={5}

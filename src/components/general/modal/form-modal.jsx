@@ -4,11 +4,19 @@ import { FormDetails } from "../../orders/order-form/order-form-details";
 import ListSingleViewCard from "../list-single-view-card/list-single-view-card";
 import LoadingButton from "../loading-button";
 import ModalBackdrop from "./modal-backdrop";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemHeading,
+  AccordionItemButton,
+  AccordionItemPanel,
+} from "react-accessible-accordion";
 
 const FormModal = ({
   formTitle,
   formSubtitle,
   formData,
+  accordionData,
   loading,
   setLoading,
   errorMsg,
@@ -62,6 +70,18 @@ const FormModal = ({
               </div>
             </div>
           ))}
+        {accordionData && (
+          <Accordion allowZeroExpanded>
+            {accordionData.map((item) => (
+              <AccordionItem key={item.uuid}>
+                <AccordionItemHeading>
+                  <AccordionItemButton>{item.heading}</AccordionItemButton>
+                </AccordionItemHeading>
+                <AccordionItemPanel>{item.content}</AccordionItemPanel>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        )}
         <div style={{ display: "flex", justifyContent: "center", gap: "2rem" }}>
           <LoadingButton
             handleSubmit={handleSubmit}
@@ -74,6 +94,7 @@ const FormModal = ({
               onClick={() => {
                 setShowModal((prev) => !prev);
                 console.log("Modal State: ", showModal);
+                alert("Close btn clicked");
               }}
               className="mt-4 btn btn-danger"
             >

@@ -17,6 +17,10 @@ export const Production = () => {
   const [displayTimeLine, setDisplayTimeLine] = useState(false);
   const [products, setProducts] = useState();
   const [productionDetails, setProductionDetails] = useState();
+  let time = moment().format("hh:mm");
+  console.log("Current Time: ", time);
+  const [selectedDate, setSelectedDate] = React.useState(`${time}`);
+  const [selectedEndDate, setSelectedEndDate] = React.useState(`${time}`);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -56,7 +60,17 @@ export const Production = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [selectedDate, setSelectedDate]);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    console.log("Time picker: ", selectedDate);
+  };
+
+  const handleEndDateChange = (date) => {
+    setSelectedEndDate(date);
+    console.log("End time picker: ", selectedEndDate);
+  };
 
   let timelineItems = timelineItem;
   let currentProductionCapacity =
@@ -97,8 +111,6 @@ export const Production = () => {
     handleChange,
     calculateShift,
     setTimelineItems,
-    selectedDate,
-    handleDateChange,
     counter,
     setCounter,
   } = functionUtils.CountDown(
@@ -108,7 +120,10 @@ export const Production = () => {
     products,
     setProductionDetails,
     timelineItems,
-    setTimelineItem
+    setTimelineItem,
+    setSelectedDate,
+    selectedDate,
+    selectedEndDate
   );
 
   /**Handle Production Capacity submit and get it's return value */
@@ -138,16 +153,28 @@ export const Production = () => {
       required: true,
     },
   ];
-  const distanceFormData = [
-    {
-      id: "distance",
-      type: "text",
-      name: "distance",
-      className: "form-control",
-      holder: "Pumping Distance",
-      required: true,
-    },
-  ];
+  const distanceFormData = {
+    distance: [
+      {
+        id: "distance",
+        type: "text",
+        name: "distance",
+        className: "form-control",
+        holder: "Pumping Distance in meters",
+        required: false,
+      },
+    ],
+    elevation: [
+      {
+        id: "elevation",
+        type: "text",
+        name: "elevation",
+        className: "form-control",
+        holder: "Pipe elevation in meters",
+        required: false,
+      },
+    ],
+  };
   console.log("timeline Items 2: ", timelineItems);
   console.log("Counter State: ", counter);
   console.log("Production Details: ", productionDetails);
@@ -183,6 +210,8 @@ export const Production = () => {
                 handleCapacityChange={handleCapacityChange}
                 selectedDate={selectedDate}
                 handleDateChange={handleDateChange}
+                selectedEndDate={selectedEndDate}
+                handleEndDateChange={handleEndDateChange}
               />
             )}
 
@@ -193,6 +222,7 @@ export const Production = () => {
                   timelineItems={timelineItems}
                   handleSubmit={getReturnValueAndHandleSubmit}
                   formInput={currentProductionCapacity}
+                  distanceFormData={distanceFormData}
                   handleChange={() =>
                     handleInputChangeWithID(
                       "current-production-capacity",
@@ -204,7 +234,10 @@ export const Production = () => {
             ) : null}
 
             {/* ON SHIFT DURATION CALCULATED, TIMELINE IS DISPLAYED */}
-            <div className="row">
+            <div
+              className="row"
+              style={{ display: "flex", justifyContent: "center" }}
+            >
               <div
                 className="widget-content widget-content-area pb-1"
                 style={{ padding: "2rem" }}

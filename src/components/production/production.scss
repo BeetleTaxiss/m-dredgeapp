@@ -69,3 +69,70 @@
   cursor: pointer;
  }
 }
+
+// Time picker
+
+.timepicker-btn {
+
+ position: relative;
+
+ .timepicker,
+ .timepicker-modal,
+ .react-timekeeper {
+  position: absolute;
+  top: 0;
+  left: 5%;
+  z-index: 10;
+ }
+
+ .timepicker {
+  display: none;
+ }
+
+ .timepicker-modal {
+  display: block;
+ }
+
+ .end-imepicker,
+ .end-timepicker-modal,
+ .react-timekeeper {
+  position: absolute;
+  top: 0;
+  left: 53%;
+  z-index: 10;
+ }
+
+ .end-timepicker {
+  display: none;
+ }
+
+ .end-timepicker-modal {
+  display: block;
+ }
+}
+
+.mt-container.mx-auto {
+ // max-width: 700px;
+ min-width: 900px;
+
+ .timeline-line {
+  // padding: 0 15%;
+
+  .item-timeline {
+   .t-dot {
+    margin: 0 1rem;
+   }
+
+   .t-time,
+   .t-text p {
+    font-size: 1rem;
+
+   }
+
+   // display: flex;
+   // justify-content: center;
+  }
+
+ }
+
+}
