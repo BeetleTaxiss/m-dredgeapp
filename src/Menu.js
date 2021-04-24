@@ -515,3 +515,5 @@ export const MenuStyles= {
         menuClass: "Admin",
     },
 }
+
+console.log(JSON.stringify(Menu));
