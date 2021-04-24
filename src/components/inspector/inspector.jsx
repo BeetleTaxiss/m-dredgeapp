@@ -203,7 +203,7 @@ const Inspector = () => {
         status={error}
         handleSubmit={InspectOrder}
         Btntext="Inspection Completed"
-        noClickOutside
+        // noClickOutside
         closeBtn
         listItems
         cols={5}

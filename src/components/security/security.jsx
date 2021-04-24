@@ -184,7 +184,7 @@ const Security = () => {
         status={error}
         handleSubmit={clearOrder}
         Btntext="Clearance Finished"
-        noClickOutside
+        // noClickOutside
         closeBtn
         listItems
         cols={5}

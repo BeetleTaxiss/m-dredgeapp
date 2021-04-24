@@ -41,7 +41,7 @@ const AddAccount = () => {
               });
               chartListBody.unshift({
                 id: 0,
-                account_type: "Select a chart Type",
+                description: "Select a chart Type",
               });
               setChartList(chartListBody);
               console.log("Chart List Body: ", chartList);

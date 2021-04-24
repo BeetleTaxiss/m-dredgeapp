@@ -15,6 +15,8 @@ export const FormDetails = ({
   cols,
   rows,
   noMargin,
+  displayHalf,
+  color,
 }) => {
   // console.log("Select value: ", value);
   return (
@@ -22,9 +24,9 @@ export const FormDetails = ({
       {type === "select" ? (
         <div
           style={{
-            width: noMargin ? "33%" : "auto",
-            marginTop: noMargin ? "1rem" : "",
-            marginBottom: noMargin ? "0rem" : "2rem",
+            width: noMargin ? "33%" : displayHalf ? "100%" : "auto",
+            marginTop: noMargin ? "1rem" : displayHalf ? "0rem" : "",
+            marginBottom: noMargin || displayHalf ? "0rem" : "2rem",
             padding: "0 0 0 0",
           }}
         >
@@ -39,10 +41,16 @@ export const FormDetails = ({
           >
             {otherProps?.options?.map((option) => (
               <option key={option.id} value={option.id}>
-                {option.product && option.product}
+                {option.product && option.description
+                  ? option.product
+                  : option.product
+                  ? option.product
+                  : option.description
+                  ? option.description
+                  : null}
                 {option.user_type && option.user_type}
                 {option.machinery_name && option.machinery_name}
-                {option.account_type && option.account_type}
+                {option.account && option.account}
               </option>
             ))}
           </select>
@@ -75,7 +83,14 @@ export const FormDetails = ({
           value={value}
           disabled={otherProps.disabled}
           {...otherProps}
-          style={{ marginBottom: "2rem" }}
+          style={{
+            marginBottom: displayHalf ? "0rem" : "2rem",
+            width: noMargin ? "33%" : displayHalf ? "100%" : "100%",
+            color: color && color,
+            fontSize: color && "1.2rem",
+            fontWeight: color && "700",
+            textAlign: color && "center",
+          }}
         />
       )}
     </>

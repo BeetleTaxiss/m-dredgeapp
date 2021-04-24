@@ -6,76 +6,16 @@ import { BASE_API_URL } from "../../../hooks/API";
 import PostAccountForm from "../../fuel-issues/add-Fuel-Form";
 
 const PostAccount = () => {
-  const [chartList, setChartList] = useState();
-  const [accountTypes, setAccountTypes] = useState();
+  const [creditAccount, setCreditAccount] = useState();
+  const [debitAccount, setDebitAccount] = useState();
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
-      let chartListBody = [];
+      let creditAccountBody = [];
+      let debitAccountBody = [];
       try {
         await axios
-          .get(`${BASE_API_URL}/api/v1/account/chart-list.php`)
-          .then((res) => {
-            console.log("Chart list response data: ", res.data);
-            if (res.data.error) {
-              let title = "Server Error Response",
-                text = res.data.message;
-              errorAlert(title, text);
-            } else {
-              const chartListItems = res.data.data;
-              chartListItems.map((item) => {
-                const account_id = parseInt(item.id),
-                  account_type = item.account_type,
-                  statement = item.statement,
-                  statement_id = item.statement_id,
-                  description = item.description;
-
-                const currentChartItem = {
-                  id: account_id,
-                  description: description,
-                  account_type: account_type,
-                  statement: statement,
-                  statement_id: statement_id,
-                };
-
-                return (chartListBody = chartListBody.concat(currentChartItem));
-              });
-              chartListBody.unshift({
-                id: 0,
-                account_type: "Select a chart Type",
-              });
-              setChartList(chartListBody);
-              console.log("Chart List Body: ", chartList);
-            }
-          })
-          .catch((error) => {
-            console.log("API error: ", error);
-            let title = "Network Error",
-              text = error;
-            errorAlert(title, text);
-          });
-      } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log("Axios Error: ", error);
-        } else {
-          throw error;
-        }
-      }
-    };
-
-    response();
-
-    return () => {
-      source.cancel();
-    };
-  }, []);
-  useEffect(() => {
-    const source = axios.CancelToken.source();
-    const response = async () => {
-      let postAccountBody = [];
-      try {
-        await axios
-          .get(`${BASE_API_URL}/api/v1/account/account-types.php`)
+          .get(`${BASE_API_URL}/api/v1/account/account-list.php`)
           .then((res) => {
             console.log("Post Account response data: ", res.data);
             if (res.data.error) {
@@ -86,23 +26,37 @@ const PostAccount = () => {
               const postAccountItems = res.data.data;
               postAccountItems.map((item) => {
                 const account_id = parseInt(item.id),
-                  account_type = item.account_type;
+                  account = item.account,
+                  chart_id = item.chart_id;
 
                 const currentPostAccountItem = {
                   id: account_id,
-                  account_type: account_type,
+                  account: account,
+                  "chart-id": chart_id,
                 };
 
-                return (postAccountBody = postAccountBody.concat(
-                  currentPostAccountItem
-                ));
+                return (
+                  (creditAccountBody = creditAccountBody.concat(
+                    currentPostAccountItem
+                  )),
+                  (debitAccountBody = debitAccountBody.concat(
+                    currentPostAccountItem
+                  ))
+                );
               });
-              postAccountBody.unshift({
+              debitAccountBody.unshift({
                 id: 0,
-                account_type: "Select an account type",
+                account: "Select an account to debit",
               });
-              setAccountTypes(postAccountBody);
-              console.log("Account Post Body: ", accountTypes);
+              setDebitAccount(debitAccountBody);
+              console.log("Account Post Body: ", debitAccount);
+
+              creditAccountBody.unshift({
+                id: 0,
+                account: "Select an account to credit",
+              });
+              setCreditAccount(creditAccountBody);
+              console.log("Account Post Body: ", creditAccount);
             }
           })
           .catch((error) => {
@@ -133,28 +87,27 @@ const PostAccount = () => {
       user_id = userDetails.id;
     const amount = document.getElementById("amount").value;
     const narration = document.getElementById("narration").value;
-    const chartValue = parseInt(document.getElementById("chart-id").value);
-    const accountValue = parseInt(
-      document.getElementById("account-type").value
-    );
-    const chartItem = chartList.filter(({ id }) => id === chartValue),
-      credit_debit_id = accountTypes.filter(({ id }) => id === accountValue),
-      credit_account = credit_debit_id[0].credit_account,
-      debit_account = credit_debit_id[0].debit_account;
+    const debitValue = parseInt(document.getElementById("debit-id").value);
+    const creditValue = parseInt(document.getElementById("credit-id").value);
 
-    console.log("chart item: ", chartItem);
+    const debitItem = debitAccount.filter(({ id }) => id === debitValue),
+      creditItem = creditAccount.filter(({ id }) => id === creditValue),
+      credit_account = creditItem[0].account,
+      chart_id = creditItem[0]["chart-id"],
+      debit_account = debitItem[0].account;
+
     const postAccountData = {
       user: user_name,
       "user-id": user_id,
-      "chart-id": chartValue,
+      "chart-id": chart_id,
       "credit-account": credit_account,
       "debit-account": debit_account,
-      "credit-account-id": credit_debit_id,
-      "debit-account-id": credit_debit_id,
+      "credit-account-id": creditValue,
+      "debit-account-id": debitValue,
       narration: narration,
       amount: amount,
     };
-    console.log("Chart API values: ", postAccountData);
+    console.log("Post Account API values: ", postAccountData);
     axios
       .post(`${BASE_API_URL}/api/v1/account/account-post.php`, postAccountData)
       .then((res) => {
@@ -164,7 +117,7 @@ const PostAccount = () => {
             text = res.data.message;
           errorAlert(title, text);
         } else {
-          let title = "Expenses Posted Successfully",
+          let title = "Transaction Posted Successfully",
             text = res.data.message,
             link = `<a href="/accountlist">View Account List</a>`;
           successAlert(title, text, link);
@@ -191,21 +144,29 @@ const PostAccount = () => {
   };
   const postAccountFormData = [
     {
-      id: "chart-id",
-      type: "select",
-      name: "chart",
-      holder: "",
+      id: "narration",
+      type: "text",
+      name: "narration",
+      holder: "Transaction narration",
       className: "form-control",
-      options: chartList,
       required: true,
     },
     {
-      id: "account-type",
+      id: "credit-id",
       type: "select",
-      name: "account-type",
+      name: "account",
       holder: "",
       className: "form-control",
-      options: accountTypes,
+      options: creditAccount,
+      required: true,
+    },
+    {
+      id: "debit-id",
+      type: "select",
+      name: "account",
+      holder: "",
+      className: "form-control",
+      options: debitAccount,
       required: true,
     },
     {
@@ -213,14 +174,6 @@ const PostAccount = () => {
       type: "text",
       name: "amount",
       holder: "Amount to post",
-      className: "form-control",
-      required: true,
-    },
-    {
-      id: "narration",
-      type: "textarea",
-      name: "narration",
-      holder: "Transaction narration",
       className: "form-control",
       required: true,
     },
@@ -241,7 +194,7 @@ const PostAccount = () => {
               content={postAccountFormData}
               // loading={loading}
               subtitle="Post expense information"
-              btnText="Post Expense"
+              btnText="Post Transaction"
               handleAddSubmit={() => handlePostAccount()}
             />
           </div>

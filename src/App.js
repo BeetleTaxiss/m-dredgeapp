@@ -2,7 +2,6 @@ import React from "react";
 import {createUserRoutes, createUserMenu} from "./Menu";
 import {Route, Switch} from "react-router";
 import NavBar from "./components/navbar/navbar";
-import OrderReceipt from "./components/orders/order-receipt/order-receipt";
 import {Production} from "./components/production/production";
 import WetSand from "./components/production/production-list/wet-sand";
 import StockUpdate from "./components/production/production-list/stock-update";

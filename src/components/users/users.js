@@ -22,7 +22,7 @@ const Users = () => {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  useEffect(() =>
+  useEffect(() => {
     axios.get(`${BASE_API_URL}/api/v1/user/list.php`).then((res) => {
       console.log("User List Data: ", res.data);
       const data = res.data.data;
@@ -90,8 +90,9 @@ const Users = () => {
       setUserList(body);
       console.log("Users Main data: ", body);
       console.log("Users Main DATA: ", userList);
-    })
-  );
+    });
+    console.log("Show modal: ", showModal);
+  }, [showModal, showUpdateModal]);
   /**
    * Data for building the user list display divided into table header/legend and users information
    */
@@ -315,6 +316,10 @@ const Users = () => {
     { user_type: "Security", id: "7" },
     { user_type: "Operation Staff", id: "8" },
   ];
+  const accordionData = [
+    { uuid: 1, heading: "Banana", content: "New bubu pack" },
+    { uuid: 2, heading: "Banana", content: "New bubu pack" },
+  ];
   console.log("Individual User Type: ", userTypes);
   const { formData } = useAddContactFormData(selectOptions);
   const { updateFormData } = useUpdateContactFormData();
@@ -327,6 +332,7 @@ const Users = () => {
           formTitle="Add a new staff"
           formSubtitle="Onboard a new staff member into your organization"
           formData={formData}
+          accordionData={accordionData}
           showModal={showModal}
           setShowModal={setShowModal}
           loading={loading}
