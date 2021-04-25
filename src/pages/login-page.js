@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { systemSettings } from "../state/store";
 import { FormDetails } from "../components/orders/order-form/order-form-details";
 import { BASE_API_URL } from "../hooks/API";
@@ -21,6 +20,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState({
     password: "",
   });
+  const [errorDisplay, setErrorDisplay] = useState(false);
   const [errors, setErrors] = useState({
     user: "",
     password: "",
@@ -58,6 +58,8 @@ const LoginPage = () => {
   };
   console.log(user.user);
   console.log(password.password);
+  console.log("Login Error: ", errors.password, " User Error: ", errors.user);
+  console.log("Display errors:  ", errorDisplay);
 
   const item1 = {
     id: "username",
@@ -92,7 +94,13 @@ const LoginPage = () => {
                 >
                   <div className="form">
                     <div id="username-field" className="field-wrapper input">
-                      <label htmlFor="username">USERNAME</label>
+                      {errors.user !== "" && errorDisplay === true ? (
+                        <label style={{ color: "red" }} htmlFor="username">
+                          {errors.user}
+                        </label>
+                      ) : (
+                        <label htmlFor="username">USERNAME</label>
+                      )}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -113,13 +121,6 @@ const LoginPage = () => {
                         handleChange={handleChange}
                         errors={errors.user}
                       />
-                      {/* <input
-                        id="username"
-                        name="username"
-                        type="text"
-                        className="form-control"
-                        placeholder="e.g John_Doe"
-                      /> */}
                     </div>
 
                     <div
@@ -127,13 +128,13 @@ const LoginPage = () => {
                       className="field-wrapper input mb-2"
                     >
                       <div className="d-flex justify-content-between">
-                        <label htmlFor="password">PASSWORD</label>
-                        {/* <Link
-                          to="auth_pass_recovery_boxed.html"
-                          className="forgot-pass-link"
-                        >
-                          Forgot Password?
-                        </Link> */}
+                        {errors.password !== "" && errorDisplay === true ? (
+                          <label style={{ color: "red" }} htmlFor="password">
+                            {errors.password}
+                          </label>
+                        ) : (
+                          <label htmlFor="password">PASSWORD</label>
+                        )}
                       </div>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -163,13 +164,6 @@ const LoginPage = () => {
                         handleChange={handleChange}
                         errors={errors.password}
                       />
-                      {/* <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        className="form-control"
-                        placeholder="Password"
-                      /> */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -193,7 +187,18 @@ const LoginPage = () => {
                     <div className="d-sm-flex justify-content-between">
                       <div className="field-wrapper">
                         <button
-                          onClick={handleSubmit}
+                          onClick={() => {
+                            if (errors.user !== "" || errors.password !== "") {
+                              setErrorDisplay(true);
+                              console.log(errorDisplay);
+                            } else if (
+                              errors.user === "" ||
+                              errors.password === ""
+                            ) {
+                              setErrorDisplay(false);
+                              handleSubmit();
+                            }
+                          }}
                           // type="submit"
                           className="btn btn-primary"
                           value=""

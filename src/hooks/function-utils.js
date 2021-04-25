@@ -35,6 +35,7 @@ export const validateForm = (errors) => {
 
 // Login function to
 const Login = async (user, password) => {
+  let responseData;
   const data = JSON.stringify({ user, password });
   console.log("Data: ", data);
   console.log("Username: ", user);
@@ -46,8 +47,13 @@ const Login = async (user, password) => {
       },
     })
     .then((response) => {
-      if (response.data) {
-        const data = response.data.data;
+      if (response.data.error) {
+        responseData = true;
+        let title = "Login Error",
+          text = response.data.message;
+        errorAlert(title, text);
+      } else {
+        responseData = response.data.data;
         localStorage.setItem(
           "user",
           JSON.stringify({
@@ -57,7 +63,7 @@ const Login = async (user, password) => {
           })
         );
       }
-      return response.data;
+      return responseData;
     });
 };
 
@@ -843,7 +849,7 @@ export const functionUtils = {
    */
   SignInFormSubmit: (errors, user, password, history, location) => {
     const handleSubmit = (event) => {
-      event.preventDefault();
+      // event.preventDefault();
 
       if (validateForm(errors)) {
         console.info("Valid Form");
@@ -856,13 +862,16 @@ export const functionUtils = {
           console.log("login object", response);
           console.log("login object", user.user);
           console.log("login object", password.password);
+          console.log("login DATA object", response);
           const { state } = location;
-          if (response.data) {
+
+          if (response === true) {
+            console.log("Login Error: ", response);
+          } else {
             history.push({
               pathname: state?.from || `/dashboard`,
-              state: response.data,
+              state: response,
             });
-            // history.push(state?.from || `/dashboard/${user.user}`);
           }
         });
       } catch (error) {
@@ -888,14 +897,26 @@ export const functionUtils = {
         case "user":
           errors.user =
             value.length < 5
-              ? "Full Name must be at least 5 characters long!"
-              : "";
+              ? setErrors((state) => ({
+                  ...state,
+                  user: "Full Name must be at least 5 characters long!",
+                }))
+              : setErrors((state) => ({
+                  ...state,
+                  user: "",
+                }));
           break;
         case "password":
           errors.password =
-            value.length < 4
-              ? "Password must be at least 8 characters long!"
-              : "";
+            value.length < 6
+              ? setErrors((state) => ({
+                  ...state,
+                  password: "Password must be at least 8 characters long!",
+                }))
+              : setErrors((state) => ({
+                  ...state,
+                  password: "",
+                }));
           break;
         default:
           break;
