@@ -1,70 +1,52 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import RecentOrders from "../components/cards/recent-orders";
-import Summary from "../components/cards/summary";
-import TotalOrders from "../components/cards/total-orders";
-import TotalRevenue from "../components/cards/total-revenue";
-import TotalStockpile from "../components/cards/total-stockpile";
-import PageHeader from "../components/page-header/page-header";
-import RecentSummary from "../components/cards/recent-summary";
-import {
-  detailedStats,
-  recentExpensesData,
-  recentPumpingActivitiesData,
-  recentRevenueData,
-  currentProductionData,
-} from "../components/cards/recent-summary-data";
-import ActivitiesSummary from "../components/cards/activities-summary";
-import DetailedStatistics from "../components/cards/detailed-statistics";
-import CurrentActivity from "../components/cards/current-activity";
+import PageWrapper from "../components/general/page-wrapper";
+import {createUserDashboard} from "./../Menu";
+import {userMenu} from "./../UserMenuMock";
+
 
 export const Dashboard = () => {
 
-  const [userState, setUserState] = useState();
-  const { state } = useLocation();
-  console.log(state, "state value");
+  const [userPermission, setUserPermission]= useState(userMenu);
 
-  useEffect(() => {
-    setUserState(state);
-  }, [userState, state]);
+/** 
+ * This function create appropriate view for user based on the dashboard contents 
+ * that this user can see. We will assign the return value to our `dashboardViews` state variable.
+ */
+const createDashboardViews=(assignToState=true)=>{
 
-  console.log("User State: ", userState);
+  const UserDashboard=createUserDashboard(userPermission);
 
-  
+  const View= (  
+  <>
+    {UserDashboard}
+  </>
+  )
+
+  /** automatically assign to state variable */
+  if(assignToState)
+    // setDashboardViews(View);
+
+    /** always return in case caller needs value */
+    return View;
+
+}
+
+  /** assign the dashboard view to a state so that we can refresh when variable changes */
+  const [dashboardViews, setDashboardViews]= useState(createDashboardViews());
+
+  //const { state } = useLocation();
+
+
+/** When the `dashboardViews` changes, refresh the page */
+useEffect(() => {
+}, [dashboardViews, userPermission]);
+
+
   return (
-    // BEGIN MAIN CONTAINER
-    <div className="main-container" id="container">
-      {/* BEGIN CONTENT PART */}
-      <div id="content" className="main-content">
-        <div className="layout-px-spacing">
-          {/* BEGINNING OF PAGE HEADER */}
-          <PageHeader />
-          {/* END OF PAGE HEADER */}
+    <PageWrapper>
+            {dashboardViews}
+    </PageWrapper>
+  )
 
-          <div className="row layout-top-spacing">
-            {
-              userState?.user_type === "2" ? (
-                <>
-                  <TotalOrders />
-                  <TotalRevenue />
-                  <TotalStockpile />
-                  <RecentOrders />
-                  <Summary />
-                  <DetailedStatistics data={detailedStats} />
-                  <RecentSummary data={recentExpensesData} />
-                  <RecentSummary data={recentRevenueData} />
-                  <CurrentActivity data={currentProductionData} />
-                </>
-              ) : null
-              // <>
-              // </>
-            }
-          </div>
-        </div>
-
-        {/* END CONTENT PART */}
-      </div>
-      {/* END OF MAIN CONTENT  */}
-    </div>
-  );
-};
+}

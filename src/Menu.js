@@ -48,6 +48,7 @@ import productionIcon from "./assets/production.svg";
 import ordersIcon from "./assets/orders.svg";
 import dropdownIcon from "./assets/dropdownIcon.svg";
 import DetailedStatistics from "./components/cards/detailed-statistics";
+import Loader from "./components/loader/loader";
 
 
 /**
@@ -88,8 +89,16 @@ export const createUserRoutes = (userMenu) => {
                 if (globalMenu[menuLocation][page] && globalMenu[menuLocation][page] !== null && typeof globalMenu[menuLocation][page] === "object") {
                     /** get the current page we are allowing user to view **/
                     let currentPage = globalMenu[menuLocation][page];
-                    /** concat to userAccess  list*/
-                    userAccess = userAccess.concat({...currentPage});
+
+                    /** if we are only showing this menu on the dashboard
+                     * we will not bother to create a route for it as 
+                     * this will
+                     */
+                    const {showOnDashboard}= globalMenu[menuLocation][page];
+
+                    /** concat to userAccess  list if not meant for dashboard view*/
+                    if(showOnDashboard!==true)
+                        userAccess = userAccess.concat({...currentPage});
                 }
             })
         }
@@ -101,11 +110,22 @@ export const createUserRoutes = (userMenu) => {
     if (globalMenu["default"] && typeof globalMenu["default"] === "object") {
         Object.keys(globalMenu["default"]).forEach(defaultPage => {
             let currentPage = globalMenu["default"][defaultPage];
-            userAccess = userAccess.concat({...currentPage});
+            userAccess= userAccess.concat({...currentPage});
         })
     }
+    /**
+     * to fix a peculiar issue with `react-router-dom` where route definition at the top overrides
+     * navigation to route at the bottom even if such a route exist, we will make sure the default 
+     * route comes first.  In `default` menu definition, we ensure that `dashboard` comes first 
+     * this is to avoid `login` with the default route showing in /dashboard even when dashboard is also defined
+     * @todo: we need to investigate this behaviour
+     */
+    //const allAccessibleRoutes=[...defaultAllowedAccess, ...userAccess];
+
+    console.log(userAccess, "all routes create"); 
+
     /** return the routes created */
-    return userAccess
+    return userAccess;
 }
 
 
@@ -159,8 +179,6 @@ export const createUserMenu = (userMenu) => {
                 /** this will hold the current submenu item */
                 let currentSubMenuItem = null;
 
-                console.log(globalMenu[menuLocation][page]["showInMenu"], "show in menu");
-
                 if (globalMenu[menuLocation][page] && 
                     globalMenu[menuLocation][page] !== null && 
                     typeof globalMenu[menuLocation][page] === "object"
@@ -209,7 +227,7 @@ export const createUserMenu = (userMenu) => {
                  * but it will simply not be available on the menu bar.. This option is mostly use 
                  * for populating our dashboard items, but it can also be use for any menu item
                  */
-                if (globalMenu[menuLocation][page]["showInMenu"]!==false) {
+                if (globalMenu[menuLocation][page]  && globalMenu[menuLocation][page]["showInMenu"]!==false) {
                     subMenuItems = subMenuItems.concat(currentSubMenuItem);
                 }
             })
@@ -221,8 +239,76 @@ export const createUserMenu = (userMenu) => {
         userMenuAccess = userMenuAccess.concat(menuObject);
     });
 
-    /** return the routes created */
+    /** return the menu created */
     return userMenuAccess
+}
+
+
+/**
+ * Create the dashboard view for user based on user permission
+ * @param {*} userMenu 
+ * @returns 
+ */
+export const createUserDashboard = (userMenu) => {
+
+    if (typeof userMenu !== "object") {
+        const msg="user permission provide must be an object";
+        alert(msg)
+        return console.error(msg)
+    }
+    /** get the global dashboard menu  definition
+     * to use this feature, we must have `dashboard` property 
+     * as part of our menu definition
+     */
+    const globalDashboardMenu = Menu["dashboard"] ?? null;
+
+    if (globalDashboardMenu === null) {
+        const msg="Dashboard menu not defined. There must be an entry called dashboard in our menu definition";
+        alert(msg)
+        return console.error(msg)
+    }
+
+    /**get the dashboard view user is allowed to see*/
+    const userDashboardViewsAllowed= userMenu['dashboard'] ?? null;
+
+    /** this user cannot see anything on the dashboard */
+    if(userDashboardViewsAllowed===null) {
+        const msg="User has not dashboard view";
+        /** we will return an empty array to avoid error */
+        console.log(msg);
+        return [];
+    }
+
+    /** this will hold all the dashboard views user will see */
+    let userDashboard = [];
+
+    Object.keys(userDashboardViewsAllowed).forEach(menuLocation => {
+
+        if (globalDashboardMenu[menuLocation] && globalDashboardMenu[menuLocation] !== null && typeof globalDashboardMenu[menuLocation] === "object") {
+            
+            /** check if we are showing this menu entry on the dashboard
+             * Please see `Menu` definition under the `dashboard` property for details
+             */
+            const {showOnDashboard}=globalDashboardMenu[menuLocation];
+
+            /** Assign this dashboard view for this user
+             * @todo: in the future, we could perform more function here to assign based on each menu row
+             * or we could use a dummy dashboard view for component that user does not have permission to see
+             * This is all to help in our display styling.
+             */
+            //console.log(globalDashboardMenu[menuLocation]["component"], " will assign this now ")
+            if(showOnDashboard===true) {
+                console.log(showOnDashboard, "will show on dashboard");
+                const CurrentDashboardComponent=globalDashboardMenu[menuLocation]["component"];
+                userDashboard = userDashboard.concat(<CurrentDashboardComponent/>);
+                // userDashboard = userDashboard.concat(<div><TotalOrders/></div>);
+
+            }
+            // userDashboard = userDashboard.concat(<div>Hello From Menu creation</div>);
+        }
+    });
+    /** return the dashboard created */
+    return userDashboard
 }
 
 /**
@@ -256,52 +342,61 @@ export const Menu = {
 
     /** the dashboard page definition */
     dashboard:{
-        dashboard: {
+        dashboardHome: {
             text: "Dashboard Content",
             link: "/dashboard",
             component: Dashboard,
             usePageWrapper: false,
-        },
+        },   
+
         totalOrders: {
             text: "Total Orders",
-            link: "/dashboard",
+            link: "dashboard",
             component:TotalOrders ,
             usePageWrapper: false,
-            showInMenu:false
+            showOnDashboard:true,
+            showInMenu:false,
         },
         recentOrders: {
             text: "Recent Orders",
-            link: "/dashboard",
+            link: "#",
             component:RecentOrders ,
             usePageWrapper: false,
-            showInMenu:false
+            showOnDashboard:true,
+            showInMenu:false,
+
         },
         totalRevenue: {
             text: "Total Revenue",
-            link: "/dashboard",
+            link: "#",
             component: TotalRevenue ,
             usePageWrapper: false,
+            showOnDashboard:true,
             showInMenu:false,
+
         },
         summary: {
             text: "Summary",
-            link: "/dashboard",
+            link: "#",
             component:Summary ,
             usePageWrapper: false,
+            showOnDashboard:true,
             showInMenu:false,
         },
         detailedStatistics: {
             text: "Detailed Statistics",
-            link: "/dashboard",
             component: DetailedStatistics ,
             usePageWrapper: false,
+            showOnDashboard:true,
             showInMenu:false,
         },
         RecentSummary: {
             text: "Detailed Statistics",
-            link: "/dashboard",
+            link: "#",
+
             component: DetailedStatistics ,
             usePageWrapper: false,
+            showOnDashboard:true,
             showInMenu:false,
         },
 
@@ -373,7 +468,7 @@ export const Menu = {
         },
     },
 
-    /** revenue definition goes her */
+    /** revenue definition goes here */
     revenue : {
         revenueReport: {
             text: "Revenue Report",
@@ -416,7 +511,7 @@ export const Menu = {
         },
     },
 
-    /** Administrative task menu starts her */
+    /** Administrative task menu starts here */
     admin :{
         addUsers: {
             text: "Add User",
@@ -428,6 +523,10 @@ export const Menu = {
             link: "/products",
             component: Products,
         },
+    },
+    
+    /** store operations menu */
+    storeOperations :{
         addMachinery: {
             text: "Add Machinery",
             link: "/operations",
@@ -454,6 +553,17 @@ export const Menu = {
             component: FuelIssueList,
         },
     },
+
+    /** loader menu definition */
+    loader: {
+        placeOrder: {
+            text: "Load Order",
+            link: "/loader",
+            component: Loader,
+        },  
+    },
+
+    /** loading inspector menus */
     inspector:{
         inspect: {
             text: "Inspect Order",
@@ -461,6 +571,8 @@ export const Menu = {
             component: Inspector,
         },
     },
+
+    /** security menu  */
     security:{
         inspect: {
             text: "Clear Order",
@@ -470,15 +582,75 @@ export const Menu = {
     },
 }
 
+/** The entries below define items to show only on the dashboard
+ * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry. 
+ * Our dashboard creation method will check if `showOnDashboard` property is true before showing on the dashboard
+ */
+export const DashboardMenu = {
+
+        totalOrders: {
+            text: "Total Orders",
+            link: "dashboard",
+            component:TotalOrders ,
+            usePageWrapper: false,
+            showOnDashboard:true,
+            showInMenu:false,
+        },
+        recentOrders: {
+            text: "Recent Orders",
+            link: "#",
+            component:RecentOrders ,
+            usePageWrapper: false,
+            showOnDashboard:true,
+            showInMenu:false,
+
+        },
+        totalRevenue: {
+            text: "Total Revenue",
+            link: "#",
+            component: TotalRevenue ,
+            usePageWrapper: false,
+            showOnDashboard:true,
+            showInMenu:false,
+
+        },
+        summary: {
+            text: "Summary",
+            link: "#",
+            component:Summary ,
+            usePageWrapper: false,
+            showOnDashboard:true,
+            showInMenu:false,
+        },
+        detailedStatistics: {
+            text: "Detailed Statistics",
+            component: DetailedStatistics ,
+            usePageWrapper: false,
+            showOnDashboard:true,
+            showInMenu:false,
+        },
+        RecentSummary: {
+            text: "Detailed Statistics",
+            link: "#",
+
+            component: DetailedStatistics ,
+            usePageWrapper: false,
+            showOnDashboard:true,
+            showInMenu:false,
+        },
+
+}
+
 /**
  * This is the menu definition for our individual menu entries
  * This will hold the icons, the main style and the dropdown icon
  */
 export const MenuStyles= {
 
-    /** No styling for default menu entry. We will most likely not 
+    /** No styling for default menu entry. We will most likely not be
      * showing them on the menu bar */
     default:null,
+
     order:{
         icon: ordersIcon,
         text: "Order",
@@ -514,6 +686,39 @@ export const MenuStyles= {
         link: "#",
         menuClass: "Admin",
     },
+    storeOperations:{
+        icon: null,
+        text: "Store Operations",
+        dropdownIcon: dropdownIcon,
+        link: "#",
+        menuClass: "store-operations",
+    },
+    revenue:{
+        icon: null,
+        text: "Revenue",
+        dropdownIcon: dropdownIcon,
+        link: "#",
+        menuClass: "revenue",
+    },
+    inspector:{
+        icon: null,
+        text: "Inspector",
+        dropdownIcon: dropdownIcon,
+        link: "#",
+        menuClass: "inspector",
+    },
+    loader:{
+        icon: null,
+        text: "Loader",
+        dropdownIcon: dropdownIcon,
+        link: "/loader",
+        menuClass: "loader",
+    },
+    security:{
+        icon: null,
+        text: "Security",
+        dropdownIcon: dropdownIcon,
+        link: "#",
+        menuClass: "security",
+    },
 }
-
-console.log(JSON.stringify(Menu));

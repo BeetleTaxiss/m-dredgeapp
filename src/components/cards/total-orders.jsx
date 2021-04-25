@@ -5,6 +5,7 @@ const TotalOrders = () => {
   const ordersData = { title: "Total Orders", value: "423,964" };
   return (
     <div className="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+      Hello Orders
       <div className="widget widget-one">
         <div className="widget-heading">
           <h6 className="">Orders</h6>
