@@ -5,7 +5,7 @@ import ShiftCalculator from "./shift-calculator";
 import TimelineNotification from "./timeline-notification";
 import ProductionCapacity from "./production-capacity";
 import PageWrapper from "../general/page-wrapper";
-import { functionUtils } from "../../hooks/function-utils";
+import { functionUtils, warningAlert } from "../../hooks/function-utils";
 import { BASE_API_URL } from "../../hooks/API";
 import moment from "moment";
 import "./production.scss";
@@ -17,7 +17,7 @@ export const Production = () => {
   const [displayTimeLine, setDisplayTimeLine] = useState(false);
   const [products, setProducts] = useState();
   const [productionDetails, setProductionDetails] = useState();
-  let time = moment().format("hh:mm");
+  let time = moment().format("HH:MM");
   console.log("Current Time: ", time);
   const [selectedDate, setSelectedDate] = React.useState(`${time}`);
   const [selectedEndDate, setSelectedEndDate] = React.useState(`${time}`);
@@ -64,7 +64,21 @@ export const Production = () => {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+    let timeValue = moment().format("HH:MM");
+    alert(timeValue);
+    if (date === timeValue) {
+      // setSelectedDate(time);
+    } else if (date < timeValue) {
+      const title = "Warning!",
+        text = "Selected time should not be lowered than current time";
+      warningAlert(title, text);
+      // setSelectedDate("");
+    }
+
     console.log("Time picker: ", selectedDate);
+    console.log("Time status: ", date < timeValue);
+    console.log("Clock time: ", date);
+    console.log("Moment time: ", timeValue);
   };
 
   const handleEndDateChange = (date) => {
