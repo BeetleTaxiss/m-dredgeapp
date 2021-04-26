@@ -9,7 +9,7 @@ import { TaskActionButton } from "../general/task-action";
 import WidgetHeader from "../general/widget-header";
 
 const ActivitiesSummary = () => {
-  const [activitiesSummary, setActivitiesSummary] = useState([]);
+  const [activitiesSummary, setActivitiesSummary] = useState(["loading"]);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -134,6 +134,7 @@ const ActivitiesSummary = () => {
     },
     taskAction: "/productionlist",
     activities: activitiesSummary,
+    body: activitiesSummary,
   };
 
   const ActivitiesSummaryComponent = () => (
@@ -145,7 +146,10 @@ const ActivitiesSummary = () => {
           arrow
         />
         <div className="widget-content">
-          <Activities content={recentPumpingActivitiesData.activities} />
+          <Activities
+            content={recentPumpingActivitiesData.activities}
+            body={recentPumpingActivitiesData}
+          />
           <TaskActionButton link={recentPumpingActivitiesData.taskAction} />
         </div>
       </div>
@@ -160,21 +164,41 @@ const Activities = ({ content }) => (
     style={{ minWidth: "0px" }}
   >
     <div className="timeline-line">
-      {content.map((item, i) => (
-        <div
-          key={i}
-          className={`item-timeline timeline-${
-            item.status.color && item.status.color
-          }`}
-        >
-          <div className="t-dot" data-original-title="" title=""></div>
-          <div className="t-text">
-            <p>{item.activity}</p>
-            <span className="badge">{item.status.comment}</span>
-            <p className="t-time">{item.time}</p>
+      {content[0] === "loading" ? (
+        <>
+          <Skeleton height={35} />
+          <span />
+          <Skeleton height={35} />
+          <span />
+          <Skeleton height={35} />
+          <span />
+          <Skeleton height={35} />
+          <span />
+          <Skeleton height={35} />
+          <span />
+          <Skeleton height={35} />
+          <span />
+          <Skeleton height={35} />
+          <span />
+          <Skeleton height={35} />
+        </>
+      ) : (
+        content.map((item, i) => (
+          <div
+            key={i}
+            className={`item-timeline timeline-${
+              item.status.color && item.status.color
+            }`}
+          >
+            <div className="t-dot" data-original-title="" title=""></div>
+            <div className="t-text">
+              <p>{item.activity}</p>
+              <span className="badge">{item.status.comment}</span>
+              <p className="t-time">{item.time}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   </div>
 );

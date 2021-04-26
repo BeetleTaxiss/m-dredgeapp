@@ -1,4 +1,5 @@
 import React from "react";
+import Skeleton from "react-loading-skeleton";
 import WidgetHeader from "../general/widget-header";
 const RecentSummaryHeader = ({ content }) => (
   <thead>
@@ -46,19 +47,34 @@ const RecentSummary = ({ data }) => {
   return (
     <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
       <div className="widget widget-table-three">
-        <WidgetHeader
-          title={data.widgetHeaderTitle}
-          links={data.widgetHeaderLinks}
-          dropdown
-        />
-        <div className="widget-content">
-          <div className="table-responsive">
-            <table className="table table-scroll">
-              <RecentSummaryHeader content={data.header} />
-              <RecentSummaryBody content={data.body} />
-            </table>
-          </div>
-        </div>
+        {data[0] === "loading" ? (
+          <>
+            <Skeleton height={35} />
+            <Skeleton height={35} />
+            <Skeleton height={35} />
+            <Skeleton height={35} />
+            <Skeleton height={35} />
+            <Skeleton height={35} />
+            <Skeleton height={35} />
+            <Skeleton height={35} />
+          </>
+        ) : (
+          <>
+            <WidgetHeader
+              title={data.widgetHeaderTitle}
+              links={data.widgetHeaderLinks}
+              dropdown
+            />
+            <div className="widget-content">
+              <div className="table-responsive">
+                <table className="table table-scroll">
+                  <RecentSummaryHeader content={data.header} />
+                  <RecentSummaryBody content={data.body} />
+                </table>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

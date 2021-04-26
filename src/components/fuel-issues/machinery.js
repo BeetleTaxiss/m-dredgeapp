@@ -10,7 +10,7 @@ import AddUpdateMachinery from "./add-update-machinery";
 import "./machinery.css";
 
 const Machinery = () => {
-  const [machineryList, setMachineryList] = useState();
+  const [machineryList, setMachineryList] = useState(["loading"]);
   const [showUpdateMachinery, setShowUpdateMachinery] = useState(false);
   const [loading, setloading] = useState(false);
 

@@ -9,7 +9,7 @@ import { batch } from "pullstate";
 import { Link } from "react-router-dom";
 
 // Alerts
-const successAlert = (title, text, link, showBtn) => {
+export const successAlert = (title, text, link, showBtn) => {
   Swal.fire({
     icon: "success",
     title: title,
@@ -18,9 +18,18 @@ const successAlert = (title, text, link, showBtn) => {
     showConfirmButton: showBtn ? true : false,
   });
 };
-const errorAlert = (title, text) => {
+export const errorAlert = (title, text) => {
   Swal.fire({
     icon: "error",
+    title: title,
+    text: text,
+    showConfirmButton: false,
+  });
+};
+
+export const warningAlert = (title, text) => {
+  Swal.fire({
+    icon: "warning",
     title: title,
     text: text,
     showConfirmButton: false,

@@ -5,7 +5,7 @@ import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
 const Security = () => {
-  const [bodyData, setBodyData] = useState(null);
+  const [bodyData, setBodyData] = useState(["loading"]);
   const [load, setLoad] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);

@@ -8,7 +8,7 @@ import UpdateAccountForm from "../../fuel-issues/add-Fuel-Form";
 import WidgetHeader from "../../general/widget-header";
 
 const ChartList = () => {
-  const [chartList, setChartList] = useState();
+  const [chartList, setChartList] = useState(["loading"]);
   const [statementTypes, setStatementTypes] = useState();
   const [accountTypes, setAccountTypes] = useState();
   useEffect(() => {

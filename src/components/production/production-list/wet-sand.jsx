@@ -6,7 +6,7 @@ import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import moment from "moment";
 
 const WetSand = () => {
-  const [wetsandList, setWetSandList] = useState();
+  const [wetsandList, setWetSandList] = useState(["loading"]);
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {

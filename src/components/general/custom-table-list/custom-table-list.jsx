@@ -1,4 +1,5 @@
 import React from "react";
+import Skeleton from "react-loading-skeleton";
 import WidgetHeader from "../widget-header";
 import CustomTableListBody from "./custom-table-list-body";
 import CustomTableListHeader from "./custom-table-list-header";
@@ -11,7 +12,14 @@ const CustomTableList = ({ content, setLoad }) => {
       <WidgetHeader title={content.tableTitle} />
       <div className="widget-content widget-content-area">
         <div className="table-responsive">
-          {arrayContent && content.body.length <= 0 ? (
+          {content.body[0] === "loading" ? (
+            <>
+              <Skeleton height={35} />
+              <Skeleton height={35} />
+              <Skeleton height={35} />
+              <Skeleton height={35} />
+            </>
+          ) : arrayContent && content.body.length <= 0 ? (
             <div
               style={{
                 display: "grid",
