@@ -89,7 +89,12 @@ const ProductionCapacity = ({
           </div>
         </div>
         <div
-          style={{ display: "flex", width: "100%", justifyContent: "center" }}
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            gap: "2rem",
+          }}
         >
           <button
             onClick={() => handleSubmit()}
@@ -99,6 +104,17 @@ const ProductionCapacity = ({
             style={{ width: "16rem", height: "3rem", fontSize: "1rem" }}
           >
             Update Production Capacity
+          </button>
+          <button
+            onClick={() => handleSubmit()}
+            name="txt"
+            id="pause-marker"
+            className="mt-4 btn btn-primary"
+            style={{ width: "16rem", height: "3rem", fontSize: "1rem" }}
+          >
+            {document.getElementById("pause-marker")
+              ? "Pause Shift"
+              : "Resume Shift"}
           </button>
         </div>
       </form>

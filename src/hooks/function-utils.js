@@ -267,6 +267,8 @@ export const functionUtils = {
       const productionCapacityOnStart = parseInt(formInput[""]);
       const pumping_distance_in_meters = document.getElementById("distance")
         .value;
+      const pumping_elevation_in_meters = document.getElementById("elevation")
+        .value;
       const addMarkerData = {
         user: userName,
         "user-id": userId,
@@ -276,6 +278,7 @@ export const functionUtils = {
         "start-time": loggedShiftStart,
         "production-date": loggedShiftStartDate,
         "pumping-distance-in-meters": pumping_distance_in_meters,
+        "pumping-elevation-in-meters": pumping_elevation_in_meters,
       };
       console.log("add Marker Values: ", addMarkerData);
       try {
@@ -309,9 +312,25 @@ export const functionUtils = {
               res.data[
                 "pumping_distance_in_meters"
               ] = pumping_distance_in_meters;
+              res.data[
+                "pumping_elevation_in_meters"
+              ] = pumping_elevation_in_meters;
               res.data["product_name"] = productName;
+
               setProductionDetails(res.data);
               setCounter({ hours, minutes, seconds });
+              document.getElementById(
+                "distance"
+              ).value = pumping_distance_in_meters;
+              document.getElementById(
+                "elevation"
+              ).value = pumping_elevation_in_meters;
+              document.getElementById(
+                "current-production-capacity"
+              ).value = productionCapacityOnStart;
+              document.getElementById(
+                "range-count-number"
+              ).innerHTML = productionCapacityOnStart;
 
               functionUtils.showTimeLine(
                 timelineItems,
@@ -475,13 +494,8 @@ export const functionUtils = {
       "current-production-capacity"
     ).value;
 
-    /**
-     * Set pumping and elevation values to their respective elements so it displays
-     */
-    document.getElementById("distance").value =
-      productDetailsStateless.pumping_distance_in_meters;
-
     console.log("Old Production Capacity", currentProductionCapacity);
+    console.log("New Production Capacity", temporaryProductionCapacity);
     console.log("New Production Capacity", temporaryProductionCapacity);
 
     // Production Capacity (in percentage) and time variables
@@ -490,6 +504,8 @@ export const functionUtils = {
     const DISTANCE_BENCHMARK = 1000;
     const pumping_distance_in_meters =
       productDetailsStateless.pumping_distance_in_meters;
+    const pumping_elevation_in_meters =
+      productDetailsStateless.pumping_elevation_in_meters;
     const calDistance = DISTANCE_BENCHMARK / pumping_distance_in_meters;
     const MAX_PRODUCTION_OUTPUT_PER_SECONDS = MAX_PRODUCTION_OUTPUT / SECONDS;
     const MAX_PRODUCTION_CAPACITY = 100 / 100;
@@ -577,6 +593,7 @@ export const functionUtils = {
       "total-qty-pumped": calcProductionOutput,
       "duration-pumped-in-seconds": PRODUCTION_TIME,
       "pumping-distance-in-meters": pumping_distance_in_meters,
+      "pumping-elevation-in-meters": pumping_elevation_in_meters,
       "production-date": prevloggedProductionDateToServer,
     };
     console.log("Old Pumping in meters: ", addStopMarkerData);
@@ -601,18 +618,27 @@ export const functionUtils = {
 
     let stopStartProductionBtnId = document.getElementById("stop-start-marker");
     let stopProductionBtnId = document.getElementById("stop-marker");
+    let pauseProductionBtnId = document.getElementById("pause-marker");
+    let resumeProductionBtnId = document.getElementById("resume-marker");
     /**
-     * New Pumping distance in meters
+     * New Pumping distance and elevation in meters
      */
     let new_pumping_distance_in_meters;
+    let new_pumping_elevation_in_meters;
     if (document.getElementById("distance").value === "") {
       new_pumping_distance_in_meters = pumping_distance_in_meters;
     } else {
       new_pumping_distance_in_meters = document.getElementById("distance")
         .value;
     }
+    if (document.getElementById("elevation").value === "") {
+      new_pumping_elevation_in_meters = pumping_elevation_in_meters;
+    } else {
+      new_pumping_elevation_in_meters = document.getElementById("elevation")
+        .value;
+    }
 
-    if (stopStartProductionBtnId) {
+    if (stopStartProductionBtnId && stopStartProductionBtnId.click) {
       console.log("Stop start marker working");
       console.log("Button clicked: ", stopStartProductionBtnId);
 
@@ -636,7 +662,16 @@ export const functionUtils = {
         productDetailsStateless.production_id = response.data.production_id;
         productDetailsStateless.batch_no = response.data.batch_no;
         productDetailsStateless.pumping_distance_in_meters = new_pumping_distance_in_meters;
+        productDetailsStateless.pumping_elevation_in_meters = new_pumping_elevation_in_meters;
         console.log("Product Details stateless: ", productDetailsStateless);
+
+        /**
+         * Set pumping and elevation values to their respective elements so it displays
+         */
+        document.getElementById("distance").value =
+          productDetailsStateless.pumping_distance_in_meters;
+        document.getElementById("elevation").value =
+          productDetailsStateless.pumping_elevation_in_meters;
         /**
          * Timeline items for notifications. When production capacity falls bellow or above a range of percentages (35%, 50%, 70%),then the timeline item's dot should reflect the rough estimate of the production capacity in colors either danger(red) or warning(yellow) for bellow 50% and secondary(blue) or success(green) for above 50%
          */
@@ -650,7 +685,7 @@ export const functionUtils = {
         // Set the previous time of the shift while shift is running to help ascertain difference in shift durations when production capacity is being calculated
         sessionStorage.setItem("prevTime", getNewLoggedTime);
       }
-    } else if (stopProductionBtnId) {
+    } else if (stopProductionBtnId && stopProductionBtnId.click) {
       /** Axios call to end production Marker once timer runs out */
       console.log("Stop Marker working");
       console.log("Button  clicked stop", stopProductionBtnId);
@@ -674,6 +709,68 @@ export const functionUtils = {
             successAlert(title, text, link);
             clearTimeout(restartMarker);
             document.getElementById("stop-marker").id = "stop-start-marker";
+          }
+        })
+        .catch((error) => {
+          console.log("Error occurred", error);
+          const title = "Network Error",
+            text = `Network not available, try switching on your network/data: ${error}`;
+          errorAlert(title, text);
+          restartStopMarker();
+        });
+    } else if (pauseProductionBtnId && pauseProductionBtnId.click) {
+      /** Axios call to pause production Marker once timer runs out */
+      console.log("Pause Marker working");
+      console.log("Button  clicked stop", pauseProductionBtnId);
+
+      axios
+        .put(
+          `${BASE_API_URL}/api/v1/production/stop-marker.php`,
+          stopMarkerData
+        )
+        .then((res) => {
+          console.log("Pause marker response: ", res.data);
+          if (res.data.error) {
+            const title = "Server Error Response",
+              text = res.data.message;
+            errorAlert(title, text);
+            restartStopMarker();
+          } else {
+            stopProductionBtnId.disable = true;
+            const title = "Shift paused Successfully";
+            successAlert(title);
+            document.getElementById("pause-marker").id = "resume-marker";
+          }
+        })
+        .catch((error) => {
+          console.log("Error occurred", error);
+          const title = "Network Error",
+            text = `Network not available, try switching on your network/data: ${error}`;
+          errorAlert(title, text);
+          restartStopMarker();
+        });
+    } else if (resumeProductionBtnId && resumeProductionBtnId.click) {
+      /** Axios call to pause production Marker once timer runs out */
+      console.log("resume Marker working");
+      console.log("Button  clicked stop", resumeProductionBtnId);
+
+      axios
+        .put(
+          `${BASE_API_URL}/api/v1/production/stop-start-marker.php`,
+          addStopMarkerData
+        )
+        .then((res) => {
+          console.log("Resume marker response: ", res.data);
+          if (res.data.error) {
+            const title = "Server Error Response",
+              text = res.data.message;
+            errorAlert(title, text);
+            restartStopMarker();
+          } else {
+            stopProductionBtnId.disable = false;
+            const title = "Shift Resumed Successfully";
+            successAlert(title);
+            document.getElementById("resume-marker").id = "pause-marker";
           }
         })
         .catch((error) => {
