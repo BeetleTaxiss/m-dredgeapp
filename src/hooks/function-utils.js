@@ -172,7 +172,7 @@ export const functionUtils = {
       console.log("Select Value: ", selectValue);
 
       // Filter Products Array to get single product
-      const product = products.filter((product) => product.id === selectValue);
+      const product = products?.filter((product) => product.id === selectValue);
       console.log("Product: ", product);
     };
     /**
@@ -257,7 +257,7 @@ export const functionUtils = {
       console.log("Select Value: ", selectValue);
 
       // Filter Products Array to get single product
-      const product = products.filter((product) => product.id === selectValue);
+      const product = products?.filter((product) => product.id === selectValue);
       console.log("Product: ", product);
       const productId = product[0].id,
         productName = product[0].product;
@@ -303,7 +303,7 @@ export const functionUtils = {
               timelineItems = timelineItems.concat({
                 time: loggedShiftStart,
                 dotColor: "primary",
-                text: "Shift started",
+                text: `Shift started and Production running at ${productionCapacityOnStart}%`,
               });
               setTimelineItem(timelineItems);
               console.log("timeline Items: ", timelineItems);
@@ -543,7 +543,9 @@ export const functionUtils = {
     const updatedTimelineItems = (
       timelineItems,
       currentProductionCapacity,
-      newTimelineItems
+      newTimelineItems,
+      pause,
+      resume
     ) => {
       console.log("Previous Timeline Array: ", timelineItems);
       timelineItems = timelineItems.concat({
@@ -559,11 +561,21 @@ export const functionUtils = {
             ? "success"
             : "secondary"
         }`,
-        text: `Production running at ${currentProductionCapacity}%`,
+        text: `${
+          pause
+            ? "Shift Paused"
+            : resume
+            ? `Shift resumed and Production running at ${currentProductionCapacity}%`
+            : `Production running at ${currentProductionCapacity}%`
+        } `,
         timeSpent: `${hours ? hours : "0"} hrs : ${
           minutes ? minutes : "0"
         } mins :  ${seconds ? seconds : "0"} secs `,
-        productionOutput: `Production output per hour: ${productionOutputForUser}cm³ `,
+        productionOutput: `${
+          pause
+            ? ""
+            : `Production output per hour: ${productionOutputForUser}cm³`
+        }`,
       });
 
       console.log("Mutated Timeline Array: ", timelineItems);
@@ -607,19 +619,58 @@ export const functionUtils = {
       "total-qty-pumped": calcProductionOutput,
       "duration-pumped-in-seconds": PRODUCTION_TIME,
     };
+    const addMarkerData = {
+      user: userName,
+      "user-id": userId,
+      "product-id": productId,
+      product: productName,
+      "production-capacity": temporaryProductionCapacity,
+      "start-time": prevloggedProductionTimeToServer,
+      "production-date": prevloggedProductionDateToServer,
+      "pumping-distance-in-meters": pumping_distance_in_meters,
+      "pumping-elevation-in-meters": pumping_elevation_in_meters,
+    };
     let restartMarker = null;
     const restartStopMarker = () => {
-      restartMarker = setTimeout(
-        () => document.getElementById("stop-marker").click(),
-        20000
-      );
+      restartMarker = setTimeout(() => {
+        if (document.getElementById("stop-marker") !== null) {
+          document.getElementById("stop-marker").click();
+        }
+      }, 20000);
       return restartMarker;
     };
 
     let stopStartProductionBtnId = document.getElementById("stop-start-marker");
+    let stopStartProductionBtnIdAttribute;
+    if (stopStartProductionBtnId !== null) {
+      stopStartProductionBtnIdAttribute =
+        stopStartProductionBtnId.dataset.runStopStartMarker;
+    }
+
     let stopProductionBtnId = document.getElementById("stop-marker");
+    let stopProductionBtnIdAttribute;
+    if (stopProductionBtnId !== null) {
+      stopProductionBtnIdAttribute =
+        stopProductionBtnId.dataset.runStopStartMarker;
+    }
+
     let pauseProductionBtnId = document.getElementById("pause-marker");
+    let pauseProductionBtnIdAttribute;
+    if (pauseProductionBtnId !== null) {
+      pauseProductionBtnIdAttribute =
+        pauseProductionBtnId.dataset.runPauseResumeMarker;
+    }
+
     let resumeProductionBtnId = document.getElementById("resume-marker");
+    let resumeProductionBtnIdAttribute;
+    if (resumeProductionBtnId !== null) {
+      resumeProductionBtnIdAttribute =
+        resumeProductionBtnId.dataset.runPauseResumeMarker;
+    }
+
+    console.log("Data Attribute: ", stopStartProductionBtnIdAttribute);
+    console.log("Data Attribute: ", pauseProductionBtnIdAttribute);
+    console.log("Data Attribute: ", pauseProductionBtnIdAttribute === "false");
     /**
      * New Pumping distance and elevation in meters
      */
@@ -638,7 +689,7 @@ export const functionUtils = {
         .value;
     }
 
-    if (stopStartProductionBtnId && stopStartProductionBtnId.click) {
+    if (stopStartProductionBtnId && pauseProductionBtnIdAttribute === "false") {
       console.log("Stop start marker working");
       console.log("Button clicked: ", stopStartProductionBtnId);
 
@@ -685,7 +736,10 @@ export const functionUtils = {
         // Set the previous time of the shift while shift is running to help ascertain difference in shift durations when production capacity is being calculated
         sessionStorage.setItem("prevTime", getNewLoggedTime);
       }
-    } else if (stopProductionBtnId && stopProductionBtnId.click) {
+    } else if (
+      stopProductionBtnId &&
+      pauseProductionBtnIdAttribute === "false"
+    ) {
       /** Axios call to end production Marker once timer runs out */
       console.log("Stop Marker working");
       console.log("Button  clicked stop", stopProductionBtnId);
@@ -718,7 +772,10 @@ export const functionUtils = {
           errorAlert(title, text);
           restartStopMarker();
         });
-    } else if (pauseProductionBtnId && pauseProductionBtnId.click) {
+    } else if (
+      pauseProductionBtnId &&
+      stopStartProductionBtnIdAttribute === "false"
+    ) {
       /** Axios call to pause production Marker once timer runs out */
       console.log("Pause Marker working");
       console.log("Button  clicked stop", pauseProductionBtnId);
@@ -736,10 +793,25 @@ export const functionUtils = {
             errorAlert(title, text);
             restartStopMarker();
           } else {
-            stopProductionBtnId.disable = true;
+            stopStartProductionBtnId.disabled = true;
             const title = "Shift paused Successfully";
             successAlert(title);
             document.getElementById("pause-marker").id = "resume-marker";
+            // pauseProductionBtnIdAttribute = "true";
+            /**
+             * Timeline items for notifications. When production capacity falls bellow or above a range of percentages (35%, 50%, 70%),then the timeline item's dot should reflect the rough estimate of the production capacity in colors either danger(red) or warning(yellow) for bellow 50% and secondary(blue) or success(green) for above 50%
+             */
+            let pause = true;
+            currentProductionCapacity = temporaryProductionCapacity;
+            updatedTimelineItems(
+              timelineItems,
+              currentProductionCapacity,
+              functionUtils.newTimelineItems,
+              pause
+            );
+
+            // Set the previous time of the shift while shift is running to help ascertain difference in shift durations when production capacity is being calculated
+            sessionStorage.setItem("prevTime", getNewLoggedTime);
           }
         })
         .catch((error) => {
@@ -749,16 +821,16 @@ export const functionUtils = {
           errorAlert(title, text);
           restartStopMarker();
         });
-    } else if (resumeProductionBtnId && resumeProductionBtnId.click) {
+    } else if (
+      resumeProductionBtnId &&
+      stopStartProductionBtnIdAttribute === "true"
+    ) {
       /** Axios call to pause production Marker once timer runs out */
       console.log("resume Marker working");
       console.log("Button  clicked stop", resumeProductionBtnId);
 
       axios
-        .put(
-          `${BASE_API_URL}/api/v1/production/stop-start-marker.php`,
-          addStopMarkerData
-        )
+        .post(`${BASE_API_URL}/api/v1/production/add-marker.php`, addMarkerData)
         .then((res) => {
           console.log("Resume marker response: ", res.data);
           if (res.data.error) {
@@ -767,10 +839,47 @@ export const functionUtils = {
             errorAlert(title, text);
             restartStopMarker();
           } else {
-            stopProductionBtnId.disable = false;
+            productDetailsStateless.production_id = res.data.production_id;
+            productDetailsStateless.batch_no = res.data.batch_no;
+            productDetailsStateless.pumping_distance_in_meters = new_pumping_distance_in_meters;
+            productDetailsStateless.pumping_elevation_in_meters = new_pumping_elevation_in_meters;
+            stopStartProductionBtnId.disabled = false;
+
             const title = "Shift Resumed Successfully";
             successAlert(title);
+
             document.getElementById("resume-marker").id = "pause-marker";
+            /**
+             * Timeline items for notifications. When production capacity falls bellow or above a range of percentages (35%, 50%, 70%),then the timeline item's dot should reflect the rough estimate of the production capacity in colors either danger(red) or warning(yellow) for bellow 50% and secondary(blue) or success(green) for above 50%
+             */
+            currentProductionCapacity = temporaryProductionCapacity;
+
+            console.log(
+              " Current Production Capacity: ",
+              currentProductionCapacity
+            );
+
+            const loggedShiftEnd = moment().format("hh:mm");
+            let resumeTimelineItem = {
+              time: loggedShiftEnd,
+              dotColor: "primary",
+              text: `Shift resumed at production capacity of ${currentProductionCapacity}%`,
+            };
+            functionUtils.globalTimeline = functionUtils.globalTimeline.concat(
+              resumeTimelineItem
+            );
+            console.log(
+              "Global timeline items 3: ",
+              functionUtils.globalTimeline
+            );
+            functionUtils.showTimeLine(
+              functionUtils.globalTimeline,
+              "timeline-notification-single"
+            );
+            functionUtils.globalTimeline = functionUtils.globalTimeline;
+
+            // Set the previous time of the shift while shift is running to help ascertain difference in shift durations when production capacity is being calculated
+            sessionStorage.setItem("prevTime", getNewLoggedTime);
           }
         })
         .catch((error) => {
@@ -817,7 +926,7 @@ export const functionUtils = {
     // Get form values with document,getById
 
     // Filter Products Array to get single product
-    const product = products.filter((product) => product.id === selectValue);
+    const product = products?.filter((product) => product.id === selectValue);
     console.log("Product: ", product);
     // Calculate the cost of an order
     const orderCost = qtyValue * product[0].price;
