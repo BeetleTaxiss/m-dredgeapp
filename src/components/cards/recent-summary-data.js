@@ -156,7 +156,7 @@ export const recentPumpingActivitiesData = {
   ],
 };
 
-export const detailedStats = [
+export const detailedStatsData = [
   { followers: true, stats: "4,000", legend: "Stockpile" },
   { linkk: true, stats: "2,000", legend: "Wet sand" },
   { chat: true, stats: "14,000", legend: "Gallons of water" },

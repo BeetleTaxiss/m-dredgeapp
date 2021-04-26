@@ -54,12 +54,13 @@ const Login = async (user, password) => {
         errorAlert(title, text);
       } else {
         responseData = response.data.data;
+        console.log("User Login response Details: ", responseData);
         localStorage.setItem(
           "user",
           JSON.stringify({
-            id: data.id,
-            username: data.user,
-            userType: data.user_type,
+            id: responseData.id,
+            username: responseData.user,
+            userType: responseData.user_type,
           })
         );
       }

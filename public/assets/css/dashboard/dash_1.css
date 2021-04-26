@@ -1090,6 +1090,19 @@
     text-align: center;
     padding: 0 15px 0 0;
 }
+.widget-table-two .table>thead>tr>.th-new-table {
+  padding: 10px 0 10px 0px;
+}
+.widget-table-two .table>thead>tr>th:first-child .th-content.new-table {
+    margin-left: 10px;
+}
+.widget-table-two .table>thead>tr>th:last-child .th-content.new-table {
+    margin-left: 10px;
+}
+.widget-table-two .table>thead>tr>th:nth-last-child(2) .th-content.new-table {
+    text-align: center;
+    padding: 0 15px 0 0;
+}
 .widget-table-two .table > tbody > tr > td {
     border-top: none;
     background: transparent;
