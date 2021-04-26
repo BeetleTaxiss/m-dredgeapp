@@ -85,6 +85,34 @@ const ShiftCalculator = ({
               ))}
             </span>
           </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "2rem",
+              width: "100%",
+            }}
+          >
+            <span
+              style={{
+                padding: "1rem 1rem",
+                borderRadius: "10px",
+                width: "100%",
+                backgroundColor: "rgba(235, 237, 242, 0.5)",
+              }}
+            >
+              {distanceFormData.elevation.map((item, i) => (
+                <FormDetails
+                  color="#4361ee"
+                  displayHalf
+                  key={i}
+                  item={item}
+                  handleChange={handleChange}
+                />
+              ))}
+            </span>
+          </div>
           {/* BEGINNING OF SHIFT "FROM" INPUT */}
           <div
             style={{

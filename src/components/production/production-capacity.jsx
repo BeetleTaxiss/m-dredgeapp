@@ -9,9 +9,20 @@ const ProductionCapacity = ({
   distanceFormData,
 }) => {
   console.log("Range Count: ", document.getElementById("range-count-number"));
-  // if (document.getElementById("range-count-number") === "undefined%") {
-  //   document.getElementById("range-count-number").innerHTML = 0;
-  // }
+  const toggleBtnText = () => {
+    const toggleBtnId =
+      document.getElementById("pause-marker") ||
+      document.getElementById("resume-marker");
+
+    const toggleText = toggleBtnId.innerText;
+
+    if (toggleText === "Pause Shift") {
+      toggleBtnId.innerText = "Resume Shift";
+    } else if (toggleText === "Resume Shift") {
+      toggleBtnId.innerText = "Pause Shift";
+    }
+  };
+
   return (
     <div className="custom-progress progress-up" style={{ width: "100%" }}>
       <form
@@ -89,16 +100,55 @@ const ProductionCapacity = ({
           </div>
         </div>
         <div
-          style={{ display: "flex", width: "100%", justifyContent: "center" }}
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            gap: "2rem",
+          }}
         >
           <button
             onClick={() => handleSubmit()}
             name="txt"
             id="stop-start-marker"
+            data-run-stop-start-marker="true"
             className="mt-4 btn btn-primary"
             style={{ width: "16rem", height: "3rem", fontSize: "1rem" }}
           >
             Update Production Capacity
+          </button>
+          <button
+            onClick={() => {
+              let stopStartProductionBtnId = document.getElementById(
+                "stop-start-marker"
+              );
+              if (stopStartProductionBtnId !== null) {
+                stopStartProductionBtnId.dataset.runStopStartMarker = false;
+              }
+              let pauseProductionBtnId = document.getElementById(
+                "pause-marker"
+              );
+              if (pauseProductionBtnId !== null) {
+                pauseProductionBtnId.dataset.runPauseResumeMarker = true;
+              }
+              let resumeProductionBtnId = document.getElementById(
+                "resume-marker"
+              );
+              if (resumeProductionBtnId !== null) {
+                resumeProductionBtnId.dataset.runPauseResumeMarker = false;
+                stopStartProductionBtnId.dataset.runStopStartMarker = true;
+              }
+              toggleBtnText();
+              handleSubmit();
+            }}
+            name="txt"
+            id="pause-marker"
+            data-run-pause-resume-marker="false"
+            data-btn-text=""
+            className="mt-4 btn btn-warning"
+            style={{ width: "16rem", height: "3rem", fontSize: "1rem" }}
+          >
+            Pause Shift
           </button>
         </div>
       </form>
