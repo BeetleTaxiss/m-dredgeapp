@@ -49,6 +49,7 @@ const RecentSummary = ({ data }) => {
       <div className="widget widget-table-three">
         {data[0] === "loading" ? (
           <>
+            <Skeleton height={40} />
             <Skeleton height={35} />
             <Skeleton height={35} />
             <Skeleton height={35} />
@@ -56,7 +57,8 @@ const RecentSummary = ({ data }) => {
             <Skeleton height={35} />
             <Skeleton height={35} />
             <Skeleton height={35} />
-            <Skeleton height={35} />
+            <Skeleton height={40} />
+            <Skeleton height={40} />
           </>
         ) : (
           <>

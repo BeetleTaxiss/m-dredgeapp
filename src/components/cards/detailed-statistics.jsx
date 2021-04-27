@@ -12,7 +12,11 @@ import excavator from "../../assets/excavator.jpg";
 import stockImg from "../../assets/excavator2.jpg";
 import stockpiledImg from "../../assets/excavator3.jpg";
 const DetailedStatistics = () => {
-  const [detailedStats, setDetailedStats] = useState([]);
+  const [detailedStats, setDetailedStats] = useState([
+    "loading",
+    "loading",
+    "loading",
+  ]);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -99,59 +103,80 @@ const DetailedStatistics = () => {
   const DetailedStatsComponent = () => (
     <div className="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
       <div className="row widget-statistic">
-        {detailedStats.map((item, i) => (
-          <div
-            key={i}
-            className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing"
-          >
-            <div className="widget widget-one_hybrid widget-followers">
-              <div className="widget-heading" style={{ marginBottom: "0px" }}>
-                <div className="w-title">
-                  <div className="w-icon">
-                    {item.followers ? (
-                      <Followers />
-                    ) : item.linkk ? (
-                      <Linkk />
-                    ) : item.chat ? (
-                      <Chat />
-                    ) : null}
-                  </div>
-                  <div className="">
-                    <p className="w-value">{item.stats}</p>
-                    <h5 className="">{item.legend}</h5>
+        {detailedStats[0] === "loading"
+          ? detailedStats.map((item, i) => (
+              <div
+                key={i}
+                className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing"
+              >
+                <div className="widget widget-one_hybrid widget-followers">
+                  <div
+                    className="widget-heading"
+                    style={{ marginBottom: "0px" }}
+                  >
+                    <Skeleton height={40} />
+                    <Skeleton height={40} />
+                    <Skeleton height={300} />
                   </div>
                 </div>
-                <div
-                  style={{
-                    backgroundImage: `url(${
-                      item.followers
-                        ? excavator
-                        : item.linkk
-                        ? stockpiledImg
-                        : item.chat
-                        ? stockImg
-                        : null
-                    })`,
-                    height: "300px",
-                    width: "100%",
-                    backgroundSize: "cover",
-                    // backgroundSize: item.followers
-                    //   ? "cover"
-                    //   : item.linkk
-                    //   ? "contain"
-                    //   : item.chat
-                    //   ? "contain"
-                    //   : "cover",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                    borderRadius: "10px",
-                    marginTop: "2rem",
-                  }}
-                ></div>
               </div>
-            </div>
-          </div>
-        ))}
+            ))
+          : detailedStats.map((item, i) => (
+              <div
+                key={i}
+                className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing"
+              >
+                <div className="widget widget-one_hybrid widget-followers">
+                  <div
+                    className="widget-heading"
+                    style={{ marginBottom: "0px" }}
+                  >
+                    <div className="w-title">
+                      <div className="w-icon">
+                        {item.followers ? (
+                          <Followers />
+                        ) : item.linkk ? (
+                          <Linkk />
+                        ) : item.chat ? (
+                          <Chat />
+                        ) : null}
+                      </div>
+                      <div className="">
+                        <p className="w-value">{item.stats}</p>
+                        <h5 className="">{item.legend}</h5>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        backgroundImage: `url(${
+                          item.followers
+                            ? excavator
+                            : item.linkk
+                            ? stockpiledImg
+                            : item.chat
+                            ? stockImg
+                            : null
+                        })`,
+                        height: "300px",
+                        width: "100%",
+                        backgroundSize: "cover",
+                        // backgroundSize: item.followers
+                        //   ? "cover"
+                        //   : item.linkk
+                        //   ? "contain"
+                        //   : item.chat
+                        //   ? "contain"
+                        //   : "cover",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        borderRadius: "10px",
+                        marginTop: "2rem",
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
       </div>
     </div>
   );

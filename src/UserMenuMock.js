@@ -58,14 +58,13 @@ export const userMenu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-
-    // RecentSummary: {
-    //   text: "Detailed Statistics",
-    //   link: "#",
-    //   usePageWrapper: false,
-    //   showOnDashboard: true,
-    //   showInMenu: false,
-    // },
+    CurrentActivity: {
+      text: "Current Activity",
+      link: "#",
+      usePageWrapper: false,
+      showOnDashboard: true,
+      showInMenu: false,
+    },
   },
 
   order: {

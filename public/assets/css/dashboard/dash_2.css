@@ -71,7 +71,7 @@
 }
 .widget-card-four .w-progress-stats {
     display: flex;
-    margin-top: 36px;
+    margin-top: 40px;
 }
 .widget-card-four .w-icon {
     color: #5f0a87;
@@ -82,7 +82,7 @@
 .widget-card-four .progress {
     height: 8px;
     margin-bottom: 0;
-    height: 20px;
+    height: 25px;
     padding: 4px;
     border-radius: 20px;
     box-shadow: 0 2px 2px rgba(224, 230, 237, 0.4588235294117647);

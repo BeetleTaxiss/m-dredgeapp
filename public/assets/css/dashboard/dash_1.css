@@ -1044,7 +1044,7 @@
 }
 .widget-table-two .table {
     border-collapse: separate;
-    border-spacing: 0 5px;
+    border-spacing: 0 7px;
     margin-bottom: 0;
 }
 .widget-table-two .table > thead > tr > th {

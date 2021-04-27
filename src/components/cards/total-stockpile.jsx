@@ -77,11 +77,19 @@ const TotalStockpile = () => {
             </div>
           </div>
           {/* BEGINNING OF STOCK PILE INFORMATION */}
-          <StockPileInformation content={info} />
+          {!info ? (
+            <Skeleton height={120} />
+          ) : (
+            <StockPileInformation content={info} />
+          )}
           {/* END OF STOCK PILE INFORMATION */}
 
           {/* BEGINNING OF PROGRESS BAR FOR STOCK PILE CAPACITY */}
-          <StockPileProgressBar content={progressPercentage} />
+          {progressPercentage === undefined ? (
+            <Skeleton height={27} />
+          ) : (
+            <StockPileProgressBar content={progressPercentage} />
+          )}
           {/* ENDING OF PROGRESS BAR FOR STOCK PILE CAPACITY */}
         </div>
       </div>
