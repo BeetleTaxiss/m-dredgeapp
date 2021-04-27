@@ -50,9 +50,15 @@ export const userMenu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-
     summary: {
       text: "Summary",
+      link: "#",
+      usePageWrapper: false,
+      showOnDashboard: true,
+      showInMenu: false,
+    },
+    UsersActivitiesSummary: {
+      text: "Users Activities Summary",
       link: "#",
       usePageWrapper: false,
       showOnDashboard: true,

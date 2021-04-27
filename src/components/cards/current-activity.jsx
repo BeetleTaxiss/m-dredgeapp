@@ -12,7 +12,11 @@ const CurrentActivity = () => {
 
     const response = async () => {
       await axios
-        .get(`${BASE_API_URL}/api/v1/production/list.php`)
+        .get(`${BASE_API_URL}/api/v1/production/list.php`, {
+          params: {
+            count: 2,
+          },
+        })
         .then((res) => {
           let activitiesSummaryResponse = res.data.data;
           let reversedCurrentActivityResponse = [
@@ -41,11 +45,13 @@ const CurrentActivity = () => {
                 3600,
               distance_pumped = Math.round(
                 reversedCurrentActivityResponse[0].pumping_distance_in_meters
-              );
+              ),
+              completed = reversedCurrentActivityResponse[0].completed;
             const currentActivitySchema = {
               link: "/productionlist",
               user: user,
               date: date,
+              completed: completed,
               productionInfo: [
                 { text: "Current Production Information: " },
                 { text: `Wet sand: ${wet_sand_pumped} cm³` },
@@ -97,11 +103,32 @@ const CurrentActivity = () => {
             <Skeleton height={200} />
           </>
         ) : (
-          <div className="widget-content">
+          <div className="widget-content current-activity">
             <div className="media">
               <div className="w-img"></div>
               <div className="media-body">
-                <h6>{currentActivity.user}</h6>
+                <span
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <h6>{currentActivity.user}</h6>
+                  <div className="usr-name">
+                    <span
+                      id="span-pending"
+                      style={{
+                        background:
+                          currentActivity.completed === "1"
+                            ? "#1abc9c"
+                            : "#2196f3",
+                      }}
+                    >
+                      {currentActivity.completed === "0"
+                        ? "processing"
+                        : currentActivity.completed === "1"
+                        ? "completed"
+                        : "processing"}
+                    </span>
+                  </div>
+                </span>
                 <p className="meta-date-time">{currentActivity.date}</p>
               </div>
             </div>
@@ -112,7 +139,7 @@ const CurrentActivity = () => {
               </p>
             ))}
 
-            <TaskActionButton link={currentActivity.link} />
+            <TaskActionButton link={currentActivity.link} mt />
           </div>
         )}
       </div>
