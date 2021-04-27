@@ -113,17 +113,7 @@ export const createUserRoutes = (userMenu) => {
             userAccess= userAccess.concat({...currentPage});
         })
     }
-    /**
-     * to fix a peculiar issue with `react-router-dom` where route definition at the top overrides
-     * navigation to route at the bottom even if such a route exist, we will make sure the default 
-     * route comes first.  In `default` menu definition, we ensure that `dashboard` comes first 
-     * this is to avoid `login` with the default route showing in /dashboard even when dashboard is also defined
-     * @todo: we need to investigate this behaviour
-     */
-    //const allAccessibleRoutes=[...defaultAllowedAccess, ...userAccess];
-
-    console.log(userAccess, "all routes create"); 
-
+    
     /** return the routes created */
     return userAccess;
 }
@@ -131,7 +121,7 @@ export const createUserRoutes = (userMenu) => {
 
 export const createUserMenu = (userMenu) => {
 
-    if (typeof userMenu !== "object") {
+    if (typeof userMenu !== "object" || userMenu===null || userMenu===undefined) {
         alert("user permission provide must be an object")
         return console.error("user permission provide must be an object")
     }
@@ -256,6 +246,12 @@ export const createUserDashboard = (userMenu) => {
         alert(msg)
         return console.error(msg)
     }
+
+    /** if userMnu is null, simply ignore menu creation */
+    if(userMenu===null || userMenu===undefined) {
+        return []
+    }
+
     /** get the global dashboard menu  definition
      * to use this feature, we must have `dashboard` property 
      * as part of our menu definition
@@ -296,15 +292,10 @@ export const createUserDashboard = (userMenu) => {
              * or we could use a dummy dashboard view for component that user does not have permission to see
              * This is all to help in our display styling.
              */
-            //console.log(globalDashboardMenu[menuLocation]["component"], " will assign this now ")
             if(showOnDashboard===true) {
-                console.log(showOnDashboard, "will show on dashboard");
                 const CurrentDashboardComponent=globalDashboardMenu[menuLocation]["component"];
                 userDashboard = userDashboard.concat(<CurrentDashboardComponent/>);
-                // userDashboard = userDashboard.concat(<div><TotalOrders/></div>);
-
             }
-            // userDashboard = userDashboard.concat(<div>Hello From Menu creation</div>);
         }
     });
     /** return the dashboard created */
@@ -339,7 +330,6 @@ export const Menu = {
         },
     },
 
-
     /** the dashboard page definition */
     dashboard:{
         dashboardHome: {
@@ -348,7 +338,12 @@ export const Menu = {
             component: Dashboard,
             usePageWrapper: false,
         },   
-
+        
+        /** The entries below define items to show only on the dashboard
+         * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry. 
+         * Our dashboard creation method will check if `showOnDashboard` property is true before 
+         * showing on the dashboard
+         */
         totalOrders: {
             text: "Total Orders",
             link: "dashboard",
@@ -582,64 +577,6 @@ export const Menu = {
     },
 }
 
-/** The entries below define items to show only on the dashboard
- * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry. 
- * Our dashboard creation method will check if `showOnDashboard` property is true before showing on the dashboard
- */
-export const DashboardMenu = {
-
-        totalOrders: {
-            text: "Total Orders",
-            link: "dashboard",
-            component:TotalOrders ,
-            usePageWrapper: false,
-            showOnDashboard:true,
-            showInMenu:false,
-        },
-        recentOrders: {
-            text: "Recent Orders",
-            link: "#",
-            component:RecentOrders ,
-            usePageWrapper: false,
-            showOnDashboard:true,
-            showInMenu:false,
-
-        },
-        totalRevenue: {
-            text: "Total Revenue",
-            link: "#",
-            component: TotalRevenue ,
-            usePageWrapper: false,
-            showOnDashboard:true,
-            showInMenu:false,
-
-        },
-        summary: {
-            text: "Summary",
-            link: "#",
-            component:Summary ,
-            usePageWrapper: false,
-            showOnDashboard:true,
-            showInMenu:false,
-        },
-        detailedStatistics: {
-            text: "Detailed Statistics",
-            component: DetailedStatistics ,
-            usePageWrapper: false,
-            showOnDashboard:true,
-            showInMenu:false,
-        },
-        RecentSummary: {
-            text: "Detailed Statistics",
-            link: "#",
-
-            component: DetailedStatistics ,
-            usePageWrapper: false,
-            showOnDashboard:true,
-            showInMenu:false,
-        },
-
-}
 
 /**
  * This is the menu definition for our individual menu entries

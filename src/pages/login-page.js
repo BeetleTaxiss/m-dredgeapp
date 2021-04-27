@@ -1,18 +1,23 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { systemSettings } from "../state/store";
 import { FormDetails } from "../components/orders/order-form/order-form-details";
 import { BASE_API_URL } from "../hooks/API";
-import { functionUtils } from "../hooks/function-utils";
+import { functionUtils, errorAlert } from "../hooks/function-utils";
+
+import {StoreManager} from "react-persistent-store-manager"
+import {Stores, AppStore} from "./../state/store";
+
+import {userMenu} from "./../UserMenuMock";
+
 
 const LoginPage = () => {
-  // SET APP SETTINGS TO GLOBAL PULLSTATE
 
-  axios.get(`${BASE_API_URL}/api/v1/system/app-settings.php`).then((res) => {
-    console.log(res.data);
-    systemSettings.update((s) => (s = false));
-  });
+//console.log(JSON.stringify(userMenu), "menu sample");
+
+  /** create a store  */
+  const Store= StoreManager(AppStore, Stores, "AppSettingsStore");
+
 
   const [user, setUsername] = useState({
     user: "",
@@ -28,6 +33,7 @@ const LoginPage = () => {
 
   const history = useHistory();
   const location = useLocation();
+
   const handleChange = functionUtils.SignInFormChange(
     errors,
     setErrors,
@@ -41,6 +47,7 @@ const LoginPage = () => {
     history,
     location
   );
+
   const showPassword = () => {
     let passwordType = document.getElementById("password").getAttribute("type");
     document
@@ -56,10 +63,6 @@ const LoginPage = () => {
         }`
       );
   };
-  console.log(user.user);
-  console.log(password.password);
-  console.log("Login Error: ", errors.password, " User Error: ", errors.user);
-  console.log("Display errors:  ", errorDisplay);
 
   const item1 = {
     id: "username",
@@ -78,6 +81,29 @@ const LoginPage = () => {
     className: "form-control",
     holder: "Password",
   };
+  
+/** get the system settings only once we load */
+  useEffect(()=>{
+
+    axios.get(`${BASE_API_URL}/api/v1/system/app-settings.php`).then((response) => {
+
+      const data=response.data.data;
+
+      Store.update("measurements", data['measurement']);    
+      Store.update("userTypes", data['user_types']);  
+
+      /** parse permissionList as object
+       * @todo the server might need to return a simpler permission list data
+       *  **/ 
+      const userPermissions=functionUtils.parseUserPermission(data['user_permission'][0]['permission']);
+      Store.update("user_permission", userPermissions);  
+
+    }).catch(error=>{
+      errorAlert("Oops!","could not load settings. Check Internet connection");
+    })
+  }, []);
+
+
   return (
     <section className="form">
       <div className="form-container outer">
