@@ -48,6 +48,7 @@ import DetailedStatistics from "./components/cards/detailed-statistics";
 import Loader from "./components/loader/loader";
 import ActivitiesSummary from "./components/cards/activities-summary";
 import RecentExpenses from "./components/cards/recent-expenses";
+import CurrentActivity from "./components/cards/current-activity";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -420,6 +421,14 @@ export const Menu = {
       text: "Recent Summary",
       link: "#",
       component: RecentExpenses,
+      usePageWrapper: false,
+      showOnDashboard: true,
+      showInMenu: false,
+    },
+    CurrentActivity: {
+      text: "Current Activity",
+      link: "#",
+      component: CurrentActivity,
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,

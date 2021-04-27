@@ -98,6 +98,9 @@ const RecentOrders = () => {
                   <Skeleton height={40} />
                   <Skeleton height={40} />
                   <Skeleton height={40} />
+                  <Skeleton height={40} />
+                  <Skeleton height={40} />
+                  <Skeleton height={40} />
                 </>
               ) : (
                 <>
