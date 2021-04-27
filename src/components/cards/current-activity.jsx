@@ -1,25 +1,120 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import axios from "axios";
+import Swal from "sweetalert2";
 import { TaskActionButton } from "../general/task-action";
+import { BASE_API_URL } from "../../hooks/API";
+import moment from "moment";
+const CurrentActivity = () => {
+  const [currentActivity, setCurrentActivity] = useState(["loading"]);
+  useEffect(() => {
+    const source = axios.CancelToken.source();
 
-const CurrentActivity = ({ data }) => {
+    const response = async () => {
+      await axios
+        .get(`${BASE_API_URL}/api/v1/production/list.php`)
+        .then((res) => {
+          let activitiesSummaryResponse = res.data.data;
+          let reversedCurrentActivityResponse = [
+            ...activitiesSummaryResponse,
+          ].reverse();
+          console.log(
+            "Current Activity: ",
+            activitiesSummaryResponse,
+            reversedCurrentActivityResponse[0]
+          );
+          if (res.data.error) {
+            let title = "Server Error",
+              text = res.data.message;
+            errorAlert(title, text);
+          } else {
+            const user = reversedCurrentActivityResponse[0].user,
+              date = moment(
+                `${reversedCurrentActivityResponse[0].date_in} ${reversedCurrentActivityResponse[0].start_time}`,
+                "DD/MM/YYYY hh:mm:ss"
+              ).format("dddd, mm yyyy"),
+              wet_sand_pumped = Math.round(
+                reversedCurrentActivityResponse[0].total_qty_pumped
+              ),
+              duration =
+                reversedCurrentActivityResponse[0].duration_pumped_in_seconds /
+                3600,
+              distance_pumped = Math.round(
+                reversedCurrentActivityResponse[0].pumping_distance_in_meters
+              );
+            const currentActivitySchema = {
+              link: "/productionlist",
+              user: user,
+              date: date,
+              productionInfo: [
+                { text: "Current Production Information: " },
+                { text: `Wet sand: ${wet_sand_pumped} cm³` },
+                { text: `Pumping duration: ${duration} hours` },
+                { text: `Pumping distance: ${distance_pumped} meters` },
+              ],
+            };
+            setCurrentActivity(currentActivitySchema);
+            console.log("Current Acyivity list: ", currentActivity);
+            console.log(
+              "Current Acyivity list: ",
+              moment(
+                `${reversedCurrentActivityResponse[0].date_in} ${reversedCurrentActivityResponse[0].start_time}`,
+                "DD/MM/YYYY hh:mm:ss"
+              ).format("dddd, mm yyyy"),
+              moment()
+            );
+          }
+        })
+        .catch((error) => {
+          let title = "Network Error",
+            text = error;
+          errorAlert(title, text);
+        });
+    };
+
+    response();
+
+    return () => {
+      source.cancel();
+    };
+  }, []);
+
+  /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
+  const errorAlert = (title, text) => {
+    Swal.fire({
+      icon: "error",
+      title: title,
+      text: text,
+      showConfirmButton: false,
+    });
+  };
   return (
     <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
       <div className="widget widget-card-one">
-        <div className="widget-content">
-          <div className="media">
-            <div className="w-img">
-              <img src={data.image} alt="avatar" />
+        {currentActivity[0] === "loading" ? (
+          <>
+            <Skeleton height={60} />
+            <Skeleton height={200} />
+          </>
+        ) : (
+          <div className="widget-content">
+            <div className="media">
+              <div className="w-img"></div>
+              <div className="media-body">
+                <h6>{currentActivity.user}</h6>
+                <p className="meta-date-time">{currentActivity.date}</p>
+              </div>
             </div>
-            <div className="media-body">
-              <h6>{data.user}</h6>
-              <p className="meta-date-time">{data.date}</p>
-            </div>
+
+            {currentActivity.productionInfo.map((item, i) => (
+              <p key={i} style={{ marginBottom: "1.5rem" }}>
+                {item.text}
+              </p>
+            ))}
+
+            <TaskActionButton link={currentActivity.link} />
           </div>
-
-          <p>{data.productionInfo}</p>
-
-          <TaskActionButton link={data.link} />
-        </div>
+        )}
       </div>
     </div>
   );

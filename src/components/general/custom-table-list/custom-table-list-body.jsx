@@ -8,9 +8,9 @@ const CustomTableListBody = ({ content, setLoad }) => {
   return (
     <tbody>
       {content ? (
-        content.map((item) => (
+        content?.map((item) => (
           <tr key={item.id}>
-            {item.fields.map((field, id) => (
+            {item.fields?.map((field, id) => (
               <td key={id} className={field.class}>
                 {field.link ? (
                   <Link
@@ -136,11 +136,21 @@ const CustomTableListBody = ({ content, setLoad }) => {
         ))
       ) : (
         <>
-          <Skeleton count={3} width={2000} height={25} />
-          <Skeleton count={3} width={2000} height={25} />
-          <Skeleton count={3} width={2000} height={25} />
-          <Skeleton count={3} width={2000} height={25} />
-          <Skeleton count={3} width={2000} height={25} />
+          {/* <tr>
+            <Skeleton width={1000} height={25} />
+            <Skeleton width={1000} height={25} />
+            <Skeleton width={1000} height={25} />
+          </tr>
+          <tr>
+            <Skeleton width={1000} height={25} />
+            <Skeleton width={1000} height={25} />
+            <Skeleton width={1000} height={25} />
+          </tr>
+          <tr>
+            <Skeleton width={1000} height={25} />
+            <Skeleton width={1000} height={25} />
+            <Skeleton width={1000} height={25} />
+          </tr> */}
         </>
       )}
     </tbody>

@@ -6,7 +6,7 @@ import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import moment from "moment";
 
 const StockpiledSand = () => {
-  const [stockpiledSandList, setStockpiledSandList] = useState();
+  const [stockpiledSandList, setStockpiledSandList] = useState(["loading"]);
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {

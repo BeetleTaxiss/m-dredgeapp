@@ -156,7 +156,7 @@ export const recentPumpingActivitiesData = {
   ],
 };
 
-export const detailedStats = [
+export const detailedStatsData = [
   { followers: true, stats: "4,000", legend: "Stockpile" },
   { linkk: true, stats: "2,000", legend: "Wet sand" },
   { chat: true, stats: "14,000", legend: "Gallons of water" },
@@ -167,6 +167,10 @@ export const currentProductionData = {
   user: "Nathan Bassey",
   image: "assets/img/profile-19.jpeg",
   date: "Monday, Apr 21",
-  productionInfo: `Current Production Information:
-  Wet sand: 23000 cm³ Water: 14000 cm³.Equipment: Helment, Rubber shoes, Excavator`,
+  productionInfo: [
+    { text: "Current Production Information: " },
+    { text: "Wet sand: 23000 cm³" },
+    { text: "Water: 14000 cm³" },
+    { text: "Equipment: Helment, Rubber shoes, Excavator" },
+  ],
 };

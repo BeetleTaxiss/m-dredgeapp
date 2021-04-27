@@ -1,6 +1,65 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import Skeleton from "react-loading-skeleton";
+import { BASE_API_URL } from "../../hooks/API";
 const TotalRevenue = () => {
-  return (
+  const [totalRevenue, setTotalRevenue] = useState({});
+
+  useEffect(() => {
+    const source = axios.CancelToken.source();
+    let totalRevenueSchema;
+    const response = async () => {
+      await axios
+        .get(`${BASE_API_URL}/api/v1/order/summary.php`)
+        .then((res) => {
+          let totalRevenueResponse = res.data;
+          console.log("Total revenue: ", totalRevenueResponse);
+          if (res.data.error) {
+            let title = "Server Error",
+              text = res.data.message;
+            errorAlert(title, text);
+          } else {
+            const total_revenue = totalRevenueResponse.orders.total_price;
+            const orders_completed_price =
+              totalRevenueResponse.orders_completed.total_price;
+            totalRevenueSchema = {
+              title: "Total Revenue",
+              value: total_revenue,
+              orders_completed_price: orders_completed_price,
+            };
+
+            setTotalRevenue(totalRevenueSchema);
+            console.log("Total revenue list: ", totalRevenue);
+          }
+        })
+        .catch((error) => {
+          let title = "Network Error",
+            text = error;
+          errorAlert(title, text);
+        });
+    };
+
+    response();
+
+    return () => {
+      source.cancel();
+    };
+  }, []);
+
+  /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
+  const errorAlert = (title, text) => {
+    Swal.fire({
+      icon: "error",
+      title: title,
+      text: text,
+      showConfirmButton: false,
+    });
+  };
+
+  const { title, value, orders_completed_price } = totalRevenue;
+  const price_difference = value - orders_completed_price;
+  const TotalRevenueComponent = () => (
     <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
       <div
         className="widget widget-account-invoice-two"
@@ -17,18 +76,23 @@ const TotalRevenue = () => {
               }}
             >
               <div className="inv-title">
-                <h5 className="">Total Revenue</h5>
+                <h5 className="">{title ? title : "Total Revenue"}</h5>
               </div>
               <div className="inv-balance-info" style={{ textAlign: "center" }}>
                 <p className="inv-balance" style={{ fontSize: "45px" }}>
-                  ₦ 41,741,800.42
+                  {`₦${value === undefined || NaN ? "00000000" : value}`}
                 </p>
 
                 <span
                   className="inv-stats balance-credited"
                   style={{ fontSize: "18px" }}
                 >
-                  + 2453
+                  {" "}
+                  {`+${
+                    price_difference === undefined || isNaN(price_difference)
+                      ? "0000"
+                      : price_difference
+                  }`}
                 </span>
               </div>
             </div>
@@ -37,6 +101,7 @@ const TotalRevenue = () => {
       </div>
     </div>
   );
+  return <TotalRevenueComponent />;
 };
 const widgetInvoice = {
   invoiceTwo: {

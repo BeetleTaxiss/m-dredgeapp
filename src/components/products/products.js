@@ -10,7 +10,7 @@ import AddUpdateProduct from "./add-update-product";
 import "./product.css";
 
 const Products = () => {
-  const [productsList, setProductsList] = useState();
+  const [productsList, setProductsList] = useState(["loading"]);
   const [showUpdateProduct, setShowUpdateProduct] = useState(false);
   const [loading, setloading] = useState(false);
 

@@ -44,7 +44,7 @@ const OrderForm = () => {
     console.log("Select Value: ", selectValue);
 
     // Filter Products Array to get single product
-    const product = products.filter((product) => product.id === selectValue);
+    const product = products?.filter((product) => product.id === selectValue);
     console.log("Product: ", product);
     // Calculate the cost of an order
     const orderCost = qtyValue * product[0].price;

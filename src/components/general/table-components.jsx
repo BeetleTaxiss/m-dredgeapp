@@ -2,7 +2,6 @@ export const Orders = ({ order }) => (
   <tr>
     <td>
       <div className="td-content customer-name">
-        <img src={order.profileImg} alt={order.imgAlt} />
         <span>{order.customer}</span>
       </div>
     </td>
@@ -32,20 +31,20 @@ export const Orders = ({ order }) => (
 export const TableHeading = () => (
   <thead>
     <tr>
-      <th>
-        <div className="th-content">Customer</div>
+      <th className="th-new-table">
+        <div className="th-content new-table">Truck Reg</div>
       </th>
-      <th>
-        <div className="th-content">Product</div>
+      <th className="th-new-table">
+        <div className="th-content new-table">Product</div>
       </th>
-      <th>
-        <div className="th-content">Invoice</div>
+      <th className="th-new-table">
+        <div className="th-content new-table">Order Ref</div>
       </th>
-      <th>
-        <div className="th-content th-heading">Price</div>
+      <th className="th-new-table">
+        <div className="th-content new-table">Price</div>
       </th>
-      <th>
-        <div className="th-content">Status</div>
+      <th className="th-new-table">
+        <div className="th-content new-table">Status</div>
       </th>
     </tr>
   </thead>
@@ -53,7 +52,6 @@ export const TableHeading = () => (
 
 export const tableData = [
   {
-    profileImg: "assets/img/profile-13.jpeg",
     customer: "Luke Ivory",
     imgAlt: "avatar",
     product: "Stockpile Sand",

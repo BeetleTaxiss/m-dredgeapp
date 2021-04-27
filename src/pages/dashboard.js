@@ -7,6 +7,7 @@ import {functionUtils} from "./../hooks/function-utils"
 
 
 export const Dashboard = () => {
+  const [userPermission, setUserPermission] = useState(userMenu);
 
   /** use this function to always validate if a user is logged in */
   functionUtils.useValidateLogin("/");

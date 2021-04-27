@@ -2,7 +2,7 @@ import React from "react";
 import OrderForm from "./components/orders/order-form/order-form";
 import LoginPage from "./pages/login-page";
 import Profile from "./components/profile/profile";
-import {Production} from "./components/production/production";
+import { Production } from "./components/production/production";
 import ProductionList from "./components/production/production-list/production-list";
 import WetSand from "./components/production/production-list/wet-sand";
 import StockpiledSand from "./components/production/production-list/stockpiled-sand";
@@ -29,7 +29,6 @@ import Inspector from "./components/inspector/inspector";
 import Security from "./components/security/security";
 import { Dashboard } from "./pages/dashboard";
 
-
 /** import all the dashboard items here  */
 import RecentOrders from "./components/cards/recent-orders";
 import Summary from "./components/cards/summary";
@@ -37,8 +36,6 @@ import TotalOrders from "./components/cards/total-orders";
 import TotalRevenue from "./components/cards/total-revenue";
 import TotalStockpile from "./components/cards/total-stockpile";
 import RecentSummary from "./components/cards/recent-summary";
-
-
 
 /** import menu Icons */
 import dashboardIcon from "./assets/dashboard.svg";
@@ -49,7 +46,9 @@ import ordersIcon from "./assets/orders.svg";
 import dropdownIcon from "./assets/dropdownIcon.svg";
 import DetailedStatistics from "./components/cards/detailed-statistics";
 import Loader from "./components/loader/loader";
-
+import ActivitiesSummary from "./components/cards/activities-summary";
+import RecentExpenses from "./components/cards/recent-expenses";
+import CurrentActivity from "./components/cards/current-activity";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -57,61 +56,54 @@ import Loader from "./components/loader/loader";
  * @param userMenu
  */
 export const createUserRoutes = (userMenu) => {
+  if (typeof userMenu !== "object") {
+    alert("user permission provide must be an object");
+    return console.error("user permission provide must be an object");
+  }
 
-    if (typeof userMenu !== "object") {
-        alert("user permission provide must be an object")
-        return console.error("user permission provide must be an object")
-    }
+  /**
+   * loop over user menu location and check if there is a corresponding entry in the global menu
+   * declaration. The global menu will contain all the menus in our application
+   */
+  const globalMenu = Menu;
 
-    /**
-     * loop over user menu location and check if there is a corresponding entry in the global menu
-     * declaration. The global menu will contain all the menus in our application
-     */
-    const globalMenu = Menu;
+  /** this is an array that holds all the permitted routes for our user */
+  let userAccess = [];
 
-    /** this is an array that holds all the permitted routes for our user */
-    let userAccess = [];
+  /**
+   * loop over the user menu, and menu if found in the globalMenu definition, we will also loop
+   * through the menuLocationPages defined and create the appropriate route for this user
+   */
+  Object.keys(userMenu).forEach((menuLocation) => {
+    if (
+      globalMenu[menuLocation] &&
+      globalMenu[menuLocation] !== null &&
+      typeof globalMenu[menuLocation] === "object"
+    ) {
+      /** get the pages allowed for this user within this menu location */
+      let userAllowedPages = userMenu[menuLocation];
 
-    /**
-     * loop over the user menu, and menu if found in the globalMenu definition, we will also loop
-     * through the menuLocationPages defined and create the appropriate route for this user
-     */
-    Object.keys(userMenu).forEach(menuLocation => {
+      /** loop over each pages in the userAllowPages and create a route */
+      Object.keys(userAllowedPages).forEach((page) => {
+        if (
+          globalMenu[menuLocation][page] &&
+          globalMenu[menuLocation][page] !== null &&
+          typeof globalMenu[menuLocation][page] === "object"
+        ) {
+          /** get the current page we are allowing user to view **/
+          let currentPage = globalMenu[menuLocation][page];
 
-        if (globalMenu[menuLocation] && globalMenu[menuLocation] !== null && typeof globalMenu[menuLocation] === "object") {
+          /** if we are only showing this menu on the dashboard
+           * we will not bother to create a route for it as
+           * this will
+           */
+          const { showOnDashboard } = globalMenu[menuLocation][page];
 
-            /** get the pages allowed for this user within this menu location */
-            let userAllowedPages = userMenu[menuLocation];
-
-            /** loop over each pages in the userAllowPages and create a route */
-            Object.keys(userAllowedPages).forEach(page => {
-
-                if (globalMenu[menuLocation][page] && globalMenu[menuLocation][page] !== null && typeof globalMenu[menuLocation][page] === "object") {
-                    /** get the current page we are allowing user to view **/
-                    let currentPage = globalMenu[menuLocation][page];
-
-                    /** if we are only showing this menu on the dashboard
-                     * we will not bother to create a route for it as 
-                     * this will
-                     */
-                    const {showOnDashboard}= globalMenu[menuLocation][page];
-
-                    /** concat to userAccess  list if not meant for dashboard view*/
-                    if(showOnDashboard!==true)
-                        userAccess = userAccess.concat({...currentPage});
-                }
-            })
+          /** concat to userAccess  list if not meant for dashboard view*/
+          if (showOnDashboard !== true)
+            userAccess = userAccess.concat({ ...currentPage });
         }
-    });
-
-    /** add the default route. This are the basic route that all user must have access to
-     * This is defined under `default` section of the `Menu` definition
-     */
-    if (globalMenu["default"] && typeof globalMenu["default"] === "object") {
-        Object.keys(globalMenu["default"]).forEach(defaultPage => {
-            let currentPage = globalMenu["default"][defaultPage];
-            userAccess= userAccess.concat({...currentPage});
-        })
+      });
     }
     
     /** return the routes created */
@@ -120,6 +112,24 @@ export const createUserRoutes = (userMenu) => {
 
 
 export const createUserMenu = (userMenu) => {
+  if (typeof userMenu !== "object") {
+    alert("user permission provide must be an object");
+    return console.error("user permission provide must be an object");
+  }
+  /** get global Menu definition */
+  const globalMenu = Menu;
+
+  /** get the global menu styling options */
+  const globalMenuStyle = MenuStyles;
+
+  /** this is an array that holds all the permitted menu for user */
+  let userMenuAccess = [];
+
+  Object.keys(userMenu).forEach((menuLocation) => {
+    /** create a parent menu that houses all the sub menus
+     * This is the main menu that user sees on the menu bar
+     * clicking this menu may show submenu or not depending on configurations
+     * */
 
     if (typeof userMenu !== "object" || userMenu===null || userMenu===undefined) {
         alert("user permission provide must be an object")
@@ -156,88 +166,37 @@ export const createUserMenu = (userMenu) => {
             class: menuClass,
         }
 
-        /** this will hold all our submenu items */
-        let subMenuItems = [];
-
-        if (globalMenu[menuLocation] && typeof globalMenu[menuLocation] === "object") {
-
-            let userAllowedPages = userMenu[menuLocation];
-
-            /** create as submenu for each page user has access to */
-            Object.keys(userAllowedPages).forEach(page => {
-
-                /** this will hold the current submenu item */
-                let currentSubMenuItem = null;
-
-                if (globalMenu[menuLocation][page] && 
-                    globalMenu[menuLocation][page] !== null && 
-                    typeof globalMenu[menuLocation][page] === "object"
-                    ) {
-                    /** get the current page we are allowing user to view **/
-                    let currentPage = globalMenu[menuLocation][page];
-
-                    /** assign this current page as a subMenu */
-                    const {subItem} = currentPage;
-
-                    currentSubMenuItem = {...currentPage}
-
-                    /** get the user subMenu permissions for this entry */
-                    const userAllowedSubMenu = userMenu[menuLocation][page]["subItem"]?? null;
-
-                    /** if this user has subMenu item permission we will give it
-                     * **/
-                    let userAllowedSubMenuItems = null;
-
-                    if (userAllowedSubMenu && Array.isArray((userAllowedSubMenu))) {
-
-                        userAllowedSubMenuItems = userAllowedSubMenu.map(({link, text}) => {
-                            /** we will check and filter the subItem of our menu location
-                             * return submenu items only if they are also defined for the user
-                             *  */
-                            return subItem.filter(item => {
-                                if (item.link === link && item.text === text)
-                                {
-                                    // alert("here");
-                                    return item;
-                                }
-                            })
-                        });
-                        /** If there are subMenu items, we will list them*/
-                        if (userAllowedSubMenuItems !== null && userAllowedSubMenuItems !== undefined) {
-                            currentSubMenuItem = {...currentSubMenuItem, subItem: userAllowedSubMenuItems};
-                        }
-                    }
-                }
-    
-                /** 
-                 * assign the `currentSubMenuItem` to the `subMenuItems` array 
-                 * check for `showInMenu` property of the `currentSubMenuItem` and if its false
-                 * we will hide this menu from the menu bar.
-                 * @Note: this menu will still be part of the route define for this user
-                 * but it will simply not be available on the menu bar.. This option is mostly use 
-                 * for populating our dashboard items, but it can also be use for any menu item
-                 */
-                if (globalMenu[menuLocation][page]  && globalMenu[menuLocation][page]["showInMenu"]!==false) {
-                    subMenuItems = subMenuItems.concat(currentSubMenuItem);
-                }
-            })
+        /**
+         * assign the `currentSubMenuItem` to the `subMenuItems` array
+         * check for `showInMenu` property of the `currentSubMenuItem` and if its false
+         * we will hide this menu from the menu bar.
+         * @Note: this menu will still be part of the route define for this user
+         * but it will simply not be available on the menu bar.. This option is mostly use
+         * for populating our dashboard items, but it can also be use for any menu item
+         */
+        if (
+          globalMenu[menuLocation][page] &&
+          globalMenu[menuLocation][page]["showInMenu"] !== false
+        ) {
+          subMenuItems = subMenuItems.concat(currentSubMenuItem);
         }
-        /** assign the submenu Items created to the subMenuObject **/
-        menuObject = {...menuObject, subMenuItems}
+      });
+    }
+    /** assign the submenu Items created to the subMenuObject **/
+    menuObject = { ...menuObject, subMenuItems };
 
-        /** concat to the global  userMenuAccess array before we move to the next menu location */
-        userMenuAccess = userMenuAccess.concat(menuObject);
-    });
+    /** concat to the global  userMenuAccess array before we move to the next menu location */
+    userMenuAccess = userMenuAccess.concat(menuObject);
+  });
 
-    /** return the menu created */
-    return userMenuAccess
-}
-
+  /** return the menu created */
+  return userMenuAccess;
+};
 
 /**
  * Create the dashboard view for user based on user permission
- * @param {*} userMenu 
- * @returns 
+ * @param {*} userMenu
+ * @returns
  */
 export const createUserDashboard = (userMenu) => {
 
@@ -309,6 +268,34 @@ export const createUserDashboard = (userMenu) => {
  */
 
 export const Menu = {
+  /**
+   * default menu are the menus that are constant and available
+   * to all users irrespective of their user type and permission settings
+   */
+  default: {
+    /** using the `usePageWrapper= false`  will hide the page wrapper for this component*/
+    login: {
+      text: "Login",
+      link: "/",
+      component: LoginPage,
+      hideNavBar: true,
+      usePageWrapper: false,
+    },
+    profile: {
+      text: "Profile",
+      link: "/profile",
+      component: Profile,
+    },
+  },
+
+  /** the dashboard page definition */
+  dashboard: {
+    dashboardHome: {
+      text: "Dashboard Content",
+      link: "/dashboard",
+      component: Dashboard,
+      usePageWrapper: false,
+    },
 
     /**
      * default menu are the menus that are constant and available
@@ -431,231 +418,229 @@ export const Menu = {
      * Production related menu goes here
      * */
     production: {
-        production: {
-            text: "Start Pumping",
-            link: "/production",
-            component: Production,
-        },
-        productionList: {
-            text: "Production List",
-            link: "/productionlist",
-            component: ProductionList,
-        },
-        wetSand: {
-            text: "Wet Sand",
-            link: "/wetsand",
-            component: WetSand,
-        },
-        stockpile: {
-            text: "Production Stockpile",
-            link: "/stockpile",
-            component: StockpiledSand,
-        },
-        stock: {
-            text: "Stock Production",
-            link: "/stock",
-            component: Stock,
-        },
-        stockUpdate: {
-            text: "Stock Movements",
-            link: "/stockupdate",
-            component: StockUpdate,
-        },
+      text: "Start Pumping",
+      link: "/production",
+      component: Production,
     },
+    productionList: {
+      text: "Production List",
+      link: "/productionlist",
+      component: ProductionList,
+    },
+    wetSand: {
+      text: "Wet Sand",
+      link: "/wetsand",
+      component: WetSand,
+    },
+    stockpile: {
+      text: "Production Stockpile",
+      link: "/stockpile",
+      component: StockpiledSand,
+    },
+    stock: {
+      text: "Stock Production",
+      link: "/stock",
+      component: Stock,
+    },
+    stockUpdate: {
+      text: "Stock Movements",
+      link: "/stockupdate",
+      component: StockUpdate,
+    },
+  },
 
-    /** revenue definition goes here */
-    revenue : {
-        revenueReport: {
-            text: "Revenue Report",
-            link: "/revenuereport",
-            component: RevenueReport,
-        },
-        singleRevenueReport: {
-            text: "Single Revenue Report",
-            link: "/singlerevenuereport",
-            component: SingleRevenueReport,
-        },
+  /** revenue definition goes here */
+  revenue: {
+    revenueReport: {
+      text: "Revenue Report",
+      link: "/revenuereport",
+      component: RevenueReport,
     },
+    singleRevenueReport: {
+      text: "Single Revenue Report",
+      link: "/singlerevenuereport",
+      component: SingleRevenueReport,
+    },
+  },
 
-    /** Account menu items goes here */
-    account :{
-        postExpenses: {
-            text: "Post Expenses",
-            link: "/postexpense",
-            component: PostExpense,
-        },
-        expenseReport: {
-            text: "Expenses Report",
-            link: "/expensereport",
-            component: ExpenseReport,
-        },
-        chartOfAccount: {
-            text: "Chart of Account",
-            link: "/chartlist",
-            component: ChartList,
-        },
-        addBusinessAccount: {
-            text: "Add Business Account",
-            link: "/accountlist",
-            component: AddAccount,
-        },
-        postToAccount: {
-            text: "Post Entry",
-            link: "/postaccount",
-            component: PostAccount,
-        },
+  /** Account menu items goes here */
+  account: {
+    postExpenses: {
+      text: "Post Expenses",
+      link: "/postexpense",
+      component: PostExpense,
     },
+    expenseReport: {
+      text: "Expenses Report",
+      link: "/expensereport",
+      component: ExpenseReport,
+    },
+    chartOfAccount: {
+      text: "Chart of Account",
+      link: "/chartlist",
+      component: ChartList,
+    },
+    addBusinessAccount: {
+      text: "Add Business Account",
+      link: "/accountlist",
+      component: AddAccount,
+    },
+    postToAccount: {
+      text: "Post Entry",
+      link: "/postaccount",
+      component: PostAccount,
+    },
+  },
 
-    /** Administrative task menu starts here */
-    admin :{
-        addUsers: {
-            text: "Add User",
-            link: "/users",
-            component: Users,
-        },
-        product: {
-            text: "Add Products",
-            link: "/products",
-            component: Products,
-        },
+  /** Administrative task menu starts here */
+  admin: {
+    addUsers: {
+      text: "Add User",
+      link: "/users",
+      component: Users,
     },
-    
-    /** store operations menu */
-    storeOperations :{
-        addMachinery: {
-            text: "Add Machinery",
-            link: "/operations",
-            component: Machinery,
-        },
-        addFuel: {
-            text: "Add Fuel Stock",
-            link: "/addfuel",
-            component: AddFuel,
-        },
-        issueFuel: {
-            text: "Issue Fuel",
-            link: "/fuelissue",
-            component: FuelIssuing,
-        },
-        fuelIssued: {
-            text: "Issued Fuel",
-            link: "/fuelissuelist",
-            component: FuelIssueList,
-        },
-        fuelStockEntry: {
-            text: "Fuel Stock Entry",
-            link: "/fuelupdatelist",
-            component: FuelIssueList,
-        },
+    product: {
+      text: "Add Products",
+      link: "/products",
+      component: Products,
     },
+  },
 
-    /** loader menu definition */
-    loader: {
-        placeOrder: {
-            text: "Load Order",
-            link: "/loader",
-            component: Loader,
-        },  
+  /** store operations menu */
+  storeOperations: {
+    addMachinery: {
+      text: "Add Machinery",
+      link: "/operations",
+      component: Machinery,
     },
+    addFuel: {
+      text: "Add Fuel Stock",
+      link: "/addfuel",
+      component: AddFuel,
+    },
+    issueFuel: {
+      text: "Issue Fuel",
+      link: "/fuelissue",
+      component: FuelIssuing,
+    },
+    fuelIssued: {
+      text: "Issued Fuel",
+      link: "/fuelissuelist",
+      component: FuelIssueList,
+    },
+    fuelStockEntry: {
+      text: "Fuel Stock Entry",
+      link: "/fuelupdatelist",
+      component: FuelIssueList,
+    },
+  },
 
-    /** loading inspector menus */
-    inspector:{
-        inspect: {
-            text: "Inspect Order",
-            link: "/inspect",
-            component: Inspector,
-        },
+  /** loader menu definition */
+  loader: {
+    placeOrder: {
+      text: "Load Order",
+      link: "/loader",
+      component: Loader,
     },
+  },
 
-    /** security menu  */
-    security:{
-        inspect: {
-            text: "Clear Order",
-            link: "/security",
-            component: Security,
-        },
+  /** loading inspector menus */
+  inspector: {
+    inspect: {
+      text: "Inspect Order",
+      link: "/inspect",
+      component: Inspector,
     },
-}
+  },
+
+  /** security menu  */
+  security: {
+    inspect: {
+      text: "Clear Order",
+      link: "/security",
+      component: Security,
+    },
+  },
+};
 
 
 /**
  * This is the menu definition for our individual menu entries
  * This will hold the icons, the main style and the dropdown icon
  */
-export const MenuStyles= {
+export const MenuStyles = {
+  /** No styling for default menu entry. We will most likely not be
+   * showing them on the menu bar */
+  default: null,
 
-    /** No styling for default menu entry. We will most likely not be
-     * showing them on the menu bar */
-    default:null,
-
-    order:{
-        icon: ordersIcon,
-        text: "Order",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "order",
-    },
-    production:{
-        icon: productionIcon,
-        text: "Production",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "production",
-    },
-    dashboard:{
-        icon: dashboardIcon,
-        text: "Dashboard",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "dashboard",
-    },
-    account:{
-        icon: accountantIcon,
-        text: "Account",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "account",
-    },
-    admin:{
-        icon: adminIcon,
-        text: "Admin",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "Admin",
-    },
-    storeOperations:{
-        icon: null,
-        text: "Store Operations",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "store-operations",
-    },
-    revenue:{
-        icon: null,
-        text: "Revenue",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "revenue",
-    },
-    inspector:{
-        icon: null,
-        text: "Inspector",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "inspector",
-    },
-    loader:{
-        icon: null,
-        text: "Loader",
-        dropdownIcon: dropdownIcon,
-        link: "/loader",
-        menuClass: "loader",
-    },
-    security:{
-        icon: null,
-        text: "Security",
-        dropdownIcon: dropdownIcon,
-        link: "#",
-        menuClass: "security",
-    },
-}
+  order: {
+    icon: ordersIcon,
+    text: "Order",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "order",
+  },
+  production: {
+    icon: productionIcon,
+    text: "Production",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "production",
+  },
+  dashboard: {
+    icon: dashboardIcon,
+    text: "Dashboard",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "dashboard",
+  },
+  account: {
+    icon: accountantIcon,
+    text: "Account",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "account",
+  },
+  admin: {
+    icon: adminIcon,
+    text: "Admin",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "Admin",
+  },
+  storeOperations: {
+    icon: null,
+    text: "Store Operations",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "store-operations",
+  },
+  revenue: {
+    icon: null,
+    text: "Revenue",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "revenue",
+  },
+  inspector: {
+    icon: null,
+    text: "Inspector",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "inspector",
+  },
+  loader: {
+    icon: null,
+    text: "Loader",
+    dropdownIcon: dropdownIcon,
+    link: "/loader",
+    menuClass: "loader",
+  },
+  security: {
+    icon: null,
+    text: "Security",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "security",
+  },
+};

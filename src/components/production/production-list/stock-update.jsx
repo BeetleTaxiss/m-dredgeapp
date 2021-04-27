@@ -5,7 +5,7 @@ import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 
 const StockUpdate = () => {
-  const [stockUpdateList, setStockUpdateList] = useState();
+  const [stockUpdateList, setStockUpdateList] = useState(["loading"]);
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {

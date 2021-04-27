@@ -1044,7 +1044,7 @@
 }
 .widget-table-two .table {
     border-collapse: separate;
-    border-spacing: 0 5px;
+    border-spacing: 0 7px;
     margin-bottom: 0;
 }
 .widget-table-two .table > thead > tr > th {
@@ -1087,6 +1087,19 @@
     margin-right: 10px;
 }
 .widget-table-two .table > thead > tr > th:nth-last-child(2) .th-content {
+    text-align: center;
+    padding: 0 15px 0 0;
+}
+.widget-table-two .table>thead>tr>.th-new-table {
+  padding: 10px 0 10px 0px;
+}
+.widget-table-two .table>thead>tr>th:first-child .th-content.new-table {
+    margin-left: 10px;
+}
+.widget-table-two .table>thead>tr>th:last-child .th-content.new-table {
+    margin-left: 10px;
+}
+.widget-table-two .table>thead>tr>th:nth-last-child(2) .th-content.new-table {
     text-align: center;
     padding: 0 15px 0 0;
 }
