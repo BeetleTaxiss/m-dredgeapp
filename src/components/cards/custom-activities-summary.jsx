@@ -91,7 +91,7 @@ export const Activities = ({ content, showItem }) => (
   </div>
 );
 
-const showLogItem = (item) => {
+export const showLogItem = (item) => {
   const logTable = DOMSERVER.renderToString(showDetailedLogItem(item));
 
   Swal.fire({

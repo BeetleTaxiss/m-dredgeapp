@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import Skeleton from "react-loading-skeleton";
 import { BASE_API_URL } from "../../hooks/API";
 import ChartProgress from "../../assets/chartprogressline.svg";
+import { functionUtils } from "../../hooks/function-utils";
 
 const TotalOrders = () => {
   const [totalOrders, setTotalOrders] = useState(null);
@@ -74,7 +75,9 @@ const TotalOrders = () => {
             >
               <div className="w-detail">
                 <p className="w-title">{totalOrders.title}</p>
-                <p className="w-stats">{totalOrders.value}</p>
+                <p className="w-stats">
+                  {functionUtils.addCommaToNumbers(totalOrders.value)}
+                </p>
               </div>
               <div className="w-chart-render-one">
                 <div id="total-users">

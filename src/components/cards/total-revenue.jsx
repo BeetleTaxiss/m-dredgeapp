@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import Skeleton from "react-loading-skeleton";
 import { BASE_API_URL } from "../../hooks/API";
+import { functionUtils } from "../../hooks/function-utils";
 const TotalRevenue = () => {
   const [totalRevenue, setTotalRevenue] = useState({});
 
@@ -80,7 +81,11 @@ const TotalRevenue = () => {
               </div>
               <div className="inv-balance-info" style={{ textAlign: "center" }}>
                 <p className="inv-balance" style={{ fontSize: "45px" }}>
-                  {`₦${value === undefined || NaN ? "00000000" : value}`}
+                  {`₦${
+                    value === undefined || NaN
+                      ? functionUtils.addCommaToNumbers("00000000")
+                      : functionUtils.addCommaToNumbers(value)
+                  }`}
                 </p>
 
                 <span
