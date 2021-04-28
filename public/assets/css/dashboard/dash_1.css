@@ -26,7 +26,17 @@
     font-weight: 600;
     margin-bottom: 0;
 }
-.widget .widget-content {}
+.widget .widget-content{
+
+}
+.widget .widget-content.current-activity {
+        height: 100%;
+        display: grid;
+}
+.widget .widget-content.summary {
+        height: 90%;
+        display: grid;
+}
 
 /*
     ==================
@@ -862,6 +872,28 @@
     padding-left: 22px;
 }
 .widget-account-invoice-three .widget-heading .wallet-usr-info #span-pending:before {
+    content: '';
+    position: absolute;
+    height: 6px;
+    width: 6px;
+    background: white;
+    border-radius: 50%;
+    left: 9px;
+    top: 13px;
+}
+ .usr-name #span-pending{
+    /* display: none; */
+      display: inline-block;
+      color: #fff;
+      background: #2196f3;
+      padding: 5px 12px 5px 22px;
+      border-radius: 21px;
+      position: relative;
+      font-size: 15px;
+      letter-spacing: 1px;
+      cursor: pointer;
+}
+.usr-name #span-pending:before {
     content: '';
     position: absolute;
     height: 6px;

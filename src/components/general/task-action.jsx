@@ -72,8 +72,15 @@ export const TaskActionArrow = ({ link }) => {
   );
 };
 
-export const TaskActionButton = ({ link }) => (
-  <div className="tm-action-btn" style={{ textAlign: "center" }}>
+export const TaskActionButton = ({ link, mt }) => (
+  <div
+    className="tm-action-btn"
+    style={{
+      textAlign: "center",
+      // marginTop: mt && "1.5rem",
+      paddingTop: mt && "2rem",
+    }}
+  >
     <Link to={link}>
       <button className="btn">
         <span>View All</span>{" "}

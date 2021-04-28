@@ -50,6 +50,7 @@ import Loader from "./components/loader/loader";
 import ActivitiesSummary from "./components/cards/activities-summary";
 import RecentExpenses from "./components/cards/recent-expenses";
 import CurrentActivity from "./components/cards/current-activity";
+import UserActivitiesLog from "./components/admin/UserActivitiesLog";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -565,6 +566,11 @@ export const Menu = {
       text: "Add Products",
       link: "/products",
       component: Products,
+    },
+    userActivitiesLog: {
+      text: "Users Activity",
+      link: "/useractivity",
+      component: UserActivitiesLog,
     },
   },
 
