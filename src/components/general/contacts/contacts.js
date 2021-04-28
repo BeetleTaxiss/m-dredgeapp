@@ -6,18 +6,24 @@ import "./contacts.css";
 
 const Contacts = ({
   setShowModal,
-  content: { searchBar, header, contacts },
+  setUserPermissionListView,
+  setUserGetPermissionData,
+  content: { searchBar, header, contacts, permission },
 }) => {
-  const contactList = { header, contacts };
+  const contactList = { header, contacts, permission };
   return (
     <div className="col-lg-12">
       <div className="widget-content searchable-container grid">
         {/* BEGIN TOP SEARCH BAR */}
-        <SearchBar setShowModal={setShowModal} content={searchBar} />
+        <SearchBar setShowModal={setShowModal} content={searchBar}  
+        />
         {/* END TOP SEARCH BAR */}
 
         {/* BEGINNING OF USERS LIST */}
-        <ContactList content={contactList} />
+        <ContactList content={contactList} 
+        setUserPermissionListView={setUserPermissionListView} 
+        setUserGetPermissionData={setUserGetPermissionData}
+        />
         {/* END OF USERS LIST */}
       </div>
     </div>

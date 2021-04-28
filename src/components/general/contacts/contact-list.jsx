@@ -1,5 +1,11 @@
 import React from "react";
 import Skeleton from "react-loading-skeleton";
+import { createPermissionList, 
+  createUserPermissionListComponent,
+  getPermissionData
+ } from "../../users/PermissionList";
+
+const currentUserPermission=[];
 
 const ContactListHeader = ({ content }) => (
   <div className="items items-header-section">
@@ -14,7 +20,25 @@ const ContactListHeader = ({ content }) => (
   </div>
 );
 
-const Contact = ({ content }) => (
+/**
+   * This component will return both the permissionListAccordion and the 
+   * method to getPermissionData to get the updated permission data before 
+   * update
+   */
+ const PermissionListForExistingUser = ({permission, setUserGetPermissionData }) => {
+  const permissionListData = createPermissionList(permission);
+  /** 
+   * assign our `getPermissionData` function from `PermissionList` library to 
+   * `setUserGetPermissionData` state value so that we can call this on the main component when we 
+   * are ready to save and still have access to the updated userPermissionData
+    */
+  //setUserGetPermissionData(getPermissionData);
+  
+  /** return our initial userPermissionList component */
+  return createUserPermissionListComponent(permissionListData)
+};
+
+const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData}) => (
   <>
     {content ? (
       <div className="items">
@@ -55,14 +79,23 @@ const Contact = ({ content }) => (
               strokeLinejoin="round"
               className="feather feather-edit-2 edit"
               onClick={() => {
-                console.log("Individual User Data: ", content.user);
+                /** to show permission on the modal, we will pass it as a parameter */
+
+                console.log(JSON.parse(content.permission), "user prov. permission");
+
+                const PermissionListForUser= <PermissionListForExistingUser 
+                setUserGetPermissionData={setUserGetPermissionData}
+                permission={content.permission} />
+
+                /** set this state variable so that the popup open, the permission list for this user is shown */
+                setUserPermissionListView(PermissionListForUser);
+
+                console.log(PermissionListForUser, "permission List created");
+
                 content.setUser(content.user);
-                document.getElementById("user-add-user").value =
-                  content.user.user;
-                document.getElementById("user-id-add-user").value =
-                  content.user.id;
-                document.getElementById("password-add-user").value =
-                  content.user.password;
+                document.getElementById("user-add-user").value = content.user.user;
+                document.getElementById("user-id-add-user").value = content.user.id;
+                document.getElementById("password-add-user").value = content.user.password;
                 content.setShowUpdateModal(true);
               }}
             >
@@ -163,7 +196,7 @@ const Contact = ({ content }) => (
     )}
   </>
 );
-const ContactList = ({ content }) => {
+const ContactList = ({ content, setUserPermissionListView, setUserGetPermissionData }) => {
   return (
     <div className="searchable-items grid">
       {/* BEGIN USER LIST HEADER */}
@@ -172,7 +205,9 @@ const ContactList = ({ content }) => {
 
       {/* BEGIN USER */}
       {content.contacts ? (
-        content.contacts.map((user, i) => <Contact key={i} content={user} />)
+        content.contacts.map((user, i) => 
+        <Contact key={i} content={user} setUserPermissionListView={setUserPermissionListView} 
+        setUserGetPermissionData={setUserGetPermissionData} />)
       ) : (
         <>
           <Skeleton count={3} height={55} />

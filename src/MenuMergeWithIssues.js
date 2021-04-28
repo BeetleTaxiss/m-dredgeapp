@@ -2,7 +2,7 @@ import React from "react";
 import OrderForm from "./components/orders/order-form/order-form";
 import LoginPage from "./pages/login-page";
 import Profile from "./components/profile/profile";
-import { Production } from "./components/production/production";
+import {Production} from "./components/production/production";
 import ProductionList from "./components/production/production-list/production-list";
 import WetSand from "./components/production/production-list/wet-sand";
 import StockpiledSand from "./components/production/production-list/stockpiled-sand";
@@ -27,7 +27,7 @@ import Machinery from "./components/operations/machinery";
 import Users from "./components/users/users";
 import Inspector from "./components/inspector/inspector";
 import Security from "./components/security/security";
-import { Dashboard } from "./pages/dashboard";
+import {Dashboard} from "./pages/dashboard";
 
 /** import all the dashboard items here  */
 import RecentOrders from "./components/cards/recent-orders";
@@ -97,39 +97,19 @@ export const createUserRoutes = (userMenu) => {
                      * we will not bother to create a route for it as
                      * this will
                      */
-                    const { showOnDashboard } = globalMenu[menuLocation][page];
+                    const {showOnDashboard} = globalMenu[menuLocation][page];
 
                     /** concat to userAccess  list if not meant for dashboard view*/
                     if (showOnDashboard !== true)
-                        userAccess = userAccess.concat({ ...currentPage });
+                        userAccess = userAccess.concat({...currentPage});
                 }
             });
         }
-    });
 
-    /** add the default route. This are the basic route that all user must have access to
-     * This is defined under `default` section of the `Menu` definition
-     */
-    if (globalMenu["default"] && typeof globalMenu["default"] === "object") {
-        Object.keys(globalMenu["default"]).forEach((defaultPage) => {
-            let currentPage = globalMenu["default"][defaultPage];
-            userAccess = userAccess.concat({ ...currentPage });
-        });
+        /** return the routes created */
+        return userAccess;
     }
-    /**
-     * to fix a peculiar issue with `react-router-dom` where route definition at the top overrides
-     * navigation to route at the bottom even if such a route exist, we will make sure the default
-     * route comes first.  In `default` menu definition, we ensure that `dashboard` comes first
-     * this is to avoid `login` with the default route showing in /dashboard even when dashboard is also defined
-     * @todo: we need to investigate this behaviour
-     */
-    //const allAccessibleRoutes=[...defaultAllowedAccess, ...userAccess];
-
-    console.log(userAccess, "all routes create");
-
-    /** return the routes created */
-    return userAccess;
-};
+}
 
 export const createUserMenu = (userMenu) => {
     if (typeof userMenu !== "object") {
@@ -151,110 +131,68 @@ export const createUserMenu = (userMenu) => {
          * clicking this menu may show submenu or not depending on configurations
          * */
 
-        /** check the global menuStyle for a definition for this menu entry
-         * if there is a definition, we will use this and if not, we will use default
-         */
-        const menuStyle =
-            globalMenuStyle && globalMenuStyle[menuLocation]
-                ? globalMenuStyle[menuLocation]
-                : {};
-        const { text, icon, dropdownIcon, link, menuClass } = menuStyle;
-
-        let menuObject = {
-            menuItem: text ?? menuLocation,
-            icon: icon,
-            dropdown: dropdownIcon,
-            link: link,
-            class: menuClass,
-        };
-
-        /** this will hold all our submenu items */
-        let subMenuItems = [];
-
-        if (
-            globalMenu[menuLocation] &&
-            typeof globalMenu[menuLocation] === "object"
-        ) {
-            let userAllowedPages = userMenu[menuLocation];
-
-            /** create as submenu for each page user has access to */
-            Object.keys(userAllowedPages).forEach((page) => {
-                /** this will hold the current submenu item */
-                let currentSubMenuItem = null;
-
-                if (
-                    globalMenu[menuLocation][page] &&
-                    globalMenu[menuLocation][page] !== null &&
-                    typeof globalMenu[menuLocation][page] === "object"
-                ) {
-                    /** get the current page we are allowing user to view **/
-                    let currentPage = globalMenu[menuLocation][page];
-
-                    /** assign this current page as a subMenu */
-                    const { subItem } = currentPage;
-
-                    currentSubMenuItem = { ...currentPage };
-
-                    /** get the user subMenu permissions for this entry */
-                    const userAllowedSubMenu =
-                        userMenu[menuLocation][page]["subItem"] ?? null;
-
-                    /** if this user has subMenu item permission we will give it
-                     * **/
-                    let userAllowedSubMenuItems = null;
-
-                    if (userAllowedSubMenu && Array.isArray(userAllowedSubMenu)) {
-                        userAllowedSubMenuItems = userAllowedSubMenu.map(
-                            ({ link, text }) => {
-                                /** we will check and filter the subItem of our menu location
-                                 * return submenu items only if they are also defined for the user
-                                 *  */
-                                return subItem.filter((item) => {
-                                    if (item.link === link && item.text === text) {
-                                        // alert("here");
-                                        return item;
-                                    }
-                                });
-                            }
-                        );
-                        /** If there are subMenu items, we will list them*/
-                        if (
-                            userAllowedSubMenuItems !== null &&
-                            userAllowedSubMenuItems !== undefined
-                        ) {
-                            currentSubMenuItem = {
-                                ...currentSubMenuItem,
-                                subItem: userAllowedSubMenuItems,
-                            };
-                        }
-                    }
-                }
-
-                /**
-                 * assign the `currentSubMenuItem` to the `subMenuItems` array
-                 * check for `showInMenu` property of the `currentSubMenuItem` and if its false
-                 * we will hide this menu from the menu bar.
-                 * @Note: this menu will still be part of the route define for this user
-                 * but it will simply not be available on the menu bar.. This option is mostly use
-                 * for populating our dashboard items, but it can also be use for any menu item
-                 */
-                if (
-                    globalMenu[menuLocation][page] &&
-                    globalMenu[menuLocation][page]["showInMenu"] !== false
-                ) {
-                    subMenuItems = subMenuItems.concat(currentSubMenuItem);
-                }
-            });
+        if (typeof userMenu !== "object" || userMenu === null || userMenu === undefined) {
+            alert("user permission provide must be an object")
+            return console.error("user permission provide must be an object")
         }
-        /** assign the submenu Items created to the subMenuObject **/
-        menuObject = { ...menuObject, subMenuItems };
+        /** get global Menu definition */
+        const globalMenu = Menu;
 
-        /** concat to the global  userMenuAccess array before we move to the next menu location */
-        userMenuAccess = userMenuAccess.concat(menuObject);
-    });
+        /** get the global menu styling options */
+        const globalMenuStyle = MenuStyles;
 
-    /** return the menu created */
-    return userMenuAccess;
+
+        /** this is an array that holds all the permitted menu for user */
+        let userMenuAccess = [];
+
+        Object.keys(userMenu).forEach(menuLocation => {
+
+            /** create a parent menu that houses all the sub menus
+             * This is the main menu that user sees on the menu bar
+             * clicking this menu may show submenu or not depending on configurations
+             * */
+
+            /** check the global menuStyle for a definition for this menu entry
+             * if there is a definition, we will use this and if not, we will use default
+             */
+            const menuStyle = globalMenuStyle && globalMenuStyle[menuLocation] ? globalMenuStyle[menuLocation] : {};
+            const {text, icon, dropdownIcon, link, menuClass} = menuStyle;
+
+            let menuObject = {
+                menuItem: text ?? menuLocation,
+                icon: icon,
+                dropdown: dropdownIcon,
+                link: link,
+                class: menuClass,
+            }
+
+            /**
+             * assign the `currentSubMenuItem` to the `subMenuItems` array
+             * check for `showInMenu` property of the `currentSubMenuItem` and if its false
+             * we will hide this menu from the menu bar.
+             * @Note: this menu will still be part of the route define for this user
+             * but it will simply not be available on the menu bar.. This option is mostly use
+             * for populating our dashboard items, but it can also be use for any menu item
+             */
+            if (
+                globalMenu[menuLocation][page] &&
+                globalMenu[menuLocation][page]["showInMenu"] !== false
+            ) {
+                subMenuItems = subMenuItems.concat(currentSubMenuItem);
+            }
+        });
+    }
+    /** assign the submenu Items created to the subMenuObject **/
+    menuObject = {...menuObject, subMenuItems};
+
+    /** concat to the global  userMenuAccess array before we move to the next menu location */
+    userMenuAccess = userMenuAccess.concat(menuObject);
+}
+)
+;
+
+/** return the menu created */
+return userMenuAccess;
 };
 
 /**
@@ -263,11 +201,18 @@ export const createUserMenu = (userMenu) => {
  * @returns
  */
 export const createUserDashboard = (userMenu) => {
+
     if (typeof userMenu !== "object") {
         const msg = "user permission provide must be an object";
-        alert(msg);
-        return console.error(msg);
+        alert(msg)
+        return console.error(msg)
     }
+
+    /** if userMnu is null, simply ignore menu creation */
+    if (userMenu === null || userMenu === undefined) {
+        return []
+    }
+
     /** get the global dashboard menu  definition
      * to use this feature, we must have `dashboard` property
      * as part of our menu definition
@@ -275,14 +220,13 @@ export const createUserDashboard = (userMenu) => {
     const globalDashboardMenu = Menu["dashboard"] ?? null;
 
     if (globalDashboardMenu === null) {
-        const msg =
-            "Dashboard menu not defined. There must be an entry called dashboard in our menu definition";
-        alert(msg);
-        return console.error(msg);
+        const msg = "Dashboard menu not defined. There must be an entry called dashboard in our menu definition";
+        alert(msg)
+        return console.error(msg)
     }
 
     /**get the dashboard view user is allowed to see*/
-    const userDashboardViewsAllowed = userMenu["dashboard"] ?? null;
+    const userDashboardViewsAllowed = userMenu['dashboard'] ?? null;
 
     /** this user cannot see anything on the dashboard */
     if (userDashboardViewsAllowed === null) {
@@ -295,36 +239,29 @@ export const createUserDashboard = (userMenu) => {
     /** this will hold all the dashboard views user will see */
     let userDashboard = [];
 
-    Object.keys(userDashboardViewsAllowed).forEach((menuLocation) => {
-        if (
-            globalDashboardMenu[menuLocation] &&
-            globalDashboardMenu[menuLocation] !== null &&
-            typeof globalDashboardMenu[menuLocation] === "object"
-        ) {
+    Object.keys(userDashboardViewsAllowed).forEach(menuLocation => {
+
+        if (globalDashboardMenu[menuLocation] && globalDashboardMenu[menuLocation] !== null && typeof globalDashboardMenu[menuLocation] === "object") {
+
             /** check if we are showing this menu entry on the dashboard
              * Please see `Menu` definition under the `dashboard` property for details
              */
-            const { showOnDashboard } = globalDashboardMenu[menuLocation];
+            const {showOnDashboard} = globalDashboardMenu[menuLocation];
 
             /** Assign this dashboard view for this user
              * @todo: in the future, we could perform more function here to assign based on each menu row
              * or we could use a dummy dashboard view for component that user does not have permission to see
              * This is all to help in our display styling.
              */
-            //console.log(globalDashboardMenu[menuLocation]["component"], " will assign this now ")
             if (showOnDashboard === true) {
-                console.log(showOnDashboard, "will show on dashboard");
-                const CurrentDashboardComponent =
-                    globalDashboardMenu[menuLocation]["component"];
-                userDashboard = userDashboard.concat(<CurrentDashboardComponent />);
-                // userDashboard = userDashboard.concat(<div><TotalOrders/></div>);
+                const CurrentDashboardComponent = globalDashboardMenu[menuLocation]["component"];
+                userDashboard = userDashboard.concat(<CurrentDashboardComponent/>);
             }
-            // userDashboard = userDashboard.concat(<div>Hello From Menu creation</div>);
         }
     });
     /** return the dashboard created */
-    return userDashboard;
-};
+    return userDashboard
+}
 
 /**
  * This is the central menu definition within our application
@@ -361,115 +298,127 @@ export const Menu = {
             component: Dashboard,
             usePageWrapper: false,
         },
-        /** The entries below define items to show only on the dashboard
-         * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry.
-         * Our dashboard creation method will check if `showOnDashboard` property is true before showing on the dashboard
+
+        /**
+         * default menu are the menus that are constant and available
+         * to all users irrespective of their user type and permission settings
          */
-        totalOrders: {
-            text: "Total Orders",
-            link: "dashboard",
-            component: TotalOrders,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
+        default: {
+            /** using the `usePageWrapper= false`  will hide the page wrapper for this component*/
+            login: {
+                text: "Login",
+                link: "/",
+                component: LoginPage,
+                hideNavBar: true,
+                usePageWrapper: false,
+            },
+            profile: {
+                text: "Profile",
+                link: "/profile",
+                component: Profile,
+            },
         },
-        recentOrders: {
-            text: "Recent Orders",
-            link: "#",
-            component: RecentOrders,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
-        },
-        totalRevenue: {
-            text: "Total Revenue",
-            link: "#",
-            component: TotalRevenue,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
-        },
-        summary: {
-            text: "Summary",
-            link: "#",
-            component: Summary,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
-        },
-        detailedStatistics: {
-            text: "Detailed Statistics",
-            component: DetailedStatistics,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
-        },
-        activitiesSummary: {
-            text: "Activities Summary",
-            link: "#",
-            component: ActivitiesSummary,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
-        },
-        totalStockpile: {
-            text: "Total Stockpile",
-            link: "#",
-            component: TotalStockpile,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
-        },
-        recentSummary: {
-            text: "Recent Summary",
-            link: "#",
-            component: RecentExpenses,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
-        },
-        currentActivity: {
-            text: "Current Activity",
-            link: "#",
-            component: CurrentActivity,
-            usePageWrapper: false,
-            showOnDashboard: true,
-            showInMenu: false,
-        },
-    },
 
-    /**
-     * Everything that relates to order goes here
-     * */
-    order: {
-        placeOrder: {
-            text: "Place Order",
-            link: "/placeorder",
-            component: OrderForm,
-            /** use this entry if this sub menu will also have its own subMenu**/
-            subItem: [{ link: "/checkorderstatus", text: "Sub Menu Order" }],
-        },
-        viewOrder: {
-            text: "View Orders",
-            link: "/vieworders",
-            component: ViewOrders,
-        },
-        orderReceipt: {
-            text: "Order Receipt",
-            link: "/orderreceipt",
-            component: OrderReceipt,
-        },
-        orderDispatchList: {
-            text: "Orders Dispatch",
-            link: "/dispatchlist",
-            component: DispatchOrderList,
-        },
-    },
+        /** the dashboard page definition */
+        dashboard: {
+            dashboardHome: {
+                text: "Dashboard Content",
+                link: "/dashboard",
+                component: Dashboard,
+                usePageWrapper: false,
+            },
 
-    /**
-     * Production related menu goes here
-     * */
-    production: {
+            /** The entries below define items to show only on the dashboard
+             * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry.
+             * Our dashboard creation method will check if `showOnDashboard` property is true before
+             * showing on the dashboard
+             */
+            totalOrders: {
+                text: "Total Orders",
+                link: "dashboard",
+                component: TotalOrders,
+                usePageWrapper: false,
+                showOnDashboard: true,
+                showInMenu: false,
+            },
+            recentOrders: {
+                text: "Recent Orders",
+                link: "#",
+                component: RecentOrders,
+                usePageWrapper: false,
+                showOnDashboard: true,
+                showInMenu: false,
+
+            },
+            totalRevenue: {
+                text: "Total Revenue",
+                link: "#",
+                component: TotalRevenue,
+                usePageWrapper: false,
+                showOnDashboard: true,
+                showInMenu: false,
+
+            },
+            summary: {
+                text: "Summary",
+                link: "#",
+                component: Summary,
+                usePageWrapper: false,
+                showOnDashboard: true,
+                showInMenu: false,
+            },
+            detailedStatistics: {
+                text: "Detailed Statistics",
+                component: DetailedStatistics,
+                usePageWrapper: false,
+                showOnDashboard: true,
+                showInMenu: false,
+            },
+            RecentSummary: {
+                text: "Detailed Statistics",
+                link: "#",
+
+                component: DetailedStatistics,
+                usePageWrapper: false,
+                showOnDashboard: true,
+                showInMenu: false,
+            },
+
+        },
+
+        /**
+         * Everything that relates to order goes here
+         * */
+        order: {
+            placeOrder: {
+                text: "Place Order",
+                link: "/placeorder",
+                component: OrderForm,
+                /** use this entry if this sub menu will also have its own subMenu**/
+                subItem: [
+                    {link: "/checkorderstatus", text: "Sub Menu Order"}
+                ],
+            },
+            viewOrder: {
+                text: "View Orders",
+                link: "/vieworders",
+                component: ViewOrders,
+            },
+            orderReceipt: {
+                text: "Order Receipt",
+                link: "/orderreceipt",
+                component: OrderReceipt,
+            },
+            orderDispatchList: {
+                text: "Orders Dispatch",
+                link: "/dispatchlist",
+                component: DispatchOrderList,
+            },
+        },
+
+        /**
+         * Production related menu goes here
+         * */
         production: {
             text: "Start Pumping",
             link: "/production",
@@ -615,6 +564,7 @@ export const Menu = {
         },
     },
 };
+
 
 /**
  * This is the menu definition for our individual menu entries
