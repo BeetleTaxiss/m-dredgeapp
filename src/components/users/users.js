@@ -14,14 +14,14 @@ import FormModal from "../general/modal/form-modal";
 import {
   createPermissionList,
   createUserPermissionListComponent,
-  getPermissionData
+  getPermissionData,
 } from "./PermissionList";
-import { errorAlert, successAlert} from "../../hooks/function-utils";
+import { errorAlert, successAlert } from "../../hooks/function-utils";
+import { enUs as language } from "../../Language";
 
 /** in the future we can create a language file to handle this */
 
 const Users = () => {
-
   const [userList, setUserList] = useState(null);
   const [user, setUser] = useState(null);
   const [userTypes, setUserTypes] = useState(null);
@@ -32,7 +32,7 @@ const Users = () => {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  /** 
+  /**
    * This is the userPermissionListView that we will display when we attempt to update
    * This value will change based on the user account we are updating.
    * For us to be able to track changes happening in the `Contacts` and `Contact` component
@@ -43,19 +43,19 @@ const Users = () => {
   /** this state variable will allow  us to get the data */
   const [userGetPermissionData, setUserGetPermissionData] = useState([]);
 
-  /** 
-   * use this state value to check when we have addeed or updated data and need to refresh 
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
    * it work by concatenating  `true` to the array when we need to refresh
    * */
   const [refreshData, setRefreshData] = useState([]);
 
-
-
   /**
-   * create a state to hold our function to get permission data
-   * from our external component
+   *  an helper function to always refresh the page 
    * */
-  // const [getPermissionData, setGetPermissionData] = useState(null);
+  const reloadServerData=()=>{
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  }
 
   /**
    * Data for building the user list display divided into table header/legend and users information
@@ -72,24 +72,26 @@ const Users = () => {
   };
 
   const changePassword = () => {
-
     let userName = document.getElementById("user-add-user").value,
       userId = document.getElementById("user-id-add-user").value,
-      userPassword = document.getElementById("password-add-user").value,
-      newUserPassword = md5(
-        document.getElementById("new-password-add-user").value
+      userPassword = document.getElementById("password-add-user").value;
+    let newUserPassword = document.getElementById("new-password-add-user").value;
+
+    const encNewUserPassword = md5(newUserPassword);
+
+    if (!userId || !userPassword || !newUserPassword) {
+      return errorAlert(
+        language.popUps.updateErrorTitle,
+        language.popUps.allFormFieldsRequiredMsg
       );
+    }
 
     const changePasswordData = {
       user: userName,
       "user-id": userId,
       password: userPassword,
-      "password-new": newUserPassword,
+      "password-new": encNewUserPassword,
     };
-
-    if(!userId || !userPassword || !newUserPassword) {
-      return errorAlert("Update Alert", "Select all required form fields");
-    }
 
     axios
       .put(
@@ -106,31 +108,32 @@ const Users = () => {
           const title = "Password changed",
             text = res.data.message;
           successAlert(title, text);
+          reloadServerData();
         }
-      }).catch(error=>{
-        errorAlert(error.message, "Please check internet connection");
       })
+      .catch((error) => {
+        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg);
+      });
   };
 
   const updateUserPermission = () => {
-    
     const userId = document.getElementById("user-add-user-id").value;
-    const userName= document.getElementById("user-add-user").value;
-    const phone= document.getElementById("phone-add-user").value;            
-    const email= document.getElementById("email-add-user").value ;  
-    const userType= document.getElementById("select-add-user").value; 
-    
+    const userName = document.getElementById("user-add-user").value;
+    const phone = document.getElementById("phone-add-user").value;
+    const email = document.getElementById("email-add-user").value;
+    const userType = document.getElementById("select-add-user").value;
+
     /** ensure user select userType */
-    if(parseInt(userType)===0) {
+    if (parseInt(userType) === 0) {
       return errorAlert("Update Alert", "Please select job description");
     }
-    
-    if(!userId || !userName || !phone || !email || !userType) {
+
+    if (!userId || !userName || !phone || !email || !userType) {
       return errorAlert("Update Alert", "Please all form fields are required");
     }
 
     /** get the permission updates for this user */
-    const permission=getPermissionData();
+    const permission = getPermissionData();
     //console.log(JSON.parse(permission), "UPdATED permission");
 
     const userUpdateData = {
@@ -139,14 +142,11 @@ const Users = () => {
       phone: phone,
       email: email,
       "user-type": userType,
-      "permission": permission,
+      permission: permission,
     };
 
     axios
-      .put(
-        `${BASE_API_URL}/api/v1/user/update.php`,
-        userUpdateData
-      )
+      .put(`${BASE_API_URL}/api/v1/user/update.php`, userUpdateData)
       .then((res) => {
         if (res.data.error) {
           const title = "Update Alert",
@@ -156,42 +156,46 @@ const Users = () => {
           const title = "Update Alert",
             text = res.data.message;
           successAlert(title, text);
+          reloadServerData();
         }
-      });
+      }).catch(error=>{
+        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg)
+      })
   };
 
   /**
-   * This component will return both the permissionListAccordion and the 
-   * method to getPermissionData to get the updated permission data before 
-   * update
+   * This component will return both the permissionListAccordion and the
+   * method to getPermissionData to get the updated permission data before
+   * we update them 
    */
-   const BlankPermissionListForNewUser = (props) => {
+  const BlankPermissionListForNewUser = (props) => {
     const permissionListData = createPermissionList({});
 
-    const [
-      PermissionList
-    ] = createUserPermissionListComponent(permissionListData);
-
+    const [PermissionList] = createUserPermissionListComponent(
+      permissionListData
+    );
     return <>{PermissionList}</>;
   };
 
-
   const addContact = () => {
-
     let newUserName = document.getElementById("user-add-user").value,
       newUserType = document.getElementById("select-add-user").value,
       newUserEmail = document.getElementById("email-add-user").value,
       newUserPhoneNo = document.getElementById("phone-add-user").value,
       newUserPassword = md5(document.getElementById("password-add-user").value),
-      newUserConfirmPassword = md5(document.getElementById("confirm-password-add-user").value);
-    
+      newUserConfirmPassword = md5(
+        document.getElementById("confirm-password-add-user").value
+      );
+
     /** get the userPermissionList data */
-    const permission= getPermissionData();
-    
-    if(!permission) {
-      return errorAlert("Permission Error", "You must give new user at least one permission");
+    const permission = getPermissionData();
+
+    if (!permission) {
+      return errorAlert(
+        "Permission Error",
+        "You must give new user at least one permission"
+      );
     }
-  
     const addUserData = {
       user: newUserName,
       "user-type": newUserType,
@@ -199,8 +203,9 @@ const Users = () => {
       phone: newUserPhoneNo,
       password: newUserPassword,
       "password-confirm": newUserConfirmPassword,
-      "permission": permission,
+      permission: permission,
     };
+
     axios
       .post(`${BASE_API_URL}/api/v1/user/add.php`, addUserData)
       .then((res) => {
@@ -219,10 +224,13 @@ const Users = () => {
           newUserPhoneNo = "";
           newUserPassword = "";
           newUserConfirmPassword = "";
+          /** refresh the page so we can newly added users */
+          reloadServerData();
         }
-      }).catch(error=>{
-        errorAlert(error.message, "Please check internet connection")
       })
+      .catch((error) => {
+        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg);
+      });
   };
 
   // Delete User Function
@@ -239,10 +247,12 @@ const Users = () => {
           const title = "User Deleted",
             text = res.data.message;
           successAlert(title, text);
+          reloadServerData();
         }
-      }).catch(error=>{
-        errorAlert(error.message, "Please check internet connection")
       })
+      .catch((error) => {
+        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg);;
+      });
   };
 
   // Suspend User Function
@@ -259,10 +269,12 @@ const Users = () => {
           const title = "User Suspended",
             text = res.data.message;
           successAlert(title, text);
+          reloadServerData();
         }
-      }).catch(error=>{
-        errorAlert(error.message, "Cannot suspend.Please check internet connection")
       })
+      .catch((error) => {
+        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg);;
+      });
   };
   const enableContact = (enableUserData) => {
     axios
@@ -278,9 +290,13 @@ const Users = () => {
             text = res.data.message;
           successAlert(title, text);
         }
-      }).catch(error=>{
-        errorAlert(error.message, "Cannot enable. Please check internet connection")
       })
+      .catch((error) => {
+        errorAlert(
+          error.message,
+          "Cannot enable. Please check internet connection"
+        );
+      });
   };
 
   const warningAlert1 = (title, userName, userId) => {
@@ -354,7 +370,9 @@ const Users = () => {
   //console.log("Individual User Type: ", userTypes);
   const { formData } = useAddContactFormData(selectOptions);
   const { updateFormData } = useUpdateContactFormData();
-  const { updateUserDetailsFormData } = useUpdateUserDetailsFormData(selectOptions);
+  const { updateUserDetailsFormData } = useUpdateUserDetailsFormData(
+    selectOptions
+  );
 
   /** load the user list on page open */
   useEffect(() => {
@@ -432,15 +450,15 @@ const Users = () => {
     ////console.log("Show modal: ", showModal);
   }, [refreshData]);
 
-  
   return (
     <>
-      <Contacts setShowModal={setShowModal} 
-      setUserGetPermissionData={setUserGetPermissionData} 
-      content={userListData} 
-      setShowUpdateModal={setShowUpdateModal}
-      setShowUserDetailsUpdate={setShowUserDetailsUpdate}
-      setUserPermissionListView={setUserPermissionListView} 
+      <Contacts
+        setShowModal={setShowModal}
+        setUserGetPermissionData={setUserGetPermissionData}
+        content={userListData}
+        setShowUpdateModal={setShowUpdateModal}
+        setShowUserDetailsUpdate={setShowUserDetailsUpdate}
+        setUserPermissionListView={setUserPermissionListView}
       />
 
       {/** add new user with this section */}
@@ -455,20 +473,22 @@ const Users = () => {
           loading={loading}
           setLoading={setLoading}
           errorMsg={errorMsg}
-          status={error}          handleSubmit={addContact}
+          status={error}
+          handleSubmit={addContact}
           Btntext="Add User"
           closeBtn
         />
       )}
 
-    {/** use this to update user permissions */
-    //console.log(updateUserDetailsFormData, "update details form data")
-    }
-    <FormModal
+      {
+        /** use this to update user permissions */
+        //console.log(updateUserDetailsFormData, "update details form data")
+      }
+      <FormModal
         formTitle="Update User Permission"
         formSubtitle="Add or remove permissions for users"
         formData={updateUserDetailsFormData}
-        PermissionListComponent={()=>userPermissionListView}
+        PermissionListComponent={() => userPermissionListView}
         setUserGetPermissionData={setUserGetPermissionData}
         showModal={showUserDetailsUpdate}
         setShowModal={setShowUserDetailsUpdate}
