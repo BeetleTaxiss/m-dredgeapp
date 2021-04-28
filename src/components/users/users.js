@@ -7,6 +7,7 @@ import { BASE_API_URL } from "../../hooks/API";
 import {
   useAddContactFormData,
   useUpdateContactFormData,
+  useUpdateUserDetailsFormData,
 } from "../../hooks/useFormData";
 import Contacts from "../general/contacts/contacts";
 import FormModal from "../general/modal/form-modal";
@@ -16,6 +17,8 @@ import {
   getPermissionData
 } from "./PermissionList";
 import { errorAlert, successAlert} from "../../hooks/function-utils";
+
+/** in the future we can create a language file to handle this */
 
 const Users = () => {
 
@@ -40,6 +43,12 @@ const Users = () => {
   /** this state variable will allow  us to get the data */
   const [userGetPermissionData, setUserGetPermissionData] = useState([]);
 
+  /** 
+   * use this state value to check when we have addeed or updated data and need to refresh 
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
 
 
   /**
@@ -63,15 +72,13 @@ const Users = () => {
   };
 
   const changePassword = () => {
+
     let userName = document.getElementById("user-add-user").value,
       userId = document.getElementById("user-id-add-user").value,
       userPassword = document.getElementById("password-add-user").value,
       newUserPassword = md5(
         document.getElementById("new-password-add-user").value
       );
-      /** get the permission updates for this user */
-      const permission=getPermissionData();
-      console.log(JSON.parse(permission), "UPdATED permission");
 
     const changePasswordData = {
       user: userName,
@@ -80,13 +87,17 @@ const Users = () => {
       "password-new": newUserPassword,
     };
 
+    if(!userId || !userPassword || !newUserPassword) {
+      return errorAlert("Update Alert", "Select all required form fields");
+    }
+
     axios
       .put(
         `${BASE_API_URL}/api/v1/user/change-password.php`,
         changePasswordData
       )
       .then((res) => {
-        console.log("Change User password Data", res.data);
+        //console.log("Change User password Data", res.data);
         if (res.data.error) {
           const title = "Password update failed",
             text = res.data.message;
@@ -96,10 +107,59 @@ const Users = () => {
             text = res.data.message;
           successAlert(title, text);
         }
+      }).catch(error=>{
+        errorAlert(error.message, "Please check internet connection");
+      })
+  };
+
+  const updateUserPermission = () => {
+    
+    const userId = document.getElementById("user-add-user-id").value;
+    const userName= document.getElementById("user-add-user").value;
+    const phone= document.getElementById("phone-add-user").value;            
+    const email= document.getElementById("email-add-user").value ;  
+    const userType= document.getElementById("select-add-user").value; 
+    
+    /** ensure user select userType */
+    if(parseInt(userType)===0) {
+      return errorAlert("Update Alert", "Please select job description");
+    }
+    
+    if(!userId || !userName || !phone || !email || !userType) {
+      return errorAlert("Update Alert", "Please all form fields are required");
+    }
+
+    /** get the permission updates for this user */
+    const permission=getPermissionData();
+    //console.log(JSON.parse(permission), "UPdATED permission");
+
+    const userUpdateData = {
+      user: userName,
+      "user-id": userId,
+      phone: phone,
+      email: email,
+      "user-type": userType,
+      "permission": permission,
+    };
+
+    axios
+      .put(
+        `${BASE_API_URL}/api/v1/user/update.php`,
+        userUpdateData
+      )
+      .then((res) => {
+        if (res.data.error) {
+          const title = "Update Alert",
+            text = res.data.message;
+          errorAlert(title, text);
+        } else {
+          const title = "Update Alert",
+            text = res.data.message;
+          successAlert(title, text);
+        }
       });
   };
 
-  
   /**
    * This component will return both the permissionListAccordion and the 
    * method to getPermissionData to get the updated permission data before 
@@ -144,7 +204,7 @@ const Users = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/user/add.php`, addUserData)
       .then((res) => {
-        console.log("Add User Data", res.data);
+        //console.log("Add User Data", res.data);
         if (res.data.error) {
           const title = "Add User Failed",
             text = res.data.message;
@@ -170,7 +230,7 @@ const Users = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/user/delete.php`, deleteUserData)
       .then((res) => {
-        console.log("Delete User Data", res.data);
+        //console.log("Delete User Data", res.data);
         if (res.data.error) {
           const title = "Delete User Failed",
             text = res.data.message;
@@ -190,7 +250,7 @@ const Users = () => {
     axios
       .put(`${BASE_API_URL}/api/v1/user/suspend.php`, suspendUserData)
       .then((res) => {
-        console.log("Suspend User Data", res.data);
+        //console.log("Suspend User Data", res.data);
         if (res.data.error) {
           const title = "Suspension Failed",
             text = res.data.message;
@@ -208,7 +268,7 @@ const Users = () => {
     axios
       .put(`${BASE_API_URL}/api/v1/user/enable.php`, enableUserData)
       .then((res) => {
-        console.log("Enable User Data", res.data);
+        //console.log("Enable User Data", res.data);
         if (res.data.error) {
           const title = "Enablement Failed",
             text = res.data.message;
@@ -250,7 +310,7 @@ const Users = () => {
         user: userName,
         "user-id": userId,
       };
-      console.log("Sweet Alert: ", value);
+      //console.log("Sweet Alert: ", value);
       if (value.isConfirmed) {
         enableContact(enableUserData);
       }
@@ -272,14 +332,14 @@ const Users = () => {
         "delete-user": userName,
         "delete-id": userId,
       };
-      console.log("Sweet Alert: ", value);
+      //console.log("Sweet Alert: ", value);
       if (value.isConfirmed) {
         deleteContact(deleteUserData);
       }
     });
   };
 
-  console.log("Individual User State", user);
+  //console.log("Individual User State", user);
 
   const selectOptions = [
     { user_type: "Select Job Description", id: "0" },
@@ -291,14 +351,15 @@ const Users = () => {
     { user_type: "Security", id: "7" },
     { user_type: "Operation Staff", id: "8" },
   ];
-  console.log("Individual User Type: ", userTypes);
+  //console.log("Individual User Type: ", userTypes);
   const { formData } = useAddContactFormData(selectOptions);
   const { updateFormData } = useUpdateContactFormData();
+  const { updateUserDetailsFormData } = useUpdateUserDetailsFormData(selectOptions);
 
   /** load the user list on page open */
   useEffect(() => {
     axios.get(`${BASE_API_URL}/api/v1/user/list.php`).then((res) => {
-      console.log("User List Data: ", res.data);
+      //console.log("User List Data: ", res.data);
       const data = res.data.data;
       let body = [];
       data.map((item, i) => {
@@ -360,25 +421,29 @@ const Users = () => {
           suspend: warningAlert1,
           enable: warningAlert2,
           delete: warningAlert3,
-          setShowUpdateModal: setShowUpdateModal,
+          // setShowUpdateModal: setShowUpdateModal,
         };
         return (body = body.concat(currentUser));
       });
       setUserList(body);
-      //console.log("Users Main data: ", body);
-      //console.log("Users Main DATA: ", userList);
+      ////console.log("Users Main data: ", body);
+      ////console.log("Users Main DATA: ", userList);
     });
-    //console.log("Show modal: ", showModal);
-  }, []);
+    ////console.log("Show modal: ", showModal);
+  }, [refreshData]);
 
+  
   return (
     <>
       <Contacts setShowModal={setShowModal} 
       setUserGetPermissionData={setUserGetPermissionData} 
       content={userListData} 
       setShowUpdateModal={setShowUpdateModal}
+      setShowUserDetailsUpdate={setShowUserDetailsUpdate}
       setUserPermissionListView={setUserPermissionListView} 
       />
+
+      {/** add new user with this section */}
       {showModal && (
         <FormModal
           formTitle="Add a new staff"
@@ -390,36 +455,36 @@ const Users = () => {
           loading={loading}
           setLoading={setLoading}
           errorMsg={errorMsg}
-          status={error}
-          handleSubmit={addContact}
+          status={error}          handleSubmit={addContact}
           Btntext="Add User"
           closeBtn
         />
       )}
 
+    {/** use this to update user permissions */
+    //console.log(updateUserDetailsFormData, "update details form data")
+    }
     <FormModal
-        formTitle="Update User"
-        formSubtitle="Update user details"
-        formData={updateFormData}
+        formTitle="Update User Permission"
+        formSubtitle="Add or remove permissions for users"
+        formData={updateUserDetailsFormData}
         PermissionListComponent={()=>userPermissionListView}
         setUserGetPermissionData={setUserGetPermissionData}
-        showModal={showUpdateModal}
+        showModal={showUserDetailsUpdate}
         setShowModal={setShowUserDetailsUpdate}
         loading={loading}
         setLoading={setLoading}
         errorMsg={errorMsg}
         status={error}
-        handleSubmit={changePassword}
-        Btntext="Update Password"
+        handleSubmit={updateUserPermission}
+        Btntext="Update Permission"
         closeBtn
       />
-
+      {/** Update user password with this section */}
       <FormModal
         formTitle="Update Password"
         formSubtitle="Wrong password? Change it here"
         formData={updateFormData}
-        PermissionListComponent={()=>userPermissionListView}
-        setUserGetPermissionData={setUserGetPermissionData}
         showModal={showUpdateModal}
         setShowModal={setShowUpdateModal}
         loading={loading}

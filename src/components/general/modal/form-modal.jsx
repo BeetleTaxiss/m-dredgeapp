@@ -82,8 +82,6 @@ const FormModal = ({
               to="#"
               onClick={() => {
                 setShowModal(!showModal);
-                console.log("Modal State: ", showModal);
-                alert("Close btn clicked");
               }}
               className="mt-4 btn btn-danger"
             >

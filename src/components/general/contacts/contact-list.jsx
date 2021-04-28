@@ -37,8 +37,7 @@ const ContactListHeader = ({ content }) => (
   /** return our initial userPermissionList component */
   return createUserPermissionListComponent(permissionListData)
 };
-
-const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData, setShowUpdateModal}) => (
+const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData, setShowUpdateModal, setShowUserDetailsUpdate}) => (
   <>
     {content ? (
       <div className="items">
@@ -70,8 +69,6 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData,
 
           <button onClick={()=>{
               /** to show permission on the modal, we will pass it as a parameter */
-              console.log(JSON.parse(content.permission), "user prov. permission");
-
               const PermissionListForUser= <PermissionListForExistingUser 
               setUserGetPermissionData={setUserGetPermissionData}
               permission={content.permission} />
@@ -79,12 +76,18 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData,
               /** set this state variable so that the popup open, the permission list for this user is shown */
               setUserPermissionListView(PermissionListForUser);
 
-              console.log(PermissionListForUser, "permission List created");
+              console.log(content.user, "the user ");
+
+              /** set the initial values for our form input before we open */
+              document.getElementById("user-add-user").value = content.user.user;
+              document.getElementById("user-add-user-id").value = content.user.id;            
+              document.getElementById("phone-add-user").value = content.user.phone;            
+              document.getElementById("email-add-user").value = content.user.email;            
 
               /** open the update window */
-              setShowUpdateModal(true);
+              setShowUserDetailsUpdate(true);
               
-            }}>Edit Permission</button>
+            }}>Edit</button>
 
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +105,7 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData,
                 document.getElementById("user-add-user").value = content.user.user;
                 document.getElementById("user-id-add-user").value = content.user.id;
                 document.getElementById("password-add-user").value = content.user.password;
-                content.setShowUpdateModal(true);
+                setShowUpdateModal(true);
               }}
             >
               <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -202,7 +205,7 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData,
     )}
   </>
 );
-const ContactList = ({ content, setUserPermissionListView, setUserGetPermissionData }) => {
+const ContactList = ({ content, setUserPermissionListView, setUserGetPermissionData, setShowUpdateModal, setShowUserDetailsUpdate }) => {
   return (
     <div className="searchable-items grid">
       {/* BEGIN USER LIST HEADER */}
@@ -213,7 +216,10 @@ const ContactList = ({ content, setUserPermissionListView, setUserGetPermissionD
       {content.contacts ? (
         content.contacts.map((user, i) => 
         <Contact key={i} content={user} setUserPermissionListView={setUserPermissionListView} 
-        setUserGetPermissionData={setUserGetPermissionData} />)
+        setShowUpdateModal={setShowUpdateModal}
+        setUserGetPermissionData={setUserGetPermissionData}
+        setShowUserDetailsUpdate={setShowUserDetailsUpdate}
+         />)
       ) : (
         <>
           <Skeleton count={3} height={55} />

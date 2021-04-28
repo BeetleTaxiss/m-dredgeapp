@@ -177,6 +177,55 @@ export const useUpdateContactFormData = () => {
 
   return { updateFormData };
 };
+
+
+export const useUpdateUserDetailsFormData = (selectOptions) => {
+  const updateUserDetailsFormData = [
+    {
+      id: "user-add-user-id",
+      type: "text",
+      name: "user",
+      holder: "User ID",
+      className: "form-control",
+      required: true,
+      hidden: "hidden",
+    },
+    {
+      id: "user-add-user",
+      type: "text",
+      name: "user",
+      holder: "User name",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "select-add-user",
+      type: "select",
+      name: "job description",
+      className: "form-control",
+      options: selectOptions,
+      required: true,
+    },
+    {
+      id: "email-add-user",
+      type: "email",
+      name: "email",
+      holder: "User email",
+      className: "form-control",
+      required: true,
+    },
+    {
+      id: "phone-add-user",
+      type: "text",
+      name: "phone",
+      holder: "User phone number",
+      className: "form-control",
+      required: true,
+    },
+  ];
+
+  return { updateUserDetailsFormData };
+};
 export const useUserChangePasswordFormData = (userName) => {
   const updatePasswordFormText = {
     formTitle: "Update your password",
