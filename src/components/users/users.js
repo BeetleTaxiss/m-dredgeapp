@@ -71,7 +71,7 @@ const Users = () => {
       );
       /** get the permission updates for this user */
       const permission=getPermissionData();
-      return console.log(JSON.parse(permission), "UPdATED permission");
+      console.log(JSON.parse(permission), "UPdATED permission");
 
     const changePasswordData = {
       user: userName,
@@ -373,7 +373,10 @@ const Users = () => {
 
   return (
     <>
-      <Contacts setShowModal={setShowModal} content={userListData} 
+      <Contacts setShowModal={setShowModal} 
+      setUserGetPermissionData={setUserGetPermissionData} 
+      content={userListData} 
+      setShowUpdateModal={setShowUpdateModal}
       setUserPermissionListView={setUserPermissionListView} 
       />
       {showModal && (
@@ -401,7 +404,7 @@ const Users = () => {
         PermissionListComponent={()=>userPermissionListView}
         setUserGetPermissionData={setUserGetPermissionData}
         showModal={showUpdateModal}
-        setShowModal={setShowUpdateModal}
+        setShowModal={setShowUserDetailsUpdate}
         loading={loading}
         setLoading={setLoading}
         errorMsg={errorMsg}

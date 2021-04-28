@@ -6,6 +6,7 @@ import "./contacts.css";
 
 const Contacts = ({
   setShowModal,
+  setShowUpdateModal,
   setUserPermissionListView,
   setUserGetPermissionData,
   content: { searchBar, header, contacts, permission },
@@ -23,6 +24,7 @@ const Contacts = ({
         <ContactList content={contactList} 
         setUserPermissionListView={setUserPermissionListView} 
         setUserGetPermissionData={setUserGetPermissionData}
+        setShowUpdateModal={setShowUpdateModal}
         />
         {/* END OF USERS LIST */}
       </div>

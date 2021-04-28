@@ -38,7 +38,7 @@ const ContactListHeader = ({ content }) => (
   return createUserPermissionListComponent(permissionListData)
 };
 
-const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData}) => (
+const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData, setShowUpdateModal}) => (
   <>
     {content ? (
       <div className="items">
@@ -67,6 +67,25 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData}
           )}
 
           <div className="action-btn" style={{ display: "flex", gap: "1rem" }}>
+
+          <button onClick={()=>{
+              /** to show permission on the modal, we will pass it as a parameter */
+              console.log(JSON.parse(content.permission), "user prov. permission");
+
+              const PermissionListForUser= <PermissionListForExistingUser 
+              setUserGetPermissionData={setUserGetPermissionData}
+              permission={content.permission} />
+
+              /** set this state variable so that the popup open, the permission list for this user is shown */
+              setUserPermissionListView(PermissionListForUser);
+
+              console.log(PermissionListForUser, "permission List created");
+
+              /** open the update window */
+              setShowUpdateModal(true);
+              
+            }}>Edit Permission</button>
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -79,19 +98,6 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData}
               strokeLinejoin="round"
               className="feather feather-edit-2 edit"
               onClick={() => {
-                /** to show permission on the modal, we will pass it as a parameter */
-
-                console.log(JSON.parse(content.permission), "user prov. permission");
-
-                const PermissionListForUser= <PermissionListForExistingUser 
-                setUserGetPermissionData={setUserGetPermissionData}
-                permission={content.permission} />
-
-                /** set this state variable so that the popup open, the permission list for this user is shown */
-                setUserPermissionListView(PermissionListForUser);
-
-                console.log(PermissionListForUser, "permission List created");
-
                 content.setUser(content.user);
                 document.getElementById("user-add-user").value = content.user.user;
                 document.getElementById("user-id-add-user").value = content.user.id;
