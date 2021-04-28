@@ -151,6 +151,10 @@ export const userMenu = {
       text: "Fuel Stock Entry",
       link: "/fuelupdatelist",
     },
+    UsersActivitiesLog: {
+      text: "User Logs",
+      link: "/useractivities",
+    },
   },
 
   inspector: {

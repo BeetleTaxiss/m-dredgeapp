@@ -25,6 +25,7 @@ import FuelIssueList from "./components/fuel-issues/fuel-issue-list";
 import FuelIssuing from "./components/fuel-issues/fuel-issuing";
 import Machinery from "./components/operations/machinery";
 import Users from "./components/users/users";
+import UsersActivitiesLog from "./components/admin/UserActivitiesLog";
 import Inspector from "./components/inspector/inspector";
 import Security from "./components/security/security";
 import { Dashboard } from "./pages/dashboard";
@@ -562,6 +563,11 @@ export const Menu = {
       text: "Add Products",
       link: "/products",
       component: Products,
+    },
+    UsersActivitiesLog: {
+      text: "User Logs",
+      link: "/useractivities",
+      component: UsersActivitiesLog,
     },
   },
 
