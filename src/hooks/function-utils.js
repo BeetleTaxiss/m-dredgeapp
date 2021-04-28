@@ -8,10 +8,9 @@ import { render } from "react-dom";
 import { batch } from "pullstate";
 import { Link } from "react-router-dom";
 
-import { useHistory} from "react-router-dom";
-import {StoreManager} from "react-persistent-store-manager";
-import {Stores, AppStore} from "./../state/store";
-
+import { useHistory } from "react-router-dom";
+import { StoreManager } from "react-persistent-store-manager";
+import { Stores, AppStore } from "./../state/store";
 
 // Alerts
 export const successAlert = (title, text, link, showBtn) => {
@@ -49,51 +48,60 @@ export const validateForm = (errors) => {
 
 // Login function to
 const Login = async (user, password) => {
-
   const data = JSON.stringify({ user, password });
 
-  const response= await axios.post(`${BASE_API_URL}/api/v1/user/login.php`, data, {
+  const response = await axios
+    .post(`${BASE_API_URL}/api/v1/user/login.php`, data, {
       headers: {
         "Content-Type": "application/json",
-      }
-    }).catch(error=>{
-      errorAlert(error.message, "Could not login. Please check internet connection");
+      },
+    })
+    .catch((error) => {
+      errorAlert(
+        error.message,
+        "Could not login. Please check internet connection"
+      );
     });
 
-    if(response===null || response===undefined) {
-      /** there was an error login in */
-      errorAlert("Login Error", "Could not login. Please check internet connection");
-      return ({status: false});
-    }
+  if (response === null || response === undefined) {
+    /** there was an error login in */
+    errorAlert(
+      "Login Error",
+      "Could not login. Please check internet connection"
+    );
+    return { status: false };
+  }
 
-    /** validate response */
-    if (response.data.error) {
+  /** validate response */
+  if (response.data.error) {
+    let title = "Login Error",
+      text = response.data.message;
+    errorAlert(title, text);
 
-        let title = "Login Error",
-        text = response.data.message;
-        errorAlert(title, text);
+    /** user not logged in */
+    return { status: false };
+  } else {
+    let responseData = response.data.data;
 
-        /** user not logged in */
-        return ({status: false});
-      } else {
-        let  responseData=response.data.data;
+    /** login was successful add 1status=true to use for validation` */
+    responseData = { ...responseData, status: true };
 
-        /** login was successful add 1status=true to use for validation` */
-        responseData = {...responseData, status: true};
+    /** update store */
+    const Store = StoreManager(AppStore, Stores, "UserStore");
 
-        /** update store */
-        const Store= StoreManager(AppStore, Stores, "UserStore");
-    
-        Store.update("userId", responseData.id);
-        Store.update("user", responseData.user);
-        Store.update("email", responseData["email"]);
-        Store.update("phone", responseData["phone"]);
-        Store.update("userType", responseData["user_type"]);
-        Store.update("login", true);
-        // console.log(responseData.permission, "user perm from  db");
-        Store.update("permission", functionUtils.parseUserPermission(responseData.permission));            
-        return responseData;
-      }
+    Store.update("userId", responseData.id);
+    Store.update("user", responseData.user);
+    Store.update("email", responseData["email"]);
+    Store.update("phone", responseData["phone"]);
+    Store.update("userType", responseData["user_type"]);
+    Store.update("login", true);
+    // console.log(responseData.permission, "user perm from  db");
+    Store.update(
+      "permission",
+      functionUtils.parseUserPermission(responseData.permission)
+    );
+    return responseData;
+  }
 };
 
 // GENERATE RANDOM SERIAL NUMBER FUNCTION
@@ -1094,13 +1102,13 @@ export const functionUtils = {
 
       try {
         Login(user.user, password.password).then((response) => {
-           const { state } = location;
+          const { state } = location;
           if (response.status === false) {
           } else {
             history.push({
               pathname: state?.from || `/dashboard`,
-             state: response,
-              });
+              state: response,
+            });
           }
         });
       } catch (error) {
@@ -1159,59 +1167,61 @@ export const functionUtils = {
     };
     return handleChange;
   },
+  truncate: (str, n) => {
+    return str?.length > n ? str.substring(0, n - 1) + "..." : str;
+  },
   /**
    * Use this function to validate usr login
-   * calling this function at the top of every dashboard page will ensure that only valid 
+   * calling this function at the top of every dashboard page will ensure that only valid
    * user is allowed to view the page
    */
- useValidateLogin: (takeToPage="/")=>{
+  useValidateLogin: (takeToPage = "/") => {
     /*** create a StoreManager instance*/
-  const Store= StoreManager(AppStore, Stores, "UserStore");
+    const Store = StoreManager(AppStore, Stores, "UserStore");
 
-  /** create an history object to navigate page */
-  const history= useHistory();
+    /** create an history object to navigate page */
+    const history = useHistory();
 
-  /** check to see if user is indeed logged in */
-  Store.useStateAsync("login").then(login=>{
+    /** check to see if user is indeed logged in */
+    Store.useStateAsync("login").then((login) => {
+      if (login === false || login === null) {
+        /**  clear out every other user details pertaining to session
+         * and  take user back to the login page */
+        Store.update("email", null);
+        Store.update("name", null);
+        Store.update("userType", null);
+        Store.update("permission", null);
 
-    if(login===false || login===null) {
-      /**  clear out every other user details pertaining to session
-       * and  take user back to the login page */
-      Store.update("email", null);
-      Store.update("name", null);
-      Store.update("userType", null);
-      Store.update("permission", null);
-
-      history.push({
-        pathname: takeToPage,
-      });
-    }
-  });
-
+        history.push({
+          pathname: takeToPage,
+        });
+      }
+    });
   },
 
   /**
-   * Use to parse user permission. 
+   * Use to parse user permission.
    * fix this issue of server appending " to beginning and end of user_permission
-       * this occurs while trying to convert  the json file saved in db to json again 
-       * during the server APi response
+   * this occurs while trying to convert  the json file saved in db to json again
+   * during the server APi response
    */
-  parseUserPermission: (userPermission)=>{
-    if(userPermission===null || userPermission===undefined)
-    {
+  parseUserPermission: (userPermission) => {
+    if (userPermission === null || userPermission === undefined) {
       /** return empty object */
-      return ({});
+      return {};
     }
-    
-    if(typeof userPermission ==="object") {
+
+    if (typeof userPermission === "object") {
       /** this is already an object. No need to parse */
       return userPermission;
-    } 
-    
-    if (typeof userPermission ==="string") {
-      console.log(JSON.parse(userPermission.replace(/"{/, "{").replace(/}"/, "}")), "converted value"); 
+    }
+
+    if (typeof userPermission === "string") {
+      console.log(
+        JSON.parse(userPermission.replace(/"{/, "{").replace(/}"/, "}")),
+        "converted value"
+      );
       return JSON.parse(userPermission.replace(/"{/, "{").replace(/}"/, "}"));
     }
-  }
- 
+  },
 };

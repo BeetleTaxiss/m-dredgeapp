@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Skeleton from "react-loading-skeleton";
+import { CustomActivitiesSummary } from "./custom-activities-summary";
 import moment from "moment";
 import { BASE_API_URL } from "../../hooks/API";
-
-import { TaskActionButton } from "../general/task-action";
-import WidgetHeader from "../general/widget-header";
 
 const ActivitiesSummary = () => {
   const [activitiesSummary, setActivitiesSummary] = useState(["loading"]);
@@ -93,6 +90,7 @@ const ActivitiesSummary = () => {
                     : duration_hours <= 24
                     ? `${duration_hours} hours ago`
                     : pumping_started_ago,
+                noTimeline: false,
               };
 
               return (activitiesSummaryList = activitiesSummaryList.concat(
@@ -137,70 +135,7 @@ const ActivitiesSummary = () => {
     body: activitiesSummary,
   };
 
-  const ActivitiesSummaryComponent = () => (
-    <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-      <div className="widget widget-activity-four">
-        <WidgetHeader
-          title={recentPumpingActivitiesData.widgetHeader.title}
-          link={recentPumpingActivitiesData.widgetHeader.link}
-          arrow
-        />
-        <div className="widget-content">
-          <Activities
-            content={recentPumpingActivitiesData.activities}
-            body={recentPumpingActivitiesData}
-          />
-          <TaskActionButton link={recentPumpingActivitiesData.taskAction} />
-        </div>
-      </div>
-    </div>
-  );
-  return <ActivitiesSummaryComponent />;
+  return <CustomActivitiesSummary data={recentPumpingActivitiesData} />;
 };
-
-const Activities = ({ content }) => (
-  <div
-    className="mt-container mx-auto ps ps--active-y"
-    style={{ minWidth: "0px" }}
-  >
-    <div className="timeline-line">
-      {content[0] === "loading" ? (
-        <>
-          <Skeleton height={35} />
-          <span />
-          <Skeleton height={35} />
-          <span />
-          <Skeleton height={35} />
-          <span />
-          <Skeleton height={35} />
-          <span />
-          <Skeleton height={35} />
-          <span />
-          <Skeleton height={35} />
-          <span />
-          <Skeleton height={35} />
-          <span />
-          <Skeleton height={35} />
-        </>
-      ) : (
-        content.map((item, i) => (
-          <div
-            key={i}
-            className={`item-timeline timeline-${
-              item.status.color && item.status.color
-            }`}
-          >
-            <div className="t-dot" data-original-title="" title=""></div>
-            <div className="t-text">
-              <p>{item.activity}</p>
-              <span className="badge">{item.status.comment}</span>
-              <p className="t-time">{item.time}</p>
-            </div>
-          </div>
-        ))
-      )}
-    </div>
-  </div>
-);
 
 export default ActivitiesSummary;

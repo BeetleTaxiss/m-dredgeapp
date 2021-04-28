@@ -29,6 +29,7 @@ const Machinery = () => {
               errorAlert(title, text);
             } else {
               const machineryListItems = res.data.data;
+              console.log("Machinery Data: ", machineryListItems);
               machineryListItems.map((item) => {
                 const userDetails = JSON.parse(localStorage.getItem("user")),
                   user_name = userDetails.username,
@@ -49,6 +50,8 @@ const Machinery = () => {
 
                 const deleteMachineryItemData = {
                   "machinery-id": machinery_id,
+                  user: user_name,
+                  "user-id": user_id,
                 };
 
                 const currentMachineryItem = {

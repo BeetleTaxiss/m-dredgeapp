@@ -14,8 +14,8 @@ const Summary = () => {
       <div className="widget widget-three">
         {/* WIDGET HEADER */}
         <WidgetHeader title="Summary" dropdown />
-        <div className="widget-content">
-          <div className="order-summary">
+        <div className="widget-content summary">
+          <div className="order-summary widget-content summary">
             {/* WIDGET ORDER SUMMARY CONTENT */}
 
             {summaryList[0] === "loading" ? (
