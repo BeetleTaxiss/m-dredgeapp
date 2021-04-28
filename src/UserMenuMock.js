@@ -19,7 +19,7 @@ export const userMenu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-    TotalStockpile: {
+    totalStockpile: {
       text: "Total Stockpile",
       link: "#",
       usePageWrapper: false,
@@ -30,7 +30,7 @@ export const userMenu = {
       text: "Recent Orders",
       link: "orders",
     },
-    RecentSummary: {
+    recentSummary: {
       text: "Recent Summary",
       link: "#",
       usePageWrapper: false,
@@ -43,7 +43,7 @@ export const userMenu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-    ActivitiesSummary: {
+    activitiesSummary: {
       text: "Activities Summary",
       link: "#",
       usePageWrapper: false,
@@ -57,14 +57,14 @@ export const userMenu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-    UsersActivitiesSummary: {
+    usersActivitiesSummary: {
       text: "Users Activities Summary",
       link: "#",
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
     },
-    CurrentActivity: {
+    currentActivity: {
       text: "Current Activity",
       link: "#",
       usePageWrapper: false,
@@ -151,7 +151,7 @@ export const userMenu = {
       text: "Fuel Stock Entry",
       link: "/fuelupdatelist",
     },
-    UsersActivitiesLog: {
+    usersActivitiesLog: {
       text: "User Logs",
       link: "/useractivities",
     },
