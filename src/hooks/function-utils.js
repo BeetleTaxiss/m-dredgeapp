@@ -1261,17 +1261,21 @@ export const functionUtils = {
   /** Naira sign */
   naira: "₦",
   validateFormInputs: (formData) => {
+    console.log("Form data in validation: ", formData);
     let formInputValue = true;
     for (const [key, value] of Object.entries(formData)) {
       /** Check if value is either null, NaN, undefined or empty */
-      if (value === "" || isNaN(value) || null || undefined) {
+      let stringValue = `${value}`;
+      let trimmedValue = stringValue.trim();
+      // if (trimmedValue === "" || isNaN(trimmedValue) || null || undefined) {
+      if (trimmedValue === "") {
         const title = "Form Error",
-          text = `${key} missing in your form`;
+          text = `${key}: ${value} missing in your form`;
         errorAlert(title, text);
         console.log("item: ", value);
-        formInputValue = false;
-        console.log("Validate Data: ", formInputValue);
-        return formInputValue;
+        return (formInputValue = false);
+      } else {
+        return (formInputValue = true);
       }
     }
   },
