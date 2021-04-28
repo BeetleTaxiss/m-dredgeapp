@@ -7,6 +7,7 @@ import {
   AccordionItemButton,
   AccordionItemPanel,
 } from "react-accessible-accordion";
+import { functionUtils } from "../../hooks/function-utils";
 
 /**
  * use this as a global tracker of userAssigned permissions. Each time a permissionList is created or updated.
@@ -24,7 +25,7 @@ export const createUserPermissionListComponent = (userPermissionData) => {
 
   Object.keys(userPermissionData).forEach((menuLocation, k) => {
     const title = (
-      <AccordionItemHeading>
+      <AccordionItemHeading key={k} >
         <AccordionItemButton>{menuLocation}</AccordionItemButton>
       </AccordionItemHeading>
     );
@@ -33,9 +34,10 @@ export const createUserPermissionListComponent = (userPermissionData) => {
     Object.keys(userPermissionData[menuLocation]).forEach((page, m) => {
       const currentPage = userPermissionData[menuLocation][page];
       const { text, link, allowed } = currentPage;
-
+      const panelId=`$panel-id-${k}-${m}`;
+      
       listItems = listItems.concat(
-        <AccordionItemPanel key={m}>
+        <AccordionItemPanel key={panelId}>
           <div class="n-chk">
             <label class="new-control new-checkbox new-checkbox-rounded checkbox-primary">
               <input
@@ -79,12 +81,11 @@ export const createPermissionList = (userPermissionList) => {
 
   /** if this is a string, convert it to an object */
   if (typeof userPermissionList === "string") {
-    userPermissionList = JSON.parse(userPermissionList);
+    userPermissionList = functionUtils.parseUserPermission(userPermissionList);
   }
 
   /** The central menu definition within our application */
   const globalMenu = Menu;
-  //console.log(globalMenu, "PermissionList Global");
 
   /**
    * to create the userPermissionData, we will loop over the `globalPermissionList`
