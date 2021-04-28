@@ -6,6 +6,7 @@ import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import UpdateAccountForm from "../../fuel-issues/add-Fuel-Form";
 import WidgetHeader from "../../general/widget-header";
+import { functionUtils } from "../../../hooks/function-utils";
 
 const ChartList = () => {
   const [chartList, setChartList] = useState(["loading"]);
@@ -131,6 +132,7 @@ const ChartList = () => {
               accountTypeBody.unshift({
                 id: 0,
                 description: "Select an account type",
+                validation: "Can't select this option",
               });
               setAccountTypes(accountTypeBody);
               console.log("Account types Body: ", accountTypes);
@@ -191,6 +193,7 @@ const ChartList = () => {
               statementTypeBody.unshift({
                 id: 0,
                 description: "Select an statement type",
+                validation: "Can't select this option",
               });
               setStatementTypes(statementTypeBody);
               console.log("statement types Body: ", statementTypes);
@@ -314,6 +317,36 @@ const ChartList = () => {
       });
   };
 
+  /** Retrive add chart form data for client validation */
+
+  const getChartFormData = () => {
+    const description = document.getElementById("chart-description").value;
+    const account_type_id = parseInt(
+      document.getElementById("account-type-id").value
+    );
+    const accountTypeItem = accountTypes.filter(
+      ({ id }) => id === account_type_id
+    );
+    const account = accountTypeItem[0].account_type;
+    const statement_type_id = parseInt(
+      document.getElementById("statement-type-id").value
+    );
+    const statementTypeItem = statementTypes.filter(
+      ({ id }) => id === statement_type_id
+    );
+    const statement = statementTypeItem[0].description;
+
+    const chartListData = {
+      "account-type": account,
+      statement: statement,
+      "statement-id": statement_type_id,
+      description: description,
+      validation:
+        statementTypeItem[0].validation || accountTypeItem[0].validation,
+    };
+    return chartListData;
+  };
+
   /** Account List Table Data */
   const chartListTableData = {
     tableTitle: "Chart List",
@@ -374,7 +407,14 @@ const ChartList = () => {
             // loading={loading}
             subtitle="Add new chart information"
             btnText="Add to chart"
-            handleAddSubmit={() => handleAddToChart()}
+            handleAddSubmit={() => {
+              const validation = functionUtils.validateFormInputs(
+                getChartFormData()
+              );
+              if (validation === true) {
+                handleAddToChart();
+              }
+            }}
           />
           )
           <CustomTableList content={chartListTableData} />

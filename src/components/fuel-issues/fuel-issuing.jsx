@@ -138,6 +138,7 @@ const FuelIssuing = () => {
       "identification-no": machineItem[0].identification_no,
       "machinery-id": 0,
       description: machineItem[0].description,
+      validation: machineItem[0].validation,
     };
     return issueFuelData;
   };

@@ -16,7 +16,11 @@ import {
   createUserPermissionListComponent,
   getPermissionData,
 } from "./PermissionList";
-import { errorAlert, successAlert } from "../../hooks/function-utils";
+import {
+  errorAlert,
+  functionUtils,
+  successAlert,
+} from "../../hooks/function-utils";
 import { enUs as language } from "../../Language";
 
 /** in the future we can create a language file to handle this */
@@ -50,12 +54,12 @@ const Users = () => {
   const [refreshData, setRefreshData] = useState([]);
 
   /**
-   *  an helper function to always refresh the page 
+   *  an helper function to always refresh the page
    * */
-  const reloadServerData=()=>{
+  const reloadServerData = () => {
     /** refresh the page so we can newly added users */
     setRefreshData(refreshData.concat(true));
-  }
+  };
 
   /**
    * Data for building the user list display divided into table header/legend and users information
@@ -75,7 +79,8 @@ const Users = () => {
     let userName = document.getElementById("user-add-user").value,
       userId = document.getElementById("user-id-add-user").value,
       userPassword = document.getElementById("password-add-user").value;
-    let newUserPassword = document.getElementById("new-password-add-user").value;
+    let newUserPassword = document.getElementById("new-password-add-user")
+      .value;
 
     const encNewUserPassword = md5(newUserPassword);
 
@@ -112,7 +117,10 @@ const Users = () => {
         }
       })
       .catch((error) => {
-        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg);
+        errorAlert(
+          error.message,
+          language.popUps.checkYourInternetConnectionMsg
+        );
       });
   };
 
@@ -158,15 +166,19 @@ const Users = () => {
           successAlert(title, text);
           reloadServerData();
         }
-      }).catch(error=>{
-        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg)
       })
+      .catch((error) => {
+        errorAlert(
+          error.message,
+          language.popUps.checkYourInternetConnectionMsg
+        );
+      });
   };
 
   /**
    * This component will return both the permissionListAccordion and the
    * method to getPermissionData to get the updated permission data before
-   * we update them 
+   * we update them
    */
   const BlankPermissionListForNewUser = (props) => {
     const permissionListData = createPermissionList({});
@@ -229,8 +241,70 @@ const Users = () => {
         }
       })
       .catch((error) => {
-        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg);
+        errorAlert(
+          error.message,
+          language.popUps.checkYourInternetConnectionMsg
+        );
       });
+  };
+
+  /** Retrive add user form data for client validation */
+  const getAddUserFormData = () => {
+    let newUserName = document.getElementById("user-add-user").value,
+      newUserType = document.getElementById("select-add-user").value,
+      newUserEmail = document.getElementById("email-add-user").value,
+      newUserPhoneNo = document.getElementById("phone-add-user").value,
+      newUserPassword = md5(document.getElementById("password-add-user").value),
+      newUserConfirmPassword = md5(
+        document.getElementById("confirm-password-add-user").value
+      );
+
+    /** get the userPermissionList data */
+    const permission = getPermissionData();
+
+    if (!permission) {
+      return errorAlert(
+        "Permission Error",
+        "You must give new user at least one permission"
+      );
+    }
+    const addUserData = {
+      user: newUserName,
+      "user-type": newUserType,
+      email: newUserEmail,
+      phone: newUserPhoneNo,
+      password: newUserPassword,
+      "password-confirm": newUserConfirmPassword,
+      permission: permission,
+      validation: selectOptions[0].validation,
+    };
+    return addUserData;
+  };
+  /** Retrive update user form data for client validation */
+  const getUpdateUserFormData = () => {
+    let userName = document.getElementById("user-add-user").value,
+      userId = document.getElementById("user-id-add-user").value,
+      userPassword = document.getElementById("password-add-user").value;
+    let newUserPassword = document.getElementById("new-password-add-user")
+      .value;
+
+    const encNewUserPassword = md5(newUserPassword);
+
+    if (!userId || !userPassword || !newUserPassword) {
+      return errorAlert(
+        language.popUps.updateErrorTitle,
+        language.popUps.allFormFieldsRequiredMsg
+      );
+    }
+
+    const changePasswordData = {
+      user: userName,
+      "user-id": userId,
+      password: userPassword,
+      "password-new": encNewUserPassword,
+    };
+
+    return changePasswordData;
   };
 
   // Delete User Function
@@ -251,7 +325,10 @@ const Users = () => {
         }
       })
       .catch((error) => {
-        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg);;
+        errorAlert(
+          error.message,
+          language.popUps.checkYourInternetConnectionMsg
+        );
       });
   };
 
@@ -273,7 +350,10 @@ const Users = () => {
         }
       })
       .catch((error) => {
-        errorAlert(error.message, language.popUps.checkYourInternetConnectionMsg);;
+        errorAlert(
+          error.message,
+          language.popUps.checkYourInternetConnectionMsg
+        );
       });
   };
   const enableContact = (enableUserData) => {
@@ -358,7 +438,11 @@ const Users = () => {
   //console.log("Individual User State", user);
 
   const selectOptions = [
-    { user_type: "Select Job Description", id: "0" },
+    {
+      user_type: "Select Job Description",
+      id: "0",
+      validation: "Can't select this option",
+    },
     { user_type: "Super Admin", id: "2" },
     { user_type: "Admin", id: "3" },
     { user_type: "Loader", id: "4" },
@@ -474,7 +558,14 @@ const Users = () => {
           setLoading={setLoading}
           errorMsg={errorMsg}
           status={error}
-          handleSubmit={addContact}
+          handleSubmit={() => {
+            const validation = functionUtils.validateFormInputs(
+              getAddUserFormData()
+            );
+            if (validation === true) {
+              addContact();
+            }
+          }}
           Btntext="Add User"
           closeBtn
         />
@@ -511,7 +602,14 @@ const Users = () => {
         setLoading={setLoading}
         errorMsg={errorMsg}
         status={error}
-        handleSubmit={changePassword}
+        handleSubmit={() => {
+          const validation = functionUtils.validateFormInputs(
+            getUpdateUserFormData()
+          );
+          if (validation === true) {
+            changePassword();
+          }
+        }}
         Btntext="Update Password"
         closeBtn
       />
