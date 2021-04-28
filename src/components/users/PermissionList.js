@@ -38,7 +38,7 @@ export const createUserPermissionListComponent = (userPermissionData) => {
         <AccordionItemPanel key={m}>
           <div class="n-chk">
             <label class="new-control new-checkbox new-checkbox-rounded checkbox-primary">
-              <input 
+              <input
                 type="checkbox"
                 class="new-control-input"
                 defaultChecked={allowed}
@@ -77,7 +77,10 @@ export const createPermissionList = (userPermissionList) => {
    * */
   let currentAssignedPermissions = {};
 
-  /** load data from state vale */
+  /** if this is a string, convert it to an object */
+  if (typeof userPermissionList === "string") {
+    userPermissionList = JSON.parse(userPermissionList);
+  }
 
   /** The central menu definition within our application */
   const globalMenu = Menu;
@@ -85,10 +88,11 @@ export const createPermissionList = (userPermissionList) => {
 
   /**
    * to create the userPermissionData, we will loop over the `globalPermissionList`
-   * and for every entry not found in our userPermissionList, we will create a checkbox
+   * and for every entry not found in our userPermissionList, we will set `allowed to false`
+   * @Note: we wll always omit the  `default`  menu entry
    *
    */
-  Object.keys(globalMenu).forEach((menuLocation) => {
+  Object.keys(globalMenu).filter(item=>item!=="default").forEach((menuLocation) => {
     /**
      * create an empty object of the menuLocation in our hash table
      * we will ue this object to collect all the sub-menu later
@@ -203,9 +207,9 @@ export const getPermissionData = () => {
       }
     });
   });
-  
+
   /** return the JSON formatted permission string */
-  if(Object.keys(userPermissions).length <= 0) {
+  if (Object.keys(userPermissions).length <= 0) {
     return null;
   } else {
     return JSON.stringify(userPermissions);

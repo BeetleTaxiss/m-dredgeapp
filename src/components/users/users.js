@@ -24,9 +24,24 @@ const Users = () => {
   const [userTypes, setUserTypes] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showUserDetailsUpdate, setShowUserDetailsUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+
+  /** 
+   * This is the userPermissionListView that we will display when we attempt to update
+   * This value will change based on the user account we are updating.
+   * For us to be able to track changes happening in the `Contacts` and `Contact` component
+   * we will pass the function `setUserPermissionListView` and call whenever a user is to be updated
+   *  */
+  const [userPermissionListView, setUserPermissionListView] = useState([]);
+
+  /** this state variable will allow  us to get the data */
+  const [userGetPermissionData, setUserGetPermissionData] = useState([]);
+
+
+
   /**
    * create a state to hold our function to get permission data
    * from our external component
@@ -54,13 +69,17 @@ const Users = () => {
       newUserPassword = md5(
         document.getElementById("new-password-add-user").value
       );
-    console.log("Hashed Password: ", newUserPassword);
+      /** get the permission updates for this user */
+      const permission=getPermissionData();
+      return console.log(JSON.parse(permission), "UPdATED permission");
+
     const changePasswordData = {
       user: userName,
       "user-id": userId,
       password: userPassword,
       "password-new": newUserPassword,
     };
+
     axios
       .put(
         `${BASE_API_URL}/api/v1/user/change-password.php`,
@@ -289,6 +308,8 @@ const Users = () => {
         const userEmail = item.email;
         const userPhoneNo = item.phone;
         const userPassword = item.password;
+        const permission = item.permission;
+
         const currentUser = {
           metaInfo: { name: userName, image: userImage },
           fields: [
@@ -334,6 +355,7 @@ const Users = () => {
             },
           ],
           user: item,
+          permission: permission,
           setUser: setUser,
           suspend: warningAlert1,
           enable: warningAlert2,
@@ -351,14 +373,15 @@ const Users = () => {
 
   return (
     <>
-      <Contacts setShowModal={setShowModal} content={userListData} />
+      <Contacts setShowModal={setShowModal} content={userListData} 
+      setUserPermissionListView={setUserPermissionListView} 
+      />
       {showModal && (
         <FormModal
           formTitle="Add a new staff"
           formSubtitle="Onboard a new staff member into your organization"
           formData={formData}
           PermissionListComponent={BlankPermissionListForNewUser}
-          getPermissionData={getPermissionData}
           showModal={showModal}
           setShowModal={setShowModal}
           loading={loading}
@@ -371,10 +394,29 @@ const Users = () => {
         />
       )}
 
+    <FormModal
+        formTitle="Update User"
+        formSubtitle="Update user details"
+        formData={updateFormData}
+        PermissionListComponent={()=>userPermissionListView}
+        setUserGetPermissionData={setUserGetPermissionData}
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        loading={loading}
+        setLoading={setLoading}
+        errorMsg={errorMsg}
+        status={error}
+        handleSubmit={changePassword}
+        Btntext="Update Password"
+        closeBtn
+      />
+
       <FormModal
         formTitle="Update Password"
         formSubtitle="Wrong password? Change it here"
         formData={updateFormData}
+        PermissionListComponent={()=>userPermissionListView}
+        setUserGetPermissionData={setUserGetPermissionData}
         showModal={showUpdateModal}
         setShowModal={setShowUpdateModal}
         loading={loading}
