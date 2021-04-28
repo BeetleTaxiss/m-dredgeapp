@@ -1,36 +1,64 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
 import PageWrapper from "../components/general/page-wrapper";
-import { createUserDashboard } from "./../Menu";
-import { userMenu } from "./../UserMenuMock";
+import {createUserDashboard} from "./../Menu";
+import {StoreManager} from "react-persistent-store-manager"
+import {Stores, AppStore} from "./../state/store";
+import {functionUtils} from "./../hooks/function-utils"
+
 
 export const Dashboard = () => {
   const [userPermission, setUserPermission] = useState(userMenu);
 
-  /**
-   * This function create appropriate view for user based on the dashboard contents
-   * that this user can see. We will assign the return value to our `dashboardViews` state variable.
-   */
-  const createDashboardViews = (assignToState = true) => {
-    const UserDashboard = createUserDashboard(userPermission);
+  /** use this function to always validate if a user is logged in */
+  functionUtils.useValidateLogin("/");
 
-    const View = <>{UserDashboard}</>;
+  /** hold user permission. This is retrieve from our StoreManager */
+  const [userPermission, setUserPermission]= useState([]);
 
-    /** automatically assign to state variable */
-    if (assignToState)
-      // setDashboardViews(View);
+  /** contains  the dashboard view */
+  const [dashboardViews, setDashboardViews]= useState([]);
 
-      /** always return in case caller needs value */
-      return View;
-  };
+  /*** a StoreManager instance. s
+   * Now you must pass the three parameters to locate our actual menu location
+   * see `state/store.js` for sample definition
+  */
+  const Store= StoreManager(AppStore, Stores, "UserStore");
 
-  /** assign the dashboard view to a state so that we can refresh when variable changes */
-  const [dashboardViews, setDashboardViews] = useState(createDashboardViews());
+  /** set get the user permission and set */
+  //Store.update("permission", userMenu);
+  Store.useStateAsync("permission").then(permission=>{
+    setUserPermission(permission);
+  });
 
-  //const { state } = useLocation();
+/** 
+ * This function create appropriate view for user based on the dashboard contents 
+ * that this user can see. We will assign the return value to our `dashboardViews` state variable.
+ */
+const createDashboardViews=(assignToState=true)=>{
+  
+const UserDashboard=createUserDashboard(userPermission);
 
-  /** When the `dashboardViews` changes, refresh the page */
-  useEffect(() => {}, [dashboardViews, userPermission]);
+  const View= (  
+    <PageWrapper>
+      {UserDashboard}
+    </PageWrapper>
+  )
 
-  return <PageWrapper>{dashboardViews}</PageWrapper>;
-};
+  /** automatically assign to state variable */
+  if(assignToState)
+    setDashboardViews(View);
+
+    /** always return in case caller needs value */
+    return View;
+}
+
+
+/** When the `userPermission` changes, refresh the page */
+useEffect(() => {
+  /** load the user dashboard */
+  createDashboardViews();
+}, [userPermission]);
+
+return (<>{dashboardViews}</>)
+
+}

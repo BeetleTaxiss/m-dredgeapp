@@ -1,24 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import axios from "axios";
-import Swal from "sweetalert2";
 import HeaderNavbar from "./header-navbar";
 import TopNavbar from "./top-nav";
 import { BASE_API_URL } from "../../hooks/API";
 import "./navbar.scss";
 import {createUserMenu} from "./../../Menu";
 import {userMenu} from "./../../UserMenuMock";
-
+import { StoreManager } from "react-persistent-store-manager";
+import { AppStore, Stores } from "./../../state/store";
+import { errorAlert, functionUtils } from "../../hooks/function-utils";
 
 const Navbar = () => {
+  
+  /** user must be logged in to see this navigation section */
+  functionUtils.useValidateLogin("/");
+
   const [showMenu, setShowMenu] = useState(false);
   const [showSubMenu, setShowSubMenu] = useState(false);
 
   const history = useHistory();
+  
+  /** this is the permissions allowed for out user */
+  const [userPermission, setUserPermission] = useState({});
 
-  /** the nav bar data. we could also retrieve from store */
-  const [topNavBarData, setTopNavBarData]= useState([]);
+  /** a state variable to hold our navigation view
+   *initially, we will set it to empty
+   */
+  const [userNavigationBar, setUserNavigationBar] = useState(null);
 
+  const Store= StoreManager(AppStore, Stores, "UserStore");
+  /** get get the user permission. We will use this to create
+   * menu that user will have access to within the application
+   */
+  Store.useStateAsync("permission").then(permission=>{
+    setUserPermission(permission);
+  });
+  
+  /** ue logout function */
   const logUserOut = () => {
     const userDetails = JSON.parse(localStorage.getItem("user")),
       userName = userDetails.username,
@@ -43,37 +62,35 @@ const Navbar = () => {
       });
   };
 
-  const errorAlert = (title, text) => {
-    Swal.fire({
-      icon: "error",
-      title: title,
-      text: text,
-      showConfirmButton: false,
-    });
-  };
+  const createUserNavigationBar=()=>{
 
-const userMenuAccess= createUserMenu(userMenu);
+    console.log(userPermission, "passed to function");
 
-  return (
-    <div>
-      {/* BEGIN HEADER NAVBAR */}
+    const userAllowedMenus= createUserMenu(userPermission);
+
+    const USerNavBar=
+      <div>
       <HeaderNavbar logUserOut={logUserOut} setShowMenu={setShowMenu} />
-      {/* END HEADER NAVBAR */}
-      {/* BEGIN TOP NAVBAR */}
       <TopNavbar
         showMenu={showMenu}
         showSubMenu={showSubMenu}
         setShowSubMenu={setShowSubMenu}
-        // topNavBarData={topNavBarData}
-        topNavBarData={userMenuAccess}
-      />
-      {/* END TOP NAVBAR */}
+        topNavBarData={userAllowedMenus} />
       <div
         onClick={() => setShowMenu(false)}
-        className={`overlay ${showMenu && "show"}`}
-      ></div>
-    </div>
-  );
+        className={`overlay ${showMenu && "show"}`}> 
+      </div>
+    </div>;
+
+    setUserNavigationBar(USerNavBar);
+  }
+
+  /** load the navigation bar when the systems loads and when the userPermission change */
+  useEffect(()=>{
+    createUserNavigationBar();
+  }, [userPermission]);
+
+  return (<>{userNavigationBar}</>);
 };
 
 export default Navbar;

@@ -25,7 +25,7 @@ import FuelIssueList from "./components/fuel-issues/fuel-issue-list";
 import FuelIssuing from "./components/fuel-issues/fuel-issuing";
 import Machinery from "./components/operations/machinery";
 import Users from "./components/users/users";
-import UsersActivitiesLog from "./components/admin/UserActivitiesLog";
+import UsersActivitiesSummary from "./components/cards/users-activities-summary";
 import Inspector from "./components/inspector/inspector";
 import Security from "./components/security/security";
 import { Dashboard } from "./pages/dashboard";
@@ -50,7 +50,6 @@ import Loader from "./components/loader/loader";
 import ActivitiesSummary from "./components/cards/activities-summary";
 import RecentExpenses from "./components/cards/recent-expenses";
 import CurrentActivity from "./components/cards/current-activity";
-import UsersActivitiesSummary from "./components/cards/users-activities-summary";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -363,7 +362,10 @@ export const Menu = {
       component: Dashboard,
       usePageWrapper: false,
     },
-
+    /** The entries below define items to show only on the dashboard
+     * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry.
+     * Our dashboard creation method will check if `showOnDashboard` property is true before showing on the dashboard
+     */
     totalOrders: {
       text: "Total Orders",
       link: "dashboard",
@@ -403,7 +405,7 @@ export const Menu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-    ActivitiesSummary: {
+    activitiesSummary: {
       text: "Activities Summary",
       link: "#",
       component: ActivitiesSummary,
@@ -411,7 +413,7 @@ export const Menu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-    TotalStockpile: {
+    totalStockpile: {
       text: "Total Stockpile",
       link: "#",
       component: TotalStockpile,
@@ -419,7 +421,7 @@ export const Menu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-    RecentSummary: {
+    recentSummary: {
       text: "Recent Summary",
       link: "#",
       component: RecentExpenses,
@@ -427,7 +429,7 @@ export const Menu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-    CurrentActivity: {
+    currentActivity: {
       text: "Current Activity",
       link: "#",
       component: CurrentActivity,
@@ -435,7 +437,7 @@ export const Menu = {
       showOnDashboard: true,
       showInMenu: false,
     },
-    UsersActivitiesSummary: {
+    usersActivitiesSummary: {
       text: "Users Activities Summary",
       link: "#",
       component: UsersActivitiesSummary,
@@ -564,11 +566,6 @@ export const Menu = {
       link: "/products",
       component: Products,
     },
-    UsersActivitiesLog: {
-      text: "User Logs",
-      link: "/useractivities",
-      component: UsersActivitiesLog,
-    },
   },
 
   /** store operations menu */
@@ -625,61 +622,6 @@ export const Menu = {
       link: "/security",
       component: Security,
     },
-  },
-};
-
-/** The entries below define items to show only on the dashboard
- * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry.
- * Our dashboard creation method will check if `showOnDashboard` property is true before showing on the dashboard
- */
-export const DashboardMenu = {
-  totalOrders: {
-    text: "Total Orders",
-    link: "dashboard",
-    component: TotalOrders,
-    usePageWrapper: false,
-    showOnDashboard: true,
-    showInMenu: false,
-  },
-  recentOrders: {
-    text: "Recent Orders",
-    link: "#",
-    component: RecentOrders,
-    usePageWrapper: false,
-    showOnDashboard: true,
-    showInMenu: false,
-  },
-  totalRevenue: {
-    text: "Total Revenue",
-    link: "#",
-    component: TotalRevenue,
-    usePageWrapper: false,
-    showOnDashboard: true,
-    showInMenu: false,
-  },
-  summary: {
-    text: "Summary",
-    link: "#",
-    component: Summary,
-    usePageWrapper: false,
-    showOnDashboard: true,
-    showInMenu: false,
-  },
-  detailedStatistics: {
-    text: "Detailed Statistics",
-    component: DetailedStatistics,
-    usePageWrapper: false,
-    showOnDashboard: true,
-    showInMenu: false,
-  },
-  RecentSummary: {
-    text: "Detailed Statistics",
-    link: "#",
-
-    component: DetailedStatistics,
-    usePageWrapper: false,
-    showOnDashboard: true,
-    showInMenu: false,
   },
 };
 

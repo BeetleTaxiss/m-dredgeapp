@@ -4,20 +4,12 @@ import { FormDetails } from "../../orders/order-form/order-form-details";
 import ListSingleViewCard from "../list-single-view-card/list-single-view-card";
 import LoadingButton from "../loading-button";
 import ModalBackdrop from "./modal-backdrop";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel,
-} from "react-accessible-accordion";
 import "react-accessible-accordion/dist/fancy-example.css";
 
 const FormModal = ({
   formTitle,
   formSubtitle,
   formData,
-  accordionData,
   loading,
   setLoading,
   errorMsg,
@@ -32,7 +24,11 @@ const FormModal = ({
   listItems,
   cols,
   rows,
+  /** components */
+  PermissionListComponent,
+  getPermissionData
 }) => {
+
   return (
     <ModalBackdrop
       setLoading={setLoading}
@@ -40,6 +36,7 @@ const FormModal = ({
       setShowModal={setShowModal}
       noClickOutside={noClickOutside}
     >
+      
       {formTitle && <h2 id="formModal-title">{formTitle}</h2>}
       {formSubtitle && <p id="formModal-subtitle">{formSubtitle}</p>}
       {listItems && (
@@ -71,18 +68,8 @@ const FormModal = ({
               </div>
             </div>
           ))}
-        {accordionData && (
-          <Accordion allowZeroExpanded>
-            {accordionData.map((item) => (
-              <AccordionItem key={item.uuid}>
-                <AccordionItemHeading>
-                  <AccordionItemButton>{item.heading}</AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>{item.content}</AccordionItemPanel>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        )}
+          {PermissionListComponent && <PermissionListComponent/>}
+
         <div style={{ display: "flex", justifyContent: "center", gap: "2rem" }}>
           <LoadingButton
             handleSubmit={handleSubmit}
@@ -93,7 +80,7 @@ const FormModal = ({
             <Link
               to="#"
               onClick={() => {
-                setShowModal((prev) => !prev);
+                setShowModal(!showModal);
                 console.log("Modal State: ", showModal);
                 alert("Close btn clicked");
               }}
