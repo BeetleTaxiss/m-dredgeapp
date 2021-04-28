@@ -5,6 +5,7 @@ import WidgetHeader from "../general/widget-header";
 import { BASE_API_URL } from "../../hooks/API";
 import AddFuelForm from "./add-Fuel-Form";
 import "./machinery.css";
+import { functionUtils } from "../../hooks/function-utils";
 
 const AddFuel = () => {
   const handleAddFuel = () => {
@@ -37,6 +38,24 @@ const AddFuel = () => {
         }
       });
   };
+
+  /** Retrive add fuel to fuel stock form data for client validation  */
+  const getAddFuelStockFormData = () => {
+    const userDetails = JSON.parse(localStorage.getItem("user")),
+      user_name = userDetails.username,
+      user_id = userDetails.id;
+    const fuel_amount = document.getElementById("fuel-amount").value;
+    const fuel_quanity = document.getElementById("fuel-quantity").value;
+
+    const addFuelData = {
+      user: user_name,
+      "user-id": user_id,
+      qty: fuel_quanity,
+      amount: fuel_amount,
+    };
+    return addFuelData;
+  };
+
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -90,7 +109,15 @@ const AddFuel = () => {
               // loading={loading}
               subtitle="Add new fuel information"
               btnText="Add Fuel"
-              handleAddSubmit={handleAddFuel}
+              handleAddSubmit={() => {
+                const validation = functionUtils.validateFormInputs(
+                  getAddFuelStockFormData()
+                );
+                console.log("Validation: ", validation);
+                if (validation === true) {
+                  handleAddFuel();
+                }
+              }}
             />
           </div>
         </div>

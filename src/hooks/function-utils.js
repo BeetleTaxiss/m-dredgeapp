@@ -1264,19 +1264,42 @@ export const functionUtils = {
     console.log("Form data in validation: ", formData);
     let formInputValue = true;
     for (const [key, value] of Object.entries(formData)) {
-      /** Check if value is either null, NaN, undefined or empty */
+      /** Convert value to string without spacing */
       let stringValue = `${value}`;
-      let trimmedValue = stringValue.trim();
-      // if (trimmedValue === "" || isNaN(trimmedValue) || null || undefined) {
+      let trimmedValue = stringValue.replace(/W+/, "");
+
+      /** Validate for select dropdowns */
+      if (trimmedValue === "Can't select this option") {
+        const title = "Form Error",
+          text = `${value}. Check the form for the dropdown and select a valid option `;
+        errorAlert(title, text);
+        return (formInputValue = false);
+      }
+
+      /** Validate for empty strings */
       if (trimmedValue === "") {
         const title = "Form Error",
           text = `${key}: ${value} missing in your form`;
         errorAlert(title, text);
-        console.log("item: ", value);
         return (formInputValue = false);
-      } else {
-        return (formInputValue = true);
       }
+
+      /** Validate for numbers which are'nt numbers */
+      if (typeof value === "number" && isNaN(value)) {
+        const title = "Form Error",
+          text = `${key}: Must be a number`;
+        errorAlert(title, text);
+        return (formInputValue = false);
+      }
+
+      /** Validate for undefined and null */
+      // if (trimmedValue === null || value === undefined) {
+      //   const title = "Form Error",
+      //     text = `${key}: Input a proper value`;
+      //   errorAlert(title, text);
+      //   return (formInputValue = false);
+      // }
     }
+    return formInputValue;
   },
 };

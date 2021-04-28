@@ -5,6 +5,7 @@ import WidgetHeader from "../general/widget-header";
 import { BASE_API_URL } from "../../hooks/API";
 import IssueFuelForm from "./add-Fuel-Form";
 import "./machinery.css";
+import { functionUtils } from "../../hooks/function-utils";
 
 const FuelIssuing = () => {
   const [machineryList, setMachineryList] = useState();
@@ -50,6 +51,7 @@ const FuelIssuing = () => {
               machineryListBody.unshift({
                 id: 0,
                 machinery_name: "Select a machine",
+                validation: "Can't select this option",
               });
             }
             setMachineryList(machineryListBody);
@@ -114,6 +116,31 @@ const FuelIssuing = () => {
         }
       });
   };
+
+  /** Retrive fuel issuing form data for client validation */
+  const getFuelIssueFormData = () => {
+    const userDetails = JSON.parse(localStorage.getItem("user")),
+      user_name = userDetails.username,
+      user_id = userDetails.id;
+    const fuel_quanity = document.getElementById("fuel-quantity").value;
+    const machineValue = parseInt(
+      document.getElementById("machine-type").value
+    );
+
+    const machineItem = machineryList.filter(({ id }) => id === machineValue);
+
+    console.log("machine item: ", machineItem);
+    const issueFuelData = {
+      user: user_name,
+      "user-id": user_id,
+      qty: fuel_quanity,
+      name: machineItem[0].machinery_name,
+      "identification-no": machineItem[0].identification_no,
+      "machinery-id": 0,
+      description: machineItem[0].description,
+    };
+    return issueFuelData;
+  };
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -169,7 +196,15 @@ const FuelIssuing = () => {
               // loading={loading}
               subtitle="Add new fuel information"
               btnText="Dispense Fuel"
-              handleAddSubmit={handleIssueFuel}
+              handleAddSubmit={() => {
+                const validation = functionUtils.validateFormInputs(
+                  getFuelIssueFormData()
+                );
+
+                if (validation === true) {
+                  handleIssueFuel();
+                }
+              }}
             />
           </div>
         </div>

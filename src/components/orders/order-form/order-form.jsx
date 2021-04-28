@@ -27,6 +27,7 @@ const OrderForm = () => {
           id: "0",
           product: "Select Product",
           price: 0,
+          validation: "Can't select this option",
         });
         console.log("New Array", newArray);
         console.log("New Data", data);
@@ -121,6 +122,7 @@ const OrderForm = () => {
     const addOrderData = {
       "product-id": selectValue,
       product: product[0].product,
+      validation: product[0].validation,
       user: user.username,
       "user-id": user.id,
       qty: qtyValue,

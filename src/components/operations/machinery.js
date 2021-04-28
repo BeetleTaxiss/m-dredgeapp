@@ -8,6 +8,7 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 import AddUpdateMachinery from "./add-update-machinery";
 
 import "./machinery.css";
+import { functionUtils } from "../../hooks/function-utils";
 
 const Machinery = () => {
   const [machineryList, setMachineryList] = useState(["loading"]);
@@ -266,6 +267,45 @@ const Machinery = () => {
     console.log("Update State", showUpdateMachinery);
   };
 
+  /** Retrive form data for client validation */
+  const getAddMachineFormDataWrapper = () => {
+    const machinery_name = document.getElementById("machinery").value;
+    const machinery_description = document.getElementById(
+      "machinery-description"
+    ).value;
+    const machinery_identification = document.getElementById(
+      "machinery-identification"
+    ).value;
+
+    const addMachineryData = {
+      name: machinery_name,
+      "identification-no": machinery_identification,
+      description: machinery_description,
+    };
+
+    return addMachineryData;
+  };
+
+  /** Retrive update form data for client validation */
+  const getUpdateMachineFormDataWrapper = () => {
+    const machinery_id = document.getElementById("machinery-id").value;
+    const machinery_name = document.getElementById("machinery").value;
+    const machinery_description = document.getElementById(
+      "machinery-description"
+    ).value;
+    const machinery_identification = document.getElementById(
+      "machinery-identification"
+    ).value;
+    const updateMachineryData = {
+      "machinery-id": machinery_id,
+      name: machinery_name,
+      description: machinery_description,
+      "identification-no": machinery_identification,
+    };
+
+    return updateMachineryData;
+  };
+
   const hideIdentificationField = () => {};
   /** machinery List Table Data */
   const machineryListTableData = {
@@ -354,8 +394,22 @@ const Machinery = () => {
               showUpdateMachinery={showUpdateMachinery}
               content={addUpdateMachineryformData}
               loading={loading}
-              handleAddSubmit={handleAddMachinery}
-              handleUpdateSubmit={handleUpdateMachinery}
+              handleAddSubmit={() => {
+                const validation = functionUtils.validateFormInputs(
+                  getAddMachineFormDataWrapper()
+                );
+                if (validation === true) {
+                  handleAddMachinery();
+                }
+              }}
+              handleUpdateSubmit={() => {
+                const validation = functionUtils.validateFormInputs(
+                  getUpdateMachineFormDataWrapper()
+                );
+                if (validation === true) {
+                  handleUpdateMachinery();
+                }
+              }}
             />
             <CustomTableList content={machineryListTableData} />
           </div>
