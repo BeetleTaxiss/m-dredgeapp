@@ -7,15 +7,16 @@ import { BASE_API_URL } from "../../../hooks/API";
 import StatusModal from "../../general/modal/status-modal";
 import { errorOrderData, successfulOrderData } from "./order-form-data";
 import LoadingButton from "../../general/loading-button";
+import { functionUtils } from "../../../hooks/function-utils";
 const OrderForm = () => {
   const [order, setOrder] = useState();
   const [products, setProducts] = useState();
-  const [totalPrice, setTotalPrice] = useState("₦" + 0);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  useEffect(() =>
+  useEffect(() => {
     axios.get(`${BASE_API_URL}/api/v1/product/list.php`).then((res) => {
       console.log(res.data);
       if (res.data.error) {
@@ -31,8 +32,8 @@ const OrderForm = () => {
         console.log("New Data", data);
         setProducts(data);
       }
-    }, [])
-  );
+    });
+  }, []);
 
   const handleOrderChange = () => {
     // Get form values with document,getById
@@ -105,7 +106,42 @@ const OrderForm = () => {
         }
       });
   };
-  const { formData } = useFormData(products, totalPrice);
+
+  /** wrapper to get form data for validation */
+  const getFormDataWrapper = () => {
+    const qtyValue = document.getElementById("qty").value;
+    const truckNoValue = document.getElementById("truckNo").value;
+    const selectValue = document.getElementById("select").value;
+    const commentValue = document.getElementById("comment").value;
+    const { product } = handleOrderChange();
+    console.log("Submitted Product", product);
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log("User Object: ", user);
+    const addOrderData = {
+      "product-id": selectValue,
+      product: product[0].product,
+      user: user.username,
+      "user-id": user.id,
+      qty: qtyValue,
+      unit: product[0].unit,
+      "unit-price": product[0].price,
+      measurement: product[0].measurement,
+      "total-price": totalPrice,
+      "truck-no": truckNoValue,
+      description: product[0].description,
+      // comment: commentValue,
+    };
+    console.log("Get form data: ", addOrderData);
+    return addOrderData;
+  };
+
+  /** Validate total price before sendind */
+  let validatedTotalPrice = isNaN(totalPrice)
+    ? "Input a Number"
+    : `${functionUtils.naira}${functionUtils.addCommaToNumbers(totalPrice)}`;
+
+  /** Form data needed to populate the order form */
+  const { formData } = useFormData(products, validatedTotalPrice);
 
   return (
     <div id="basic" className="col-lg-12 layout-spacing">
@@ -131,7 +167,15 @@ const OrderForm = () => {
                     />
                   ))}
                   <LoadingButton
-                    handleSubmit={handleOrderSubmit}
+                    handleSubmit={() => {
+                      if (
+                        functionUtils.validateFormInputs(
+                          getFormDataWrapper() === true
+                        )
+                      ) {
+                        handleOrderSubmit();
+                      }
+                    }}
                     loading={loading}
                     text="Place Order"
                   />

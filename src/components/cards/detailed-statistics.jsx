@@ -11,6 +11,8 @@ import { ReactComponent as Chat } from "../../assets/chat.svg";
 import excavator from "../../assets/excavator.jpg";
 import stockImg from "../../assets/excavator2.jpg";
 import stockpiledImg from "../../assets/excavator3.jpg";
+import { addCommaToNumbers } from "./recent-orders";
+import { functionUtils } from "../../hooks/function-utils";
 const DetailedStatistics = () => {
   const [detailedStats, setDetailedStats] = useState([
     "loading",
@@ -121,62 +123,67 @@ const DetailedStatistics = () => {
                 </div>
               </div>
             ))
-          : detailedStats.map((item, i) => (
-              <div
-                key={i}
-                className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing"
-              >
-                <div className="widget widget-one_hybrid widget-followers">
-                  <div
-                    className="widget-heading"
-                    style={{ marginBottom: "0px" }}
-                  >
-                    <div className="w-title">
-                      <div className="w-icon">
-                        {item.followers ? (
-                          <Followers />
-                        ) : item.linkk ? (
-                          <Linkk />
-                        ) : item.chat ? (
-                          <Chat />
-                        ) : null}
-                      </div>
-                      <div className="">
-                        <p className="w-value">{item.stats}</p>
-                        <h5 className="">{item.legend}</h5>
-                      </div>
-                    </div>
+          : detailedStats.map((item, i) => {
+              console.log("string: ", item.stats);
+              return (
+                <div
+                  key={i}
+                  className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing"
+                >
+                  <div className="widget widget-one_hybrid widget-followers">
                     <div
-                      style={{
-                        backgroundImage: `url(${
-                          item.followers
-                            ? excavator
-                            : item.linkk
-                            ? stockpiledImg
-                            : item.chat
-                            ? stockImg
-                            : null
-                        })`,
-                        height: "300px",
-                        width: "100%",
-                        backgroundSize: "cover",
-                        // backgroundSize: item.followers
-                        //   ? "cover"
-                        //   : item.linkk
-                        //   ? "contain"
-                        //   : item.chat
-                        //   ? "contain"
-                        //   : "cover",
-                        backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat",
-                        borderRadius: "10px",
-                        marginTop: "2rem",
-                      }}
-                    ></div>
+                      className="widget-heading"
+                      style={{ marginBottom: "0px" }}
+                    >
+                      <div className="w-title">
+                        <div className="w-icon">
+                          {item.followers ? (
+                            <Followers />
+                          ) : item.linkk ? (
+                            <Linkk />
+                          ) : item.chat ? (
+                            <Chat />
+                          ) : null}
+                        </div>
+                        <div className="">
+                          <p className="w-value">
+                            {functionUtils.addCommaToNumbers(item.stats)}
+                          </p>
+                          <h5 className="">{item.legend}</h5>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          backgroundImage: `url(${
+                            item.followers
+                              ? excavator
+                              : item.linkk
+                              ? stockpiledImg
+                              : item.chat
+                              ? stockImg
+                              : null
+                          })`,
+                          height: "300px",
+                          width: "100%",
+                          backgroundSize: "cover",
+                          // backgroundSize: item.followers
+                          //   ? "cover"
+                          //   : item.linkk
+                          //   ? "contain"
+                          //   : item.chat
+                          //   ? "contain"
+                          //   : "cover",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                          borderRadius: "10px",
+                          marginTop: "2rem",
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
       </div>
     </div>
   );

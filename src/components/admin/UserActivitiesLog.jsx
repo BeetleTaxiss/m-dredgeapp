@@ -3,34 +3,11 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
-import { showDetailedLogItem } from "../cards/ShowDetailedLogItem";
+import { showLogItem } from "../cards/custom-activities-summary";
 
 const UserActivitiesLog = () => {
   const [userActivitiesLog, setUserActivitiesLog] = useState(["loading"]);
 
-  const handleUpdatedItem = (action_data, action_old_data) => {
-    let updatedItems = [];
-    Object.keys(action_data).forEach((key) => {
-      if (
-        action_old_data !== null &&
-        action_data[key] !== action_old_data[key]
-      ) {
-        updatedItems = updatedItems.concat({
-          old: action_old_data[key],
-          new: action_data[key],
-          itemUpdated: key,
-        });
-      }
-    });
-    console.log("Updated Items Array: ", updatedItems);
-    return updatedItems;
-  };
-
-  const items = (updatedItems) => {
-    return updatedItems.map((item) => {
-      return ` updated ${item.itemUpdated} from "${item.old}" to "${item.new}"`;
-    });
-  };
   useEffect(() => {
     const source = axios.CancelToken.source();
 
@@ -94,9 +71,10 @@ const UserActivitiesLog = () => {
                   },
                   {
                     class: "text-left",
-                    itemClass: "text-center",
-                    link: () => showDetailedLogItem(item),
+                    link: () => showLogItem(item),
+                    userLog: true,
                     linkText: "View Detailed Action",
+                    itemClass: "btn btn-primary",
                   },
                 ],
               };
@@ -144,6 +122,7 @@ const UserActivitiesLog = () => {
     ],
     body: userActivitiesLog,
   };
+
   return <CustomTableList content={detailedOldLogListTableData} />;
 };
 

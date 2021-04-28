@@ -1224,4 +1224,55 @@ export const functionUtils = {
       return JSON.parse(userPermission.replace(/"{/, "{").replace(/}"/, "}"));
     }
   },
+  /** Function to add comma after every third number in a number string */
+  addCommaToNumbers: (number) => {
+    if (typeof number !== "string") {
+      /** Convert numbers to string */
+      number = `${number}`;
+    }
+    if (typeof number === "string") {
+      number = number.split("");
+      let newNumber = "",
+        lastItem = number.length - 1,
+        comma = ",",
+        counter = 0;
+
+      for (let i = lastItem; i >= 0; i--) {
+        counter += 1;
+        console.log(counter);
+        if (counter % 3 === 0 && i > 0) {
+          newNumber = `${comma}${number[i]}` + newNumber;
+          console.log("New number: ", newNumber);
+        } else {
+          newNumber = number[i] + newNumber;
+        }
+      }
+      return newNumber;
+    } else {
+      return number;
+    }
+  },
+  removeCommas: (string) => {
+    let newString;
+    newString = string.replace(/,/, "");
+    console.log("remove comma: ", newString);
+    return newString;
+  },
+  /** Naira sign */
+  naira: "₦",
+  validateFormInputs: (formData) => {
+    let formInputValue = true;
+    for (const [key, value] of Object.entries(formData)) {
+      /** Check if value is either null, NaN, undefined or empty */
+      if (value === "" || isNaN(value) || null || undefined) {
+        const title = "Form Error",
+          text = `${key} missing in your form`;
+        errorAlert(title, text);
+        console.log("item: ", value);
+        formInputValue = false;
+        console.log("Validate Data: ", formInputValue);
+        return formInputValue;
+      }
+    }
+  },
 };

@@ -1,3 +1,5 @@
+import { functionUtils } from "../../hooks/function-utils";
+
 export const Orders = ({ order }) => (
   <tr>
     <td>
@@ -15,7 +17,9 @@ export const Orders = ({ order }) => (
     </td>
     <td>
       <div className="td-content pricing">
-        <span className="">₦{order.price}</span>
+        <span className="">
+          ₦{functionUtils.addCommaToNumbers(order.price)}
+        </span>
       </div>
     </td>
     <td>

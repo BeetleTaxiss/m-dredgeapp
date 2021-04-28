@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import Skeleton from "react-loading-skeleton";
 import { BASE_API_URL } from "../../hooks/API";
 import { ReactComponent as ChartLine } from "../../assets/chartLine.svg";
+import { functionUtils } from "../../hooks/function-utils";
 
 const TotalStockpile = () => {
   const [totalStockpile, setTotalStockpile] = useState({});
@@ -127,7 +128,8 @@ export const StockPileInformation = ({ content }) => (
       style={{ display: "flex", gap: "0.2rem", alignItems: "flex-end" }}
     >
       <p className="value">
-        {content?.value} <span>{content?.duration}</span>{" "}
+        {functionUtils.addCommaToNumbers(content?.value)}{" "}
+        <span>{content?.duration}</span>{" "}
       </p>
       {/* Beginning of Duration Chartline SVG */}
       <ChartLine />

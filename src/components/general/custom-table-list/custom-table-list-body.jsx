@@ -82,6 +82,11 @@ const CustomTableListBody = ({ content, setLoad }) => {
                         setLoad(field.load);
                         field.link(true);
                       }
+                      /** Render detailed User activities with popup  */
+                      if (field.userLog) {
+                        // alert("fired");
+                        field.link();
+                      }
                     }}
                     to="#"
                   >
