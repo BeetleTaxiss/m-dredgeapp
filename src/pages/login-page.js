@@ -3,21 +3,16 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { FormDetails } from "../components/orders/order-form/order-form-details";
 import { BASE_API_URL } from "../hooks/API";
-import { functionUtils, errorAlert } from "../hooks/function-utils";
+import { functionUtils, errorAlert} from "../hooks/function-utils";
 
 import {StoreManager} from "react-persistent-store-manager"
 import {Stores, AppStore} from "./../state/store";
 
-import {userMenu} from "./../UserMenuMock";
-
 
 const LoginPage = () => {
 
-//console.log(JSON.stringify(userMenu), "menu sample");
-
   /** create a store  */
   const Store= StoreManager(AppStore, Stores, "AppSettingsStore");
-
 
   const [user, setUsername] = useState({
     user: "",
