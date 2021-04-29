@@ -95,6 +95,7 @@ const Login = async (user, password) => {
     Store.update("phone", responseData["phone"]);
     Store.update("userType", responseData["user_type"]);
     Store.update("login", true);
+
     // console.log(responseData.permission, "user perm from  db");
     Store.update(
       "permission",
@@ -128,6 +129,22 @@ export const calculateOrderCost = (bucketPrice, bucketValue, bucketNumber) => {
   // CALCULATE THE VOLUME OF AN ORDER BASED ON GIVEN BUCKET NUMBER VALUE AND CONSTANT BUCKET VOLUME
   const orderVolume = Math.floor(bucketNumber * bucketValue);
   return { orderCost, orderVolume };
+};
+
+/**
+ * Get an instance of the `UserStore`. We can call this every time we need to get user details
+ */
+export const getStoreInstance = (storeName=null) => {
+  /** create store instance */
+  return StoreManager(AppStore, Stores, storeName);
+};
+
+/**
+ * Get the `UserStore` instance
+ */
+export const getUserStoreInstance = () => {
+  /** create store instance */
+  return StoreManager(AppStore, Stores, "UserStore");
 };
 
 /**
@@ -1217,10 +1234,6 @@ export const functionUtils = {
     }
 
     if (typeof userPermission === "string") {
-      console.log(
-        JSON.parse(userPermission.replace(/"{/, "{").replace(/}"/, "}")),
-        "converted value"
-      );
       return JSON.parse(userPermission.replace(/"{/, "{").replace(/}"/, "}"));
     }
   },
@@ -1252,14 +1265,26 @@ export const functionUtils = {
       return number;
     }
   },
+
+  /**
+   * A function to strip value of all formating commas
+   * @param {*} string
+   * @returns
+   */
   removeCommas: (string) => {
     let newString;
     newString = string.replace(/,/, "");
-    console.log("remove comma: ", newString);
     return newString;
   },
+
   /** Naira sign */
   naira: "₦",
+
+  /**
+   * Validate form inputs
+   * @param {*} formData `formData` is passed as a key value pair
+   * @returns
+   */
   validateFormInputs: (formData) => {
     let formInputValue = true;
     for (const [key, value] of Object.entries(formData)) {
@@ -1268,9 +1293,7 @@ export const functionUtils = {
         const title = "Form Error",
           text = `${key} missing in your form`;
         errorAlert(title, text);
-        console.log("item: ", value);
         formInputValue = false;
-        console.log("Validate Data: ", formInputValue);
         return formInputValue;
       }
     }
