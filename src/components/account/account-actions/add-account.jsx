@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import WidgetHeader from "../../general/widget-header";
 import { BASE_API_URL } from "../../../hooks/API";
 import AddAccountForm from "../../fuel-issues/add-Fuel-Form";
+import { functionUtils } from "../../../hooks/function-utils";
 
 const AddAccount = () => {
   const [chartList, setChartList] = useState();
@@ -42,6 +43,7 @@ const AddAccount = () => {
               chartListBody.unshift({
                 id: 0,
                 description: "Select a chart Type",
+                validation: "Can't select this option",
               });
               setChartList(chartListBody);
               console.log("Chart List Body: ", chartList);
@@ -98,6 +100,26 @@ const AddAccount = () => {
         }
       });
   };
+
+  /** Retrive add account form data for client validation */
+
+  const getAddAccountFormData = () => {
+    const account = document.getElementById("account-name").value;
+    const description = document.getElementById("account-description").value;
+    const chartValue = parseInt(document.getElementById("chart-id").value);
+    const chartItem = chartList.filter(({ id }) => id === chartValue);
+
+    console.log("chart item: ", chartItem);
+    const addAccountData = {
+      account: account,
+      "chart-id": chartValue,
+      description: description,
+      validation: chartItem[0].validation,
+    };
+
+    return addAccountData;
+  };
+
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -108,6 +130,7 @@ const AddAccount = () => {
       showConfirmButton: false,
     });
   };
+
   const errorAlert = (title, text) => {
     Swal.fire({
       icon: "error",
@@ -160,7 +183,14 @@ const AddAccount = () => {
               // loading={loading}
               subtitle="Add new account information"
               btnText="Add account"
-              handleAddSubmit={handleAddAccount}
+              handleAddSubmit={() => {
+                const validation = functionUtils.validateFormInputs(
+                  getAddAccountFormData()
+                );
+                if (validation === true) {
+                  handleAddAccount();
+                }
+              }}
             />
           </div>
         </div>

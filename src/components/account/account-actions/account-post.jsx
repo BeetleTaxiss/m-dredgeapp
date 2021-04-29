@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import WidgetHeader from "../../general/widget-header";
 import { BASE_API_URL } from "../../../hooks/API";
 import PostAccountForm from "../../fuel-issues/add-Fuel-Form";
+import { functionUtils } from "../../../hooks/function-utils";
 
 const PostAccount = () => {
   const [creditAccount, setCreditAccount] = useState();
@@ -47,6 +48,7 @@ const PostAccount = () => {
               debitAccountBody.unshift({
                 id: 0,
                 account: "Select an account to debit",
+                validation: "Can't select this option",
               });
               setDebitAccount(debitAccountBody);
               console.log("Account Post Body: ", debitAccount);
@@ -124,6 +126,38 @@ const PostAccount = () => {
         }
       });
   };
+
+  /** Retrive post account form data for client validation */
+  const getPostAccountFormData = () => {
+    const userDetails = JSON.parse(localStorage.getItem("user")),
+      user_name = userDetails.username,
+      user_id = userDetails.id;
+    const amount = document.getElementById("amount").value;
+    const narration = document.getElementById("narration").value;
+    const debitValue = parseInt(document.getElementById("debit-id").value);
+    const creditValue = parseInt(document.getElementById("credit-id").value);
+
+    const debitItem = debitAccount.filter(({ id }) => id === debitValue),
+      creditItem = creditAccount.filter(({ id }) => id === creditValue),
+      credit_account = creditItem[0].account,
+      chart_id = creditItem[0]["chart-id"],
+      debit_account = debitItem[0].account;
+
+    const postAccountData = {
+      user: user_name,
+      "user-id": user_id,
+      "chart-id": chart_id,
+      "credit-account": credit_account,
+      "debit-account": debit_account,
+      "credit-account-id": creditValue,
+      "debit-account-id": debitValue,
+      narration: narration,
+      amount: amount,
+      validation: debitAccount[0].validation || creditAccount[0].validation,
+    };
+    return postAccountData;
+  };
+
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -195,7 +229,14 @@ const PostAccount = () => {
               // loading={loading}
               subtitle="Post expense information"
               btnText="Post Transaction"
-              handleAddSubmit={() => handlePostAccount()}
+              handleAddSubmit={() => {
+                const validation = functionUtils.validateFormInputs(
+                  getPostAccountFormData()
+                );
+                if (validation === true) {
+                  handlePostAccount();
+                }
+              }}
             />
           </div>
         </div>

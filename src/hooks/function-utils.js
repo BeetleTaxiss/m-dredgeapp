@@ -313,7 +313,8 @@ export const functionUtils = {
       const product = products?.filter((product) => product.id === selectValue);
       console.log("Product: ", product);
       const productId = product[0].id,
-        productName = product[0].product;
+        productName = product[0].product,
+        validation = product[0].validation;
       const userDetails = JSON.parse(localStorage.getItem("user"));
       const userId = parseInt(userDetails.id),
         userName = userDetails.username;
@@ -333,72 +334,91 @@ export const functionUtils = {
         "pumping-distance-in-meters": pumping_distance_in_meters,
         "pumping-elevation-in-meters": pumping_elevation_in_meters,
       };
+      /** Retrive Add marker form data for client validation */
+      const addMarkerClientData = {
+        user: userName,
+        "user-id": userId,
+        "product-id": productId,
+        product: productName,
+        "production-capacity": productionCapacityOnStart,
+        "start-time": durationInMilliseconds === 0 ? NaN : loggedShiftStart,
+        "production-date": loggedShiftStartDate,
+        "pumping-distance-in-meters": pumping_distance_in_meters,
+        "pumping-elevation-in-meters": pumping_elevation_in_meters,
+        validation: validation,
+      };
       console.log("add Marker Values: ", addMarkerData);
-      try {
-        axios
-          .post(
-            `${BASE_API_URL}/api/v1/production/add-marker.php`,
-            addMarkerData
-          )
-          .then((res) => {
-            // alert("Axios Working");
-            console.log("Add Marker Data: ", res.data);
-            if (res.data.error) {
-              let title = "Shift failed",
-                text = res.data.message;
-              errorAlert(title, text);
-            } else {
-              // Once the singular time values are gotten, they are set to the component's state using the setCounter function which will start the count down timer. Once this is done, the shift Calculator component is removed from the UI and the countdown timer, production capacity calculator and timeline notifications are shown by setting their respective display states to true while showing an inital timeline notification saying the shift has started.
+      /** Client form validation before https call */
+      const validationStatus = functionUtils.validateFormInputs(
+        addMarkerClientData
+      );
+      if (validationStatus === true) {
+        try {
+          axios
+            .post(
+              `${BASE_API_URL}/api/v1/production/add-marker.php`,
+              addMarkerData
+            )
+            .then((res) => {
+              // alert("Axios Working");
+              console.log("Add Marker Data: ", res.data);
+              if (res.data.error) {
+                let title = "Shift failed",
+                  text = res.data.message;
+                errorAlert(title, text);
+              } else {
+                // Once the singular time values are gotten, they are set to the component's state using the setCounter function which will start the count down timer. Once this is done, the shift Calculator component is removed from the UI and the countdown timer, production capacity calculator and timeline notifications are shown by setting their respective display states to true while showing an inital timeline notification saying the shift has started.
 
-              setDisplayTimer(true);
-              setDisplayTimeline(true);
+                setDisplayTimer(true);
+                setDisplayTimeline(true);
 
-              timelineItems = timelineItems.concat({
-                time: loggedShiftStart,
-                dotColor: "primary",
-                text: `Shift started and Production running at ${productionCapacityOnStart}%`,
-              });
-              setTimelineItem(timelineItems);
-              console.log("timeline Items: ", timelineItems);
-              res.data["initial_production_capacity"] = formInput[""];
-              res.data["product_id"] = productId;
-              res.data[
-                "pumping_distance_in_meters"
-              ] = pumping_distance_in_meters;
-              res.data[
-                "pumping_elevation_in_meters"
-              ] = pumping_elevation_in_meters;
-              res.data["product_name"] = productName;
+                timelineItems = timelineItems.concat({
+                  time: loggedShiftStart,
+                  dotColor: "primary",
+                  text: `Shift started and Production running at ${productionCapacityOnStart}%`,
+                });
+                setTimelineItem(timelineItems);
+                console.log("timeline Items: ", timelineItems);
+                res.data["initial_production_capacity"] = formInput[""];
+                res.data["product_id"] = productId;
+                res.data[
+                  "pumping_distance_in_meters"
+                ] = pumping_distance_in_meters;
+                res.data[
+                  "pumping_elevation_in_meters"
+                ] = pumping_elevation_in_meters;
+                res.data["product_name"] = productName;
 
-              setProductionDetails(res.data);
-              setCounter({ hours, minutes, seconds });
-              document.getElementById(
-                "distance"
-              ).value = pumping_distance_in_meters;
-              document.getElementById(
-                "elevation"
-              ).value = pumping_elevation_in_meters;
-              document.getElementById(
-                "current-production-capacity"
-              ).value = productionCapacityOnStart;
-              document.getElementById(
-                "range-count-number"
-              ).innerHTML = productionCapacityOnStart;
+                setProductionDetails(res.data);
+                setCounter({ hours, minutes, seconds });
+                document.getElementById(
+                  "distance"
+                ).value = pumping_distance_in_meters;
+                document.getElementById(
+                  "elevation"
+                ).value = pumping_elevation_in_meters;
+                document.getElementById(
+                  "current-production-capacity"
+                ).value = productionCapacityOnStart;
+                document.getElementById(
+                  "range-count-number"
+                ).innerHTML = productionCapacityOnStart;
 
-              functionUtils.showTimeLine(
-                timelineItems,
-                "timeline-notification-single"
-              );
-            }
-          });
-      } catch (error) {
-        let title = "Shift failed",
-          text = error;
-        errorAlert(title, text);
+                functionUtils.showTimeLine(
+                  timelineItems,
+                  "timeline-notification-single"
+                );
+              }
+            });
+        } catch (error) {
+          let title = "Shift failed",
+            text = error;
+          errorAlert(title, text);
+        }
+
+        // Set the previous time/start time of the shift on shift start to help ascertain difference in shift durations when production capacity is being calculated
+        sessionStorage.setItem("prevTime", prevLoggedShiftTime);
       }
-
-      // Set the previous time/start time of the shift on shift start to help ascertain difference in shift durations when production capacity is being calculated
-      sessionStorage.setItem("prevTime", prevLoggedShiftTime);
     };
     /**--------------------------------------------------------------------------------------------------------
      * --------------------------------------Count Down Timer--------------------------------------------------
@@ -1286,16 +1306,45 @@ export const functionUtils = {
    * @returns
    */
   validateFormInputs: (formData) => {
+    console.log("Form data in validation: ", formData);
     let formInputValue = true;
     for (const [key, value] of Object.entries(formData)) {
-      /** Check if value is either null, NaN, undefined or empty */
-      if (value === "" || isNaN(value) || null || undefined) {
+      /** Convert value to string without spacing */
+      let stringValue = `${value}`;
+      let trimmedValue = stringValue.replace(/W+/, "");
+
+      /** Validate for select dropdowns */
+      if (trimmedValue === "Can't select this option") {
         const title = "Form Error",
-          text = `${key} missing in your form`;
+          text = `${value}. Check the form for the dropdown and select a valid option `;
         errorAlert(title, text);
-        formInputValue = false;
-        return formInputValue;
+        return (formInputValue = false);
       }
+
+      /** Validate for empty strings */
+      if (trimmedValue === "") {
+        const title = "Form Error",
+          text = `${key}: ${value} missing in your form`;
+        errorAlert(title, text);
+        return (formInputValue = false);
+      }
+
+      /** Validate for numbers which are'nt numbers */
+      if (typeof value === "number" && isNaN(value)) {
+        const title = "Form Error",
+          text = `${key}: Must be a number`;
+        errorAlert(title, text);
+        return (formInputValue = false);
+      }
+
+      /** Validate for undefined and null */
+      // if (trimmedValue === null || value === undefined) {
+      //   const title = "Form Error",
+      //     text = `${key}: Input a proper value`;
+      //   errorAlert(title, text);
+      //   return (formInputValue = false);
+      // }
     }
+    return formInputValue;
   },
 };

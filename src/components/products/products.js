@@ -8,6 +8,7 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 import AddUpdateProduct from "./add-update-product";
 
 import "./product.css";
+import { functionUtils } from "../../hooks/function-utils";
 
 const Products = () => {
   const [productsList, setProductsList] = useState(["loading"]);
@@ -279,6 +280,49 @@ const Products = () => {
     }
     console.log("Update State", showUpdateProduct);
   };
+
+  /** Retrive add products form data for client validation */
+  const getAddProductsFormData = () => {
+    const product_name = document.getElementById("product").value;
+    const product_unit = document.getElementById("product-unit").value;
+    const product_price = document.getElementById("product-price").value;
+    const product_measurement = document.getElementById("product-measurement")
+      .value;
+    const product_description = document.getElementById("product-description")
+      .value;
+    const addProductData = {
+      product: product_name,
+      unit: product_unit,
+      price: product_price,
+      measurement: product_measurement,
+      description: product_description,
+    };
+    return addProductData;
+  };
+  /** Retrive update products form data for client validation */
+  const getUpdateProductsFormData = () => {
+    const user = document.getElementById("user").value;
+    const user_id = document.getElementById("user-id").value;
+    const product_id = document.getElementById("product-id").value;
+    const product_name = document.getElementById("product").value;
+    const product_unit = document.getElementById("product-unit").value;
+    const product_price = document.getElementById("product-price").value;
+    const product_measurement = document.getElementById("product-measurement")
+      .value;
+    const product_description = document.getElementById("product-description")
+      .value;
+    const updateProductData = {
+      user: user,
+      "user-id": user_id,
+      "product-id": product_id,
+      product: product_name,
+      unit: product_unit,
+      price: product_price,
+      measurement: product_measurement,
+      description: product_description,
+    };
+    return updateProductData;
+  };
   /** Product List Table Data */
   const productListTableData = {
     tableTitle: "",
@@ -381,8 +425,22 @@ const Products = () => {
               showUpdateProduct={showUpdateProduct}
               content={addUpdateProductformData}
               loading={loading}
-              handleAddSubmit={handleAddProduct}
-              handleUpdateSubmit={handleUpdateProduct}
+              handleAddSubmit={() => {
+                const validation = functionUtils.validateFormInputs(
+                  getAddProductsFormData()
+                );
+                if (validation === true) {
+                  handleAddProduct();
+                }
+              }}
+              handleUpdateSubmit={() => {
+                const validation = functionUtils.validateFormInputs(
+                  getUpdateProductsFormData()
+                );
+                if (validation === true) {
+                  handleUpdateProduct();
+                }
+              }}
             />
             <CustomTableList content={productListTableData} />
           </div>

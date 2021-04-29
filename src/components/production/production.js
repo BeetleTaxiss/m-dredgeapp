@@ -40,6 +40,7 @@ export const Production = () => {
                 id: "0",
                 product: "Select Product",
                 price: 0,
+                validation: "Can't select this option",
               });
               console.log("New Array", newArray);
               console.log("New Data", data);
