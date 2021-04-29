@@ -13,7 +13,7 @@ const CustomTableListBody = ({ content, setLoad }) => {
             {item.fields?.map((field, id) => (
               <td key={id} className={field.class}>
                 {field.link ? (
-                  <Link
+                  <a
                     className={field.itemClass}
                     onClick={() => {
                       /** Wet sand Button function to add wet sand to stockpile */
@@ -88,10 +88,10 @@ const CustomTableListBody = ({ content, setLoad }) => {
                         field.link();
                       }
                     }}
-                    to="#"
+                    href="javascript:void(0)"
                   >
                     {field.linkText}
-                  </Link>
+                  </a>
                 ) : field.editScroll ? (
                   <ScrollLink
                     id="edit-btn-icon"

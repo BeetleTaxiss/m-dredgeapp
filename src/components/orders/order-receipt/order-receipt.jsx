@@ -13,9 +13,10 @@ import { useUpdateOrderFormData } from "../../../hooks/useFormData";
 import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
 import { FormDetails } from "../order-form/order-form-details";
+import { functionUtils } from "../../../hooks/function-utils";
 const OrderReceipt = () => {
   const { state } = useLocation();
-  const [order, setOrder] = useState();
+  const [order, setOrder] = useState(state);
   const [totalPrice, setTotalPrice] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,7 @@ const OrderReceipt = () => {
     console.log("Order state", order);
     setOrder(state);
     console.log("Order state", order);
-  }, [order]);
+  }, [order, state]);
 
   const handleChange = () => {
     // Get form values with document,getById
@@ -99,6 +100,36 @@ const OrderReceipt = () => {
       setLoading(false);
       document.getElementById("loading-btn").disabled = false;
     }
+  };
+
+  const getUpdateOrderFormData = () => {
+    const qtyValue = document.getElementById("qty").value;
+    const truckNoValue = document.getElementById("truckNo").value;
+    console.log(" Order", order);
+    const orderId = order.id;
+    const orderRef = order.order_ref;
+    const user = order.user;
+    const userId = order.user_id;
+    const productId = order.product_id;
+    const product = order.product;
+    const productUnit = order.unit;
+    const unitPrice = order.unit_price;
+    const measurement = order.measurement;
+    const updateOrderData = {
+      "product-id": productId,
+      product: product,
+      user: user,
+      "user-id": userId,
+      "order-id": orderId,
+      "order-ref": orderRef,
+      qty: qtyValue,
+      unit: productUnit,
+      "unit-price": unitPrice,
+      measurement: measurement,
+      "total-price": totalPrice,
+      "truck-no": truckNoValue,
+    };
+    return updateOrderData;
   };
 
   const updateSuccessAlert = () => {
@@ -183,7 +214,12 @@ const OrderReceipt = () => {
     },
   ];
 
-  const { formData } = useUpdateOrderFormData(totalPrice);
+  /** Validate total price before sendind */
+  let validatedTotalPrice = isNaN(totalPrice)
+    ? "Input a Number"
+    : `${functionUtils.naira}${functionUtils.addCommaToNumbers(totalPrice)}`;
+
+  const { formData } = useUpdateOrderFormData(validatedTotalPrice);
   return (
     <div className="row invoice  layout-spacing layout-top-spacing">
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -250,7 +286,14 @@ const OrderReceipt = () => {
           setLoading={setLoading}
           errorMsg={errorMsg}
           status={error}
-          handleSubmit={() => handleUpdateOrder()}
+          handleSubmit={() => {
+            const validationStatus = functionUtils.validateFormInputs(
+              getUpdateOrderFormData()
+            );
+            if (validationStatus === true) {
+              handleUpdateOrder();
+            }
+          }}
           handleChange={handleChange}
           Btntext="Update Order"
         />
@@ -265,28 +308,31 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
       <div className="invoice-action-btn">
         <div className="row">
           <div className="col-xl-12 col-md-4 col-sm-6">
-            <Link
+            <a
               onClick={() => window.print()}
-              to="#"
+              href="javascript:void(0)"
               className="btn btn-secondary btn-print  action-print"
             >
               Print
-            </Link>
+            </a>
           </div>
           <div className="col-xl-12 col-md-4 col-sm-6">
-            <Link to="#" className="btn btn-success btn-download">
+            <a
+              href="javascript:void(0)"
+              className="btn btn-success btn-download"
+            >
               Download
-            </Link>
+            </a>
           </div>
           <div className="col-xl-12 col-md-4 col-sm-6">
-            <Link
+            <a
               id="edit-order"
-              to="#"
+              href="javascript:void(0)"
               onClick={() => setShowModal(true)}
               className="btn btn-dark btn-edit"
             >
               Edit
-            </Link>
+            </a>
           </div>
         </div>
       </div>
@@ -304,14 +350,14 @@ export const DispatchComment = ({ content, rows, cols, dispatchOrder }) => (
             ))}
           </div>
           <div className="col-xl-12">
-            <Link
+            <a
               id="dispatch-order"
               onClick={() => dispatchOrder()}
-              to="#"
+              href="javascript:void(0)"
               className="btn btn-primary btn-send"
             >
               Dispatch Order
-            </Link>
+            </a>
           </div>
           {/* 
           <div className="col-xl-12 col-md-3 col-sm-6">

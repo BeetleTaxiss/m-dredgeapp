@@ -4,7 +4,7 @@ import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 
 const DispatchOrderList = () => {
-  const [bodyData, setBodyData] = useState(null);
+  const [bodyData, setBodyData] = useState(["loading"]);
   useEffect(
     () =>
       axios

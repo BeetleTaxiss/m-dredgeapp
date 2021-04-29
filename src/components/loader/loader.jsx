@@ -132,7 +132,7 @@ const Loader = () => {
           setBodyData(body);
           console.log("BODY ARRAY: ", body);
         }),
-    [bodyData]
+    [bodyData, showModal, setShowModal]
   );
 
   const loaderListData = {
@@ -232,7 +232,7 @@ const Loader = () => {
         handleSubmit={loadOrder}
         Btntext="Loading completed"
         // noClickOutside
-        closeBtn
+        // closeBtn
         listItems
         cols={5}
         rows={3}

@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 const ProductionList = () => {
-  const [productionList, setProductionList] = useState();
+  const [productionList, setProductionList] = useState(["loading"]);
 
   /** Axios call to fetch Production list and assign to productionList variable */
   useEffect(() => {
@@ -25,7 +25,7 @@ const ProductionList = () => {
             } else {
               const productionListItems = res.data.data;
               /** Required single response object to be concatenated to the production list array */
-              productionListItems.map((item) => {
+              productionListItems.reverse().map((item) => {
                 /** Get required response data values */
                 const production_id = item.id;
                 const batch = item.batch;

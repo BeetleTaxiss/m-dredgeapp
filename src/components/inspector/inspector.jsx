@@ -204,7 +204,7 @@ const Inspector = () => {
         handleSubmit={InspectOrder}
         Btntext="Inspection Completed"
         // noClickOutside
-        closeBtn
+        // closeBtn
         listItems
         cols={5}
         rows={3}
