@@ -1,11 +1,12 @@
 import React from "react";
 import Skeleton from "react-loading-skeleton";
-import { createPermissionList, 
+import {
+  createPermissionList,
   createUserPermissionListComponent,
-  getPermissionData
- } from "../../users/PermissionList";
+  getPermissionData,
+} from "../../users/PermissionList";
 
-const currentUserPermission=[];
+const currentUserPermission = [];
 
 const ContactListHeader = ({ content }) => (
   <div className="items items-header-section">
@@ -21,23 +22,32 @@ const ContactListHeader = ({ content }) => (
 );
 
 /**
-   * This component will return both the permissionListAccordion and the 
-   * method to getPermissionData to get the updated permission data before 
-   * update
-   */
- const PermissionListForExistingUser = ({permission, setUserGetPermissionData }) => {
+ * This component will return both the permissionListAccordion and the
+ * method to getPermissionData to get the updated permission data before
+ * update
+ */
+const PermissionListForExistingUser = ({
+  permission,
+  setUserGetPermissionData,
+}) => {
   const permissionListData = createPermissionList(permission);
-  /** 
-   * assign our `getPermissionData` function from `PermissionList` library to 
-   * `setUserGetPermissionData` state value so that we can call this on the main component when we 
+  /**
+   * assign our `getPermissionData` function from `PermissionList` library to
+   * `setUserGetPermissionData` state value so that we can call this on the main component when we
    * are ready to save and still have access to the updated userPermissionData
-    */
+   */
   //setUserGetPermissionData(getPermissionData);
-  
+
   /** return our initial userPermissionList component */
-  return createUserPermissionListComponent(permissionListData)
+  return createUserPermissionListComponent(permissionListData);
 };
-const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData, setShowUpdateModal, setShowUserDetailsUpdate}) => (
+const Contact = ({
+  content,
+  setUserPermissionListView,
+  setUserGetPermissionData,
+  setShowUpdateModal,
+  setShowUserDetailsUpdate,
+}) => (
   <>
     {content ? (
       <div className="items">
@@ -66,28 +76,38 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData,
           )}
 
           <div className="action-btn" style={{ display: "flex", gap: "1rem" }}>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                /** to show permission on the modal, we will pass it as a parameter */
+                const PermissionListForUser = (
+                  <PermissionListForExistingUser
+                    setUserGetPermissionData={setUserGetPermissionData}
+                    permission={content.permission}
+                  />
+                );
 
-          <button onClick={()=>{
-              /** to show permission on the modal, we will pass it as a parameter */
-              const PermissionListForUser= <PermissionListForExistingUser 
-              setUserGetPermissionData={setUserGetPermissionData}
-              permission={content.permission} />
+                /** set this state variable so that the popup open, the permission list for this user is shown */
+                setUserPermissionListView(PermissionListForUser);
 
-              /** set this state variable so that the popup open, the permission list for this user is shown */
-              setUserPermissionListView(PermissionListForUser);
+                console.log(content.user, "the user ");
 
-              console.log(content.user, "the user ");
+                /** set the initial values for our form input before we open */
+                document.getElementById("user-add-user").value =
+                  content.user.user;
+                document.getElementById("user-add-user-id").value =
+                  content.user.id;
+                document.getElementById("phone-add-user").value =
+                  content.user.phone;
+                document.getElementById("email-add-user").value =
+                  content.user.email;
 
-              /** set the initial values for our form input before we open */
-              document.getElementById("user-add-user").value = content.user.user;
-              document.getElementById("user-add-user-id").value = content.user.id;            
-              document.getElementById("phone-add-user").value = content.user.phone;            
-              document.getElementById("email-add-user").value = content.user.email;            
-
-              /** open the update window */
-              setShowUserDetailsUpdate(true);
-              
-            }}>Edit</button>
+                /** open the update window */
+                setShowUserDetailsUpdate(true);
+              }}
+            >
+              Edit
+            </button>
 
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -102,9 +122,12 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData,
               className="feather feather-edit-2 edit"
               onClick={() => {
                 content.setUser(content.user);
-                document.getElementById("user-add-user").value = content.user.user;
-                document.getElementById("user-id-add-user").value = content.user.id;
-                document.getElementById("password-add-user").value = content.user.password;
+                document.getElementById("user-add-user").value =
+                  content.user.user;
+                document.getElementById("user-id-add-user").value =
+                  content.user.id;
+                document.getElementById("password-add-user").value =
+                  content.user.password;
                 setShowUpdateModal(true);
               }}
             >
@@ -205,7 +228,13 @@ const Contact = ({ content, setUserPermissionListView, setUserGetPermissionData,
     )}
   </>
 );
-const ContactList = ({ content, setUserPermissionListView, setUserGetPermissionData, setShowUpdateModal, setShowUserDetailsUpdate }) => {
+const ContactList = ({
+  content,
+  setUserPermissionListView,
+  setUserGetPermissionData,
+  setShowUpdateModal,
+  setShowUserDetailsUpdate,
+}) => {
   return (
     <div className="searchable-items grid">
       {/* BEGIN USER LIST HEADER */}
@@ -214,12 +243,16 @@ const ContactList = ({ content, setUserPermissionListView, setUserGetPermissionD
 
       {/* BEGIN USER */}
       {content.contacts ? (
-        content.contacts.map((user, i) => 
-        <Contact key={i} content={user} setUserPermissionListView={setUserPermissionListView} 
-        setShowUpdateModal={setShowUpdateModal}
-        setUserGetPermissionData={setUserGetPermissionData}
-        setShowUserDetailsUpdate={setShowUserDetailsUpdate}
-         />)
+        content.contacts.map((user, i) => (
+          <Contact
+            key={i}
+            content={user}
+            setUserPermissionListView={setUserPermissionListView}
+            setShowUpdateModal={setShowUpdateModal}
+            setUserGetPermissionData={setUserGetPermissionData}
+            setShowUserDetailsUpdate={setShowUserDetailsUpdate}
+          />
+        ))
       ) : (
         <>
           <Skeleton count={3} height={55} />

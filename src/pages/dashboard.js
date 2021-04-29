@@ -15,16 +15,14 @@ export const Dashboard = () => {
   /** contains  the dashboard view */
   const [dashboardViews, setDashboardViews] = useState([]);
 
-  /*** a StoreManager instance. s
+  /*** a StoreManager instance. 
    * Now you must pass the three parameters to locate our actual menu location
    * see `state/store.js` for sample definition
    */
   const Store = StoreManager(AppStore, Stores, "UserStore");
 
   /** set get the user permission and set */
-  //Store.update("permission", userMenu);
   Store.useStateAsync("permission").then((permission) => {
-    console.log("Permission List: ", permission);
     setUserPermission(permission);
   });
 
