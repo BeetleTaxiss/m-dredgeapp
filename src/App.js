@@ -1,22 +1,40 @@
-import React from "react";
-import {createUserRoutes, createUserMenu} from "./Menu";
+import React, {useEffect, useState} from "react";
+import {createUserRoutes} from "./Menu";
 import {Route, Switch} from "react-router";
 import NavBar from "./components/navbar/navbar";
-import {Production} from "./components/production/production";
-import WetSand from "./components/production/production-list/wet-sand";
-import StockUpdate from "./components/production/production-list/stock-update";
 import PageWrapper from "./components/general/page-wrapper";
-import {userMenu} from "./UserMenuMock";
-
+import { getUserStoreInstance } from "./hooks/function-utils";
 
 
 export default function App() {
 
+    /** hold user permission. This is retrieve from our StoreManager */
+    const [userPermission, setUserPermission] = useState([]);
+
+    /** 
+     * contain state contains allowed routes for our user 
+     * This will be created from the user permission 
+     * */
+    const [allowedRoutes, setAllowedRoutes] = useState([]);
+
+    /** get the `UserStore` instance */
+    const Store= getUserStoreInstance();
+
+    /** get uer permissions */
+    Store.useStateAsync("permission").then(permission=>{
+        setUserPermission(permission)
+    });
+
+    /** 
+     * Create allowed routes for this user based on their provided permission level
+     * Get user permission once the page load, or userPermission changed
+     * */
+    useEffect(()=>{  
     /**
      * These are the valid routes this user can have access to within the application
      * Pass the `userMenu` provided during user setup
      */
-    let UserAllowedRoutes = createUserRoutes(userMenu).map((page, k) => {
+    let UserAllowedRoutes = createUserRoutes(userPermission).map((page, k) => {
 
         const {link, component, hideNavBar, usePageWrapper} = page;
         const Component = component;
@@ -55,13 +73,19 @@ export default function App() {
                 </>
             )
         }
+        /** return the custom page component created based on our routes */
         return <Route key={k} path={link} component={PageComponent}/>
     });
+
+    /** assign allowedRoutes to state so that we can view app */
+    setAllowedRoutes(UserAllowedRoutes);
+
+    }, [userPermission]);
 
     return (
         <div className="App">
         <Switch>
-            {UserAllowedRoutes}
+            {allowedRoutes}
         </Switch>
         </div>
     )

@@ -175,20 +175,6 @@ const Users = () => {
       });
   };
 
-  /**
-   * This component will return both the permissionListAccordion and the
-   * method to getPermissionData to get the updated permission data before
-   * we update them
-   */
-  const BlankPermissionListForNewUser = (props) => {
-    const permissionListData = createPermissionList({});
-
-    const [PermissionList] = createUserPermissionListComponent(
-      permissionListData
-    );
-    return <>{PermissionList}</>;
-  };
-
   const addContact = () => {
     let newUserName = document.getElementById("user-add-user").value,
       newUserType = document.getElementById("select-add-user").value,
@@ -369,6 +355,7 @@ const Users = () => {
           const title = "User Enabled",
             text = res.data.message;
           successAlert(title, text);
+          reloadServerData();
         }
       })
       .catch((error) => {
@@ -457,6 +444,22 @@ const Users = () => {
   const { updateUserDetailsFormData } = useUpdateUserDetailsFormData(
     selectOptions
   );
+
+
+    /**
+   * This component will return both the permissionListAccordion and the
+   * method to getPermissionData to get the updated permission data before
+   * we update them 
+   */
+     const BlankPermissionListForNewUser = (props) => {
+      const permissionListData = createPermissionList({});
+  
+      const [PermissionList] = createUserPermissionListComponent(
+        permissionListData
+      );
+      return <>{PermissionList}</>;
+    };
+  
 
   /** load the user list on page open */
   useEffect(() => {

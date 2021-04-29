@@ -693,7 +693,7 @@ export const MenuStyles = {
     icon: null,
     text: "Inspector",
     dropdownIcon: dropdownIcon,
-    link: "#",
+    link: "inspect",
     menuClass: "inspector",
   },
   loader: {
@@ -707,7 +707,7 @@ export const MenuStyles = {
     icon: null,
     text: "Security",
     dropdownIcon: dropdownIcon,
-    link: "#",
+    link: "security",
     menuClass: "security",
   },
 };
