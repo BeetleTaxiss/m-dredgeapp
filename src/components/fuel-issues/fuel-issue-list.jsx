@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
+import { functionUtils } from "../../hooks/function-utils";
 
 const FuelIssueList = () => {
   const [fuelIssueList, setFuelIssueList] = useState(["loading"]);
@@ -22,7 +23,7 @@ const FuelIssueList = () => {
               errorAlert(title, text);
             } else {
               const fuelIssueItems = res.data.data;
-              fuelIssueItems.map((item) => {
+              fuelIssueItems.reverse().map((item) => {
                 /** Get required response data values */
                 const fuel_issue_user = item.user;
                 const fuel_issue_user_id = item.user_id;
@@ -69,7 +70,7 @@ const FuelIssueList = () => {
                           ? "shadow-none badge badge-warning"
                           : "shadow-none badge badge-success"
                       }`,
-                      item: qty_issued,
+                      item: functionUtils.addCommaToNumbers(qty_issued),
                     },
                   ],
                 };

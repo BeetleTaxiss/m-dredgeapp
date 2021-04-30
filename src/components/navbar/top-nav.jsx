@@ -1,12 +1,18 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { MenuItem, MobileLogo } from "./menuItem";
 // import { topNavBarData } from "./menuItem-data";
 
-const TopNavbar = ({ showMenu, showSubMenu, setShowSubMenu, topNavBarData }) => {
+const TopNavbar = ({
+  showMenu,
+  showSubMenu,
+  setShowSubMenu,
+  topNavBarData,
+}) => {
   return (
     <div
       className={`topbar-nav header navbar ${showMenu && "showMenu"}`}
       role="banner"
+      // style={{ overflowY: "auto" }}
     >
       <nav id="topbar">
         {/* BEGINNING OF MOBILE LOGO */}

@@ -23,12 +23,6 @@ const OrderReceipt = () => {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  useEffect(() => {
-    console.log("Order state", order);
-    setOrder(state);
-    console.log("Order state", order);
-  }, [order, state]);
-
   const handleChange = () => {
     // Get form values with document,getById
     const qtyValue = document.getElementById("qty").value;
@@ -43,6 +37,17 @@ const OrderReceipt = () => {
     console.log("Order Cost: ", orderCost);
     // Set the value of an order to the UI
     setTotalPrice(orderCost);
+  };
+
+  const handleShowUpdateOrderDetails = () => {
+    if (document.getElementById("qty") !== null) {
+      document.getElementById("qty").value = order.qty;
+    }
+    if (document.getElementById("truckNo") !== null) {
+      document.getElementById("truckNo").value = order.truck_no;
+    }
+    console.log("Order details: ", order);
+    setTotalPrice(order.total_price);
   };
 
   const handleUpdateOrder = () => {
@@ -90,7 +95,9 @@ const OrderReceipt = () => {
           setError(false);
           setShowModal(true);
           updateSuccessAlert();
+          console.log("Before: ", order);
           setOrder(res.data.data);
+          console.log("After: ", order);
           document.getElementById("qty").value = "";
           document.getElementById("truckNo").value = "";
           setTotalPrice(0);
@@ -220,6 +227,13 @@ const OrderReceipt = () => {
     : `${functionUtils.naira}${functionUtils.addCommaToNumbers(totalPrice)}`;
 
   const { formData } = useUpdateOrderFormData(validatedTotalPrice);
+
+  useEffect(() => {
+    setOrder(state);
+  }, []);
+
+  useEffect(() => {}, [order]);
+
   return (
     <div className="row invoice  layout-spacing layout-top-spacing">
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -243,14 +257,22 @@ const OrderReceipt = () => {
                         {/* BEGINNING OF ORDER RECEIPT BODY*/}
                         <OrderReceiptBody
                           product={order?.product}
-                          qty={order?.qty}
-                          price={order?.unit_price}
-                          amount={order?.total_price}
+                          qty={functionUtils.addCommaToNumbers(order?.qty)}
+                          price={functionUtils.addCommaToNumbers(
+                            order?.unit_price
+                          )}
+                          amount={functionUtils.addCommaToNumbers(
+                            order?.total_price
+                          )}
                         />
                         {/* END OF ORDER RECEIPT BODY*/}
 
                         {/* BEGINNING OF ORDER RECEIPT FOOTER*/}
-                        <OrderReceiptFooter amount={order?.total_price} />
+                        <OrderReceiptFooter
+                          amount={functionUtils.addCommaToNumbers(
+                            order?.total_price
+                          )}
+                        />
                         {/* END OF ORDER RECEIPT FOOTER*/}
                         {/* BEGINNING OF ORDER RECEIPT FOOTER NOTE*/}
                         <OrderReceiptFooterNote />
@@ -269,7 +291,14 @@ const OrderReceipt = () => {
                 content={dispatchFormData}
                 dispatchOrder={dispatchOrder}
               />
-              <OrderReceiptLinks setShowModal={setShowModal} />
+              <OrderReceiptLinks
+                setShowModal={() => {
+                  setShowModal(true);
+                  setTimeout(() => {
+                    handleShowUpdateOrderDetails();
+                  }, 1000);
+                }}
+              />
             </div>
             {/* END OF ORDER RECIEPT LINKS */}
           </div>
@@ -328,7 +357,7 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
             <a
               id="edit-order"
               href="javascript:void(0)"
-              onClick={() => setShowModal(true)}
+              onClick={() => setShowModal()}
               className="btn btn-dark btn-edit"
             >
               Edit

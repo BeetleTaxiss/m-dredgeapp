@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import { ReactComponent as EditIcon } from "../../../assets/editIcon.svg";
 import { ReactComponent as DeleteIcon } from "../../../assets/deleteIcon.svg";
+import { functionUtils } from "../../../hooks/function-utils";
 const CustomTableListBody = ({ content, setLoad }) => {
   return (
     <tbody>
@@ -71,14 +72,20 @@ const CustomTableListBody = ({ content, setLoad }) => {
                       if (field.load) {
                         document.getElementById("span-product").innerHTML =
                           field.loadDisplay.product;
-                        document.getElementById("quantity").innerHTML =
-                          field.loadDisplay.qty;
+                        document.getElementById(
+                          "quantity"
+                        ).innerHTML = functionUtils.addCommaToNumbers(
+                          field.loadDisplay.qty
+                        );
                         document.getElementById("truckNo").innerHTML =
                           field.loadDisplay.truckNo === ""
                             ? "No Truck Number"
                             : field.loadDisplay.truckNo;
-                        document.getElementById("cost").innerHTML =
-                          field.loadDisplay.price;
+                        document.getElementById(
+                          "cost"
+                        ).innerHTML = functionUtils.addCommaToNumbers(
+                          field.loadDisplay.price
+                        );
                         setLoad(field.load);
                         field.link(true);
                       }

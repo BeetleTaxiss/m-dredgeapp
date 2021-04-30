@@ -22,7 +22,7 @@ const Stock = () => {
               errorAlert(title, text);
             } else {
               const stockItems = res.data.data;
-              stockItems.map((item) => {
+              stockItems.reverse().map((item) => {
                 /** Get required response data values */
 
                 const user_name = item.user;

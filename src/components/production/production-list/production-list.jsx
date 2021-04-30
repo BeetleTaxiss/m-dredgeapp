@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
+import { functionUtils } from "../../../hooks/function-utils";
 const ProductionList = () => {
   const [productionList, setProductionList] = useState(["loading"]);
 
@@ -25,7 +26,7 @@ const ProductionList = () => {
             } else {
               const productionListItems = res.data.data;
               /** Required single response object to be concatenated to the production list array */
-              productionListItems.reverse().map((item) => {
+              productionListItems.map((item) => {
                 /** Get required response data values */
                 const production_id = item.id;
                 const batch = item.batch;
@@ -76,7 +77,9 @@ const ProductionList = () => {
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: pumping_distance_in_meters,
+                      item: functionUtils.addCommaToNumbers(
+                        pumping_distance_in_meters
+                      ),
                     },
                     {
                       class: "text-left",

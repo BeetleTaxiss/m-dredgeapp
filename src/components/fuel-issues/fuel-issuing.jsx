@@ -175,7 +175,7 @@ const FuelIssuing = () => {
       id: "fuel-quantity",
       type: "text",
       name: "qty",
-      holder: "Fuel quantity bought",
+      holder: "Fuel quantity to dispense",
       className: "form-control",
       required: true,
     },

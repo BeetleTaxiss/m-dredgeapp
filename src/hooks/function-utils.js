@@ -23,6 +23,32 @@ export const successAlert = (title, text, link, showBtn) => {
     showConfirmButton: showBtn ? true : false,
   });
 };
+
+export const successAlertWithFunction = (
+  title,
+  text,
+  showCloseBtn,
+  btnText,
+  handleConfirmed,
+  handleCanceled
+) => {
+  Swal.fire({
+    icon: "success",
+    title: title,
+    text: text,
+    showConfirmButton: true,
+    confirmButtonText: btnText,
+    showCancelButton: showCloseBtn === true ? true : false,
+    cancelButtonColor: "red",
+  }).then((value) => {
+    if (value.isConfirmed) {
+      typeof handleConfirmed === "function" && handleConfirmed();
+    }
+    if (value.isDismissed) {
+      typeof handleCanceled === "function" && handleCanceled();
+    }
+  });
+};
 export const errorAlert = (title, text) => {
   Swal.fire({
     icon: "error",
@@ -89,7 +115,12 @@ const Login = async (user, password) => {
     return { status: false };
   } else {
     let responseData = response.data.data;
-
+    const userDetails = {
+      username: responseData.user,
+      id: responseData.id,
+      userType: responseData.user_type,
+    };
+    localStorage.setItem("user", JSON.stringify(userDetails));
     /** login was successful add 1status=true to use for validation` */
     responseData = { ...responseData, status: true };
 
@@ -110,6 +141,48 @@ const Login = async (user, password) => {
     );
     return responseData;
   }
+};
+
+export const useGetUserDetails = async (
+  setUserName,
+  setUserId,
+  setUserType,
+  setIsUserLoggedIn,
+  setUserEmail,
+  setUserPhoneNo,
+  setUserPermissions
+) => {
+  /** fetch saved user information from store */
+  const Store = StoreManager(AppStore, Stores, "UserStore");
+
+  /** Fetch user Name and set it to state */
+  Store.useStateAsync("user").then((user) => {
+    typeof setUserName === "function" && setUserName(user);
+  });
+  /** Fetch user Id and set it to state */
+  Store.useStateAsync("userId").then((userId) => {
+    typeof setUserId === "function" && setUserId(userId);
+  });
+  /** Fetch user Email and set it to state */
+  Store.useStateAsync("email").then((email) => {
+    typeof setUserEmail === "function" && setUserEmail(email);
+  });
+  /** Fetch user phone number and set it to state */
+  Store.useStateAsync("phone").then((phone) => {
+    typeof setUserPhoneNo === "function" && setUserPhoneNo(phone);
+  });
+  /** Fetch user type and set it to state */
+  Store.useStateAsync("userType").then((type) => {
+    typeof setUserType === "function" && setUserType(type);
+  });
+  /** Fetch user login status and set it to state */
+  Store.useStateAsync("login").then((login) => {
+    typeof setIsUserLoggedIn === "function" && setIsUserLoggedIn(login);
+  });
+  /** Fetch user permissions and set it to state */
+  Store.useStateAsync("permission").then((permission) => {
+    typeof setUserPermissions === "function" && setUserPermissions(permission);
+  });
 };
 
 // GENERATE RANDOM SERIAL NUMBER FUNCTION
@@ -141,7 +214,7 @@ export const calculateOrderCost = (bucketPrice, bucketValue, bucketNumber) => {
 /**
  * Get an instance of the `UserStore`. We can call this every time we need to get user details
  */
-export const getStoreInstance = (storeName=null) => {
+export const getStoreInstance = (storeName = null) => {
   /** create store instance */
   return StoreManager(AppStore, Stores, storeName);
 };
@@ -772,14 +845,6 @@ export const functionUtils = {
         .value;
     }
 
-    console.log(
-      "value: ",
-      new_pumping_elevation_in_meters,
-      "Reg Exp: ",
-      // /^[0-9][0-9]+$/.test(new_pumping_elevation_in_meters)
-      /^\d+$/.test(new_pumping_elevation_in_meters)
-    );
-
     /** Validation Pumping distance and elevation to be Numbers only */
 
     const validationStatus = functionUtils.validateFormInputs({
@@ -1319,6 +1384,31 @@ export const functionUtils = {
         Store.update("userType", null);
         Store.update("permission", null);
 
+        history.push({
+          pathname: takeToPage,
+        });
+      }
+    });
+  },
+  /**
+   * Use this function to validate usr login and log them out
+   */
+  useValidateLoginAndLogUserOut: (takeToPage = "/", history) => {
+    /*** create a StoreManager instance*/
+    const Store = StoreManager(AppStore, Stores, "UserStore");
+
+    /** check to see if user is indeed logged in */
+    Store.useStateAsync("login").then((login) => {
+      if (login === true) {
+        /**  clear out every other user details pertaining to session
+         * and  take user back to the login page */
+        Store.update("user", null);
+        Store.update("userId", null);
+        Store.update("email", null);
+        Store.update("name", null);
+        Store.update("userType", null);
+        Store.update("permission", null);
+        Store.update("login", false);
         history.push({
           pathname: takeToPage,
         });

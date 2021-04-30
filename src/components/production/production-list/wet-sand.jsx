@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import moment from "moment";
+import { functionUtils } from "../../../hooks/function-utils";
 
 const WetSand = () => {
   const [wetsandList, setWetSandList] = useState(["loading"]);
@@ -98,7 +99,9 @@ const WetSand = () => {
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: pumping_distance_in_meters,
+                      item: functionUtils.addCommaToNumbers(
+                        pumping_distance_in_meters
+                      ),
                     },
                     {
                       class: "text-left",

@@ -51,6 +51,7 @@ import ActivitiesSummary from "./components/cards/activities-summary";
 import RecentExpenses from "./components/cards/recent-expenses";
 import CurrentActivity from "./components/cards/current-activity";
 import UserActivitiesLog from "./components/admin/UserActivitiesLog";
+import FuelUpdateList from "./components/fuel-issues/fuel-update-list";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -71,6 +72,10 @@ export const createUserRoutes = (userMenu) => {
 
   /** this is an array that holds all the permitted routes for our user */
   let userAccess = [];
+
+  if (userMenu === null) {
+    return userAccess;
+  }
 
   /**
    * loop over the user menu, and menu if found in the globalMenu definition, we will also loop
@@ -599,7 +604,7 @@ export const Menu = {
     fuelStockEntry: {
       text: "Fuel Stock Entry",
       link: "/fuelupdatelist",
-      component: FuelIssueList,
+      component: FuelUpdateList,
     },
   },
 

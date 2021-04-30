@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
+import { functionUtils } from "../../hooks/function-utils";
 const Inspector = () => {
   const [bodyData, setBodyData] = useState(["loading"]);
   const [load, setLoad] = useState(null);
@@ -86,19 +87,20 @@ const Inspector = () => {
                 orderId: orderId,
                 class: "text-left",
                 itemClass: "text-left",
-                item: qty,
+                item: functionUtils.addCommaToNumbers(qty),
               },
               {
                 orderId: orderId,
                 class: "text-left",
                 itemClass: "text-left",
-                item: total_price,
+                item: functionUtils.addCommaToNumbers(total_price),
               },
               {
                 orderId: orderId,
                 class: "text-left",
                 itemClass: "text-left",
                 item: total_volume,
+                // item: functionUtils.addCommaToNumbers(total_volume),
               },
               {
                 orderId: orderId,
