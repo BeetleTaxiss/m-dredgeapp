@@ -6,7 +6,6 @@ import TopNavbar from "./top-nav";
 import { BASE_API_URL } from "../../hooks/API";
 import "./navbar.scss";
 import {createUserMenu} from "./../../Menu";
-import {userMenu} from "./../../UserMenuMock";
 import { StoreManager } from "react-persistent-store-manager";
 import { AppStore, Stores } from "./../../state/store";
 import { errorAlert, functionUtils } from "../../hooks/function-utils";

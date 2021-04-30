@@ -28,7 +28,7 @@ import Users from "./components/users/users";
 import UsersActivitiesSummary from "./components/cards/users-activities-summary";
 import Inspector from "./components/inspector/inspector";
 import Security from "./components/security/security";
-import { Dashboard } from "./pages/dashboard";
+import Dashboard  from "./pages/dashboard";
 
 /** import all the dashboard items here  */
 import RecentOrders from "./components/cards/recent-orders";
@@ -51,6 +51,7 @@ import ActivitiesSummary from "./components/cards/activities-summary";
 import RecentExpenses from "./components/cards/recent-expenses";
 import CurrentActivity from "./components/cards/current-activity";
 import UserActivitiesLog from "./components/admin/UserActivitiesLog";
+import AppRouter from "./AppRouter";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -58,6 +59,7 @@ import UserActivitiesLog from "./components/admin/UserActivitiesLog";
  * @param userMenu
  */
 export const createUserRoutes = (userMenu) => {
+
   if (typeof userMenu !== "object") {
     alert("user permission provide must be an object");
     return console.error("user permission provide must be an object");
@@ -67,7 +69,34 @@ export const createUserRoutes = (userMenu) => {
    * loop over user menu location and check if there is a corresponding entry in the global menu
    * declaration. The global menu will contain all the menus in our application
    */
-  const globalMenu = Menu;
+   const globalMenu = Menu;
+
+  /** this is the default allowed routes for users irrespective of the permission they have */
+  let defaultAllowedAccess=[];
+
+  /** add the default route. This are the basic route that all user must have access to
+   * This is defined under `default` section of the `Menu` definition
+   */
+   if (globalMenu["default"] && typeof globalMenu["default"] === "object") {
+    Object.keys(globalMenu["default"]).forEach((defaultPage) => {
+      let currentPage = globalMenu["default"][defaultPage];
+      defaultAllowedAccess = defaultAllowedAccess.concat({ ...currentPage });
+    });
+  }
+
+  /**
+   * When userMenu i.e user permission is empty, there could be 3 reason for that
+   * 1. this user has not logged in before and is using application for the first time
+   * 2. user has cleared their browser cache so our `StorageManager` could not fetch the 
+   * previously saved permission for this user
+   * 3. we enforce clearing of user permission once application closes so that once user 
+   * opens app, they must login before we save their permission level.
+   * @Note: in any case, we will return the `defaultAllowedAccess` so that they can login afresh
+   */
+  if(userMenu===null) {
+    /** return  */
+    return defaultAllowedAccess;
+  }
 
   /** this is an array that holds all the permitted routes for our user */
   let userAccess = [];
@@ -109,28 +138,13 @@ export const createUserRoutes = (userMenu) => {
     }
   });
 
-  /** add the default route. This are the basic route that all user must have access to
-   * This is defined under `default` section of the `Menu` definition
-   */
-  if (globalMenu["default"] && typeof globalMenu["default"] === "object") {
-    Object.keys(globalMenu["default"]).forEach((defaultPage) => {
-      let currentPage = globalMenu["default"][defaultPage];
-      userAccess = userAccess.concat({ ...currentPage });
-    });
-  }
-  /**
-   * to fix a peculiar issue with `react-router-dom` where route definition at the top overrides
-   * navigation to route at the bottom even if such a route exist, we will make sure the default
-   * route comes first.  In `default` menu definition, we ensure that `dashboard` comes first
-   * this is to avoid `login` with the default route showing in /dashboard even when dashboard is also defined
-   * @todo: we need to investigate this behaviour
-   */
-  //const allAccessibleRoutes=[...defaultAllowedAccess, ...userAccess];
+  /** this is all the routes user can see, including the default ones*/
+  const allAccessibleRoutes=[...defaultAllowedAccess, ...userAccess];
 
-  console.log(userAccess, "all routes create");
+  console.log(allAccessibleRoutes, "All routes cretedd");
 
   /** return the routes created */
-  return userAccess;
+  return allAccessibleRoutes;
 };
 
 export const createUserMenu = (userMenu) => {
@@ -283,8 +297,16 @@ export const createUserDashboard = (userMenu) => {
     return console.error(msg);
   }
 
+    /** this user cannot see anything on the dashboard */
+    if (!userMenu === null) {
+      const msg = "User  menu empty";
+      /** we will return an empty array to avoid error */
+      console.log(msg);
+      return [];
+    }
+
   /**get the dashboard view user is allowed to see*/
-  const userDashboardViewsAllowed = userMenu["dashboard"] ?? null;
+  const userDashboardViewsAllowed = userMenu && userMenu["dashboard"] ?  userMenu["dashboard"] :  null;
 
   /** this user cannot see anything on the dashboard */
   if (userDashboardViewsAllowed === null) {
@@ -340,10 +362,21 @@ export const Menu = {
    * to all users irrespective of their user type and permission settings
    */
   default: {
-    /** using the `usePageWrapper= false`  will hide the page wrapper for this component*/
+    /** 
+     * this entry is process new valid route creation after user has successfully log in 
+     * This also add a second level of validation and ensure that user will not see the dashboard 
+     * until they are fully created based on permission
+     * */
+    appRouter: {
+      text: "App Router",
+      link: "/",
+      component:AppRouter ,
+      hideNavBar: true,
+      usePageWrapper: false,
+    },
     login: {
       text: "Login",
-      link: "/",
+      link: "/login",
       component: LoginPage,
       hideNavBar: true,
       usePageWrapper: false,
@@ -357,12 +390,15 @@ export const Menu = {
 
   /** the dashboard page definition */
   dashboard: {
+
+    /** using the `usePageWrapper= false`  will hide the page wrapper for this component*/
     dashboardHome: {
-      text: "Dashboard Content",
+      text: "Dashboard Home",
       link: "/dashboard",
       component: Dashboard,
       usePageWrapper: false,
     },
+
     /** The entries below define items to show only on the dashboard
      * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry.
      * Our dashboard creation method will check if `showOnDashboard` property is true before showing on the dashboard

@@ -11,6 +11,12 @@ import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { StoreManager } from "react-persistent-store-manager";
 import { Stores, AppStore } from "./../state/store";
+import { createUserRoutes } from "../Menu";
+import PageWrapper from "../components/general/page-wrapper";
+import {Route} from "react-router";
+import NavBar from "./../components/navbar/navbar";
+
+
 
 // Alerts
 export const successAlert = (title, text, link, showBtn) => {
@@ -96,7 +102,7 @@ const Login = async (user, password) => {
     Store.update("userType", responseData["user_type"]);
     Store.update("login", true);
 
-    // console.log(responseData.permission, "user perm from  db");
+    console.log(responseData.permission, "user perm from  db");
     Store.update(
       "permission",
       functionUtils.parseUserPermission(responseData.permission)
@@ -146,6 +152,72 @@ export const getUserStoreInstance = () => {
   /** create store instance */
   return StoreManager(AppStore, Stores, "UserStore");
 };
+
+/**
+ * Get the `UserStore` instance
+ */
+ export const getAppSettingStoreInstance = () => {
+  /** create store instance */
+  return StoreManager(AppStore, Stores, "AppSettingsStore");
+};
+
+
+/**
+ * use this function to create user routes based on the user permission level
+ */
+export const createUserAllowedRoutes=(userPermission)=>{
+/**
+* These are the valid routes this user can have access to within the application
+* Pass the `userMenu` provided during user setup
+*/
+let UserAllowedRoutes = createUserRoutes(userPermission).map((page, k) => {
+
+const {link, component, hideNavBar, usePageWrapper} = page;
+const Component = component;
+
+/**
+* process route component and hide navigation bar if `hideNavBar=false`
+* In the login menu definition, we will pass `usePageWrapper=false` property to be false
+* so that we can hide `PageWrapper` around the login page
+*/
+const PageComponent = () => {
+
+  const NavigationBar = hideNavBar && hideNavBar === true ? () => null : () => <NavBar/>;
+
+  /** Create an helper component for pageWrapper
+   */
+  const PageWrapperContainer = (props)=> {
+      if(usePageWrapper === false) {
+          /** no page wrapper needed */
+          return (
+              <>{props.children}</>
+          )
+      }
+      /** return pages with wrapper */
+      return (
+          <PageWrapper>
+              {props.children}
+          </PageWrapper>
+      )
+  }
+  return (
+      <>
+          <NavigationBar/>
+          <PageWrapperContainer>
+              <Component/>
+          </PageWrapperContainer>
+      </>
+  )
+}
+/** return the custom page component created based on our routes */
+return <Route key={k} path={link} component={PageComponent}/>
+});
+
+/** return allowed routes */
+return UserAllowedRoutes
+}
+
+
 
 /**
  * --------------------------------------------------------------------------------------------------------------
@@ -1125,9 +1197,10 @@ export const functionUtils = {
    * @param  {setUser} setUser
    * @param  {history} history
    * @param  {loaction} location
+   * @param  {approuter} approuter
    * ----------------------------------------------------------------------------------------------------------
    */
-  SignInFormSubmit: (errors, user, password, history, location) => {
+  SignInFormSubmit: (errors, user, password, history, location, successLocation="/approuter") => {
     const handleSubmit = (event) => {
       // event.preventDefault();
 
@@ -1143,7 +1216,7 @@ export const functionUtils = {
           if (response.status === false) {
           } else {
             history.push({
-              pathname: state?.from || `/dashboard`,
+              pathname: state?.from || successLocation,
               state: response,
             });
           }
@@ -1347,4 +1420,28 @@ export const functionUtils = {
     }
     return formInputValue;
   },
-};
+
+  /***
+   * convert first letter to upperCase
+   */
+  firstLetterToUpperCase:(value)=>{
+    if(!value) return null;
+    return value.split("").map((v, k)=>{
+        return k===0 ? v.toUpperCase(): v
+    }).join("");
+  },
+  
+  /**
+   * 
+   */
+  getUserPositionFromTypeId:(userTypes, userTypeId)=>{
+    if(!userTypes || userTypes.length <=0) return null;
+    if(userTypeId===null) return null;
+    
+    console.log(userTypes, "user Type entry");
+    for (let {id, userType} of userTypes) {
+      if(id===userTypeId)  return userType;
+    }
+  }
+
+}

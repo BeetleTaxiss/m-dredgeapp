@@ -1,7 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { getUserStoreInstance, getAppSettingStoreInstance, functionUtils } from "./../../hooks/function-utils";
+
 
 const HeaderNavbar = ({ logUserOut, setShowMenu }) => {
+
+  const [user, setUser] = useState("loading User...");
+  const [userType, setUserType] = useState(null);
+  const [userPosition, setUserPosition] = useState(null);
+
+  /** to hold the list of userTypes we retrieve from the store */
+  const [userTypes, setUserTypes] = useState(null);
+
+  const Store = getUserStoreInstance();
+
+  Store.useStateAsync("user").then(user => {
+    setUser(functionUtils.firstLetterToUpperCase(user));
+  });
+
+  Store.useStateAsync("userType").then(userType => {
+    setUser(userType);
+  });
+
+  const AppSettingStore = getAppSettingStoreInstance();
+  /** get the userTypes from store and pass to create */
+  AppSettingStore.useStateAsync("userTypes").then(userTypes => {
+    setUserTypes(userTypes);
+  });
+
+
+  /** refresh our page once we get the value of user and userType */
+  useEffect(() => {
+    /** 
+     * once we get userTypes value, we must get the description od the position User 
+     */
+    functionUtils.getUserPositionFromTypeId(userTypes, userType);
+  }, [user, userTypes, userType]);
+
   return (
     <div className="header-container">
       <header className="header navbar navbar-expand-sm">
@@ -233,8 +268,8 @@ const HeaderNavbar = ({ logUserOut, setShowMenu }) => {
             >
               <div className="media">
                 <div className="media-body align-self-center">
-                  <h6>Andy King</h6>
-                  <p>Manager</p>
+                  <h6>{user}</h6>
+                  <p>{userPosition}</p>
                 </div>
                 <img
                   src="assets/img/profile-7.jpeg"
