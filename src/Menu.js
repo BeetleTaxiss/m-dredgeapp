@@ -473,6 +473,7 @@ export const Menu = {
       text: "Order Receipt",
       link: "/orderreceipt",
       component: OrderReceipt,
+      showInMenu: false,
     },
     orderDispatchList: {
       text: "Orders Dispatch",

@@ -655,7 +655,7 @@ export const functionUtils = {
     console.log("New Production Capacity", temporaryProductionCapacity);
 
     // Production Capacity (in percentage) and time variables
-    const MAX_PRODUCTION_OUTPUT = 10000;
+    const MAX_PRODUCTION_OUTPUT = 350;
     const SECONDS = 3600;
     const DISTANCE_BENCHMARK = 1000;
     const pumping_distance_in_meters =
