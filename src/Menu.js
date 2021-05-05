@@ -628,30 +628,25 @@ export const Menu = {
       component: Inspector,
     },
   },
-
   /** activity report menu  */
-  impoundTruck: {
+  activityReport: {
     inspect: {
-      text: "Impound truck",
-      link: "/impoundtruck",
-      component: ImpoundTruck,
+      text: "Activity sheet",
+      link: "/activityreport",
+      component: ActivityReport,
     },
   },
-
-  // /** activity report menu  */
-  // activityReport: {
-  //   inspect: {
-  //     text: "Activity sheet",
-  //     link: "/activityreport",
-  //     component: ActivityReport,
-  //   },
-  // },
   /** security menu  */
   security: {
     inspect: {
       text: "Clear Order",
       link: "/security",
       component: Security,
+    },
+    impound: {
+      text: "Impound truck",
+      link: "/impoundtruck",
+      component: ImpoundTruck,
     },
   },
 };
