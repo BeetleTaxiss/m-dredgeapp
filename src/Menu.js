@@ -54,6 +54,7 @@ import UserActivitiesLog from "./components/admin/UserActivitiesLog";
 import FuelUpdateList from "./components/fuel-issues/fuel-update-list";
 import ActivityReport from "./components/activity-report/ActivityReport";
 import ImpoundTruck from "./components/security/impound-truck/ImpoundTruck";
+import ActivityReportList from "./components/activity-report/ActivityReportList";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -634,6 +635,11 @@ export const Menu = {
       text: "Activity sheet",
       link: "/activityreport",
       component: ActivityReport,
+    },
+    reportList: {
+      text: "Report List",
+      link: "/reportlist",
+      component: ActivityReportList,
     },
   },
   /** security menu  */
