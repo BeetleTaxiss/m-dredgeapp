@@ -77,7 +77,7 @@ const OrderForm = () => {
     const qtyValue = parseInt(document.getElementById("qty").value);
     const truckNoValue = document.getElementById("truckNo").value;
     const selectValue = parseInt(document.getElementById("select").value);
-    const commentValue = document.getElementById("comment").value;
+    // const commentValue = document.getElementById("comment").value;
     const { product } = handleOrderChange();
     console.log("Submitted Product", product);
 
@@ -93,7 +93,7 @@ const OrderForm = () => {
       "total-price": totalPrice,
       "truck-no": truckNoValue,
       description: product[0].description,
-      comment: commentValue,
+      comment: "",
     };
     console.log("Add Order Data: ", addOrderData);
     if (error || !error) {
@@ -125,7 +125,7 @@ const OrderForm = () => {
           document.getElementById("qty").value = "";
           document.getElementById("truckNo").value = "";
           document.getElementById("select").value = 0;
-          document.getElementById("comment").value = "";
+          // document.getElementById("comment").value = "";
           setTotalPrice(0);
         }
       });

@@ -67,6 +67,8 @@ const PageHeader = () => {
       ? "Fuel Update List"
       : url === "/profile"
       ? "Account settings"
+      : url === "/activityreport"
+      ? "Activity Report"
       : null;
   const breadCrumbsData = [
     { text: "Dashboard", link: "/dashboard" },

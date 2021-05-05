@@ -52,6 +52,7 @@ import RecentExpenses from "./components/cards/recent-expenses";
 import CurrentActivity from "./components/cards/current-activity";
 import UserActivitiesLog from "./components/admin/UserActivitiesLog";
 import FuelUpdateList from "./components/fuel-issues/fuel-update-list";
+import ActivityReport from "./components/activity-report/ActivityReport";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -627,6 +628,14 @@ export const Menu = {
     },
   },
 
+  /** activity report menu  */
+  activityReport: {
+    inspect: {
+      text: "Report sheet",
+      link: "/activityreport",
+      component: ActivityReport,
+    },
+  },
   /** security menu  */
   security: {
     inspect: {
