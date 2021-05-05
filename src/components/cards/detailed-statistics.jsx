@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Skeleton from "react-loading-skeleton";
 import { BASE_API_URL } from "../../hooks/API";
 
-import { ReactComponent as Followers } from "../../assets/followers.svg";
-import { ReactComponent as Linkk } from "../../assets/link.svg";
-import { ReactComponent as Chat } from "../../assets/chat.svg";
-
-import excavator from "../../assets/excavator.jpg";
-import stockImg from "../../assets/excavator2.jpg";
-import stockpiledImg from "../../assets/excavator3.jpg";
-import { addCommaToNumbers } from "./recent-orders";
-import { functionUtils } from "../../hooks/function-utils";
+import CustomDetailedStats from "./CustomDetailedStats";
 const DetailedStatistics = () => {
   const [detailedStats, setDetailedStats] = useState([
-    "loading",
+    "load",
     "loading",
     "loading",
   ]);
@@ -68,6 +59,7 @@ const DetailedStatistics = () => {
                   : total_stock
                   ? "Total stock"
                   : null,
+                img: true,
               };
 
               return (detailedStatsList = detailedStatsList.concat(
@@ -102,92 +94,7 @@ const DetailedStatistics = () => {
     });
   };
 
-  const DetailedStatsComponent = () => (
-    <div className="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
-      <div className="row widget-statistic">
-        {detailedStats[0] === "loading"
-          ? detailedStats.map((item, i) => (
-              <div
-                key={i}
-                className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing"
-              >
-                <div className="widget widget-one_hybrid widget-followers">
-                  <div
-                    className="widget-heading"
-                    style={{ marginBottom: "0px" }}
-                  >
-                    <Skeleton height={40} />
-                    <Skeleton height={40} />
-                    <Skeleton height={300} />
-                  </div>
-                </div>
-              </div>
-            ))
-          : detailedStats.map((item, i) => {
-              console.log("string: ", item.stats);
-              return (
-                <div
-                  key={i}
-                  className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing"
-                >
-                  <div className="widget widget-one_hybrid widget-followers">
-                    <div
-                      className="widget-heading"
-                      style={{ marginBottom: "0px" }}
-                    >
-                      <div className="w-title">
-                        <div className="w-icon">
-                          {item.followers ? (
-                            <Followers />
-                          ) : item.linkk ? (
-                            <Linkk />
-                          ) : item.chat ? (
-                            <Chat />
-                          ) : null}
-                        </div>
-                        <div className="">
-                          <p className="w-value">
-                            {functionUtils.addCommaToNumbers(item.stats)}
-                          </p>
-                          <h5 className="">{item.legend}</h5>
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          backgroundImage: `url(${
-                            item.followers
-                              ? excavator
-                              : item.linkk
-                              ? stockpiledImg
-                              : item.chat
-                              ? stockImg
-                              : null
-                          })`,
-                          height: "300px",
-                          width: "100%",
-                          backgroundSize: "cover",
-                          // backgroundSize: item.followers
-                          //   ? "cover"
-                          //   : item.linkk
-                          //   ? "contain"
-                          //   : item.chat
-                          //   ? "contain"
-                          //   : "cover",
-                          backgroundPosition: "center",
-                          backgroundRepeat: "no-repeat",
-                          borderRadius: "10px",
-                          marginTop: "2rem",
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-      </div>
-    </div>
-  );
-  return <DetailedStatsComponent />;
+  return <CustomDetailedStats data={detailedStats} />;
 };
 
 export default DetailedStatistics;
