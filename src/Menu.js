@@ -53,6 +53,7 @@ import CurrentActivity from "./components/cards/current-activity";
 import UserActivitiesLog from "./components/admin/UserActivitiesLog";
 import FuelUpdateList from "./components/fuel-issues/fuel-update-list";
 import ActivityReport from "./components/activity-report/ActivityReport";
+import ImpoundTruck from "./components/security/impound-truck/ImpoundTruck";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -629,13 +630,22 @@ export const Menu = {
   },
 
   /** activity report menu  */
-  activityReport: {
+  impoundTruck: {
     inspect: {
-      text: "Report sheet",
-      link: "/activityreport",
-      component: ActivityReport,
+      text: "Impound truck",
+      link: "/impoundtruck",
+      component: ImpoundTruck,
     },
   },
+
+  // /** activity report menu  */
+  // activityReport: {
+  //   inspect: {
+  //     text: "Activity sheet",
+  //     link: "/activityreport",
+  //     component: ActivityReport,
+  //   },
+  // },
   /** security menu  */
   security: {
     inspect: {

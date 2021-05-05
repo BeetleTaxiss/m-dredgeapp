@@ -69,6 +69,8 @@ const PageHeader = () => {
       ? "Account settings"
       : url === "/activityreport"
       ? "Activity Report"
+      : url === "/impoundtruck"
+      ? "Impound Truck"
       : null;
   const breadCrumbsData = [
     { text: "Dashboard", link: "/dashboard" },

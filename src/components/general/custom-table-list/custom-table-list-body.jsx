@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import { ReactComponent as EditIcon } from "../../../assets/editIcon.svg";
 import { ReactComponent as DeleteIcon } from "../../../assets/deleteIcon.svg";
+import { ReactComponent as ReleaseIcon } from "../../../assets/releaseIcon.svg";
 import { functionUtils } from "../../../hooks/function-utils";
 const CustomTableListBody = ({ content, setLoad }) => {
   return (
@@ -133,6 +134,12 @@ const CustomTableListBody = ({ content, setLoad }) => {
                   </button>
                 ) : field.delete ? (
                   <DeleteIcon
+                    onClick={() => {
+                      return field.onClick ? field.onClick() : null;
+                    }}
+                  />
+                ) : field.release ? (
+                  <ReleaseIcon
                     onClick={() => {
                       return field.onClick ? field.onClick() : null;
                     }}
