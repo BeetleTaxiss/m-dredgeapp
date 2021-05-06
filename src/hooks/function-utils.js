@@ -1628,8 +1628,8 @@ export const functionUtils = {
     if (userTypeId === null) return null;
 
     console.log(userTypes, "user Type entry");
-    for (let { id, userType } of userTypes) {
-      if (id === userTypeId) return userType;
+    for (let { id, user_type } of userTypes) {
+      if (id === userTypeId) return user_type;
     }
   },
 };
