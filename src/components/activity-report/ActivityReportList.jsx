@@ -33,8 +33,17 @@ const ActivityReportList = () => {
                   next_week_tasks = item.next_week_task;
 
                 const task_id = parseInt(item.id);
-                item["item_log"] = "item-log";
+
                 console.log("Item log: ", item);
+                const singleActivityReportPopup = {
+                  date: date,
+                  week: work_week,
+                  "submitted-by": user_name,
+                  "tasks-completed": completed_tasks,
+                  "tasks-ongoing": ongoing_tasks,
+                  "nextweek-tasks": next_week_tasks,
+                  "approved-by": item.approved_by,
+                };
                 const activityReportItemData = {
                   "user-id": user_id,
                   user: user_name,
@@ -86,7 +95,7 @@ const ActivityReportList = () => {
                     },
                     {
                       class: "text-left",
-                      link: () => showLogItem(item),
+                      link: () => showLogItem(singleActivityReportPopup),
                       userLog: true,
                       linkText: "View Activity Report",
                       itemClass: "btn btn-primary",
