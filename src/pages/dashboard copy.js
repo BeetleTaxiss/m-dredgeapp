@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import PageWrapper from "../components/general/page-wrapper";
 import { createUserDashboard } from "./../Menu";
+import { StoreManager } from "react-persistent-store-manager";
+import { Stores, AppStore } from "./../state/store";
 import { functionUtils, getUserStoreInstance } from "./../hooks/function-utils";
 
 export default function  Dashboard ()  {
@@ -22,7 +24,7 @@ export default function  Dashboard ()  {
 
   /** set get the user permission and set */
   Store.useStateAsync("permission").then((permission) => {
-    // console.log(permission, "user perm");
+    console.log(permission, "user perm");
     setUserPermission(permission);
   });
 
