@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-<<<<<<< HEAD
 import { getUserStoreInstance, getAppSettingStoreInstance, functionUtils } from "./../../hooks/function-utils";
 
 
@@ -11,16 +10,6 @@ const HeaderNavbar = ({ logUserOut, setShowMenu }) => {
       <header className="header navbar navbar-expand-sm">
         <button
           to="#"
-=======
-import profileImg from "../../assets/blankProfileImg.png";
-
-const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
-  return (
-    <div className="header-container">
-      <header className="header navbar navbar-expand-sm">
-        <Link
-          to="javascript:void(0)"
->>>>>>> 88a584c3113f4dab8d598af8e054d7cf74dd62c7
           onClick={() => setShowMenu((prev) => !prev)}
           className="sidebarCollapse"
           data-placement="bottom"
@@ -55,8 +44,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
         <ul className="navbar-item flex-row nav-dropdowns">
           <li className="nav-item dropdown notification-dropdown">
             <Link
-              to="javascript:void(0)"
-              onClick={(e) => e.preventDefault()}
+              to="#"
               className="nav-link dropdown-toggle"
               id="notificationDropdown"
               data-toggle="dropdown"
@@ -237,17 +225,9 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
             </div>
           </li>
 
-          <li
-            id="nav-item-user-dropdown"
-            className="nav-item dropdown user-profile-dropdown order-lg-0 order-1"
-            onClick={() => {
-              document.getElementById("nav-item-user-dropdown").class =
-                "nav-item dropdown user-profile-dropdown order-lg-0 order-1 show";
-            }}
-          >
+          <li className="nav-item dropdown user-profile-dropdown order-lg-0 order-1">
             <Link
-              to="javascript:void(0)"
-              onClick={(e) => e.preventDefault()}
+              to="#"
               className="nav-link dropdown-toggle user"
               id="user-profile-dropdown"
               data-toggle="dropdown"
@@ -256,16 +236,11 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
             >
               <div className="media">
                 <div className="media-body align-self-center">
-<<<<<<< HEAD
                   <h6>{"Demo"}</h6>
                   <p>{"admin"}</p>
-=======
-                  <h6>{userName}</h6>
-                  <p>{userType}</p>
->>>>>>> 88a584c3113f4dab8d598af8e054d7cf74dd62c7
                 </div>
                 <img
-                  src={profileImg}
+                  src="assets/img/profile-7.jpeg"
                   className="img-fluid"
                   alt="admin-profile"
                 />
@@ -298,17 +273,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
                 </Link>
               </div>
               <div className="dropdown-item">
-<<<<<<< HEAD
                 <button to="#" onClick={() => logUserOut()}>
-=======
-                <Link
-                  to="javascript:void(0)"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    logUserOut();
-                  }}
-                >
->>>>>>> 88a584c3113f4dab8d598af8e054d7cf74dd62c7
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
