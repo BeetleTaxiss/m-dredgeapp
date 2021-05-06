@@ -23,12 +23,13 @@ import Products from "./components/products/products";
 import AddFuel from "./components/fuel-issues/add-fuel";
 import FuelIssueList from "./components/fuel-issues/fuel-issue-list";
 import FuelIssuing from "./components/fuel-issues/fuel-issuing";
+import FuelUpdateList from "./components/fuel-issues/fuel-update-list";
 import Machinery from "./components/operations/machinery";
 import Users from "./components/users/users";
 import UsersActivitiesSummary from "./components/cards/users-activities-summary";
 import Inspector from "./components/inspector/inspector";
 import Security from "./components/security/security";
-import Dashboard  from "./pages/dashboard";
+import Dashboard from "./pages/dashboard";
 
 /** import all the dashboard items here  */
 import RecentOrders from "./components/cards/recent-orders";
@@ -52,14 +53,15 @@ import RecentExpenses from "./components/cards/recent-expenses";
 import CurrentActivity from "./components/cards/current-activity";
 import UserActivitiesLog from "./components/admin/UserActivitiesLog";
 import AppRouter from "./AppRouter";
+import DashboardRouter from "./pages/DashboardRouter";
+import TimeKeeper from "react-timekeeper";
 
 /**
  * Create a menu route for app user based on user permission level
  * @constructor
  * @param userMenu
  */
-export const createUserRoutes = (userMenu) => {
-
+export const createUserRoutes = (userMenu, addDefaultRoutes = true) => {
   if (typeof userMenu !== "object") {
     alert("user permission provide must be an object");
     return console.error("user permission provide must be an object");
@@ -69,31 +71,34 @@ export const createUserRoutes = (userMenu) => {
    * loop over user menu location and check if there is a corresponding entry in the global menu
    * declaration. The global menu will contain all the menus in our application
    */
-   const globalMenu = Menu;
+  const globalMenu = Menu;
 
   /** this is the default allowed routes for users irrespective of the permission they have */
-  let defaultAllowedAccess=[];
+  let defaultAllowedAccess = [];
 
   /** add the default route. This are the basic route that all user must have access to
    * This is defined under `default` section of the `Menu` definition
+   * @Note: by default we will not add this route
    */
-   if (globalMenu["default"] && typeof globalMenu["default"] === "object") {
-    Object.keys(globalMenu["default"]).forEach((defaultPage) => {
-      let currentPage = globalMenu["default"][defaultPage];
-      defaultAllowedAccess = defaultAllowedAccess.concat({ ...currentPage });
-    });
+  if (addDefaultRoutes) {
+    if (globalMenu["default"] && typeof globalMenu["default"] === "object") {
+      Object.keys(globalMenu["default"]).forEach((defaultPage) => {
+        let currentPage = globalMenu["default"][defaultPage];
+        defaultAllowedAccess = defaultAllowedAccess.concat({ ...currentPage });
+      });
+    }
   }
 
   /**
    * When userMenu i.e user permission is empty, there could be 3 reason for that
    * 1. this user has not logged in before and is using application for the first time
-   * 2. user has cleared their browser cache so our `StorageManager` could not fetch the 
+   * 2. user has cleared their browser cache so our `StorageManager` could not fetch the
    * previously saved permission for this user
-   * 3. we enforce clearing of user permission once application closes so that once user 
+   * 3. we enforce clearing of user permission once application closes so that once user
    * opens app, they must login before we save their permission level.
    * @Note: in any case, we will return the `defaultAllowedAccess` so that they can login afresh
    */
-  if(userMenu===null) {
+  if (userMenu === null) {
     /** return  */
     return defaultAllowedAccess;
   }
@@ -139,12 +144,32 @@ export const createUserRoutes = (userMenu) => {
   });
 
   /** this is all the routes user can see, including the default ones*/
-  const allAccessibleRoutes=[...defaultAllowedAccess, ...userAccess];
+  const allAccessibleRoutes = [...userAccess, ...defaultAllowedAccess];
 
   console.log(allAccessibleRoutes, "All routes cretedd");
 
   /** return the routes created */
   return allAccessibleRoutes;
+};
+
+/**
+ * The default route that create when it starts
+ */
+export const createDefaultRoutes = () => {
+  const globalMenu = Menu;
+
+  let defaultAllowedAccess = [];
+
+  /** This are the basic route that all user must have access to
+   * This is defined under `default` section of the `Menu` definition
+   */
+  if (globalMenu["default"] && typeof globalMenu["default"] === "object") {
+    Object.keys(globalMenu["default"]).forEach((defaultPage) => {
+      let currentPage = globalMenu["default"][defaultPage];
+      defaultAllowedAccess = defaultAllowedAccess.concat({ ...currentPage });
+    });
+  }
+  return defaultAllowedAccess;
 };
 
 export const createUserMenu = (userMenu) => {
@@ -279,6 +304,7 @@ export const createUserMenu = (userMenu) => {
  * @returns
  */
 export const createUserDashboard = (userMenu) => {
+
   if (typeof userMenu !== "object") {
     const msg = "user permission provide must be an object";
     alert(msg);
@@ -297,16 +323,17 @@ export const createUserDashboard = (userMenu) => {
     return console.error(msg);
   }
 
-    /** this user cannot see anything on the dashboard */
-    if (!userMenu === null) {
-      const msg = "User  menu empty";
-      /** we will return an empty array to avoid error */
-      console.log(msg);
-      return [];
-    }
+  /** this user cannot see anything on the dashboard */
+  if (!userMenu === null) {
+    const msg = "User  menu empty";
+    /** we will return an empty array to avoid error */
+    console.log(msg);
+    return [];
+  }
 
   /**get the dashboard view user is allowed to see*/
-  const userDashboardViewsAllowed = userMenu && userMenu["dashboard"] ?  userMenu["dashboard"] :  null;
+  const userDashboardViewsAllowed =
+    userMenu && userMenu["dashboard"] ? userMenu["dashboard"] : null;
 
   /** this user cannot see anything on the dashboard */
   if (userDashboardViewsAllowed === null) {
@@ -319,7 +346,14 @@ export const createUserDashboard = (userMenu) => {
   /** this will hold all the dashboard views user will see */
   let userDashboard = [];
 
-  Object.keys(userDashboardViewsAllowed).forEach((menuLocation) => {
+  /** 
+   * for menu arrangement, we will put our dashboard items inside menu groups
+   * */
+  let userDashboardGroup= [];
+
+  console.log(userDashboardGroup, "Initial dashboard group");
+
+  Object.keys(userDashboardViewsAllowed).forEach((menuLocation, k) => {
     if (
       globalDashboardMenu[menuLocation] &&
       globalDashboardMenu[menuLocation] !== null &&
@@ -328,7 +362,7 @@ export const createUserDashboard = (userMenu) => {
       /** check if we are showing this menu entry on the dashboard
        * Please see `Menu` definition under the `dashboard` property for details
        */
-      const { showOnDashboard } = globalDashboardMenu[menuLocation];
+      const { showOnDashboard, menuGroup } = globalDashboardMenu[menuLocation];
 
       /** Assign this dashboard view for this user
        * @todo: in the future, we could perform more function here to assign based on each menu row
@@ -337,17 +371,32 @@ export const createUserDashboard = (userMenu) => {
        */
       //console.log(globalDashboardMenu[menuLocation]["component"], " will assign this now ")
       if (showOnDashboard === true) {
-        console.log(showOnDashboard, "will show on dashboard");
-        const CurrentDashboardComponent =
-          globalDashboardMenu[menuLocation]["component"];
-        userDashboard = userDashboard.concat(<CurrentDashboardComponent />);
-        // userDashboard = userDashboard.concat(<div><TotalOrders/></div>);
+        const CurrentDashboardComponent = globalDashboardMenu[menuLocation]["component"];
+        const menuId = `${menuLocation}-${k}`;
+        
+        if(!userDashboardGroup[menuGroup]) {
+          /** add dashboard as an array */
+          userDashboardGroup[menuGroup]=[<CurrentDashboardComponent key={menuId} />]
+        }  else {
+          /** there is an existing entry for this menuGroup. Concat this dashboard content to it */
+          userDashboardGroup[menuGroup]=userDashboardGroup[menuGroup].concat(<CurrentDashboardComponent key={menuId} />)
+        }
       }
-      // userDashboard = userDashboard.concat(<div>Hello From Menu creation</div>);
     }
   });
+
+  console.log(userDashboardGroup, "user menu group");
+
+  // /** finally, to ensure that we force each menuGroup to its own row */
+  // for (let k=0 ; k < userDashboardGroup.length; k++) {
+  //   const menuRow= userDashboardGroup[k];
+  //   console.log(menuRow, "menu Group");
+  //   userDashboard=userDashboard.concat(<div key={k} style={{width:"100vw"}}>{menuRow}</div>);
+  // }
+
   /** return the dashboard created */
-  return userDashboard;
+  //return userDashboard;
+  return userDashboardGroup;
 };
 
 /**
@@ -362,21 +411,14 @@ export const Menu = {
    * to all users irrespective of their user type and permission settings
    */
   default: {
-    /** 
-     * this entry is process new valid route creation after user has successfully log in 
-     * This also add a second level of validation and ensure that user will not see the dashboard 
+    /**
+     * this entry is process new valid route creation after user has successfully log in
+     * This also add a second level of validation and ensure that user will not see the dashboard
      * until they are fully created based on permission
      * */
-    appRouter: {
-      text: "App Router",
-      link: "/",
-      component:AppRouter ,
-      hideNavBar: true,
-      usePageWrapper: false,
-    },
     login: {
       text: "Login",
-      link: "/login",
+      link: "/",
       component: LoginPage,
       hideNavBar: true,
       usePageWrapper: false,
@@ -390,11 +432,10 @@ export const Menu = {
 
   /** the dashboard page definition */
   dashboard: {
-
     /** using the `usePageWrapper= false`  will hide the page wrapper for this component*/
     dashboardHome: {
       text: "Dashboard Home",
-      link: "/dashboard",
+      link: "/",
       component: Dashboard,
       usePageWrapper: false,
     },
@@ -402,14 +443,16 @@ export const Menu = {
     /** The entries below define items to show only on the dashboard
      * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry.
      * Our dashboard creation method will check if `showOnDashboard` property is true before showing on the dashboard
+     * Also, we have added `menuGroup` option which will check which menu group to assign this dashboard iem
      */
     totalOrders: {
       text: "Total Orders",
-      link: "dashboard",
+      link: "#",
       component: TotalOrders,
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:1
     },
     recentOrders: {
       text: "Recent Orders",
@@ -418,6 +461,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:2
     },
     totalRevenue: {
       text: "Total Revenue",
@@ -426,6 +470,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:1
     },
     summary: {
       text: "Summary",
@@ -434,13 +479,16 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:4
     },
     detailedStatistics: {
       text: "Detailed Statistics",
+      link: "#",
       component: DetailedStatistics,
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:3
     },
     activitiesSummary: {
       text: "Activities Summary",
@@ -449,6 +497,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:3
     },
     totalStockpile: {
       text: "Total Stockpile",
@@ -457,6 +506,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:1
     },
     recentSummary: {
       text: "Recent Summary",
@@ -465,6 +515,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:2
     },
     currentActivity: {
       text: "Current Activity",
@@ -473,6 +524,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:4
     },
     usersActivitiesSummary: {
       text: "Users Activities Summary",
@@ -481,6 +533,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
+      menuGroup:4
     },
   },
 
@@ -635,7 +688,7 @@ export const Menu = {
     fuelStockEntry: {
       text: "Fuel Stock Entry",
       link: "/fuelupdatelist",
-      component: FuelIssueList,
+      component: FuelUpdateList,
     },
   },
 
