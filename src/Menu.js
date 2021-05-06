@@ -435,6 +435,12 @@ export const Menu = {
       link: "/profile",
       component: Profile,
     },
+    dashboardHome: {
+      text: "Dashboard Home",
+      link: "/",
+      component: Dashboard,
+      usePageWrapper: false,
+    },
   },
 
   /** the dashboard page definition */
@@ -824,4 +830,11 @@ export const MenuStyles = {
     link: "security",
     menuClass: "security",
   },
+  activityReport: {
+    icon: null,
+    text: "Activity Report",
+    dropdownIcon: dropdownIcon,
+    link: "#",
+    menuClass: "activity-report",
+  }
 };
