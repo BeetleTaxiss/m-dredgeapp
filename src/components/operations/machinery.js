@@ -173,7 +173,7 @@ const Machinery = () => {
         } else {
           let title = "Machinery Deleted Successfully",
             text = res.data.message,
-            link = `<a href="/operationss">View Machinery List</a>`;
+            link = `<a href="/operations">View Machinery List</a>`;
           successAlert(title, text, link);
         }
       });

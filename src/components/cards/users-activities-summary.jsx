@@ -53,11 +53,13 @@ const UsersActivitiesSummary = () => {
         : action_taken === "delete" && action_received === "operation_machinery"
         ? `${action_instigator} deleted ${action_data.machinery_name} from machinery list`
         : /**Updated items description */
-        action_taken === "update" && action_received === "product"
+        action_taken === "update"
         ? `${action_instigator} ${items(updatedItems)} from products list`
-        : action_taken === "update" && action_received === "account_accounts"
-        ? `${action_instigator} updated ${action_data.data[0].account} from accounts list`
-        : "Hello";
+        : // : action_taken === "update" && action_received === "account_accounts"
+          // ? `${action_instigator} updated ${action_data.data[0].account} from accounts list`
+          // : action_taken === "update" && action_received === "account_accounts"
+          // ? `${action_instigator} updated ${action_data.data[0].account} from accounts list`
+          "Hello";
     /** Truncate description over 100 characters */
     return functionUtils.truncate(description, 100);
   };

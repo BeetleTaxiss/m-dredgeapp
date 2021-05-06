@@ -22,7 +22,7 @@ const StockUpdate = () => {
               errorAlert(title, text);
             } else {
               const stockUpdateItems = res.data.data;
-              stockUpdateItems.map((item) => {
+              stockUpdateItems.reverse().map((item) => {
                 /** Get required response data values */
                 const product = item.product;
                 const production_id = item.id;

@@ -55,6 +55,9 @@ import UserActivitiesLog from "./components/admin/UserActivitiesLog";
 import AppRouter from "./AppRouter";
 import DashboardRouter from "./pages/DashboardRouter";
 import TimeKeeper from "react-timekeeper";
+import ActivityReport from "./components/activity-report/ActivityReport";
+import ImpoundTruck from "./components/security/impound-truck/ImpoundTruck";
+import ActivityReportList from "./components/activity-report/ActivityReportList";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -105,6 +108,10 @@ export const createUserRoutes = (userMenu, addDefaultRoutes = true) => {
 
   /** this is an array that holds all the permitted routes for our user */
   let userAccess = [];
+
+  if (userMenu === null) {
+    return userAccess;
+  }
 
   /**
    * loop over the user menu, and menu if found in the globalMenu definition, we will also loop
@@ -557,6 +564,7 @@ export const Menu = {
       text: "Order Receipt",
       link: "/orderreceipt",
       component: OrderReceipt,
+      showInMenu: false,
     },
     orderDispatchList: {
       text: "Orders Dispatch",
@@ -709,13 +717,30 @@ export const Menu = {
       component: Inspector,
     },
   },
-
+  /** activity report menu  */
+  activityReport: {
+    inspect: {
+      text: "Activity sheet",
+      link: "/activityreport",
+      component: ActivityReport,
+    },
+    reportList: {
+      text: "Report List",
+      link: "/reportlist",
+      component: ActivityReportList,
+    },
+  },
   /** security menu  */
   security: {
     inspect: {
       text: "Clear Order",
       link: "/security",
       component: Security,
+    },
+    impound: {
+      text: "Impound truck",
+      link: "/impoundtruck",
+      component: ImpoundTruck,
     },
   },
 };

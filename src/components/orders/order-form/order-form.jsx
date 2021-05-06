@@ -1,42 +1,54 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { useFormData } from "../../../hooks/useFormData";
 import { FormDetails } from "./order-form-details";
 import WidgetHeader from "../../general/widget-header";
 import { BASE_API_URL } from "../../../hooks/API";
-import StatusModal from "../../general/modal/status-modal";
-import { errorOrderData, successfulOrderData } from "./order-form-data";
 import LoadingButton from "../../general/loading-button";
-import { functionUtils } from "../../../hooks/function-utils";
-
+import {
+  errorAlert,
+  functionUtils,
+  successAlertWithFunction,
+  useGetUserDetails,
+} from "../../../hooks/function-utils";
 
 const OrderForm = () => {
   const [order, setOrder] = useState();
   const [products, setProducts] = useState();
   const [totalPrice, setTotalPrice] = useState(0);
-  const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+
+  /** User Details state is passed to useGetUserDetails hook which makes an async call to the store (react persistent store manager) and get single store entries  */
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
   useEffect(() => {
-    axios.get(`${BASE_API_URL}/api/v1/product/list.php`).then((res) => {
-      console.log(res.data);
-      if (res.data.error) {
-        console.log("Products Erro: ", res.data.error);
-      } else {
-        const data = res.data.data;
-        const newArray = data.unshift({
-          id: "0",
-          product: "Select Product",
-          price: 0,
-          validation: "Can't select this option",
-        });
-        console.log("New Array", newArray);
-        console.log("New Data", data);
-        setProducts(data);
-      }
-    });
+    axios
+      .get(`${BASE_API_URL}/api/v1/product/list.php`)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.error) {
+          console.log("Products Erro: ", res.data.error);
+        } else {
+          const data = res.data.data;
+          data.unshift({
+            id: "0",
+            product: "Select Product",
+            price: 0,
+            validation: "Can't select this option",
+          });
+          setProducts(data);
+        }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+      });
   }, []);
+
+  /** Get user Details from Store */
+  useGetUserDetails(setUserName, setUserId);
 
   const handleOrderChange = () => {
     // Get form values with document,getById
@@ -65,18 +77,15 @@ const OrderForm = () => {
     const qtyValue = parseInt(document.getElementById("qty").value);
     const truckNoValue = document.getElementById("truckNo").value;
     const selectValue = parseInt(document.getElementById("select").value);
-    const commentValue = document.getElementById("comment").value;
+    // const commentValue = document.getElementById("comment").value;
     const { product } = handleOrderChange();
     console.log("Submitted Product", product);
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      userName = userDetails.username,
-      userId = parseInt(userDetails.id);
 
     const addOrderData = {
       "product-id": selectValue,
       product: product[0].product,
       user: userName,
-      "user-id": userId,
+      "user-id": parseInt(userId),
       qty: qtyValue,
       unit: product[0].unit,
       "unit-price": product[0].price,
@@ -84,7 +93,7 @@ const OrderForm = () => {
       "total-price": totalPrice,
       "truck-no": truckNoValue,
       description: product[0].description,
-      comment: commentValue,
+      comment: "",
     };
     console.log("Add Order Data: ", addOrderData);
     if (error || !error) {
@@ -97,16 +106,26 @@ const OrderForm = () => {
         console.log("ADD ORDER: ", res.data);
         if (res.data.error) {
           setError(true);
-          setShowModal(true);
-          setErrorMsg(res.data.message);
+          errorAlert("Order not completed", res.data.message);
         } else {
           setError(false);
-          setShowModal(true);
+          /** Handle order on successful confirmation */
+          const handleConfirmed = () =>
+            document.getElementById("order-success").click();
+
+          successAlertWithFunction(
+            "Order completed successfully",
+            res.data.message,
+            false,
+            "View Order ->",
+            handleConfirmed
+          );
+
           setOrder(res.data.data);
           document.getElementById("qty").value = "";
           document.getElementById("truckNo").value = "";
           document.getElementById("select").value = 0;
-          document.getElementById("comment").value = "";
+          // document.getElementById("comment").value = "";
           setTotalPrice(0);
         }
       });
@@ -114,19 +133,21 @@ const OrderForm = () => {
 
   /** wrapper to get form data for validation */
   const getFormDataWrapper = () => {
-    const qtyValue = document.getElementById("qty").value;
+    const qtyValue = /^\d+$/.test(document.getElementById("qty").value)
+      ? parseInt(document.getElementById("qty").value)
+      : NaN;
     const truckNoValue = document.getElementById("truckNo").value;
-    const selectValue = document.getElementById("select").value;
+    const selectValue = /^\d+$/.test(document.getElementById("select").value)
+      ? parseInt(document.getElementById("select").value)
+      : NaN;
     const { product } = handleOrderChange();
-    console.log("Submitted Product", product);
-    const user = JSON.parse(localStorage.getItem("user"));
-    console.log("User Object: ", user);
+    const userid = /^\d+$/.test(userId) ? parseInt(userId) : NaN;
     const addOrderData = {
       "product-id": selectValue,
       product: product[0].product,
       validation: product[0].validation,
-      user: user.username,
-      "user-id": user.id,
+      user: userName,
+      "user-id": userid,
       qty: qtyValue,
       unit: product[0].unit,
       "unit-price": product[0].price,
@@ -187,19 +208,15 @@ const OrderForm = () => {
               </form>
             </div>
           </div>
-          {showModal && (
-            <StatusModal
-              status={error}
-              showModal={showModal}
-              setLoading={setLoading}
-              setShowModal={setShowModal}
-              itemSuccess={successfulOrderData}
-              itemError={errorOrderData}
-              errorMsg={errorMsg}
-              orderId={order}
-            />
-          )}
         </div>
+        <Link
+          id="order-success"
+          style={{ visibility: "hidden" }}
+          to={{
+            pathname: "/orderreceipt",
+            state: order,
+          }}
+        />
       </div>
     </div>
   );

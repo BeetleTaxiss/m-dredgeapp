@@ -3,8 +3,40 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 export const showDetailedLogItem = (logItem) => {
   let keyValuePair = [];
   let oldKeyValuePair = [];
-  const newData = JSON.parse(logItem.data);
-  const oldData = JSON.parse(logItem.data_old);
+  const newData = JSON.parse(logItem.data && logItem.data);
+  const oldData = JSON.parse(logItem.data_old && logItem.data_old);
+  console.log("Log Item: ", logItem);
+
+  if (logItem.item_log === "item-log") {
+    alert("Fired");
+    for (const [key, value] of Object.entries(logItem)) {
+      keyValuePair = keyValuePair.concat({
+        id: key,
+        fields: [
+          {
+            class: "text-left",
+            itemClass: "text-center",
+            item: key,
+          },
+          {
+            class: "text-left",
+            itemClass: "text-center",
+            item: value,
+          },
+        ],
+      });
+    }
+    /** Detailed Log List Table Data */
+    const detailedLogListTableData = {
+      tableTitle: "Deleted Item",
+      header: [
+        { class: "", title: "Data Field" },
+        { class: "", title: "Value" },
+      ],
+      body: keyValuePair,
+    };
+    return <CustomTableList content={detailedLogListTableData} />;
+  }
 
   if (logItem.action === "delete") {
     for (const [key, value] of Object.entries(newData)) {

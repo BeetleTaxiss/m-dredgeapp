@@ -11,6 +11,13 @@ import ExpenseReportTablepaiginaition from "./expense-report-tablepaiginaition";
 const expenseReportData = {
   tableHeader: [
     {
+      text: "Date",
+      className: "sorting",
+      ariaLabel: "Start date: activate to sort column ascending",
+      // ariaSort: "descending",
+      width: "81px",
+    },
+    {
       text: "Expenses",
       className: "sorting",
       ariaLabel: "Name: activate to sort column ascending",
@@ -38,13 +45,7 @@ const expenseReportData = {
       ariaSort: "descending",
       width: "31px",
     },
-    {
-      text: "Date",
-      className: "sorting",
-      ariaLabel: "Start date: activate to sort column ascending",
-      // ariaSort: "descending",
-      width: "81px",
-    },
+
     {
       text: "Serial No",
       className: "sorting",
@@ -62,48 +63,48 @@ const expenseReportData = {
   ],
   tableBody: [
     {
+      date: "12/04/2021",
       expense: "Salaries",
       description: "Company staff salaries",
       amount: "1200000",
       issuer: "Angela",
-      date: "12/04/2021",
       serialNo: "p0owPVQMO3",
       link: "/singleexpensereport",
     },
     {
+      date: "1/05/2021",
       expense: "Excavator",
       description: "Sand Excavartor",
       amount: "120000",
       issuer: "Angela",
-      date: "1/05/2021",
       serialNo: "p0owPVQMO3",
       link: "/singleexpensereport",
     },
     {
+      date: "17/04/2021",
       expense: "Party",
       description: "Company staff party",
       amount: "100000",
       issuer: "Angela",
-      date: "17/04/2021",
       serialNo: "p0owPVQMO3",
       link: "/singleexpensereport",
     },
     {
+      date: "5/08/2021",
       expense: "Transportation",
       description: "Company car repairs",
       amount: "110000",
       issuer: "Angela",
-      date: "5/08/2021",
       serialNo: "p0owPVQMO3",
       link: "/singleexpensereport",
     },
   ],
   tableFooter: [
+    "Date",
     "Expenses",
     "Description",
     "Amount",
     "Issuer",
-    "Date",
     "Serial No",
   ],
 };

@@ -27,7 +27,7 @@ const ActivitiesSummary = () => {
               text = res.data.message;
             errorAlert(title, text);
           } else {
-            activitiesSummaryResponse.reverse().map((item, id) => {
+            activitiesSummaryResponse.map((item, id) => {
               console.log("Detailed Item: ", item);
               const completed = item.completed;
               const start_time = item.time_in;

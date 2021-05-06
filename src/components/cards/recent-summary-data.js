@@ -1,3 +1,5 @@
+import { functionUtils } from "../../hooks/function-utils";
+
 export const recentExpensesData = {
   widgetHeaderTitle: "Recent Expenses",
   widgetHeaderLinks: [{ text: "Detailed report", link: "/expensereport" }],
@@ -9,10 +11,10 @@ export const recentExpensesData = {
         text: "Sand",
       },
       fields: [
-        { text: "34555", amount: true },
+        { text: functionUtils.addCommaToNumbers("34555"), amount: true },
         { text: "Angela" },
         { text: "12/4/21" },
-        { text: "Undecided" },
+        { text: "Excavator" },
       ],
     },
     {
@@ -21,10 +23,10 @@ export const recentExpensesData = {
         text: "Sand",
       },
       fields: [
-        { text: "34555", amount: true },
+        { text: functionUtils.addCommaToNumbers("34555"), amount: true },
         { text: "Angela" },
         { text: "12/4/21" },
-        { text: "Undecided" },
+        { text: "Generator" },
       ],
     },
     {
@@ -33,10 +35,10 @@ export const recentExpensesData = {
         text: "Sand",
       },
       fields: [
-        { text: "34555", amount: true },
+        { text: functionUtils.addCommaToNumbers("34555"), amount: true },
         { text: "Angela" },
         { text: "12/4/21" },
-        { text: "Undecided" },
+        { text: "Power Drill" },
       ],
     },
     {
@@ -45,10 +47,10 @@ export const recentExpensesData = {
         text: "Sand",
       },
       fields: [
-        { text: "34555", amount: true },
+        { text: functionUtils.addCommaToNumbers("34555"), amount: true },
         { text: "Angela" },
         { text: "12/4/21" },
-        { text: "Undecided" },
+        { text: "Salary" },
       ],
     },
   ],
@@ -64,7 +66,7 @@ export const recentRevenueData = {
         text: "Stockpile Sand",
       },
       fields: [
-        { text: "34555", amount: true },
+        { text: functionUtils.addCommaToNumbers("34555"), amount: true },
         { text: "Ike & sons" },
         { text: "2/8/21" },
         { text: "Undecided" },
@@ -75,7 +77,7 @@ export const recentRevenueData = {
         text: "Stockpile Sand",
       },
       fields: [
-        { text: "34555", amount: true },
+        { text: functionUtils.addCommaToNumbers("34555"), amount: true },
         { text: "Ike & sons" },
         { text: "2/8/21" },
         { text: "Undecided" },
@@ -86,7 +88,7 @@ export const recentRevenueData = {
         text: "Stockpile Sand",
       },
       fields: [
-        { text: "34555", amount: true },
+        { text: functionUtils.addCommaToNumbers("34555"), amount: true },
         { text: "Ike & sons" },
         { text: "2/8/21" },
         { text: "Undecided" },
@@ -97,7 +99,7 @@ export const recentRevenueData = {
         text: "Stockpile Sand",
       },
       fields: [
-        { text: "34555", amount: true },
+        { text: functionUtils.addCommaToNumbers("34555"), amount: true },
         { text: "Ike & sons" },
         { text: "2/8/21" },
         { text: "Undecided" },

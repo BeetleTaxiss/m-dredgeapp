@@ -10,6 +10,7 @@ const ModalBackdrop = ({
   return (
     <div
       className="modal backdrop"
+      id="main-modal-backdrop"
       style={{ display: showModal ? "block" : "none " }}
     >
       {noClickOutside ? (

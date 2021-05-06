@@ -66,7 +66,6 @@ export const Production = () => {
   const handleDateChange = (date) => {
     setSelectedDate(date);
     let timeValue = moment().format("HH:MM");
-    alert(timeValue);
     if (date === timeValue) {
       // setSelectedDate(time);
     } else if (date < timeValue) {
@@ -142,7 +141,7 @@ export const Production = () => {
   );
 
   /**Handle Production Capacity submit and get it's return value */
-  const getReturnValueAndHandleSubmit = () => {
+  const getReturnValueAndHandleSubmit = async () => {
     functionUtils
       .getTimeAndProductionStamp(
         currentProductionCapacity,

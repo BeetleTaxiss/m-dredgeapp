@@ -23,8 +23,25 @@ const ListSingleViewCard = ({ pending }) => {
             <div className="usr-name-comment">
               <span
                 id="span-comment"
-                style={{ backgroundColor: "#1b2e4b" }}
-              ></span>
+                style={{
+                  backgroundColor: "#1b2e4b",
+                  display: "grid",
+                  gap: "1rem",
+                }}
+              >
+                <span
+                  id="span-comment-dispatcher"
+                  className="span-comment-dispatcher"
+                ></span>
+                <span
+                  id="span-comment-loader"
+                  className="span-comment-loader"
+                ></span>
+                <span
+                  id="span-comment-inspector"
+                  className="span-comment-inspector"
+                ></span>
+              </span>
             </div>
           </div>
         </div>

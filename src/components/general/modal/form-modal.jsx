@@ -27,9 +27,8 @@ const FormModal = ({
   rows,
   /** components */
   PermissionListComponent,
-  getPermissionData
+  getPermissionData,
 }) => {
-
   return (
     <ModalBackdrop
       setLoading={setLoading}
@@ -37,7 +36,6 @@ const FormModal = ({
       setShowModal={setShowModal}
       noClickOutside={noClickOutside}
     >
-      
       {formTitle && <h2 id="formModal-title">{formTitle}</h2>}
       {formSubtitle && <p id="formModal-subtitle">{formSubtitle}</p>}
       {listItems && (
@@ -69,7 +67,7 @@ const FormModal = ({
               </div>
             </div>
           ))}
-          {PermissionListComponent && <PermissionListComponent/>}
+        {PermissionListComponent && <PermissionListComponent />}
 
         <div style={{ display: "flex", justifyContent: "center", gap: "2rem" }}>
           <LoadingButton
@@ -78,15 +76,19 @@ const FormModal = ({
             text={Btntext}
           />
           {closeBtn && (
-            <Link
-              to="#"
+            <a
+              href="javascript:void(0)"
               onClick={() => {
-                setShowModal(!showModal);
+                // document.getElementById("main-modal-backdrop").style.display =
+                //   "none";
+                console.log("Close State: ", showModal);
+                setShowModal(false);
+                console.log("Close State after click: ", showModal);
               }}
               className="mt-4 btn btn-danger"
             >
               Close
-            </Link>
+            </a>
           )}
         </div>
       </form>

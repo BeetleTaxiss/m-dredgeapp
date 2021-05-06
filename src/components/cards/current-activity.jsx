@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { TaskActionButton } from "../general/task-action";
 import { BASE_API_URL } from "../../hooks/API";
 import moment from "moment";
+import { functionUtils } from "../../hooks/function-utils";
 const CurrentActivity = () => {
   const [currentActivity, setCurrentActivity] = useState(["loading"]);
   useEffect(() => {
@@ -19,34 +20,40 @@ const CurrentActivity = () => {
         })
         .then((res) => {
           let activitiesSummaryResponse = res.data.data;
-          let reversedCurrentActivityResponse = [
-            ...activitiesSummaryResponse,
-          ].reverse();
+          let reversedCurrentActivityResponse = [...activitiesSummaryResponse];
           console.log(
             "Current Activity: ",
             activitiesSummaryResponse,
-            reversedCurrentActivityResponse[0]
+            reversedCurrentActivityResponse[1]
           );
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
             errorAlert(title, text);
           } else {
-            const user = reversedCurrentActivityResponse[0].user,
+            const user = reversedCurrentActivityResponse[1].user,
               date = moment(
-                `${reversedCurrentActivityResponse[0].date_in} ${reversedCurrentActivityResponse[0].start_time}`,
+                `${reversedCurrentActivityResponse[1].date_in} ${reversedCurrentActivityResponse[0].start_time}`,
                 "DD/MM/YYYY hh:mm:ss"
               ).format("dddd, mm yyyy"),
               wet_sand_pumped = Math.round(
-                reversedCurrentActivityResponse[0].total_qty_pumped
+                reversedCurrentActivityResponse[1].total_qty_pumped
               ),
               duration =
-                reversedCurrentActivityResponse[0].duration_pumped_in_seconds /
-                3600,
+                reversedCurrentActivityResponse[1].duration_pumped_in_seconds <
+                3600
+                  ? reversedCurrentActivityResponse[1]
+                      .duration_pumped_in_seconds
+                  : reversedCurrentActivityResponse[1]
+                      .duration_pumped_in_seconds >= 3600
+                  ? reversedCurrentActivityResponse[1]
+                      .duration_pumped_in_seconds / 3600
+                  : reversedCurrentActivityResponse[1]
+                      .duration_pumped_in_seconds,
               distance_pumped = Math.round(
-                reversedCurrentActivityResponse[0].pumping_distance_in_meters
+                reversedCurrentActivityResponse[1].pumping_distance_in_meters
               ),
-              completed = reversedCurrentActivityResponse[0].completed;
+              completed = reversedCurrentActivityResponse[1].completed;
             const currentActivitySchema = {
               link: "/productionlist",
               user: user,
@@ -54,9 +61,27 @@ const CurrentActivity = () => {
               completed: completed,
               productionInfo: [
                 { text: "Current Production Information: " },
-                { text: `Wet sand: ${wet_sand_pumped} cm³` },
-                { text: `Pumping duration: ${duration} hours` },
-                { text: `Pumping distance: ${distance_pumped} meters` },
+                {
+                  text: `Wet sand: ${functionUtils.addCommaToNumbers(
+                    wet_sand_pumped
+                  )} cm³`,
+                },
+                {
+                  text: `Pumping duration: ${duration} ${
+                    duration > 3600
+                      ? "hours"
+                      : duration < 60
+                      ? "Seconds"
+                      : duration < 3600
+                      ? "Minutes"
+                      : null
+                  }`,
+                },
+                {
+                  text: `Pumping distance: ${functionUtils.addCommaToNumbers(
+                    distance_pumped
+                  )} meters`,
+                },
               ],
             };
             setCurrentActivity(currentActivitySchema);

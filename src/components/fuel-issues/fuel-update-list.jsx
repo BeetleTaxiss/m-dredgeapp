@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
+import { functionUtils } from "../../hooks/function-utils";
 
 const FuelUpdateList = () => {
   const [fuelUpdateList, setFuelUpdateList] = useState(["loading"]);
@@ -22,7 +23,7 @@ const FuelUpdateList = () => {
               errorAlert(title, text);
             } else {
               const fuelUpdateItems = res.data.data;
-              fuelUpdateItems.map((item) => {
+              fuelUpdateItems.reverse().map((item) => {
                 /** Get required response data values */
                 const fuel_update_user = item.user;
                 const fuel_update_user_id = item.user_id;
@@ -50,7 +51,7 @@ const FuelUpdateList = () => {
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: amount,
+                      item: functionUtils.addCommaToNumbers(amount),
                     },
 
                     {
@@ -71,7 +72,7 @@ const FuelUpdateList = () => {
                           ? "shadow-none badge badge-warning"
                           : "shadow-none badge badge-success"
                       }`,
-                      item: qty_stocked,
+                      item: functionUtils.addCommaToNumbers(qty_stocked),
                     },
                   ],
                 };

@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
+import { functionUtils } from "../../hooks/function-utils";
 const Security = () => {
   const [bodyData, setBodyData] = useState(["loading"]);
   const [load, setLoad] = useState(null);
@@ -36,6 +37,8 @@ const Security = () => {
             const userDetails = JSON.parse(localStorage.getItem("user"));
             const userId = userDetails.id;
             const userName = userDetails.username;
+            const dispatcherComment = item.dispatcher_comment;
+            const loaderComment = item.loader_comment;
             const inspectorComment = item.inspector_comment;
 
             const loadingData = {
@@ -51,6 +54,8 @@ const Security = () => {
               truckNo: truck_Number,
               price: total_price,
               inspectorComment: inspectorComment,
+              dispatcherComment: dispatcherComment,
+              loaderComment: loaderComment,
             };
             console.log(
               "Body Items: ",
@@ -79,25 +84,26 @@ const Security = () => {
                   orderId: orderId,
                   class: "text-left",
                   itemClass: "text-left",
-                  item: orderRef,
+                  item: truck_Number,
                 },
                 {
                   orderId: orderId,
                   class: "text-left",
                   itemClass: "text-left",
-                  item: qty,
+                  item: functionUtils.addCommaToNumbers(qty),
                 },
                 {
                   orderId: orderId,
                   class: "text-left",
                   itemClass: "text-left",
-                  item: total_price,
+                  item: functionUtils.addCommaToNumbers(total_price),
                 },
                 {
                   orderId: orderId,
                   class: "text-left",
                   itemClass: "text-left",
                   item: total_volume,
+                  // item: functionUtils.addCommaToNumbers(total_volume),
                 },
                 {
                   orderId: orderId,
@@ -123,7 +129,7 @@ const Security = () => {
     tableTitle: "Clearance List",
     header: [
       { class: "", title: "Product" },
-      { class: "", title: "Order Ref" },
+      { class: "", title: "Truck No" },
       { class: "", title: "Quantity" },
       { class: "", title: "Price" },
       { class: "", title: "Volume" },
@@ -185,7 +191,7 @@ const Security = () => {
         handleSubmit={clearOrder}
         Btntext="Clearance Finished"
         // noClickOutside
-        closeBtn
+        // closeBtn
         listItems
         cols={5}
         rows={3}
