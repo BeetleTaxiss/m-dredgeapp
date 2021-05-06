@@ -425,7 +425,7 @@ export const Menu = {
      * */
     login: {
       text: "Login",
-      link: "/",
+      link: "/login",
       component: LoginPage,
       hideNavBar: true,
       usePageWrapper: false,

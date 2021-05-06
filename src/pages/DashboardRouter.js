@@ -29,9 +29,8 @@ export default function DashboardRouter() {
   useEffect(() => {
     /**
      * create route for user based on the existing permission
-     * At this stage, this will most likely be the default route `login` `approuter`, and `dashboard`
      *  */
-    const userRoutes = createUserAllowedRoutes(userPermission, false);
+    const userRoutes = createUserAllowedRoutes(userPermission, true);
     setDashboardRouter(userRoutes);
   }, [userPermission]);
 

@@ -19,6 +19,7 @@ export default function App({ loginStatus }) {
     <div className="App">
       <Router forceRefresh>
         <Switch>
+          <Route exact path="/login" component={LoginPage} />
           <Route exact path="/" component={LoginPage} />
         </Switch>
       </Router>
@@ -26,7 +27,7 @@ export default function App({ loginStatus }) {
   );
 
   /** 
-   * create appView based on if user s logged in or not 
+   * create appView based on if user is logged in or not 
    * the `loginStatus` is passed as property from `AppRouter` comp
    * */
   const createAppView = (loginStatus = false) => {

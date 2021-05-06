@@ -1619,7 +1619,7 @@ export const functionUtils = {
       })
       .join("");
   },
-
+  
   /**
    *
    */
@@ -1627,7 +1627,6 @@ export const functionUtils = {
     if (!userTypes || userTypes.length <= 0) return null;
     if (userTypeId === null) return null;
 
-    console.log(userTypes, "user Type entry");
     for (let { id, user_type } of userTypes) {
       if (id === userTypeId) return user_type;
     }
