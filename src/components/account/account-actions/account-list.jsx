@@ -6,11 +6,16 @@ import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import UpdateAccountForm from "../../fuel-issues/add-Fuel-Form";
 import WidgetHeader from "../../general/widget-header";
+import { useGetUserDetails } from "../../../hooks/function-utils";
 
 const AccountList = () => {
   const [accountList, setAccountList] = useState(["loading"]);
   const [chartList, setChartList] = useState();
   const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+  useGetUserDetails(setUserName, setUserId);
+  console.log("User Deetails: ", userName, userId);
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {

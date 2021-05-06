@@ -58,6 +58,7 @@ import TimeKeeper from "react-timekeeper";
 import ActivityReport from "./components/activity-report/ActivityReport";
 import ImpoundTruck from "./components/security/impound-truck/ImpoundTruck";
 import ActivityReportList from "./components/activity-report/ActivityReportList";
+import AccountList from "./components/account/account-actions/account-list";
 
 /**
  * Create a menu route for app user based on user permission level
@@ -311,7 +312,6 @@ export const createUserMenu = (userMenu) => {
  * @returns
  */
 export const createUserDashboard = (userMenu) => {
-
   if (typeof userMenu !== "object") {
     const msg = "user permission provide must be an object";
     alert(msg);
@@ -353,10 +353,10 @@ export const createUserDashboard = (userMenu) => {
   /** this will hold all the dashboard views user will see */
   let userDashboard = [];
 
-  /** 
+  /**
    * for menu arrangement, we will put our dashboard items inside menu groups
    * */
-  let userDashboardGroup= [];
+  let userDashboardGroup = [];
 
   console.log(userDashboardGroup, "Initial dashboard group");
 
@@ -378,15 +378,20 @@ export const createUserDashboard = (userMenu) => {
        */
       //console.log(globalDashboardMenu[menuLocation]["component"], " will assign this now ")
       if (showOnDashboard === true) {
-        const CurrentDashboardComponent = globalDashboardMenu[menuLocation]["component"];
+        const CurrentDashboardComponent =
+          globalDashboardMenu[menuLocation]["component"];
         const menuId = `${menuLocation}-${k}`;
-        
-        if(!userDashboardGroup[menuGroup]) {
+
+        if (!userDashboardGroup[menuGroup]) {
           /** add dashboard as an array */
-          userDashboardGroup[menuGroup]=[<CurrentDashboardComponent key={menuId} />]
-        }  else {
+          userDashboardGroup[menuGroup] = [
+            <CurrentDashboardComponent key={menuId} />,
+          ];
+        } else {
           /** there is an existing entry for this menuGroup. Concat this dashboard content to it */
-          userDashboardGroup[menuGroup]=userDashboardGroup[menuGroup].concat(<CurrentDashboardComponent key={menuId} />)
+          userDashboardGroup[menuGroup] = userDashboardGroup[menuGroup].concat(
+            <CurrentDashboardComponent key={menuId} />
+          );
         }
       }
     }
@@ -459,7 +464,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:1
+      menuGroup: 1,
     },
     recentOrders: {
       text: "Recent Orders",
@@ -468,7 +473,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:2
+      menuGroup: 2,
     },
     totalRevenue: {
       text: "Total Revenue",
@@ -477,7 +482,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:1
+      menuGroup: 1,
     },
     summary: {
       text: "Summary",
@@ -486,7 +491,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:4
+      menuGroup: 4,
     },
     detailedStatistics: {
       text: "Detailed Statistics",
@@ -495,7 +500,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:3
+      menuGroup: 3,
     },
     activitiesSummary: {
       text: "Activities Summary",
@@ -504,7 +509,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:3
+      menuGroup: 3,
     },
     totalStockpile: {
       text: "Total Stockpile",
@@ -513,7 +518,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:1
+      menuGroup: 1,
     },
     recentSummary: {
       text: "Recent Summary",
@@ -522,7 +527,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:2
+      menuGroup: 2,
     },
     currentActivity: {
       text: "Current Activity",
@@ -531,7 +536,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:4
+      menuGroup: 4,
     },
     usersActivitiesSummary: {
       text: "Users Activities Summary",
@@ -540,7 +545,7 @@ export const Menu = {
       usePageWrapper: false,
       showOnDashboard: true,
       showInMenu: false,
-      menuGroup:4
+      menuGroup: 4,
     },
   },
 
@@ -642,8 +647,13 @@ export const Menu = {
     },
     addBusinessAccount: {
       text: "Add Business Account",
-      link: "/accountlist",
+      link: "/addaccount",
       component: AddAccount,
+    },
+    businessAccountList: {
+      text: "Business Accounts",
+      link: "/accountlist",
+      component: AccountList,
     },
     postToAccount: {
       text: "Post Entry",

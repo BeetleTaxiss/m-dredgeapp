@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Redirect } from "react-router";
-import {
-  getUserStoreInstance,
-} from "./hooks/function-utils";
+import { getUserStoreInstance } from "./hooks/function-utils";
 import { BrowserRouter as Router } from "react-router-dom";
 import DashboardRouter from "./pages/DashboardRouter";
 import LoginPage from "./pages/login-page";
 
 export default function App({ loginStatus }) {
-
   const UserStore = getUserStoreInstance();
 
   /** old the current view user will see */
@@ -25,12 +22,11 @@ export default function App({ loginStatus }) {
     </div>
   );
 
-  /** 
-   * create appView based on if user s logged in or not 
+  /**
+   * create appView based on if user s logged in or not
    * the `loginStatus` is passed as property from `AppRouter` comp
    * */
   const createAppView = (loginStatus = false) => {
-
     if (loginStatus) {
       setAppView(
         <div className="App">
@@ -43,14 +39,14 @@ export default function App({ loginStatus }) {
       );
     } else {
       /**
-       * This user is not log in yet, or the user refresh and we are 
-       * still trying to get the login status from our async store. 
+       * This user is not log in yet, or the user refresh and we are
+       * still trying to get the login status from our async store.
        * what we will do is to wait a little while before setting `appView`
-       * so that if user is eventually found to have logged in, we wont show 
+       * so that if user is eventually found to have logged in, we wont show
        * the login page before moving to the dashboard
        */
       //setTimeout(()=>{
-        setAppView(<LoginView />);
+      setAppView(<LoginView />);
       //}, 1000);
     }
   };
