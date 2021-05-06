@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { FormDetails } from "../components/orders/order-form/order-form-details";
 import { BASE_API_URL } from "../hooks/API";
-import { functionUtils, errorAlert} from "../hooks/function-utils";
+import { functionUtils, errorAlert, getUserStoreInstance, getAppSettingStoreInstance} from "../hooks/function-utils";
 
 import {StoreManager} from "react-persistent-store-manager"
 import {Stores, AppStore} from "./../state/store";
@@ -11,8 +11,16 @@ import {Stores, AppStore} from "./../state/store";
 
 const LoginPage = () => {
 
+  const UserStore= getUserStoreInstance();
+
+  /** 
+   * each time we load the login page, we must clear any existing user permission saved 
+   * during the last session. This is to force user to always login
+   *  */
+ //  UserStore.update("permission", null);
+
   /** create a store  */
-  const Store= StoreManager(AppStore, Stores, "AppSettingsStore");
+  const Store= getAppSettingStoreInstance();
 
   const [user, setUsername] = useState({
     user: "",
@@ -97,7 +105,6 @@ const LoginPage = () => {
       errorAlert("Oops!","could not load settings. Check Internet connection");
     })
   }, []);
-
 
   return (
     <section className="form">

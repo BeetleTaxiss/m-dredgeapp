@@ -1,92 +1,63 @@
-import React, {useEffect, useState} from "react";
-import {createUserRoutes} from "./Menu";
-import {Route, Switch} from "react-router";
-import NavBar from "./components/navbar/navbar";
-import PageWrapper from "./components/general/page-wrapper";
-import { getUserStoreInstance } from "./hooks/function-utils";
+import React, { useEffect, useState } from "react";
+import { Switch, Route, Redirect } from "react-router";
+import {
+  getUserStoreInstance,
+} from "./hooks/function-utils";
+import { BrowserRouter as Router } from "react-router-dom";
+import DashboardRouter from "./pages/DashboardRouter";
+import LoginPage from "./pages/login-page";
 
+export default function App({ loginStatus }) {
 
-export default function App() {
+  const UserStore = getUserStoreInstance();
 
-    /** hold user permission. This is retrieve from our StoreManager */
-    const [userPermission, setUserPermission] = useState([]);
+  /** old the current view user will see */
+  const [appView, setAppView] = useState([]);
 
-    /** 
-     * contain state contains allowed routes for our user 
-     * This will be created from the user permission 
-     * */
-    const [allowedRoutes, setAllowedRoutes] = useState([]);
-
-    /** get the `UserStore` instance */
-    const Store= getUserStoreInstance();
-
-    /** get uer permissions */
-    Store.useStateAsync("permission").then(permission=>{
-        setUserPermission(permission)
-    });
-
-    /** 
-     * Create allowed routes for this user based on their provided permission level
-     * Get user permission once the page load, or userPermission changed
-     * */
-    useEffect(()=>{  
-    /**
-     * These are the valid routes this user can have access to within the application
-     * Pass the `userMenu` provided during user setup
-     */
-    let UserAllowedRoutes = createUserRoutes(userPermission).map((page, k) => {
-
-        const {link, component, hideNavBar, usePageWrapper} = page;
-        const Component = component;
-
-        /**
-         * process route component and hide navigation bar if `hideNavBar=false`
-         * In the login menu definition, we will pass `usePageWrapper=false` property to be false
-         * so that we can hide `PageWrapper` around the login page
-         */
-        const PageComponent = () => {
-
-            const NavigationBar = hideNavBar && hideNavBar === true ? () => null : () => <NavBar/>;
-
-            /** Create an helper component for pageWrapper
-             */
-            const PageWrapperContainer = (props)=> {
-                if(usePageWrapper === false) {
-                    /** no page wrapper needed */
-                    return (
-                        <>{props.children}</>
-                    )
-                }
-                /** return pages with wrapper */
-                return (
-                    <PageWrapper>
-                        {props.children}
-                    </PageWrapper>
-                )
-            }
-            return (
-                <>
-                    <NavigationBar/>
-                    <PageWrapperContainer>
-                        <Component/>
-                    </PageWrapperContainer>
-                </>
-            )
-        }
-        /** return the custom page component created based on our routes */
-        return <Route key={k} path={link} component={PageComponent}/>
-    });
-
-    /** assign allowedRoutes to state so that we can view app */
-    setAllowedRoutes(UserAllowedRoutes);
-
-    }, [userPermission]);
-
-    return (
-        <div className="App">
+  /** the default login view  */
+  const LoginView = () => (
+    <div className="App">
+      <Router forceRefresh>
         <Switch>
-            {allowedRoutes}
+          <Route exact path="/" component={LoginPage} />
         </Switch>
+      </Router>
+    </div>
+  );
+
+  /** 
+   * create appView based on if user s logged in or not 
+   * the `loginStatus` is passed as property from `AppRouter` comp
+   * */
+  const createAppView = (loginStatus = false) => {
+
+    if (loginStatus) {
+      setAppView(
+        <div className="App">
+          <Router>
+            <Switch>
+              <DashboardRouter />
+            </Switch>
+          </Router>
         </div>
-    )
+      );
+    } else {
+      /**
+       * This user is not log in yet, or the user refresh and we are 
+       * still trying to get the login status from our async store. 
+       * what we will do is to wait a little while before setting `appView`
+       * so that if user is eventually found to have logged in, we wont show 
+       * the login page before moving to the dashboard
+       */
+      //setTimeout(()=>{
+        setAppView(<LoginView />);
+      //}, 1000);
+    }
+  };
+
+  useEffect(() => {
+    createAppView(loginStatus);
+  }, [loginStatus]);
+
+  return <>{appView}</>;
 }

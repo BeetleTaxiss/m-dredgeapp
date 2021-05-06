@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { getUserStoreInstance, getAppSettingStoreInstance, functionUtils } from "./../../hooks/function-utils";
+
 
 const HeaderNavbar = ({ logUserOut, setShowMenu }) => {
+
   return (
     <div className="header-container">
       <header className="header navbar navbar-expand-sm">
-        <Link
+        <button
           to="#"
           onClick={() => setShowMenu((prev) => !prev)}
           className="sidebarCollapse"
@@ -27,7 +30,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu }) => {
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
-        </Link>
+        </button>
 
         <div className="nav-logo align-self-center">
           <Link className="navbar-brand" to="index.html">
@@ -233,8 +236,8 @@ const HeaderNavbar = ({ logUserOut, setShowMenu }) => {
             >
               <div className="media">
                 <div className="media-body align-self-center">
-                  <h6>Andy King</h6>
-                  <p>Manager</p>
+                  <h6>{"Demo"}</h6>
+                  <p>{"admin"}</p>
                 </div>
                 <img
                   src="assets/img/profile-7.jpeg"
@@ -270,7 +273,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu }) => {
                 </Link>
               </div>
               <div className="dropdown-item">
-                <Link to="#" onClick={() => logUserOut()}>
+                <button to="#" onClick={() => logUserOut()}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -288,7 +291,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu }) => {
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                   </svg>{" "}
                   <span>Log Out</span>
-                </Link>
+                </button>
               </div>
             </div>
           </li>

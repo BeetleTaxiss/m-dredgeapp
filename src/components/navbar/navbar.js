@@ -6,15 +6,14 @@ import TopNavbar from "./top-nav";
 import { BASE_API_URL } from "../../hooks/API";
 import "./navbar.scss";
 import {createUserMenu} from "./../../Menu";
-import {userMenu} from "./../../UserMenuMock";
 import { StoreManager } from "react-persistent-store-manager";
 import { AppStore, Stores } from "./../../state/store";
 import { errorAlert, functionUtils } from "../../hooks/function-utils";
 
-const Navbar = () => {
+const Navbar = ({userPermission}) => {
   
   /** user must be logged in to see this navigation section */
-  functionUtils.useValidateLogin("/");
+  // functionUtils.useValidateLogin("/");
 
   const [showMenu, setShowMenu] = useState(false);
   const [showSubMenu, setShowSubMenu] = useState(false);
@@ -22,20 +21,22 @@ const Navbar = () => {
   const history = useHistory();
   
   /** this is the permissions allowed for out user */
-  const [userPermission, setUserPermission] = useState({});
+  // const [userPermission, setUserPermission] = useState({});
 
   /** a state variable to hold our navigation view
    *initially, we will set it to empty
    */
   const [userNavigationBar, setUserNavigationBar] = useState(null);
 
-  const Store= StoreManager(AppStore, Stores, "UserStore");
-  /** get get the user permission. We will use this to create
-   * menu that user will have access to within the application
-   */
-  Store.useStateAsync("permission").then(permission=>{
-    setUserPermission(permission);
-  });
+
+  // const Store= StoreManager(AppStore, Stores, "UserStore");
+  // /** get get the user permission. We will use this to create
+  //  * menu that user will have access to within the application
+  //  */
+  // Store.useStateAsync("permission").then(permission=>{
+  //   setUserPermission(permission);
+  // });
+
   
   /** ue logout function */
   const logUserOut = () => {
