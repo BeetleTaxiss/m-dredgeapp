@@ -6,9 +6,19 @@ import { BASE_API_URL } from "../../hooks/API";
 import IssueFuelForm from "./add-Fuel-Form";
 import "./machinery.css";
 import { functionUtils } from "../../hooks/function-utils";
+import CustomDetailedStats from "../cards/CustomDetailedStats";
+import Followers from "../../assets/followers.svg";
+import Linkk from "../../assets/link.svg";
+import Chat from "../../assets/chat.svg";
+import moment from "moment";
 
 const FuelIssuing = () => {
   const [machineryList, setMachineryList] = useState();
+  const [detailedStats, setDetailedStats] = useState([
+    "loading",
+    "loading",
+    "loading",
+  ]);
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -29,13 +39,6 @@ const FuelIssuing = () => {
                   machinery_name = item.machinery_name,
                   identification_no = item.identification_no,
                   description = item.description;
-
-                // const machineryItemData = {
-                //   id: machinery_id,
-                //   machinery_name: machinery_name,
-                //   identification_no: identification_no,
-                //   description: description,
-                // };
 
                 const currentMachineryItem = {
                   id: machinery_id,
@@ -78,6 +81,81 @@ const FuelIssuing = () => {
       source.cancel();
     };
   }, []);
+
+  /** Get Fuel Summary data */
+
+  const currentDate = moment().format("DD/MM/YYYY");
+  console.log("Current date: ", currentDate);
+  useEffect(() => {
+    const source = axios.CancelToken.source();
+
+    const response = async () => {
+      let detailedStatsList = [];
+      await axios
+        .get(`${BASE_API_URL}/api/v1/operations/fuel-stock-summary.php`, {
+          params: { "date-in": currentDate },
+        })
+        .then((res) => {
+          let detailedStatsResponseList;
+          let detailedStatsResponse = res.data;
+          detailedStatsResponse.fuel_stock["legend"] = "Fuel Reserves";
+
+          detailedStatsResponse.incoming_fuel["legend"] = "Incoming Fuel";
+
+          detailedStatsResponse.outgoing_fuel["legend"] = "Outgoing Fuel";
+
+          detailedStatsResponse.fuel_stock["icon"] = Followers;
+
+          detailedStatsResponse.incoming_fuel["icon"] = Linkk;
+
+          detailedStatsResponse.outgoing_fuel["icon"] = Chat;
+
+          detailedStatsResponseList = [
+            detailedStatsResponse.fuel_stock,
+            detailedStatsResponse.incoming_fuel,
+            detailedStatsResponse.outgoing_fuel,
+          ];
+
+          console.log("Detailed: ", detailedStatsResponse);
+          console.log("Detailed List: ", detailedStatsResponseList);
+          if (res.data.error) {
+            let title = "Server Error",
+              text = res.data.message;
+            errorAlert(title, text);
+          } else {
+            detailedStatsResponseList.map((item) => {
+              const detailedStatsSchema = {
+                icon: item.icon,
+                stats:
+                  item.total_qty === null || item.total_qty === undefined
+                    ? 0
+                    : Math.round(item.total_qty),
+                legend: item.legend,
+                array: true,
+              };
+
+              return (detailedStatsList = detailedStatsList.concat(
+                detailedStatsSchema
+              ));
+            });
+            setDetailedStats(detailedStatsList);
+            console.log("Recent order list: ", detailedStats);
+          }
+        })
+        .catch((error) => {
+          let title = "Network Error",
+            text = error;
+          errorAlert(title, text);
+        });
+    };
+
+    response();
+
+    return () => {
+      source.cancel();
+    };
+  }, []);
+
   const handleIssueFuel = () => {
     const userDetails = JSON.parse(localStorage.getItem("user")),
       user_name = userDetails.username,
@@ -170,12 +248,11 @@ const FuelIssuing = () => {
       options: machineryList,
       required: true,
     },
-    // wfegfsdafge
     {
       id: "fuel-quantity",
       type: "text",
       name: "qty",
-      holder: "Fuel quantity bought",
+      holder: "Fuel quantity to dispense",
       className: "form-control",
       required: true,
     },
@@ -192,6 +269,7 @@ const FuelIssuing = () => {
             className="widget-content widget-content-area searchable-container list"
             style={{ display: "grid", padding: "2rem", gap: "2rem" }}
           >
+            <CustomDetailedStats data={detailedStats} />
             <IssueFuelForm
               content={issueFuelFormData}
               // loading={loading}

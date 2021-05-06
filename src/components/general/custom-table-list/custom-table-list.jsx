@@ -12,7 +12,7 @@ const CustomTableList = ({ content, setLoad }) => {
       <WidgetHeader title={content.tableTitle} />
       <div className="widget-content widget-content-area">
         <div className="table-responsive">
-          {content.body[0] === "loading" ? (
+          {content?.body[0] === "loading" ? (
             <>
               <Skeleton height={35} />
               <Skeleton height={35} />

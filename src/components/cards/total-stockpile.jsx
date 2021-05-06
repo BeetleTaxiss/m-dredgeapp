@@ -35,7 +35,12 @@ const TotalStockpile = () => {
             );
 
             totalStockpileSchema = {
-              info: { value: `${stockpiled_value}cm³`, duration: "this week" },
+              info: {
+                value: `${functionUtils.addCommaToNumbers(
+                  stockpiled_value
+                )}cm³`,
+                duration: "this week",
+              },
               progressPercentage: `${current_stockpiled_percentage}`,
             };
 
@@ -128,8 +133,7 @@ export const StockPileInformation = ({ content }) => (
       style={{ display: "flex", gap: "0.2rem", alignItems: "flex-end" }}
     >
       <p className="value">
-        {functionUtils.addCommaToNumbers(content?.value)}{" "}
-        <span>{content?.duration}</span>{" "}
+        {content?.value} <span>{content?.duration}</span>{" "}
       </p>
       {/* Beginning of Duration Chartline SVG */}
       <ChartLine />

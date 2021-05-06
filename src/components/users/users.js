@@ -84,13 +84,6 @@ const Users = () => {
 
     const encNewUserPassword = md5(newUserPassword);
 
-    if (!userId || !userPassword || !newUserPassword) {
-      return errorAlert(
-        language.popUps.updateErrorTitle,
-        language.popUps.allFormFieldsRequiredMsg
-      );
-    }
-
     const changePasswordData = {
       user: userName,
       "user-id": userId,
@@ -274,20 +267,20 @@ const Users = () => {
     let newUserPassword = document.getElementById("new-password-add-user")
       .value;
 
-    const encNewUserPassword = md5(newUserPassword);
+    // const encNewUserPassword = newUserPassword;
 
-    if (!userId || !userPassword || !newUserPassword) {
-      return errorAlert(
-        language.popUps.updateErrorTitle,
-        language.popUps.allFormFieldsRequiredMsg
-      );
-    }
+    // if (!userId || !userPassword || !newUserPassword) {
+    //   return errorAlert(
+    //     language.popUps.updateErrorTitle,
+    //     language.popUps.allFormFieldsRequiredMsg
+    //   );
+    // }
 
     const changePasswordData = {
       user: userName,
       "user-id": userId,
       password: userPassword,
-      "password-new": encNewUserPassword,
+      "password-new": newUserPassword,
     };
 
     return changePasswordData;
@@ -445,21 +438,19 @@ const Users = () => {
     selectOptions
   );
 
-
-    /**
+  /**
    * This component will return both the permissionListAccordion and the
    * method to getPermissionData to get the updated permission data before
-   * we update them 
+   * we update them
    */
-     const BlankPermissionListForNewUser = (props) => {
-      const permissionListData = createPermissionList({});
-  
-      const [PermissionList] = createUserPermissionListComponent(
-        permissionListData
-      );
-      return <>{PermissionList}</>;
-    };
-  
+  const BlankPermissionListForNewUser = (props) => {
+    const permissionListData = createPermissionList({});
+
+    const [PermissionList] = createUserPermissionListComponent(
+      permissionListData
+    );
+    return <>{PermissionList}</>;
+  };
 
   /** load the user list on page open */
   useEffect(() => {
@@ -570,7 +561,7 @@ const Users = () => {
             }
           }}
           Btntext="Add User"
-          closeBtn
+          // closeBtn
         />
       )}
 
@@ -592,7 +583,7 @@ const Users = () => {
         status={error}
         handleSubmit={updateUserPermission}
         Btntext="Update Permission"
-        closeBtn
+        // closeBtn
       />
       {/** Update user password with this section */}
       <FormModal
@@ -614,7 +605,7 @@ const Users = () => {
           }
         }}
         Btntext="Update Password"
-        closeBtn
+        // closeBtn
       />
     </>
   );

@@ -1,6 +1,20 @@
 import React from "react";
+import { getShiftPausedStatus } from "../../hooks/function-utils";
 import { FormDetails } from "../orders/order-form/order-form-details";
 
+export const toggleBtnText = () => {
+  const toggleBtnId =
+    document.getElementById("pause-marker") ||
+    document.getElementById("resume-marker");
+
+  const toggleText = toggleBtnId.innerText;
+
+  if (toggleText === "Pause Shift") {
+    toggleBtnId.innerText = "Resume Shift";
+  } else if (toggleText === "Resume Shift") {
+    toggleBtnId.innerText = "Pause Shift";
+  }
+};
 const ProductionCapacity = ({
   timelineItems,
   handleSubmit,
@@ -9,19 +23,6 @@ const ProductionCapacity = ({
   distanceFormData,
 }) => {
   console.log("Range Count: ", document.getElementById("range-count-number"));
-  const toggleBtnText = () => {
-    const toggleBtnId =
-      document.getElementById("pause-marker") ||
-      document.getElementById("resume-marker");
-
-    const toggleText = toggleBtnId.innerText;
-
-    if (toggleText === "Pause Shift") {
-      toggleBtnId.innerText = "Resume Shift";
-    } else if (toggleText === "Resume Shift") {
-      toggleBtnId.innerText = "Pause Shift";
-    }
-  };
 
   return (
     <div className="custom-progress progress-up" style={{ width: "100%" }}>
@@ -118,28 +119,52 @@ const ProductionCapacity = ({
             Update Production Capacity
           </button>
           <button
-            onClick={() => {
+            onClick={async () => {
+              let isShiftPaused;
+              isShiftPaused = getShiftPausedStatus();
+              console.log("isResumed: ", isShiftPaused);
+
               let stopStartProductionBtnId = document.getElementById(
                 "stop-start-marker"
               );
-              if (stopStartProductionBtnId !== null) {
-                stopStartProductionBtnId.dataset.runStopStartMarker = false;
+
+              if (isShiftPaused === false) {
+                if (stopStartProductionBtnId !== null) {
+                  stopStartProductionBtnId.dataset.runStopStartMarker = false;
+                }
+
+                let pauseProductionBtnId = document.getElementById(
+                  "pause-marker"
+                );
+
+                if (pauseProductionBtnId !== null) {
+                  pauseProductionBtnId.dataset.runPauseResumeMarker = true;
+                  // toggleBtnText();
+                }
               }
-              let pauseProductionBtnId = document.getElementById(
-                "pause-marker"
-              );
-              if (pauseProductionBtnId !== null) {
-                pauseProductionBtnId.dataset.runPauseResumeMarker = true;
-              }
-              let resumeProductionBtnId = document.getElementById(
-                "resume-marker"
-              );
-              if (resumeProductionBtnId !== null) {
-                resumeProductionBtnId.dataset.runPauseResumeMarker = false;
-                stopStartProductionBtnId.dataset.runStopStartMarker = true;
-              }
-              toggleBtnText();
-              handleSubmit();
+
+              await handleSubmit();
+
+              setTimeout(() => {
+                isShiftPaused = getShiftPausedStatus();
+                console.log("Is Paused: ", isShiftPaused);
+                if (isShiftPaused === true) {
+                  cleanUpProductionId(isShiftPaused);
+                }
+              }, 5000);
+
+              const cleanUpProductionId = (isShiftPaused) => {
+                if (isShiftPaused === true) {
+                  let resumeProductionBtnId = document.getElementById(
+                    "resume-marker"
+                  );
+                  if (resumeProductionBtnId !== null) {
+                    resumeProductionBtnId.dataset.runPauseResumeMarker = false;
+                    stopStartProductionBtnId.dataset.runStopStartMarker = true;
+                  }
+                  // toggleBtnText();
+                }
+              };
             }}
             name="txt"
             id="pause-marker"

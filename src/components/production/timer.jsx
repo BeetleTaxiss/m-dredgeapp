@@ -1,11 +1,10 @@
 import React from "react";
-import axios from "axios";
 import { functionUtils } from "../../hooks/function-utils";
 import moment from "moment";
 
 // TIMER COMPONENT
 const Timer = ({ circle, counter, setCounter, timelineItems }) => {
-  console.log("State: ", counter);
+  // console.log("State: ", counter);
   let timerEnd = false;
   /** Stop marker boolen to start stop-marker axios call */
   let stopMarker = false;
@@ -15,7 +14,7 @@ const Timer = ({ circle, counter, setCounter, timelineItems }) => {
     let hours = counter.hours;
     let minutes = counter.minutes;
     let seconds = counter.seconds;
-    console.log("Counter: ", counter);
+    // console.log("Counter: ", counter);
     // TIMER LOGIC WHICH MIMICKS AN ACTIVE CLOCK
     if (counter.seconds > 0) {
       seconds = counter.seconds - 1;
@@ -39,8 +38,8 @@ const Timer = ({ circle, counter, setCounter, timelineItems }) => {
       minutes = 0;
       seconds = 0;
     }
-    console.log("Counter Seconds: ", counter.seconds);
-    console.log("Variable Seconds: ", seconds);
+    // console.log("Counter Seconds: ", counter.seconds);
+    // console.log("Variable Seconds: ", seconds);
     return { hours, minutes, seconds };
   };
   let timerRunning = false;
@@ -48,7 +47,7 @@ const Timer = ({ circle, counter, setCounter, timelineItems }) => {
   if (timerRunning === false) {
     /**  assign to initial state counter */
     timer = { ...counter };
-    console.log("Counter Timer: ", timer);
+    // console.log("Counter Timer: ", timer);
     timerRunning = true;
     setCounter("");
   }
@@ -88,20 +87,20 @@ const Timer = ({ circle, counter, setCounter, timelineItems }) => {
         dotColor: "primary",
         text: "Shift ended",
       };
-      console.log(
-        "stop marker working: ",
-        document.getElementById("stop-start-marker")
-      );
+      // console.log(
+      //   "stop marker working: ",
+      //   document.getElementById("stop-start-marker")
+      // );
       if (document.getElementById("stop-start-marker") !== null) {
         document.getElementById("stop-start-marker").id = "stop-marker";
         document.getElementById("stop-marker").click();
       }
 
-      console.log("Mutated Timeline Array: ", timelineItems);
+      // console.log("Mutated Timeline Array: ", timelineItems);
       functionUtils.endTimeline(endTimelineItem, timelineItems);
       // clear(timerStatus);
       clearInterval(timerStatus);
-      console.log("Timeline at end of shift: ", timelineItems);
+      // console.log("Timeline at end of shift: ", timelineItems);
 
       timerEnd = true;
     }

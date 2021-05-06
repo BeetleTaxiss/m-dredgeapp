@@ -122,6 +122,15 @@ const Contact = ({
               className="feather feather-edit-2 edit"
               onClick={() => {
                 content.setUser(content.user);
+                console.log(
+                  "Before value: ",
+                  document.getElementById("user-add-user").value
+                );
+                console.log("User Item: ", content.user);
+                console.log(
+                  "After value: ",
+                  document.getElementById("user-add-user").value
+                );
                 document.getElementById("user-add-user").value =
                   content.user.user;
                 document.getElementById("user-id-add-user").value =

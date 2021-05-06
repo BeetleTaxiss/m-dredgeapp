@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
+import { functionUtils } from "../../hooks/function-utils";
 const Inspector = () => {
   const [bodyData, setBodyData] = useState(["loading"]);
   const [load, setLoad] = useState(null);
@@ -35,8 +36,9 @@ const Inspector = () => {
           const userDetails = JSON.parse(localStorage.getItem("user"));
           const userId = userDetails.id;
           const userName = userDetails.username;
+          const dispatcherComment = item.dispatcher_comment;
           const loaderComment = item.loader_comment;
-
+          console.log("Dispatcher comment: ", dispatcherComment);
           const loadingData = {
             "order-id": orderId,
             "order-ref": orderRef,
@@ -51,6 +53,7 @@ const Inspector = () => {
             truckNo: truck_Number,
             price: total_price,
             loaderComment: loaderComment,
+            dispatcherComment: dispatcherComment,
           };
           console.log("DISPATCH DATA: ", res.data);
           console.log(
@@ -86,19 +89,20 @@ const Inspector = () => {
                 orderId: orderId,
                 class: "text-left",
                 itemClass: "text-left",
-                item: qty,
+                item: functionUtils.addCommaToNumbers(qty),
               },
               {
                 orderId: orderId,
                 class: "text-left",
                 itemClass: "text-left",
-                item: total_price,
+                item: functionUtils.addCommaToNumbers(total_price),
               },
               {
                 orderId: orderId,
                 class: "text-left",
                 itemClass: "text-left",
                 item: total_volume,
+                // item: functionUtils.addCommaToNumbers(total_volume),
               },
               {
                 orderId: orderId,
@@ -204,7 +208,7 @@ const Inspector = () => {
         handleSubmit={InspectOrder}
         Btntext="Inspection Completed"
         // noClickOutside
-        closeBtn
+        // closeBtn
         listItems
         cols={5}
         rows={3}

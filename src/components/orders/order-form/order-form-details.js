@@ -6,6 +6,7 @@ export const FormDetails = ({
     holder,
     value,
     className,
+    min,
 
     ...otherProps
   },
@@ -17,6 +18,7 @@ export const FormDetails = ({
   noMargin,
   displayHalf,
   color,
+  noMB,
 }) => {
   // console.log("Select value: ", value);
   return (
@@ -45,11 +47,16 @@ export const FormDetails = ({
                   ? option.product
                   : option.product
                   ? option.product
+                  : option.machinery_name && option.description
+                  ? option.machinery_name
+                  : option.machinery_name
+                  ? option.machinery_name
                   : option.description
                   ? option.description
                   : null}
+
                 {option.user_type && option.user_type}
-                {option.machinery_name && option.machinery_name}
+                {/* {option.machinery_name && option.machinery_name} */}
                 {option.account && option.account}
               </option>
             ))}
@@ -67,7 +74,7 @@ export const FormDetails = ({
           disabled={otherProps.disabled}
           {...otherProps}
           style={{
-            marginBottom: "2rem",
+            marginBottom: noMB ? "0rem" : "2rem",
           }}
           cols={cols ? cols : 5}
           rows={rows ? rows : 5}
@@ -81,6 +88,7 @@ export const FormDetails = ({
           className={className}
           onChange={handleChange}
           value={value}
+          min={min}
           disabled={otherProps.disabled}
           {...otherProps}
           style={{

@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
+import { functionUtils } from "../../hooks/function-utils";
 const Loader = () => {
   const [bodyData, setBodyData] = useState(["loading"]);
   const [load, setLoad] = useState(null);
@@ -33,14 +34,18 @@ const Loader = () => {
             const total_price = item.total_price;
             const total_volume = item.total_volume;
             const truck_Number = item.truck_no;
-            const userDetails = JSON.parse(localStorage.getItem("user"));
-            const userName = userDetails.username;
-            const userId = userDetails.id;
+            const userDetails = localStorage.getItem("user")
+              ? JSON.parse(localStorage.getItem("user"))
+              : null;
+            const userName = userDetails?.username;
+            const userId = userDetails?.id;
             const loaded = item.loaded;
             const inspected = item.inspected;
             const cleared = item.security;
             const comment = "";
             const dispatcherComment = item.dispatcher_comment;
+            const loaderComment = item.loader_comment;
+            const inspectorComment = item.inspector_comment;
 
             const loadingData = {
               "order-id": orderId,
@@ -48,13 +53,16 @@ const Loader = () => {
               "user-id": userId,
               comment: comment,
             };
+            console.log("User Details: ", userDetails);
             const loadingDisplayData = {
               product: product,
               qty: qty,
               volume: total_volume,
               truckNo: truck_Number,
               price: total_price,
-              dispatchComment: dispatcherComment,
+              dispatcherComment: dispatcherComment,
+              loaderComment: loaderComment,
+              inspectorComment: inspectorComment,
             };
             const isProcessing = {
               "order-id": orderId,
@@ -99,19 +107,20 @@ const Loader = () => {
                   orderId: orderId,
                   class: "text-left",
                   itemClass: "text-left",
-                  item: qty,
+                  item: functionUtils.addCommaToNumbers(qty),
                 },
                 {
                   orderId: orderId,
                   class: "text-left",
                   itemClass: "text-left",
-                  item: total_price,
+                  item: functionUtils.addCommaToNumbers(total_price),
                 },
                 {
                   orderId: orderId,
                   class: "text-left",
                   itemClass: "text-left",
                   item: total_volume,
+                  // item: functionUtils.addCommaToNumbers(total_volume),
                 },
                 {
                   orderId: orderId,
@@ -132,7 +141,7 @@ const Loader = () => {
           setBodyData(body);
           console.log("BODY ARRAY: ", body);
         }),
-    [bodyData]
+    [bodyData, showModal, setShowModal]
   );
 
   const loaderListData = {
@@ -232,7 +241,7 @@ const Loader = () => {
         handleSubmit={loadOrder}
         Btntext="Loading completed"
         // noClickOutside
-        closeBtn
+        // closeBtn
         listItems
         cols={5}
         rows={3}
