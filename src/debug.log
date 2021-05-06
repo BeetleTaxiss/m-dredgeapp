@@ -6,5 +6,9 @@
 [0506/134236.686:ERROR:registration_protocol_win.cc(102)] CreateFile: The system cannot find the file specified. (0x2)
 =======
 [0506/131330.764:ERROR:registration_protocol_win.cc(102)] CreateFile: The system cannot find the file specified. (0x2)
+<<<<<<< HEAD
 >>>>>>> master
 [0506/134331.782:ERROR:registration_protocol_win.cc(102)] CreateFile: The system cannot find the file specified. (0x2)
+=======
+[0506/135048.805:ERROR:registration_protocol_win.cc(102)] CreateFile: The system cannot find the file specified. (0x2)
+>>>>>>> master

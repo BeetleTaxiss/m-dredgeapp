@@ -104,7 +104,7 @@ const Navbar = ({ userPermission }) => {
           errorAlert(title, text);
         } else {
 
-          const takeToPage="/";
+          const takeToPage="/login";
 
           /** check to see if user is indeed logged in */
 
