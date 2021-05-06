@@ -16,6 +16,8 @@ const DispatchOrderList = () => {
             const dispatchId = item.id;
             const orderId = item.order_id;
             const orderRef = item.order_ref;
+            const date = item.date_in;
+            const time = item.time_in;
             const product = item.product;
             const loaded = item.loaded;
             const inspected = item.inspected;
@@ -35,6 +37,18 @@ const DispatchOrderList = () => {
             const currentDispatch = {
               id: dispatchId,
               fields: [
+                {
+                  orderId: orderId,
+                  class: "text-left",
+                  itemClass: "text-center",
+                  item: date,
+                },
+                {
+                  orderId: orderId,
+                  class: "text-left",
+                  itemClass: "text-center",
+                  item: time,
+                },
                 {
                   orderId: orderId,
                   class: "text-left",
@@ -119,8 +133,10 @@ const DispatchOrderList = () => {
   );
 
   const dispatchListData = {
-    tableTitle: "Dispatch List",
+    tableTitle: "Clearance List",
     header: [
+      { class: "", title: "Date" },
+      { class: "", title: "Time" },
       { class: "", title: "Product" },
       { class: "", title: "Order Ref" },
       { class: "", title: "Loaded" },

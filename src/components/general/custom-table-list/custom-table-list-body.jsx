@@ -36,15 +36,28 @@ const CustomTableListBody = ({ content, setLoad }) => {
                       }
 
                       // Conditionally render dispatcher's comment
-                      if (field.loadDisplay?.dispatchComment) {
+                      if (field.loadDisplay?.dispatcherComment) {
                         document.getElementById(
                           "wallet-comment"
                         ).style.display =
-                          field.loadDisplay.dispatchComment.length >= 1
+                          field.loadDisplay.dispatcherComment.length >= 1
                             ? "flex"
                             : "none";
-                        document.getElementById("span-comment").innerHTML =
-                          field.loadDisplay.dispatchComment;
+                        if (
+                          field.loadDisplay.loaderComment === null ||
+                          field.loadDisplay.loaderComment === undefined ||
+                          field.loadDisplay.loaderComment === ""
+                        ) {
+                          document.getElementById(
+                            "span-comment-loader"
+                          ).style.display = "none";
+                          document.getElementById(
+                            "span-comment-inspector"
+                          ).style.display = "none";
+                        }
+                        document.getElementById(
+                          "span-comment-dispatcher"
+                        ).innerHTML = `Dispatcher comment: ${field.loadDisplay.dispatcherComment}`;
                       }
 
                       if (field.loadDisplay?.loaderComment) {
@@ -54,8 +67,32 @@ const CustomTableListBody = ({ content, setLoad }) => {
                           field.loadDisplay.loaderComment.length >= 1
                             ? "flex"
                             : "none";
-                        document.getElementById("span-comment").innerHTML =
-                          field.loadDisplay.loaderComment;
+                        if (
+                          field.loadDisplay.inspectorComment === null ||
+                          field.loadDisplay.inspectorComment === undefined ||
+                          field.loadDisplay.inspectorComment === ""
+                        ) {
+                          document.getElementById(
+                            "span-comment-inspector"
+                          ).style.display = "none";
+                        }
+                        document.getElementById(
+                          "span-comment-loader"
+                        ).style.display = "block";
+                        document.getElementById(
+                          "span-comment-dispatcher"
+                        ).innerHTML = `Dispatcher comment: ${
+                          field.loadDisplay.dispatcherComment === ""
+                            ? "No comment from dispatcher"
+                            : field.loadDisplay.dispatcherComment
+                        }`;
+                        document.getElementById(
+                          "span-comment-loader"
+                        ).innerHTML = `Loader comment: ${
+                          field.loadDisplay.loaderComment === ""
+                            ? "No comment from loader"
+                            : field.loadDisplay.loaderComment
+                        }`;
                       }
 
                       if (field.loadDisplay?.inspectorComment) {
@@ -65,8 +102,33 @@ const CustomTableListBody = ({ content, setLoad }) => {
                           field.loadDisplay.inspectorComment.length >= 1
                             ? "flex"
                             : "none";
-                        document.getElementById("span-comment").innerHTML =
-                          field.loadDisplay.inspectorComment;
+
+                        document.getElementById(
+                          "span-comment-dispatcher"
+                        ).innerHTML = `Dispatcher comment: 
+                          ${
+                            field.loadDisplay.dispatcherComment === ""
+                              ? "No comment from dispatcher"
+                              : field.loadDisplay.dispatcherComment
+                          }`;
+
+                        document.getElementById(
+                          "span-comment-loader"
+                        ).innerHTML = `Loader comment: 
+                            ${
+                              field.loadDisplay.loaderComment === ""
+                                ? "No comment from loader"
+                                : field.loadDisplay.loaderComment
+                            }`;
+                        document.getElementById(
+                          "span-comment-inspector"
+                        ).innerHTML = `Inspector comment: 
+                            ${
+                              field.loadDisplay.inspectorComment === ""
+                                ? "No comment from inspector"
+                                : field.loadDisplay.inspectorComment
+                            }
+                            `;
                       }
 
                       /** Render Order details to either loader, Inspector or Clearance UI modal on button click  */

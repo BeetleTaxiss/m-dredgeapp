@@ -36,8 +36,9 @@ const Inspector = () => {
           const userDetails = JSON.parse(localStorage.getItem("user"));
           const userId = userDetails.id;
           const userName = userDetails.username;
+          const dispatcherComment = item.dispatcher_comment;
           const loaderComment = item.loader_comment;
-
+          console.log("Dispatcher comment: ", dispatcherComment);
           const loadingData = {
             "order-id": orderId,
             "order-ref": orderRef,
@@ -52,6 +53,7 @@ const Inspector = () => {
             truckNo: truck_Number,
             price: total_price,
             loaderComment: loaderComment,
+            dispatcherComment: dispatcherComment,
           };
           console.log("DISPATCH DATA: ", res.data);
           console.log(

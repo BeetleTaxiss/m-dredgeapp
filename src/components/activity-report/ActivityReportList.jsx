@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
+import { showLogItem } from "../cards/custom-activities-summary";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 
 const ActivityReportList = () => {
@@ -32,7 +33,8 @@ const ActivityReportList = () => {
                   next_week_tasks = item.next_week_task;
 
                 const task_id = parseInt(item.id);
-
+                item["item_log"] = "item-log";
+                console.log("Item log: ", item);
                 const activityReportItemData = {
                   "user-id": user_id,
                   user: user_name,
@@ -81,6 +83,13 @@ const ActivityReportList = () => {
                           `Are you sure you want to delete this activity report?`,
                           activityReportItemData
                         ),
+                    },
+                    {
+                      class: "text-left",
+                      link: () => showLogItem(item),
+                      userLog: true,
+                      linkText: "View Activity Report",
+                      itemClass: "btn btn-primary",
                     },
                   ],
                 };
@@ -171,6 +180,7 @@ const ActivityReportList = () => {
       { class: "", title: "Completed tasks" },
       { class: "", title: "Ongoing tasks" },
       { class: "", title: "Next week tasks" },
+      { class: "", title: "" },
       { class: "", title: "" },
     ],
 

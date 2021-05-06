@@ -37,6 +37,8 @@ const Security = () => {
             const userDetails = JSON.parse(localStorage.getItem("user"));
             const userId = userDetails.id;
             const userName = userDetails.username;
+            const dispatcherComment = item.dispatcher_comment;
+            const loaderComment = item.loader_comment;
             const inspectorComment = item.inspector_comment;
 
             const loadingData = {
@@ -52,6 +54,8 @@ const Security = () => {
               truckNo: truck_Number,
               price: total_price,
               inspectorComment: inspectorComment,
+              dispatcherComment: dispatcherComment,
+              loaderComment: loaderComment,
             };
             console.log(
               "Body Items: ",

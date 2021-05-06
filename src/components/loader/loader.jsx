@@ -44,6 +44,8 @@ const Loader = () => {
             const cleared = item.security;
             const comment = "";
             const dispatcherComment = item.dispatcher_comment;
+            const loaderComment = item.loader_comment;
+            const inspectorComment = item.inspector_comment;
 
             const loadingData = {
               "order-id": orderId,
@@ -58,7 +60,9 @@ const Loader = () => {
               volume: total_volume,
               truckNo: truck_Number,
               price: total_price,
-              dispatchComment: dispatcherComment,
+              dispatcherComment: dispatcherComment,
+              loaderComment: loaderComment,
+              inspectorComment: inspectorComment,
             };
             const isProcessing = {
               "order-id": orderId,
