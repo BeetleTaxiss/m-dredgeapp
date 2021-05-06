@@ -6,9 +6,7 @@ import TopNavbar from "./top-nav";
 import { BASE_API_URL } from "../../hooks/API";
 import "./navbar.scss";
 import {createUserMenu} from "./../../Menu";
-import { StoreManager } from "react-persistent-store-manager";
-import { AppStore, Stores } from "./../../state/store";
-import { errorAlert, functionUtils } from "../../hooks/function-utils";
+import { errorAlert, functionUtils, getUserStoreInstance, getAppSettingStoreInstance } from "../../hooks/function-utils";
 
 const Navbar = ({userPermission}) => {
   
@@ -21,21 +19,54 @@ const Navbar = ({userPermission}) => {
   const history = useHistory();
   
   /** this is the permissions allowed for out user */
-  // const [userPermission, setUserPermission] = useState({});
+   const [userName, setUserName] = useState("Loading user...");
+   const [userTypeId, setUserTypeId] = useState(0);
+   const [userType, setUserType] = useState("User");
+   const [userTypes, setUserTypes] = useState(null);
 
   /** a state variable to hold our navigation view
    *initially, we will set it to empty
    */
   const [userNavigationBar, setUserNavigationBar] = useState(null);
 
+  const UserStore= getUserStoreInstance();
 
-  // const Store= StoreManager(AppStore, Stores, "UserStore");
-  // /** get get the user permission. We will use this to create
-  //  * menu that user will have access to within the application
-  //  */
-  // Store.useStateAsync("permission").then(permission=>{
-  //   setUserPermission(permission);
-  // });
+  UserStore.useStateAsync("user").then(user=>{
+    setUserName(functionUtils.firstLetterToUpperCase(user));
+  });
+
+  UserStore.useStateAsync("userType").then(userTypeId=>{
+    setUserTypeId(userTypeId);
+  });
+
+  const AppSettingsStore= getAppSettingStoreInstance();
+
+  AppSettingsStore.useStateAsync("userTypes").then(userTypes=>{
+    setUserTypes(userTypes);
+  })
+  
+
+  const createUserNavigationBar=()=>{
+
+    const userAllowedMenus= createUserMenu(userPermission);
+    const userPosition=functionUtils.getUserPositionFromTypeId(userTypes, userTypeId);
+
+    const USerNavBar=
+      <div>
+      <HeaderNavbar logUserOut={logUserOut} setShowMenu={setShowMenu} userName={userName} userType={userPosition} />
+      <TopNavbar
+        showMenu={showMenu}
+        showSubMenu={showSubMenu}
+        setShowSubMenu={setShowSubMenu}
+        topNavBarData={userAllowedMenus} />
+      <div
+        onClick={() => setShowMenu(false)}
+        className={`overlay ${showMenu && "show"}`}> 
+      </div>
+    </div>;
+
+    setUserNavigationBar(USerNavBar);
+  }
 
   
   /** ue logout function */
@@ -63,33 +94,10 @@ const Navbar = ({userPermission}) => {
       });
   };
 
-  const createUserNavigationBar=()=>{
-
-    console.log(userPermission, "passed to function");
-
-    const userAllowedMenus= createUserMenu(userPermission);
-
-    const USerNavBar=
-      <div>
-      <HeaderNavbar logUserOut={logUserOut} setShowMenu={setShowMenu} />
-      <TopNavbar
-        showMenu={showMenu}
-        showSubMenu={showSubMenu}
-        setShowSubMenu={setShowSubMenu}
-        topNavBarData={userAllowedMenus} />
-      <div
-        onClick={() => setShowMenu(false)}
-        className={`overlay ${showMenu && "show"}`}> 
-      </div>
-    </div>;
-
-    setUserNavigationBar(USerNavBar);
-  }
-
   /** load the navigation bar when the systems loads and when the userPermission change */
   useEffect(()=>{
     createUserNavigationBar();
-  }, [userPermission]);
+  }, [userPermission, userName, userTypeId, userTypes]);
 
   return (<>{userNavigationBar}</>);
 };
