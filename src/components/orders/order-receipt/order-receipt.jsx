@@ -14,6 +14,9 @@ import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
 import { FormDetails } from "../order-form/order-form-details";
 import { functionUtils } from "../../../hooks/function-utils";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
 const OrderReceipt = () => {
   const { state } = useLocation();
   const [order, setOrder] = useState(state);
@@ -196,9 +199,9 @@ const OrderReceipt = () => {
           errorAlert(title, text);
         } else {
           const title =
-              res.data.message === "Order already dispatched"
-                ? res.data.message
-                : "Your Order has been dispatched successfully",
+            res.data.message === "Order already dispatched"
+              ? res.data.message
+              : "Your Order has been dispatched successfully",
             text =
               res.data.message === "Order already dispatched"
                 ? ""
@@ -232,16 +235,17 @@ const OrderReceipt = () => {
     setOrder(state);
   }, []);
 
-  useEffect(() => {}, [order]);
+  useEffect(() => { }, [order]);
 
   return (
-    <div className="row invoice  layout-spacing layout-top-spacing">
+
+    <div id="order-receipt-view" className="row invoice  layout-spacing layout-top-spacing">
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div className="doc-container">
           <div className="row">
             <div className="col-xl-9">
               <div className="invoice-container">
-                <div className="invoice-inbox">
+                <div style={{ padding: "10px" }} className="invoice-inbox">
                   <div id="ct" className="">
                     <div className="invoice-00001">
                       <div className="content-section">
@@ -284,7 +288,7 @@ const OrderReceipt = () => {
               </div>
             </div>
             {/* BEGINNING OF ORDER RECIEPT LINKS */}
-            <div className="col-xl-3">
+            <div id="order-receipt-view-links" className="order-receipt-view-links col-xl-3">
               <DispatchComment
                 rows={5}
                 cols={3}
@@ -331,14 +335,94 @@ const OrderReceipt = () => {
   );
 };
 
+/** use this function to print out the order receipt  */
+const printOrderReceiptOld = (printTitle = "Order Receipt", orderReceiptLayer = "order-receipt-view") => {
+
+  const receiptContentLayer = document.getElementById(orderReceiptLayer).cloneNode(true);
+
+  /** get the content to print without the links */
+  let receiptContent = receiptContentLayer.innerHTML;
+
+  let printWindow = window.open('', 'PRINT', 'height=400,width=600');
+
+  const receiptView = `<div style="padding:5px">${receiptContent}</div>`;
+
+  const printCommand = '<scr' + 'ipt type="text/javascript">' + 'window.onload = function() {' +
+    'document.getElementById("order-receipt-view-link").innerHTML=null;' +
+    'window.print();' +
+    'window.close();' +
+    '};' + '</sc' + 'ript>';
+
+  printWindow.document.write(`<html><head><title>${printTitle}</title>`);
+  printWindow.document.write('<link rel="stylesheet" href="./assets/css/bootstrap/css/bootstrap.min.css" type="text/css" />');
+  printWindow.document.write('<link rel="stylesheet" href="./assets/css/dashboard/dash_1.css" type="text/css" />');
+  printWindow.document.write('<link rel="stylesheet" href="./assets/css/dashboard/dash_2.css" type="text/css" />');
+  printWindow.document.write('<link rel="stylesheet" href="./assets/css/main.css" type="text/css" />');
+  printWindow.document.write('<link rel="stylesheet" href="./assets/css/structure.css" type="text/css" />');
+  printWindow.document.write('<link rel="stylesheet" href="./assets/css/tables/table-basic.css" type="text/css" />');
+  printWindow.document.write('<link rel="stylesheet" href="./assets/css/apps/invoice-preview.css" type="text/css" />');
+  printWindow.document.write(printCommand);
+  printWindow.document.write('</head><body>');
+  printWindow.document.write(receiptView);
+  printWindow.document.write('</body></html>');
+
+  printWindow.addEventListener("load", () => {
+    printWindow.document.getElementsByClassName("order-receipt-view-links")[0].innerHTML = null;
+  });
+
+  printWindow.document.close(); 
+  printWindow.focus(); 
+
+  return true
+}
+
+/**
+ * Use to create a printable and downloadable orderReceipt
+ */
+const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", orderReceiptLayer = "order-receipt-view", orderReceiptLayerLinks = "order-receipt-view-links") => {
+
+  /** hide the links layer */
+  const links = document.getElementById(orderReceiptLayerLinks);
+  links.setAttribute("style", "display:none");
+
+  const receiptContentLayer = document.getElementById(orderReceiptLayer);
+
+  const canvasOptions = {
+    scale:1,
+    backgroundColor:"#ffffff"
+  }
+  const pdfOptions = {
+    orientation: 'p',
+    unit: 'mm',
+    format: 'a4',
+  }
+
+  html2canvas(receiptContentLayer, canvasOptions).then(canvas => {
+
+    var img = canvas.toDataURL("image/png");
+    var doc = new jsPDF(pdfOptions);
+    doc.addImage(img, 'JPEG', 10, 15);
+
+    if (saveReceipt === true) {
+      return doc.save(receiptName);
+    }
+    /** by default attempt to open the receipt  */
+    window.open(doc.output('bloburl'), '_blank');
+
+  });
+  /** show link layer  */
+  links.setAttribute("style", "display:block");
+}
+
 export const OrderReceiptLinks = ({ setShowModal }) => (
   <div className="">
     <div className="invoice-actions-btn">
       <div className="invoice-action-btn">
         <div className="row">
           <div className="col-xl-12 col-md-4 col-sm-6">
-            <a
-              onClick={() => window.print()}
+            <a onClick={() => {
+              printOrderReceipt()
+            }}
               href="javascript:void(0)"
               className="btn btn-secondary btn-print  action-print"
             >
@@ -347,6 +431,9 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
           </div>
           <div className="col-xl-12 col-md-4 col-sm-6">
             <a
+            onClick={()=>{
+              printOrderReceipt(true)
+            }}
               href="javascript:void(0)"
               className="btn btn-success btn-download"
             >
@@ -368,6 +455,7 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
     </div>
   </div>
 );
+
 export const DispatchComment = ({ content, rows, cols, dispatchOrder }) => (
   <div className="mb-4">
     <div className="invoice-actions-btn">
