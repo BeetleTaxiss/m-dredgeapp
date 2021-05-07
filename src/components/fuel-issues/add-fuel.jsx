@@ -5,7 +5,7 @@ import WidgetHeader from "../general/widget-header";
 import { BASE_API_URL } from "../../hooks/API";
 import AddFuelForm from "./add-Fuel-Form";
 import "./machinery.css";
-import { functionUtils } from "../../hooks/function-utils";
+import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 import moment from "moment";
 
 import CustomDetailedStats from "../cards/CustomDetailedStats";
@@ -19,6 +19,13 @@ const AddFuel = () => {
     "loading",
     "loading",
   ]);
+
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+
   /** Get Fuel Summary data */
 
   const currentDate = moment().format("DD/MM/YYYY");
@@ -91,17 +98,18 @@ const AddFuel = () => {
     return () => {
       source.cancel();
     };
-  }, []);
-  const handleAddFuel = () => {
+  }, [userName, userId]);
+  const handleAddFuel = (userName, userId) => {
     const userDetails = JSON.parse(localStorage.getItem("user")),
       user_name = userDetails.username,
       user_id = userDetails.id;
+
     const fuel_amount = document.getElementById("fuel-amount").value;
     const fuel_quanity = document.getElementById("fuel-quantity").value;
 
     const addFuelData = {
-      user: user_name,
-      "user-id": user_id,
+      user: userName,
+      "user-id": userId,
       qty: fuel_quanity,
       amount: fuel_amount,
     };
@@ -124,7 +132,7 @@ const AddFuel = () => {
   };
 
   /** Retrive add fuel to fuel stock form data for client validation  */
-  const getAddFuelStockFormData = () => {
+  const getAddFuelStockFormData = (userName, userId) => {
     const userDetails = JSON.parse(localStorage.getItem("user")),
       user_name = userDetails.username,
       user_id = userDetails.id;
@@ -132,8 +140,8 @@ const AddFuel = () => {
     const fuel_quanity = document.getElementById("fuel-quantity").value;
 
     const addFuelData = {
-      user: user_name,
-      "user-id": user_id,
+      user: userName,
+      "user-id": userId,
       qty: fuel_quanity,
       amount: fuel_amount,
     };
@@ -196,11 +204,11 @@ const AddFuel = () => {
               btnText="Add Fuel"
               handleAddSubmit={() => {
                 const validation = functionUtils.validateFormInputs(
-                  getAddFuelStockFormData()
+                  getAddFuelStockFormData(userName, userId)
                 );
                 console.log("Validation: ", validation);
                 if (validation === true) {
-                  handleAddFuel();
+                  handleAddFuel(userName, userId);
                 }
               }}
             />
