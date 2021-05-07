@@ -5,7 +5,7 @@ import WidgetHeader from "../general/widget-header";
 import { BASE_API_URL } from "../../hooks/API";
 import IssueFuelForm from "./add-Fuel-Form";
 import "./machinery.css";
-import { functionUtils } from "../../hooks/function-utils";
+import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 import CustomDetailedStats from "../cards/CustomDetailedStats";
 import Followers from "../../assets/followers.svg";
 import Linkk from "../../assets/link.svg";
@@ -19,6 +19,13 @@ const FuelIssuing = () => {
     "loading",
     "loading",
   ]);
+
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -154,12 +161,9 @@ const FuelIssuing = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [userName, userId]);
 
-  const handleIssueFuel = () => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
+  const handleIssueFuel = (userName, userId) => {
     const fuel_quanity = document.getElementById("fuel-quantity").value;
     const machineValue = parseInt(
       document.getElementById("machine-type").value
@@ -169,8 +173,8 @@ const FuelIssuing = () => {
 
     console.log("machine item: ", machineItem);
     const issueFuelData = {
-      user: user_name,
-      "user-id": user_id,
+      user: userName,
+      "user-id": userId,
       qty: fuel_quanity,
       name: machineItem[0].machinery_name,
       "identification-no": machineItem[0].identification_no,
@@ -196,10 +200,7 @@ const FuelIssuing = () => {
   };
 
   /** Retrive fuel issuing form data for client validation */
-  const getFuelIssueFormData = () => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
+  const getFuelIssueFormData = (userName, userId) => {
     const fuel_quanity = document.getElementById("fuel-quantity").value;
     const machineValue = parseInt(
       document.getElementById("machine-type").value
@@ -209,8 +210,8 @@ const FuelIssuing = () => {
 
     console.log("machine item: ", machineItem);
     const issueFuelData = {
-      user: user_name,
-      "user-id": user_id,
+      user: userName,
+      "user-id": userId,
       qty: fuel_quanity,
       name: machineItem[0].machinery_name,
       "identification-no": machineItem[0].identification_no,
@@ -277,11 +278,11 @@ const FuelIssuing = () => {
               btnText="Dispense Fuel"
               handleAddSubmit={() => {
                 const validation = functionUtils.validateFormInputs(
-                  getFuelIssueFormData()
+                  getFuelIssueFormData(userName, userId)
                 );
 
                 if (validation === true) {
-                  handleIssueFuel();
+                  handleIssueFuel(userName, userId);
                 }
               }}
             />

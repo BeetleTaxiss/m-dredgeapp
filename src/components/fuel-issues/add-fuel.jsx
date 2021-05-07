@@ -100,10 +100,6 @@ const AddFuel = () => {
     };
   }, [userName, userId]);
   const handleAddFuel = (userName, userId) => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
-
     const fuel_amount = document.getElementById("fuel-amount").value;
     const fuel_quanity = document.getElementById("fuel-quantity").value;
 
@@ -133,9 +129,6 @@ const AddFuel = () => {
 
   /** Retrive add fuel to fuel stock form data for client validation  */
   const getAddFuelStockFormData = (userName, userId) => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
     const fuel_amount = document.getElementById("fuel-amount").value;
     const fuel_quanity = document.getElementById("fuel-quantity").value;
 
