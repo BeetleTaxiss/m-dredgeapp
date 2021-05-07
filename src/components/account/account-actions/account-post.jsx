@@ -4,11 +4,16 @@ import Swal from "sweetalert2";
 import WidgetHeader from "../../general/widget-header";
 import { BASE_API_URL } from "../../../hooks/API";
 import PostAccountForm from "../../fuel-issues/add-Fuel-Form";
-import { functionUtils } from "../../../hooks/function-utils";
+import {
+  functionUtils,
+  useGetUserDetails,
+} from "../../../hooks/function-utils";
 
 const PostAccount = () => {
   const [creditAccount, setCreditAccount] = useState();
   const [debitAccount, setDebitAccount] = useState();
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -56,6 +61,7 @@ const PostAccount = () => {
               creditAccountBody.unshift({
                 id: 0,
                 account: "Select an account to credit",
+                validation: "Can't select this option",
               });
               setCreditAccount(creditAccountBody);
               console.log("Account Post Body: ", creditAccount);
@@ -83,10 +89,11 @@ const PostAccount = () => {
     };
   }, []);
 
-  const handlePostAccount = () => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
+  useEffect(() => {}, [userName, userId]);
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+  const handlePostAccount = (userName, userId) => {
     const amount = document.getElementById("amount").value;
     const narration = document.getElementById("narration").value;
     const debitValue = parseInt(document.getElementById("debit-id").value);
@@ -99,8 +106,8 @@ const PostAccount = () => {
       debit_account = debitItem[0].account;
 
     const postAccountData = {
-      user: user_name,
-      "user-id": user_id,
+      user: userName,
+      "user-id": userId,
       "chart-id": chart_id,
       "credit-account": credit_account,
       "debit-account": debit_account,
@@ -110,6 +117,7 @@ const PostAccount = () => {
       amount: amount,
     };
     console.log("Post Account API values: ", postAccountData);
+
     axios
       .post(`${BASE_API_URL}/api/v1/account/account-post.php`, postAccountData)
       .then((res) => {
@@ -128,10 +136,7 @@ const PostAccount = () => {
   };
 
   /** Retrive post account form data for client validation */
-  const getPostAccountFormData = () => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
+  const getPostAccountFormData = (userName, userId) => {
     const amount = document.getElementById("amount").value;
     const narration = document.getElementById("narration").value;
     const debitValue = parseInt(document.getElementById("debit-id").value);
@@ -144,8 +149,8 @@ const PostAccount = () => {
       debit_account = debitItem[0].account;
 
     const postAccountData = {
-      user: user_name,
-      "user-id": user_id,
+      user: userName,
+      "user-id": userId,
       "chart-id": chart_id,
       "credit-account": credit_account,
       "debit-account": debit_account,
@@ -153,7 +158,7 @@ const PostAccount = () => {
       "debit-account-id": debitValue,
       narration: narration,
       amount: amount,
-      validation: debitAccount[0].validation || creditAccount[0].validation,
+      validation: debitItem[0].validation || creditItem[0].validation,
     };
     return postAccountData;
   };
@@ -231,10 +236,10 @@ const PostAccount = () => {
               btnText="Post Transaction"
               handleAddSubmit={() => {
                 const validation = functionUtils.validateFormInputs(
-                  getPostAccountFormData()
+                  getPostAccountFormData(userName, userId)
                 );
                 if (validation === true) {
-                  handlePostAccount();
+                  handlePostAccount(userName, userId);
                 }
               }}
             />
