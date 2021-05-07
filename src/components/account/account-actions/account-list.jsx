@@ -6,11 +6,15 @@ import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import UpdateAccountForm from "../../fuel-issues/add-Fuel-Form";
 import WidgetHeader from "../../general/widget-header";
+import { useGetUserDetails } from "../../../hooks/function-utils";
 
 const AccountList = () => {
   const [accountList, setAccountList] = useState(["loading"]);
   const [chartList, setChartList] = useState();
   const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -33,7 +37,7 @@ const AccountList = () => {
                 const account_id = item.id;
                 const chart_id = item.chart_id;
                 const description = item.description;
-
+                console.log("User deetails in map: ", userName, userId);
                 const updateData = {
                   account_name: account_name,
                   account_id: account_id,
@@ -64,9 +68,8 @@ const AccountList = () => {
                       editScroll: true,
                       scrollLocation: "update-form",
                       onClick: () => {
-                        handleUpdateForm(updateData);
-                        // setShowUpdateForm((prev) => !prev);
                         setShowUpdateForm(true);
+                        setTimeout(() => handleUpdateForm(updateData), 500);
                       },
                     },
                     {
@@ -76,7 +79,9 @@ const AccountList = () => {
                       onClick: () => {
                         warningAlert(
                           `Are you sure you want to delete this account: ${account_name}`,
-                          account_id
+                          account_id,
+                          userName,
+                          userId
                         );
                       },
                     },
@@ -109,7 +114,7 @@ const AccountList = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [userName, userId, showUpdateForm]);
 
   /**
    * Chart API call for the select dropdown
@@ -148,7 +153,7 @@ const AccountList = () => {
               });
               chartListBody.unshift({
                 id: 0,
-                account_type: "Select a chart Type",
+                description: "Select a chart Type",
               });
               setChartList(chartListBody);
               console.log("Chart List Body: ", chartList);
@@ -193,20 +198,20 @@ const AccountList = () => {
       showConfirmButton: false,
     });
   };
-  const warningAlert = (title, account_id) => {
+  const warningAlert = (title, account_id, userName, userId) => {
     Swal.fire({
       icon: "warning",
       title: title,
     }).then((value) => {
       if (value.isConfirmed) {
-        handleDeleteAccount(account_id);
+        handleDeleteAccount(account_id, userName, userId);
       }
     });
   };
-  const handleUpdateAccount = () => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+  console.log("User Deetails: ", userName, userId);
+  const handleUpdateAccount = (userName, userId) => {
     const account = document.getElementById("account-name").value;
     const account_id = document.getElementById("account-id").value;
     const description = document.getElementById("account-description").value;
@@ -215,8 +220,8 @@ const AccountList = () => {
 
     console.log("chart item: ", chartItem);
     const updateAccountData = {
-      user: user_name,
-      "user-id": user_id,
+      user: userName,
+      "user-id": userId,
       "account-id": account_id,
       account: account,
       "chart-id": chartValue,
@@ -242,14 +247,12 @@ const AccountList = () => {
         }
       });
   };
-  const handleDeleteAccount = (id) => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
+  const handleDeleteAccount = (id, userName, userId) => {
+    console.log("User deetails in delete", userName, userId);
     axios
       .post(`${BASE_API_URL}/api/v1/account/account-delete.php`, {
-        user: user_name,
-        "user-id": user_id,
+        user: userName,
+        "user-id": userId,
         "account-id": id,
       })
       .then((res) => {
@@ -345,7 +348,7 @@ const AccountList = () => {
               // loading={loading}
               subtitle="Update account information"
               btnText="Update account"
-              handleAddSubmit={() => handleUpdateAccount()}
+              handleAddSubmit={() => handleUpdateAccount(userName, userId)}
             />
           )}
           <CustomTableList content={accountListTableData} />

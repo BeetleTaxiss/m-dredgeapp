@@ -381,7 +381,7 @@ const printOrderReceiptOld = (printTitle = "Order Receipt", orderReceiptLayer = 
  */
 const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", orderReceiptLayer = "order-receipt-view", orderReceiptLayerLinks = "order-receipt-view-links") => {
 
-  /** hide the links layer */
+  /** hide the links layer.  */
   const links = document.getElementById(orderReceiptLayerLinks);
   links.setAttribute("style", "display:none");
 

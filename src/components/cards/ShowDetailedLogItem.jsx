@@ -3,12 +3,15 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 export const showDetailedLogItem = (logItem) => {
   let keyValuePair = [];
   let oldKeyValuePair = [];
-  const newData = JSON.parse(logItem.data && logItem.data);
-  const oldData = JSON.parse(logItem.data_old && logItem.data_old);
-  console.log("Log Item: ", logItem);
-
-  if (logItem.item_log === "item-log") {
-    alert("Fired");
+  let newData;
+  let oldData;
+  if (logItem.data) {
+    newData = JSON.parse(logItem.data && logItem.data);
+  }
+  if (logItem.data_old) {
+    oldData = JSON.parse(logItem.data_old && logItem.data_old);
+  }
+  if (logItem["tasks-completed"]) {
     for (const [key, value] of Object.entries(logItem)) {
       keyValuePair = keyValuePair.concat({
         id: key,
@@ -28,9 +31,9 @@ export const showDetailedLogItem = (logItem) => {
     }
     /** Detailed Log List Table Data */
     const detailedLogListTableData = {
-      tableTitle: "Deleted Item",
+      tableTitle: "Single Activity Report",
       header: [
-        { class: "", title: "Data Field" },
+        { class: "", title: "Activity Field" },
         { class: "", title: "Value" },
       ],
       body: keyValuePair,

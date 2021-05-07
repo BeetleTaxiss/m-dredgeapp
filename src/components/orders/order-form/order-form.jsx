@@ -47,9 +47,9 @@ const OrderForm = () => {
       });
   }, []);
 
-  /** Get user Details from Store */
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
-
+  console.log("User deetails: ", userName, userId);
   const handleOrderChange = () => {
     // Get form values with document,getById
     const qtyValue = document.getElementById("qty").value;
@@ -80,7 +80,7 @@ const OrderForm = () => {
     // const commentValue = document.getElementById("comment").value;
     const { product } = handleOrderChange();
     console.log("Submitted Product", product);
-
+    console.log("User deetails in submit: ", userName, userId);
     const addOrderData = {
       "product-id": selectValue,
       product: product[0].product,

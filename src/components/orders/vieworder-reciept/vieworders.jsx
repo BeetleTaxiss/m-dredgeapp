@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import axios from "axios";
 import { BASE_API_URL } from "../../../hooks/API";
 import ViewordersTablehead from "./vieworders-tablehead";
 import ViewordersTableBody from "./vieworders-body";
@@ -7,7 +7,8 @@ import ViewordersTablefooter from "./vieworders-tablefooter";
 import ViewordersSearchbar from "./vieworders-searchbar";
 import ViewordersTablepaiginaition from "./vieworders-tablepaiginaition";
 import "./vieworders.scss";
-
+import { errorAlert } from "../../../hooks/function-utils";
+import { useGetUserDetails } from "../../../hooks/function-utils";
 /**
  * Orders List Data object which is divided into table header, body and footer properties
  */
@@ -64,71 +65,6 @@ const viewOrdersData = {
       width: "68px",
     },
   ],
-  tableBody: [
-    {
-      truckNo: "ACH4D34C",
-      orderSize: "10",
-      orderCost: "30000",
-      orderVolume: "3000",
-      Date: "2009/01/12",
-      serialNo: "p0owPVQMO3",
-      link: "/orderreceipt",
-    },
-    {
-      truckNo: "ACH4D34C",
-      orderSize: "10",
-      orderCost: "30000",
-      orderVolume: "3000",
-      Date: "2009/01/12",
-      serialNo: "p0owPVQMO3",
-      link: "/orderreceipt",
-    },
-    {
-      truckNo: "ACH4D34C",
-      orderSize: "10",
-      orderCost: "30000",
-      orderVolume: "3000",
-      Date: "2009/01/12",
-      serialNo: "p0owPVQMO3",
-      link: "/orderreceipt",
-    },
-    {
-      truckNo: "ACH4D34C",
-      orderSize: "10",
-      orderCost: "30000",
-      orderVolume: "3000",
-      Date: "2009/01/12",
-      serialNo: "p0owPVQMO3",
-      link: "/orderreceipt",
-    },
-    {
-      truckNo: "ACH4D34C",
-      orderSize: "10",
-      orderCost: "30000",
-      orderVolume: "3000",
-      Date: "2009/01/12",
-      serialNo: "p0owPVQMO3",
-      link: "/orderreceipt",
-    },
-    {
-      truckNo: "ACH4D34C",
-      orderSize: "10",
-      orderCost: "30000",
-      orderVolume: "3000",
-      Date: "2009/01/12",
-      serialNo: "p0owPVQMO3",
-      link: "/orderreceipt",
-    },
-    {
-      truckNo: "ACH4D34C",
-      orderSize: "10",
-      orderCost: "30000",
-      orderVolume: "3000",
-      Date: "2009/01/12",
-      serialNo: "p0owPVQMO3",
-      link: "/orderreceipt",
-    },
-  ],
   tableFooter: [
     "Date",
     "Truck No",
@@ -140,17 +76,38 @@ const viewOrdersData = {
 };
 const ViewOrders = () => {
   const [ordersList, setOrdersList] = useState();
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+  console.log("User Deetails: ", userName, userId);
   useEffect(() => {
-    fetch(`${BASE_API_URL}/api/v1/order/list.php`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Orders List Data: ", data.data);
-        setOrdersList(data.data);
-      })
-      // .then((data) => console.log("API DATA: ", data.data))
-      .catch((err) => console.log("API ERROR: ", err));
-    return () => {};
-  }, []);
+    const source = axios.CancelToken.source();
+
+    const response = async () =>
+      await axios
+        .get(`${BASE_API_URL}/api/v1/order/list.php`)
+        .then((res) => {
+          if (res.data.error === true) {
+            errorAlert("Server Error", res.data.message);
+          } else {
+            let data = res.data.data;
+            data["userName"] = userName;
+            data["userId"] = userId;
+            setOrdersList(data);
+            console.log("Item: ", ordersList, res.data.data);
+          }
+        })
+        .catch((error) => {
+          errorAlert("Network Error", error);
+        });
+
+    response();
+    return () => {
+      source.cancel();
+    };
+  }, [userName, userId]);
   return (
     <div className="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
       <div className="widget-content widget-content-area br-6">

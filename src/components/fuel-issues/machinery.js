@@ -8,11 +8,17 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 import AddUpdateMachinery from "./add-update-machinery";
 
 import "./machinery.css";
+import { useGetUserDetails } from "../../hooks/function-utils";
 
 const Machinery = () => {
   const [machineryList, setMachineryList] = useState(["loading"]);
   const [showUpdateMachinery, setShowUpdateMachinery] = useState(false);
   const [loading, setloading] = useState(false);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -30,17 +36,14 @@ const Machinery = () => {
             } else {
               const machineryListItems = res.data.data;
               machineryListItems.map((item) => {
-                const userDetails = JSON.parse(localStorage.getItem("user")),
-                  user_name = userDetails.username,
-                  user_id = userDetails.id;
                 const machinery_id = parseInt(item.id),
                   machinery_name = item.machinery_name,
                   identification_no = item.identification_no,
                   description = item.description;
 
                 const machineryItemData = {
-                  user: user_name,
-                  user_id: user_id,
+                  user: userName,
+                  user_id: userId,
                   id: machinery_id,
                   machinery_name: machinery_name,
                   identification_no: identification_no,
@@ -119,7 +122,7 @@ const Machinery = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [userName, userId]);
 
   useEffect(() => {}, [showUpdateMachinery]);
 
@@ -217,6 +220,7 @@ const Machinery = () => {
     const machinery_identification = document.getElementById(
       "machinery-identification"
     ).value;
+
     const updateMachineryData = {
       "machinery-id": machinery_id,
       name: machinery_name,

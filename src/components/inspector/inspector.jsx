@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
-import { functionUtils } from "../../hooks/function-utils";
+import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 const Inspector = () => {
   const [bodyData, setBodyData] = useState(["loading"]);
   const [load, setLoad] = useState(null);
@@ -12,6 +12,13 @@ const Inspector = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+
   useEffect(() => {
     axios
       .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`, {
@@ -33,16 +40,16 @@ const Inspector = () => {
           const total_price = item.total_price;
           const total_volume = item.total_volume;
           const truck_Number = item.truck_no;
-          const userDetails = JSON.parse(localStorage.getItem("user"));
-          const userId = userDetails.id;
-          const userName = userDetails.username;
+          // const userDetails = JSON.parse(localStorage.getItem("user"));
+          // const userId = userDetails.id;
+          // const userName = userDetails.username;
           const dispatcherComment = item.dispatcher_comment;
           const loaderComment = item.loader_comment;
           console.log("Dispatcher comment: ", dispatcherComment);
           const loadingData = {
             "order-id": orderId,
             "order-ref": orderRef,
-            "user-id": userId,
+            "user-id": parseInt(userId),
             user: userName,
             comment: "",
           };
@@ -65,7 +72,6 @@ const Inspector = () => {
             qty,
             total_price,
             total_volume,
-            userDetails,
             userId,
             "Load Data: ",
             loadingData
@@ -122,7 +128,7 @@ const Inspector = () => {
         console.log("BODY ARRAY: ", body);
         console.log("BODY Data: ", bodyData);
       });
-  }, [bodyData]);
+  }, [bodyData, userName, userId]);
 
   const loaderListData = {
     tableTitle: "Inspection List",
