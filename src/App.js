@@ -4,12 +4,16 @@ import { getUserStoreInstance } from "./hooks/function-utils";
 import { BrowserRouter as Router } from "react-router-dom";
 import DashboardRouter from "./pages/DashboardRouter";
 import LoginPage from "./pages/login-page";
+import { findAllByDisplayValue } from "@testing-library/react";
 
 export default function App({ loginStatus }) {
   const UserStore = getUserStoreInstance();
 
-  /** old the current view user will see */
+  /** hold the current view user will see */
   const [appView, setAppView] = useState([]);
+
+  /** this will be set to tru once we are able to secure valid login status */
+  const [loginStatusValid, setLoginStatusValid] = useState(false);
 
   /** the default login view  */
   const LoginView = () => (
@@ -29,6 +33,11 @@ export default function App({ loginStatus }) {
    * */
   const createAppView = (loginStatus = false) => {
     if (loginStatus) {
+      /**
+       * set loginStatusValid. We set this state variable so that when the page refresh
+       */
+      setLoginStatusValid(true);
+
       setAppView(
         <div className="App">
           <Router>
@@ -43,12 +52,11 @@ export default function App({ loginStatus }) {
        * This user is not log in yet, or the user refresh and we are
        * still trying to get the login status from our async store.
        * what we will do is to wait a little while before setting `appView`
-       * so that if user is eventually found to have logged in, we wont show
-       * the login page before moving to the dashboard
+       * @todo implement this delay view feature
        */
       //setTimeout(()=>{
       setAppView(<LoginView />);
-      //}, 1000);
+      //}, 3000);
     }
   };
 
