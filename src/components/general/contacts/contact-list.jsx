@@ -90,7 +90,7 @@ const Contact = ({
                 /** set this state variable so that the popup open, the permission list for this user is shown */
                 setUserPermissionListView(PermissionListForUser);
 
-                console.log(content.user, "the user ");
+                console.log("the user: ", content.user);
 
                 /** open the update window */
                 setShowUserDetailsUpdate(true);
@@ -99,6 +99,8 @@ const Contact = ({
                   content.user.user;
                 document.getElementById("user-add-user-id").value =
                   content.user.id;
+                document.getElementById("select-add-user").value =
+                  content.user.user_type;
                 document.getElementById("phone-add-user").value =
                   content.user.phone;
                 document.getElementById("email-add-user").value =

@@ -82,6 +82,8 @@ const Users = () => {
     contacts: userList,
   };
 
+  console.log("User List Data: ", userListData);
+
   const changePassword = () => {
     let userName = document.getElementById("user-add-user").value,
       userId = document.getElementById("user-id-add-user").value,
@@ -542,7 +544,7 @@ const Users = () => {
       });
       setUserList(body);
       ////console.log("Users Main data: ", body);
-      ////console.log("Users Main DATA: ", userList);
+      console.log("Users Main DATA: ", userList);
     });
     ////console.log("Show modal: ", showModal);
   }, [refreshData, userName, userId]);
