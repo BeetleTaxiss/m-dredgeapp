@@ -14,6 +14,7 @@ import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
 import { FormDetails } from "../order-form/order-form-details";
 import { functionUtils } from "../../../hooks/function-utils";
+
 const OrderReceipt = () => {
   const { state } = useLocation();
   const [order, setOrder] = useState(state);
@@ -331,8 +332,6 @@ const OrderReceipt = () => {
   );
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 /** use this function to print out the order receipt  */
 const printOrderReceiptOld = (printTitle = "Order Receipt", orderReceiptLayer = "order-receipt-view") => {
 
@@ -412,10 +411,6 @@ const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", o
   links.setAttribute("style", "display:block");
 }
 
-=======
->>>>>>> parent of 5648565... Order print and download feature added
-=======
->>>>>>> parent of 5648565... Order print and download feature added
 export const OrderReceiptLinks = ({ setShowModal }) => (
   <div className="">
     <div className="invoice-actions-btn">
