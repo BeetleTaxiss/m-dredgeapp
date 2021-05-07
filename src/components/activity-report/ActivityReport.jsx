@@ -1,14 +1,39 @@
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
-import React from "react";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
-import { functionUtils } from "../../hooks/function-utils";
-import { FormDetails } from "../orders/order-form/order-form-details";
+import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 import ActivityReportForm from "./ActivityReportForm";
 
 const ActivityReport = () => {
-  // const [] = useState();
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+  const [userType, setUserType] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId, setUserType);
+
+  useEffect(() => {
+    document.getElementById("employee-name").value = userName;
+    document.getElementById("department").value =
+      userType === "2"
+        ? "Super Admin"
+        : userType === "3"
+        ? "Admin"
+        : userType === "4"
+        ? "Loader"
+        : userType === "5"
+        ? "Production Master"
+        : userType === "6"
+        ? "Loading Inspector"
+        : userType === "7"
+        ? "Security"
+        : userType === "8"
+        ? "Operation Staff"
+        : "Staff";
+  }, [userName, userId, userType]);
+
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -28,29 +53,15 @@ const ActivityReport = () => {
     });
   };
 
-  // const warningAlert = (title, releaseItem) => {
-  //   Swal.fire({
-  //     icon: "warning",
-  //     title: title,
-  //   }).then((value) => {
-  //     if (value.isConfirmed) {
-  //       handleReleaseImpoundedTruck(releaseItem);
-  //     }
-  //   });
-  // };
-
-  const handleAddActivityReport = () => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
+  const handleAddActivityReport = (userName, userId) => {
     const work_week = document.getElementById("work-week").value;
     const ongoing_tasks = document.getElementById("ongoing-tasks").value;
     const completed_tasks = document.getElementById("completed-tasks").value;
     const next_week_tasks = document.getElementById("next-week-tasks").value;
 
     const addActivityReportData = {
-      user: user_name,
-      "user-id": user_id,
+      user: userName,
+      "user-id": userId,
       "work-week": work_week,
       "ongoing-task": ongoing_tasks,
       "next-week-task": next_week_tasks,
@@ -66,8 +77,6 @@ const ActivityReport = () => {
             text = res.data.message;
           errorAlert(title, text);
         } else {
-          document.getElementById("employee-name").value = "";
-          document.getElementById("department").value = "";
           document.getElementById("work-week").value = "";
           document.getElementById("ongoing-tasks").value = "";
           document.getElementById("completed-tasks").value = "";
@@ -115,6 +124,7 @@ const ActivityReport = () => {
         name: "employee-name",
         className: "form-control",
         holder: "",
+        disabled: true,
         required: false,
       },
     ],
@@ -125,6 +135,7 @@ const ActivityReport = () => {
         name: "department",
         className: "form-control",
         holder: "",
+        disabled: true,
         required: false,
       },
     ],
@@ -201,7 +212,7 @@ const ActivityReport = () => {
           getAddActivityReportFormDataWrapper()
         );
         if (validation === true) {
-          handleAddActivityReport();
+          handleAddActivityReport(userName, userId);
         }
       }}
     />

@@ -2,11 +2,17 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
+import { useGetUserDetails } from "../../hooks/function-utils";
 import { showLogItem } from "../cards/custom-activities-summary";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 
 const ActivityReportList = () => {
   const [activityReportList, setActivityReportList] = useState(["loading"]);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -45,8 +51,8 @@ const ActivityReportList = () => {
                   "approved-by": item.approved_by,
                 };
                 const activityReportItemData = {
-                  "user-id": user_id,
-                  user: user_name,
+                  "user-id": userId,
+                  user: userName,
                   "task-id": task_id,
                 };
 
@@ -131,7 +137,7 @@ const ActivityReportList = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [userName, userId]);
 
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
