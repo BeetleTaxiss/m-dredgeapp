@@ -1,6 +1,6 @@
 import React from "react";
 
-const ViewordersSearchbar = () => {
+const ViewordersSearchbar = ({ handleCountChange, handleSearchList }) => {
   return (
     <div className="dt--top-section">
       <div className="row">
@@ -9,9 +9,13 @@ const ViewordersSearchbar = () => {
             <label>
               Results :{" "}
               <select
+                id="order-list-count"
                 name="default-ordering_length"
                 aria-controls="default-ordering"
                 className="form-control"
+                onChange={() => {
+                  return handleCountChange && handleCountChange();
+                }}
               >
                 <option value="7">7</option>
                 <option value="10">10</option>
@@ -44,6 +48,9 @@ const ViewordersSearchbar = () => {
                 className="form-control"
                 placeholder="Search..."
                 aria-controls="default-ordering"
+                onChange={() => {
+                  return handleSearchList && handleSearchList();
+                }}
               />
             </label>
           </div>
