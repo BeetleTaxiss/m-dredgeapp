@@ -81,7 +81,6 @@ const ViewOrders = () => {
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
-  console.log("User Deetails: ", userName, userId);
   useEffect(() => {
     const source = axios.CancelToken.source();
 
