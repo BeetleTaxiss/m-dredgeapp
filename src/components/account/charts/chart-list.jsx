@@ -304,9 +304,6 @@ const ChartList = () => {
   useGetUserDetails(setUserName, setUserId);
 
   const handleDeleteChartItem = (id, userName, userId) => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
     axios
       .post(`${BASE_API_URL}/api/v1/account/chart-delete.php`, {
         user: userName,
