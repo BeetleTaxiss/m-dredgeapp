@@ -92,6 +92,8 @@ const Contact = ({
 
                 console.log(content.user, "the user ");
 
+                /** open the update window */
+                setShowUserDetailsUpdate(true);
                 /** set the initial values for our form input before we open */
                 document.getElementById("user-add-user").value =
                   content.user.user;
@@ -101,9 +103,6 @@ const Contact = ({
                   content.user.phone;
                 document.getElementById("email-add-user").value =
                   content.user.email;
-
-                /** open the update window */
-                setShowUserDetailsUpdate(true);
               }}
             >
               Edit
@@ -157,11 +156,7 @@ const Contact = ({
               onClick={() => {
                 console.log("Individual User Data: ", content.user);
                 content.setUser(content.user);
-                content.delete(
-                  `Are you sure you want to delete ${content.metaInfo.name} ?`,
-                  content.user.user,
-                  content.user.id
-                );
+                content.delete();
               }}
             >
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>

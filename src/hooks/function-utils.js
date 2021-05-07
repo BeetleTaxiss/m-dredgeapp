@@ -150,6 +150,36 @@ const Login = async (user, password) => {
   }
 };
 
+export const useGetAppSettings = async (
+  setUserTypesList,
+  setMeasurementList,
+  setUsersPermissions
+) => {
+  /** fetch saved app settings informarion from store */
+  const Store = StoreManager(AppStore, Stores, "AppSettingsStore");
+
+  /** Fetch users types list and set it to state */
+  Store.useStateAsync("userTypes").then((typesList) => {
+    // typesList.unshift({
+    //   user_type: "Select Job Description",
+    //   id: "0",
+    //   validation: "Can't select this option",
+    // });
+    typeof setUserTypesList === "function" && setUserTypesList(typesList);
+  });
+
+  /** Fetch measurement list and set it to state */
+  Store.useStateAsync("userTypes").then((measurementList) => {
+    typeof setMeasurementList === "function" &&
+      setUserTypesList(measurementList);
+  });
+  /** Fetch users permissions and set it to state */
+  Store.useStateAsync("userTypes").then((permissionList) => {
+    typeof setUsersPermissions === "function" &&
+      setUserTypesList(permissionList);
+  });
+};
+
 export const useGetUserDetails = async (
   setUserName,
   setUserId,
@@ -1591,6 +1621,10 @@ export const functionUtils = {
   validateFormInputs: (formData) => {
     console.log("Form data in validation: ", formData);
     let formInputValue = true;
+    /** Check if form data is undefined */
+    if (formData === undefined || formData === null) {
+      return (formInputValue = false);
+    }
     for (const [key, value] of Object.entries(formData)) {
       /** Convert value to string without spacing */
       let stringValue = `${value}`;
