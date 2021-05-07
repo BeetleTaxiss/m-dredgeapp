@@ -6,12 +6,18 @@ import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import UpdateAccountForm from "../../fuel-issues/add-Fuel-Form";
 import WidgetHeader from "../../general/widget-header";
-import { functionUtils } from "../../../hooks/function-utils";
+import {
+  functionUtils,
+  useGetUserDetails,
+} from "../../../hooks/function-utils";
 
 const ChartList = () => {
   const [chartList, setChartList] = useState(["loading"]);
   const [statementTypes, setStatementTypes] = useState();
   const [accountTypes, setAccountTypes] = useState();
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -61,7 +67,9 @@ const ChartList = () => {
                       onClick: () => {
                         warningAlert(
                           `Are you sure you want to delete this account: ${statement}`,
-                          chart_id
+                          chart_id,
+                          userName,
+                          userId
                         );
                       },
                     },
@@ -94,7 +102,7 @@ const ChartList = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [userName, userId]);
 
   /**
    * Account types API call for the select dropdown
@@ -238,13 +246,13 @@ const ChartList = () => {
       showConfirmButton: false,
     });
   };
-  const warningAlert = (title, chart_id) => {
+  const warningAlert = (title, chart_id, userName, userId) => {
     Swal.fire({
       icon: "warning",
       title: title,
     }).then((value) => {
       if (value.isConfirmed) {
-        handleDeleteChartItem(chart_id);
+        handleDeleteChartItem(chart_id, userName, userId);
       }
     });
   };
@@ -292,14 +300,17 @@ const ChartList = () => {
         }
       });
   };
-  const handleDeleteChartItem = (id) => {
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+
+  const handleDeleteChartItem = (id, userName, userId) => {
     const userDetails = JSON.parse(localStorage.getItem("user")),
       user_name = userDetails.username,
       user_id = userDetails.id;
     axios
       .post(`${BASE_API_URL}/api/v1/account/chart-delete.php`, {
-        user: user_name,
-        "user-id": user_id,
+        user: userName,
+        "user-id": userId,
         "chart-id": id,
       })
       .then((res) => {
