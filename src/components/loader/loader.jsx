@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import FormModal from "../general/modal/form-modal";
-import { functionUtils } from "../../hooks/function-utils";
+import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 const Loader = () => {
   const [bodyData, setBodyData] = useState(["loading"]);
   const [load, setLoad] = useState(null);
@@ -12,6 +12,13 @@ const Loader = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+
   useEffect(
     () =>
       axios
@@ -34,11 +41,6 @@ const Loader = () => {
             const total_price = item.total_price;
             const total_volume = item.total_volume;
             const truck_Number = item.truck_no;
-            const userDetails = localStorage.getItem("user")
-              ? JSON.parse(localStorage.getItem("user"))
-              : null;
-            const userName = userDetails?.username;
-            const userId = userDetails?.id;
             const loaded = item.loaded;
             const inspected = item.inspected;
             const cleared = item.security;
@@ -50,10 +52,10 @@ const Loader = () => {
             const loadingData = {
               "order-id": orderId,
               "order-ref": orderRef,
-              "user-id": userId,
+              "user-id": parseInt(userId),
               comment: comment,
             };
-            console.log("User Details: ", userDetails);
+            // console.log("User Details: ", userDetails);
             const loadingDisplayData = {
               product: product,
               qty: qty,
@@ -68,7 +70,7 @@ const Loader = () => {
               "order-id": orderId,
               "order-ref": orderRef,
               user: userName,
-              "user-id": userId,
+              "user-id": parseInt(userId),
             };
 
             console.log(
@@ -80,7 +82,6 @@ const Loader = () => {
               qty,
               total_price,
               total_volume,
-              userDetails,
               userId,
               comment,
               "Load Data: ",
@@ -141,7 +142,7 @@ const Loader = () => {
           setBodyData(body);
           console.log("BODY ARRAY: ", body);
         }),
-    [bodyData, showModal, setShowModal]
+    [bodyData, showModal, setShowModal, userName, userId]
   );
 
   const loaderListData = {
@@ -169,6 +170,7 @@ const Loader = () => {
   ];
 
   const Processing = (load) => {
+    console.log("processing: ", load);
     axios
       .put(`${BASE_API_URL}/api/v1/order/processing.php`, load)
       .then((res) => {

@@ -100,7 +100,6 @@ const Login = async (user, password) => {
       );
     });
 
-
   if (response === null || response === undefined) {
     /** there was an error login in */
     errorAlert(
@@ -120,14 +119,15 @@ const Login = async (user, password) => {
     return { status: false };
   } else {
     let responseData = response.data.data;
-    if(!responseData || !responseData.id) {
-      /** 
-       * this user is certainly not logged in. This could be a login error from the server 
+    if (!responseData || !responseData.id) {
+      /**
+       * this user is certainly not logged in. This could be a login error from the server
        * */
-       let title = "Login Error",
-       text = "Could not login. Something went wrong from the server. Please contact system admin";
-       errorAlert(title, text);
-       return { status: false };
+      let title = "Login Error",
+        text =
+          "Could not login. Something went wrong from the server. Please contact system admin";
+      errorAlert(title, text);
+      return { status: false };
     }
 
     /** login was successful add 1status=true to use for validation` */
@@ -245,19 +245,24 @@ export const getAppSettingStoreInstance = () => {
 /**
  * use this function to create user routes based on the user permission level
  */
-export const createUserAllowedRoutes = (userPermission, addDefaultRoutes = true) => {
-  
-    /** 
-     * hold the default route within our application. Due to the peculiar nature of react-router-dom
-     * where "/" matches other routes, we must add this entry as the last  item in our router stack
-     * */
-     let defaultRoute=null;
+export const createUserAllowedRoutes = (
+  userPermission,
+  addDefaultRoutes = true
+) => {
+  /**
+   * hold the default route within our application. Due to the peculiar nature of react-router-dom
+   * where "/" matches other routes, we must add this entry as the last  item in our router stack
+   * */
+  let defaultRoute = null;
 
   /**
    * These are the valid routes this user can have access to within the application
    * Pass the `userMenu` provided during user setup
    */
-  let UserAllowedRoutes = createUserRoutes(userPermission,addDefaultRoutes ).map((page, k) => {
+  let UserAllowedRoutes = createUserRoutes(
+    userPermission,
+    addDefaultRoutes
+  ).map((page, k) => {
     const { link, component, hideNavBar, usePageWrapper } = page;
     const Component = component;
 
@@ -268,7 +273,9 @@ export const createUserAllowedRoutes = (userPermission, addDefaultRoutes = true)
      */
     const PageComponent = () => {
       const NavigationBar =
-        hideNavBar && hideNavBar === true ? () => null : () => <NavBar userPermission={userPermission} />;
+        hideNavBar && hideNavBar === true
+          ? () => null
+          : () => <NavBar userPermission={userPermission} />;
 
       /** Create an helper component for pageWrapper
        */
@@ -290,16 +297,20 @@ export const createUserAllowedRoutes = (userPermission, addDefaultRoutes = true)
       );
     };
 
-    if(link==="/") {
-      defaultRoute=<Route key={k}  exact path={link} component={PageComponent} />;
+    if (link === "/") {
+      defaultRoute = (
+        <Route key={k} exact path={link} component={PageComponent} />
+      );
       return [];
     }
     /** return the route */
-      return <Route key={k} path={link} component={PageComponent} />;
+    return <Route key={k} path={link} component={PageComponent} />;
   });
 
   /** return allowed routes */
-  return defaultRoute ?  UserAllowedRoutes.concat(defaultRoute) : UserAllowedRoutes;
+  return defaultRoute
+    ? UserAllowedRoutes.concat(defaultRoute)
+    : UserAllowedRoutes;
 };
 
 /**
@@ -1279,16 +1290,30 @@ export const functionUtils = {
    * @param  {order_ref} order_ref
    * ----------------------------------------------------------------------------------------------------------
    */
-  handleDeleteOrder: async (id, order_ref) => {
-    const request = await axios.post(
-      `${BASE_API_URL}/api/v1/order/delete.php`,
-      { "order-id": id, "order-ref": order_ref }
-    );
-    const response = request.data;
-    if (response.error === false) {
-      // window.refresh();
-    }
-    console.log("Order deleted? ", response);
+  handleDeleteOrder: async (id, order_ref, userName, userId) => {
+    await axios
+      .post(`${BASE_API_URL}/api/v1/order/delete.php`, {
+        "order-id": id,
+        "order-ref": order_ref,
+        user: userName,
+        "user-id": parseInt(userId),
+      })
+      .then((res) => {
+        if (res.data.error === true) {
+          errorAlert("Order wasn't deleted", res.data.message);
+        } else {
+          successAlert("Order deleted successfully", res.data.message);
+        }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+      });
+    // const response = request.data;
+
+    // if (response.error === false) {
+    //   // window.refresh();
+    // }
+    // console.log("Order deleted? ", response);
     console.log("Order Id ", id);
     console.log("Order Ref ", order_ref);
   },
@@ -1367,7 +1392,6 @@ export const functionUtils = {
     successLocation = "/"
   ) => {
     const handleSubmit = async (event) => {
-
       if (validateForm(errors)) {
         console.info("Valid Form");
       } else {
@@ -1383,7 +1407,7 @@ export const functionUtils = {
           state: response,
         });
       } else {
-       return false;
+        return false;
       }
     };
     return handleSubmit;
@@ -1619,7 +1643,7 @@ export const functionUtils = {
       })
       .join("");
   },
-  
+
   /**
    *
    */

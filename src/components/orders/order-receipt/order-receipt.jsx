@@ -13,7 +13,10 @@ import { useUpdateOrderFormData } from "../../../hooks/useFormData";
 import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
 import { FormDetails } from "../order-form/order-form-details";
-import { functionUtils } from "../../../hooks/function-utils";
+import {
+  functionUtils,
+  useGetUserDetails,
+} from "../../../hooks/function-utils";
 const OrderReceipt = () => {
   const { state } = useLocation();
   const [order, setOrder] = useState(state);
@@ -22,6 +25,11 @@ const OrderReceipt = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
 
   const handleChange = () => {
     // Get form values with document,getById
@@ -50,14 +58,14 @@ const OrderReceipt = () => {
     setTotalPrice(order.total_price);
   };
 
-  const handleUpdateOrder = () => {
+  const handleUpdateOrder = (userName, userId) => {
     const qtyValue = document.getElementById("qty").value;
     const truckNoValue = document.getElementById("truckNo").value;
     console.log(" Order", order);
     const orderId = order.id;
     const orderRef = order.order_ref;
-    const user = order.user;
-    const userId = order.user_id;
+    // const user = order.user;
+    // const userId = order.user_id;
     const productId = order.product_id;
     const product = order.product;
     const productUnit = order.unit;
@@ -66,8 +74,8 @@ const OrderReceipt = () => {
     const updateOrderData = {
       "product-id": productId,
       product: product,
-      user: user,
-      "user-id": userId,
+      user: userName,
+      "user-id": parseInt(userId),
       "order-id": orderId,
       "order-ref": orderRef,
       qty: qtyValue,
@@ -109,14 +117,14 @@ const OrderReceipt = () => {
     }
   };
 
-  const getUpdateOrderFormData = () => {
+  const getUpdateOrderFormData = (userName, userId) => {
     const qtyValue = document.getElementById("qty").value;
     const truckNoValue = document.getElementById("truckNo").value;
     console.log(" Order", order);
     const orderId = order.id;
     const orderRef = order.order_ref;
-    const user = order.user;
-    const userId = order.user_id;
+    // const user = order.user;
+    // const userId = order.user_id;
     const productId = order.product_id;
     const product = order.product;
     const productUnit = order.unit;
@@ -125,7 +133,7 @@ const OrderReceipt = () => {
     const updateOrderData = {
       "product-id": productId,
       product: product,
-      user: user,
+      user: userName,
       "user-id": userId,
       "order-id": orderId,
       "order-ref": orderRef,
@@ -172,16 +180,16 @@ const OrderReceipt = () => {
     });
   };
 
-  const dispatchOrder = () => {
+  const dispatchOrder = (userName, userId) => {
     const orderId = order.id;
     const orderRef = order.order_ref;
-    const user = order.user;
-    const userId = order.user_id;
+    // const user = order.user;
+    // const userId = order.user_id;
     const comment = document.getElementById("comment").value;
     const dispatchData = {
       "order-id": orderId,
       "order-ref": orderRef,
-      user: user,
+      user: userName,
       "user-id": userId,
       comment: comment,
     };
@@ -232,7 +240,7 @@ const OrderReceipt = () => {
     setOrder(state);
   }, []);
 
-  useEffect(() => {}, [order]);
+  useEffect(() => {}, [order, userName, userId]);
 
   return (
     <div className="row invoice  layout-spacing layout-top-spacing">
@@ -289,7 +297,7 @@ const OrderReceipt = () => {
                 rows={5}
                 cols={3}
                 content={dispatchFormData}
-                dispatchOrder={dispatchOrder}
+                dispatchOrder={() => dispatchOrder(userName, userId)}
               />
               <OrderReceiptLinks
                 setShowModal={() => {
@@ -317,10 +325,10 @@ const OrderReceipt = () => {
           status={error}
           handleSubmit={() => {
             const validationStatus = functionUtils.validateFormInputs(
-              getUpdateOrderFormData()
+              getUpdateOrderFormData(userName, userId)
             );
             if (validationStatus === true) {
-              handleUpdateOrder();
+              handleUpdateOrder(userName, userId);
             }
           }}
           handleChange={handleChange}

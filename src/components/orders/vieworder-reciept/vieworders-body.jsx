@@ -7,13 +7,13 @@ import { ReactComponent as DeleteIcon } from "../../../assets/deleteIcon.svg";
 
 const ViewordersTableBody = ({ content }) => {
   const title = "Are you sure you want to Delete this order ?";
-  const warningAlert = (title, id, ref) => {
+  const warningAlert = (title, id, ref, userName, userId) => {
     Swal.fire({
       icon: "warning",
       title: title,
     }).then((value) => {
       if (value.isConfirmed) {
-        functionUtils.handleDeleteOrder(id, ref);
+        functionUtils.handleDeleteOrder(id, ref, userName, userId);
       }
     });
   };
@@ -48,7 +48,13 @@ const ViewordersTableBody = ({ content }) => {
                     ? warningCantDeleteAlert(
                         "Order already dispatched, can't be deleted"
                       )
-                    : warningAlert(title, item.id, item.order_ref)
+                    : warningAlert(
+                        title,
+                        item.id,
+                        item.order_ref,
+                        content.userName,
+                        content.userId
+                      )
                 }
               />
               <button className="btn btn-primary">
