@@ -8,12 +8,17 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 import AddUpdateProduct from "./add-update-product";
 
 import "./product.css";
-import { functionUtils } from "../../hooks/function-utils";
+import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 
 const Products = () => {
   const [productsList, setProductsList] = useState(["loading"]);
   const [showUpdateProduct, setShowUpdateProduct] = useState(false);
   const [loading, setloading] = useState(false);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -31,9 +36,6 @@ const Products = () => {
             } else {
               const productsListItems = res.data.data;
               productsListItems.map((item) => {
-                const userDetails = JSON.parse(localStorage.getItem("user")),
-                  user_name = userDetails.username,
-                  user_id = userDetails.id;
                 const product = item.product,
                   product_id = item.id,
                   description = item.description,
@@ -42,8 +44,8 @@ const Products = () => {
                   measurement = item.measurement;
 
                 const productItemData = {
-                  user: user_name,
-                  user_id: user_id,
+                  user: userName,
+                  user_id: userId,
                   product: product,
                   product_id: product_id,
                   description: description,
@@ -53,8 +55,8 @@ const Products = () => {
                 };
 
                 const deleteProductItemData = {
-                  user: user_name,
-                  "user-id": user_id,
+                  user: userName,
+                  "user-id": userId,
                   product: product,
                   "product-id": product_id,
                 };
@@ -138,7 +140,7 @@ const Products = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [userName, userId]);
 
   useEffect(() => {}, [showUpdateProduct]);
 
