@@ -190,9 +190,9 @@ const UsersActivitiesSummary = () => {
   const recentPumpingActivitiesData = {
     widgetHeader: {
       title: "Recent User Activities",
-      link: "/productionlist",
+      link: "/useractivity",
     },
-    taskAction: "/productionlist",
+    taskAction: "/useractivity",
     activities: activitiesSummary,
   };
 
