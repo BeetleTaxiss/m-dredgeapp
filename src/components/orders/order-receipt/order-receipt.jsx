@@ -14,9 +14,6 @@ import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
 import { FormDetails } from "../order-form/order-form-details";
 import { functionUtils } from "../../../hooks/function-utils";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-
 const OrderReceipt = () => {
   const { state } = useLocation();
   const [order, setOrder] = useState(state);
@@ -199,9 +196,9 @@ const OrderReceipt = () => {
           errorAlert(title, text);
         } else {
           const title =
-            res.data.message === "Order already dispatched"
-              ? res.data.message
-              : "Your Order has been dispatched successfully",
+              res.data.message === "Order already dispatched"
+                ? res.data.message
+                : "Your Order has been dispatched successfully",
             text =
               res.data.message === "Order already dispatched"
                 ? ""
@@ -235,17 +232,16 @@ const OrderReceipt = () => {
     setOrder(state);
   }, []);
 
-  useEffect(() => { }, [order]);
+  useEffect(() => {}, [order]);
 
   return (
-
-    <div id="order-receipt-view" className="row invoice  layout-spacing layout-top-spacing">
+    <div className="row invoice  layout-spacing layout-top-spacing">
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div className="doc-container">
           <div className="row">
             <div className="col-xl-9">
               <div className="invoice-container">
-                <div style={{ padding: "10px" }} className="invoice-inbox">
+                <div className="invoice-inbox">
                   <div id="ct" className="">
                     <div className="invoice-00001">
                       <div className="content-section">
@@ -288,7 +284,7 @@ const OrderReceipt = () => {
               </div>
             </div>
             {/* BEGINNING OF ORDER RECIEPT LINKS */}
-            <div id="order-receipt-view-links" className="order-receipt-view-links col-xl-3">
+            <div className="col-xl-3">
               <DispatchComment
                 rows={5}
                 cols={3}
@@ -335,6 +331,7 @@ const OrderReceipt = () => {
   );
 };
 
+<<<<<<< HEAD
 /** use this function to print out the order receipt  */
 const printOrderReceiptOld = (printTitle = "Order Receipt", orderReceiptLayer = "order-receipt-view") => {
 
@@ -414,15 +411,16 @@ const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", o
   links.setAttribute("style", "display:block");
 }
 
+=======
+>>>>>>> parent of 5648565... Order print and download feature added
 export const OrderReceiptLinks = ({ setShowModal }) => (
   <div className="">
     <div className="invoice-actions-btn">
       <div className="invoice-action-btn">
         <div className="row">
           <div className="col-xl-12 col-md-4 col-sm-6">
-            <a onClick={() => {
-              printOrderReceipt()
-            }}
+            <a
+              onClick={() => window.print()}
               href="javascript:void(0)"
               className="btn btn-secondary btn-print  action-print"
             >
@@ -431,9 +429,6 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
           </div>
           <div className="col-xl-12 col-md-4 col-sm-6">
             <a
-            onClick={()=>{
-              printOrderReceipt(true)
-            }}
               href="javascript:void(0)"
               className="btn btn-success btn-download"
             >
@@ -455,7 +450,6 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
     </div>
   </div>
 );
-
 export const DispatchComment = ({ content, rows, cols, dispatchOrder }) => (
   <div className="mb-4">
     <div className="invoice-actions-btn">
