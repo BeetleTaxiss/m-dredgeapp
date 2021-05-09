@@ -24,7 +24,8 @@ const ViewordersTablepaiginaition = () => {
               id="default-ordering_previous"
             >
               <Link
-                to="#"
+                to="javascript:void(0)"
+                onClick={(e) => e.preventDefault()}
                 aria-controls="default-ordering"
                 data-dt-idx="0"
                 tabIndex="0"
@@ -49,7 +50,8 @@ const ViewordersTablepaiginaition = () => {
             </li>
             <li className="paginate_button page-item active">
               <Link
-                to="#"
+                to="javascript:void(0)"
+                onClick={(e) => e.preventDefault()}
                 aria-controls="default-ordering"
                 data-dt-idx="1"
                 tabIndex="0"
@@ -60,7 +62,8 @@ const ViewordersTablepaiginaition = () => {
             </li>
             <li className="paginate_button page-item ">
               <Link
-                to="#"
+                to="javascript:void(0)"
+                onClick={(e) => e.preventDefault()}
                 aria-controls="default-ordering"
                 data-dt-idx="2"
                 tabIndex="0"
@@ -71,7 +74,8 @@ const ViewordersTablepaiginaition = () => {
             </li>
             <li className="paginate_button page-item ">
               <Link
-                to="#"
+                to="javascript:void(0)"
+                onClick={(e) => e.preventDefault()}
                 aria-controls="default-ordering"
                 data-dt-idx="3"
                 tabIndex="0"
@@ -82,7 +86,8 @@ const ViewordersTablepaiginaition = () => {
             </li>
             <li className="paginate_button page-item ">
               <Link
-                to="#"
+                to="javascript:void(0)"
+                onClick={(e) => e.preventDefault()}
                 aria-controls="default-ordering"
                 data-dt-idx="4"
                 tabIndex="0"
@@ -96,7 +101,8 @@ const ViewordersTablepaiginaition = () => {
               id="default-ordering_next"
             >
               <Link
-                to="#"
+                to="javascript:void(0)"
+                onClick={(e) => e.preventDefault()}
                 aria-controls="default-ordering"
                 data-dt-idx="5"
                 tabIndex="0"

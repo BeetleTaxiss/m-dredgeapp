@@ -40,9 +40,6 @@ const Inspector = () => {
           const total_price = item.total_price;
           const total_volume = item.total_volume;
           const truck_Number = item.truck_no;
-          // const userDetails = JSON.parse(localStorage.getItem("user"));
-          // const userId = userDetails.id;
-          // const userName = userDetails.username;
           const dispatcherComment = item.dispatcher_comment;
           const loaderComment = item.loader_comment;
           console.log("Dispatcher comment: ", dispatcherComment);

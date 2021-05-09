@@ -52,6 +52,13 @@ const UsersActivitiesSummary = () => {
         ? `${action_instigator} deleted ${action_data.description} from products list`
         : action_taken === "delete" && action_received === "operation_machinery"
         ? `${action_instigator} deleted ${action_data.machinery_name} from machinery list`
+        : action_taken === "delete" &&
+          action_received === "security_impounded_trucks"
+        ? `${action_instigator} deleted impounded truck ${action_data.truck_no} from impounded trucks list`
+        : action_taken === "delete" && action_received === "task"
+        ? `${action_instigator} deleted an activity report from ${action_data.user}`
+        : action_taken === "delete" && action_received === "orders"
+        ? `${action_instigator} deleted an order with order reference: "${action_data.order_ref}" from orders list`
         : /**Updated items description */
         action_taken === "update"
         ? `${action_instigator} ${items(updatedItems)} from products list`
@@ -71,7 +78,7 @@ const UsersActivitiesSummary = () => {
       await axios
         .get(`${BASE_API_URL}/api/v1/system/system-logs.php`, {
           params: {
-            count: "15",
+            count: "50",
           },
         })
         .then((res) => {
@@ -116,7 +123,9 @@ const UsersActivitiesSummary = () => {
                 "Action data: ",
                 action_data,
                 "Action old data: ",
-                action_old_data
+                action_old_data,
+                "Action recieved: ",
+                action_received
               );
 
               const activitiesSummarySchema = {
@@ -181,9 +190,9 @@ const UsersActivitiesSummary = () => {
   const recentPumpingActivitiesData = {
     widgetHeader: {
       title: "Recent User Activities",
-      link: "/productionlist",
+      link: "/useractivity",
     },
-    taskAction: "/productionlist",
+    taskAction: "/useractivity",
     activities: activitiesSummary,
   };
 

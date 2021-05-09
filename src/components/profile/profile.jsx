@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import md5 from "md5";
 import Swal from "sweetalert2";
-import PageWrapper from "../general/page-wrapper";
 import WidgetHeader from "../general/widget-header";
 import { useUserChangePasswordFormData } from "../../hooks/useFormData";
 import { FormDetails } from "../orders/order-form/order-form-details";
 import LoadingButton from "../general/loading-button";
 import axios from "axios";
 import { BASE_API_URL } from "../../hooks/API";
+import { useGetUserDetails } from "../../hooks/function-utils";
 const Profile = () => {
-  const userDetails = JSON.parse(localStorage.getItem("user")),
-    userName = userDetails.username,
-    userId = userDetails.id;
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+
+  useEffect(() => {}, [userName, userId]);
 
   console.log("UserDetails: ", userName, userId);
 
@@ -72,44 +76,42 @@ const Profile = () => {
   } = useUserChangePasswordFormData(userName);
 
   return (
-    <PageWrapper>
-      <div className="statbox widget box box-shadow col-md-12">
-        <WidgetHeader title={"Account Settings"} />
-        <div
-          className="widget-content widget-content-area"
-          style={{
-            padding: "1.5rem  3rem",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <h2 style={titleStyles} id="formModal-title">
-            {formTitle}
-          </h2>
-          <p style={subtitleStyles} id="formModal-subtitle">
-            {formSubtitle}
-          </p>
-          <form id="formModal" onSubmit={(e) => e.preventDefault()}>
-            {updatePasswordFormData.map((item, i) => (
-              <div key={item.id} className="row">
-                <div className="col-md-12">
-                  <div className="">
-                    <i className="flaticon-location-1"></i>
-                    <FormDetails item={item} />
-                    <span className="validation-text"></span>
-                  </div>
+    <div className="statbox widget box box-shadow col-md-12">
+      <WidgetHeader title={"Account Settings"} />
+      <div
+        className="widget-content widget-content-area"
+        style={{
+          padding: "1.5rem  3rem",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <h2 style={titleStyles} id="formModal-title">
+          {formTitle}
+        </h2>
+        <p style={subtitleStyles} id="formModal-subtitle">
+          {formSubtitle}
+        </p>
+        <form id="formModal" onSubmit={(e) => e.preventDefault()}>
+          {updatePasswordFormData.map((item, i) => (
+            <div key={item.id} className="row">
+              <div className="col-md-12">
+                <div className="">
+                  <i className="flaticon-location-1"></i>
+                  <FormDetails item={item} />
+                  <span className="validation-text"></span>
                 </div>
               </div>
-            ))}
-            <LoadingButton
-              handleSubmit={handleSubmit}
-              // loading={loading}
-              text={Btntext}
-            />
-          </form>
-        </div>
+            </div>
+          ))}
+          <LoadingButton
+            handleSubmit={handleSubmit}
+            // loading={loading}
+            text={Btntext}
+          />
+        </form>
       </div>
-    </PageWrapper>
+    </div>
   );
 };
 

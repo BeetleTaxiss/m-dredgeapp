@@ -4,9 +4,17 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import moment from "moment";
+import { useGetUserDetails } from "../../../hooks/function-utils";
 
 const StockpiledSand = () => {
   const [stockpiledSandList, setStockpiledSandList] = useState(["loading"]);
+
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -31,9 +39,6 @@ const StockpiledSand = () => {
               const stockpiledSandItems = res.data.data;
               stockpiledSandItems.map((item) => {
                 /** Get required response data values */
-                const userDetails = JSON.parse(localStorage.getItem("user")),
-                  user_id = userDetails.id,
-                  user_name = userDetails.username;
                 const product_id = item.product_id;
                 const production_id = item.id;
                 const batch = item.batch;
@@ -49,8 +54,8 @@ const StockpiledSand = () => {
 
                 /** to stockpile API data */
                 const addToStockData = {
-                  "user-id": user_id,
-                  user: user_name,
+                  "user-id": parseInt(userId),
+                  user: userName,
                   "product-id": product_id,
                   "production-id": production_id,
                   "batch-no": batch,
@@ -137,7 +142,7 @@ const StockpiledSand = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [userName, userId]);
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
     Swal.fire({

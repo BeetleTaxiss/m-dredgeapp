@@ -150,6 +150,36 @@ const Login = async (user, password) => {
   }
 };
 
+export const useGetAppSettings = async (
+  setUserTypesList,
+  setMeasurementList,
+  setUsersPermissions
+) => {
+  /** fetch saved app settings informarion from store */
+  const Store = StoreManager(AppStore, Stores, "AppSettingsStore");
+
+  /** Fetch users types list and set it to state */
+  Store.useStateAsync("userTypes").then((typesList) => {
+    // typesList.unshift({
+    //   user_type: "Select Job Description",
+    //   id: "0",
+    //   validation: "Can't select this option",
+    // });
+    typeof setUserTypesList === "function" && setUserTypesList(typesList);
+  });
+
+  /** Fetch measurement list and set it to state */
+  Store.useStateAsync("userTypes").then((measurementList) => {
+    typeof setMeasurementList === "function" &&
+      setUserTypesList(measurementList);
+  });
+  /** Fetch users permissions and set it to state */
+  Store.useStateAsync("userTypes").then((permissionList) => {
+    typeof setUsersPermissions === "function" &&
+      setUserTypesList(permissionList);
+  });
+};
+
 export const useGetUserDetails = async (
   setUserName,
   setUserId,
@@ -367,7 +397,9 @@ export const functionUtils = {
     setTimelineItem,
     setSelectedDate,
     selectedDate,
-    selectedEndDate
+    selectedEndDate,
+    userName,
+    userId
   ) => {
     /**
      * Counter state for countdown timer which tracks time in hours, minutes and seconds
@@ -481,9 +513,6 @@ export const functionUtils = {
       const productId = product[0].id,
         productName = product[0].product,
         validation = product[0].validation;
-      const userDetails = JSON.parse(localStorage.getItem("user"));
-      const userId = parseInt(userDetails.id),
-        userName = userDetails.username;
       const productionCapacityOnStart = parseInt(formInput[""]);
       const pumping_distance_in_meters = document.getElementById("distance")
         .value;
@@ -491,7 +520,7 @@ export const functionUtils = {
         .value;
       const addMarkerData = {
         user: userName,
-        "user-id": userId,
+        "user-id": parseInt(userId),
         "product-id": productId,
         product: productName,
         "production-capacity": productionCapacityOnStart,
@@ -503,7 +532,7 @@ export const functionUtils = {
       /** Retrive Add marker form data for client validation */
       const addMarkerClientData = {
         user: userName,
-        "user-id": userId,
+        "user-id": parseInt(userId),
         "product-id": productId,
         product: productName,
         "production-capacity": productionCapacityOnStart,
@@ -676,7 +705,9 @@ export const functionUtils = {
     currentProductionCapacity,
     timelineItems,
     productionDetails,
-    products
+    products,
+    userName,
+    userId
   ) => {
     // Variable to get the accurate time a given production capacity is logged and it's then formated to hours and minutes display and finally used to set the time value property of the timeline item state
     const loggedProductionTime = moment().format("hh:mm");
@@ -826,9 +857,6 @@ export const functionUtils = {
       console.log("Global timeline items: ", functionUtils.globalTimeline);
     };
 
-    const userDetails = JSON.parse(localStorage.getItem("user"));
-    const userId = parseInt(userDetails.id);
-    const userName = userDetails.username;
     const productId = parseInt(productDetailsStateless.product_id);
     const productName = productDetailsStateless.product_name;
     const production_id = productDetailsStateless.production_id;
@@ -836,7 +864,7 @@ export const functionUtils = {
     /**Add Stop Production Data */
     const addStopMarkerData = {
       user: userName,
-      "user-id": userId,
+      "user-id": parseInt(userId),
       "product-id": productId,
       product: productName,
       "production-capacity": temporaryProductionCapacity,
@@ -863,7 +891,7 @@ export const functionUtils = {
     };
     const addMarkerData = {
       user: userName,
-      "user-id": userId,
+      "user-id": parseInt(userId),
       "product-id": productId,
       product: productName,
       "production-capacity": temporaryProductionCapacity,
@@ -1261,17 +1289,17 @@ export const functionUtils = {
     totalPrice,
     qtyValue,
     truckNoValue,
-    selectValue
+    selectValue,
+    userName,
+    userId
   ) => {
     const { product } = handleOrderChange();
     console.log("Submitted Product", product);
-    const user = JSON.parse(localStorage.getItem("user"));
-    console.log("User Object: ", user);
     const addOrderData = {
       "product-id": selectValue,
       product: product[0].product,
-      user: user.username,
-      "user-id": user.id,
+      user: userName,
+      "user-id": parseInt(userId),
       qty: qtyValue,
       unit: product[0].unit,
       "unit-price": product[0].price,
@@ -1591,6 +1619,10 @@ export const functionUtils = {
   validateFormInputs: (formData) => {
     console.log("Form data in validation: ", formData);
     let formInputValue = true;
+    /** Check if form data is undefined */
+    if (formData === undefined || formData === null) {
+      return (formInputValue = false);
+    }
     for (const [key, value] of Object.entries(formData)) {
       /** Convert value to string without spacing */
       let stringValue = `${value}`;

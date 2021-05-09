@@ -78,16 +78,20 @@ const ViewOrders = () => {
   const [ordersList, setOrdersList] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+  const [listCount, setListCount] = useState("7");
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
-  console.log("User Deetails: ", userName, userId);
   useEffect(() => {
     const source = axios.CancelToken.source();
 
     const response = async () =>
       await axios
-        .get(`${BASE_API_URL}/api/v1/order/list.php`)
+        .get(`${BASE_API_URL}/api/v1/order/list.php`, {
+          params: {
+            count: listCount,
+          },
+        })
         .then((res) => {
           if (res.data.error === true) {
             errorAlert("Server Error", res.data.message);
@@ -96,7 +100,7 @@ const ViewOrders = () => {
             data["userName"] = userName;
             data["userId"] = userId;
             setOrdersList(data);
-            console.log("Item: ", ordersList, res.data.data);
+            console.log("Item: ", ordersList, data);
           }
         })
         .catch((error) => {
@@ -107,7 +111,18 @@ const ViewOrders = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId]);
+  }, [userName, userId, listCount]);
+
+  /** Refetch order list when list count state changes */
+  const handleCountChange = () => {
+    let countValue;
+    if (document.getElementById("order-list-count") !== null) {
+      countValue = document.getElementById("order-list-count").value;
+    }
+    setListCount(countValue);
+  };
+
+  const handleSearchList = () => {};
   return (
     <div className="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
       <div className="widget-content widget-content-area br-6">
@@ -116,7 +131,10 @@ const ViewOrders = () => {
           className="dataTables_wrapper container-fluid dt-bootstrap4"
         >
           {/* BEGINNING OF VIEW ORDERS SEARCH BAR */}
-          <ViewordersSearchbar />
+          <ViewordersSearchbar
+            handleCountChange={handleCountChange}
+            handleSearchList={handleSearchList}
+          />
           {/* END OF VIEW ORDERS SEARCH BAR */}
           <div className="table-responsive">
             <table

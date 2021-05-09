@@ -5,7 +5,11 @@ import ShiftCalculator from "./shift-calculator";
 import TimelineNotification from "./timeline-notification";
 import ProductionCapacity from "./production-capacity";
 import PageWrapper from "../general/page-wrapper";
-import { functionUtils, warningAlert } from "../../hooks/function-utils";
+import {
+  functionUtils,
+  useGetUserDetails,
+  warningAlert,
+} from "../../hooks/function-utils";
 import { BASE_API_URL } from "../../hooks/API";
 import moment from "moment";
 import "./production.scss";
@@ -21,6 +25,14 @@ export const Production = () => {
   console.log("Current Time: ", time);
   const [selectedDate, setSelectedDate] = React.useState(`${time}`);
   const [selectedEndDate, setSelectedEndDate] = React.useState(`${time}`);
+
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
+
+  useEffect(() => {}, [userName, userId]);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -137,7 +149,10 @@ export const Production = () => {
     setTimelineItem,
     setSelectedDate,
     selectedDate,
-    selectedEndDate
+    selectedEndDate,
+    userName,
+    userId
+    
   );
 
   /**Handle Production Capacity submit and get it's return value */
@@ -147,7 +162,9 @@ export const Production = () => {
         currentProductionCapacity,
         timelineItems,
         productionDetails,
-        products
+        products,
+        userName,
+        userId
       )
       .then((value) => {
         timelineItems = value;

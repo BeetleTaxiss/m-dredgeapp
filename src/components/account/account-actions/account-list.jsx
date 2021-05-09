@@ -6,7 +6,10 @@ import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import UpdateAccountForm from "../../fuel-issues/add-Fuel-Form";
 import WidgetHeader from "../../general/widget-header";
-import { useGetUserDetails } from "../../../hooks/function-utils";
+import {
+  functionUtils,
+  useGetUserDetails,
+} from "../../../hooks/function-utils";
 
 const AccountList = () => {
   const [accountList, setAccountList] = useState(["loading"]);
@@ -154,6 +157,7 @@ const AccountList = () => {
               chartListBody.unshift({
                 id: 0,
                 description: "Select a chart Type",
+                validation: "Can't select this option",
               });
               setChartList(chartListBody);
               console.log("Chart List Body: ", chartList);
@@ -246,6 +250,28 @@ const AccountList = () => {
           successAlert(title, text, link);
         }
       });
+  };
+
+  /** Get update form data for client validation  */
+  const getUpdateBusinessAccountFormData = (userName, userId) => {
+    const account = document.getElementById("account-name").value;
+    const account_id = document.getElementById("account-id").value;
+    const description = document.getElementById("account-description").value;
+    const chartValue = parseInt(document.getElementById("chart-id").value);
+    const chartItem = chartList.filter(({ id }) => id === chartValue);
+
+    console.log("chart item: ", chartItem);
+    const updateAccountData = {
+      user: userName,
+      "user-id": userId,
+      "account-id": account_id,
+      account: account,
+      "chart-id": chartValue,
+      description: description,
+      validation: chartItem[0].validation,
+    };
+
+    return updateAccountData;
   };
   const handleDeleteAccount = (id, userName, userId) => {
     console.log("User deetails in delete", userName, userId);
@@ -348,7 +374,15 @@ const AccountList = () => {
               // loading={loading}
               subtitle="Update account information"
               btnText="Update account"
-              handleAddSubmit={() => handleUpdateAccount(userName, userId)}
+              handleAddSubmit={() => {
+                let validationStatus = functionUtils.validateFormInputs(
+                  getUpdateBusinessAccountFormData(userName, userId)
+                );
+
+                if (validationStatus === true) {
+                  handleUpdateAccount(userName, userId);
+                }
+              }}
             />
           )}
           <CustomTableList content={accountListTableData} />

@@ -8,11 +8,19 @@ import CustomTableList from "../../general/custom-table-list/custom-table-list";
 
 // import "./machinery.css";
 import ImpoundTruckForm from "./ImpoundTruckForm";
-import { functionUtils } from "../../../hooks/function-utils";
+import {
+  functionUtils,
+  useGetUserDetails,
+} from "../../../hooks/function-utils";
 
 const ImpoundTruck = () => {
   const [impoundTruckList, setImpoundTruckList] = useState(["loading"]);
   const [loading, setloading] = useState(false);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -30,17 +38,16 @@ const ImpoundTruck = () => {
             } else {
               const impoundTruckListItems = res.data.data;
               impoundTruckListItems.map((item) => {
-                const user_name = item.user,
-                  user_id = parseInt(item.user_id),
-                  comment = item.comment;
+                const comment = item.comment,
+                  user_name = item.user;
 
                 const truck_no = item.truck_no,
                   impound_id = parseInt(item.id),
                   truck_description = item.truck_description;
 
                 const impoundTruckItemData = {
-                  user: user_name,
-                  "user-id": user_id,
+                  user: userName,
+                  "user-id": parseInt(userId),
                   "impound-id": impound_id,
                   "truck-no": truck_no,
                 };
@@ -109,7 +116,7 @@ const ImpoundTruck = () => {
     return () => {
       source.cancel();
     };
-  }, []);
+  }, [userName, userId]);
 
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
@@ -160,18 +167,15 @@ const ImpoundTruck = () => {
         }
       });
   };
-  const handleAddImpoundedTruck = () => {
-    const userDetails = JSON.parse(localStorage.getItem("user")),
-      user_name = userDetails.username,
-      user_id = userDetails.id;
+  const handleAddImpoundedTruck = (userName, userId) => {
     const truck_no = document.getElementById("truck-no").value;
     const truck_description = document.getElementById("truck-description")
       .value;
     const impounded_comment = document.getElementById("comment").value;
 
     const addImpoundedTruckData = {
-      "user-id": user_id,
-      user: user_name,
+      "user-id": userId,
+      user: userName,
       "truck-no": truck_no,
       "truck-description": truck_description,
       comment: impounded_comment,

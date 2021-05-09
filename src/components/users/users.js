@@ -20,6 +20,8 @@ import {
   errorAlert,
   functionUtils,
   successAlert,
+  useGetAppSettings,
+  useGetUserDetails,
 } from "../../hooks/function-utils";
 import { enUs as language } from "../../Language";
 
@@ -28,13 +30,18 @@ import { enUs as language } from "../../Language";
 const Users = () => {
   const [userList, setUserList] = useState(null);
   const [user, setUser] = useState(null);
-  const [userTypes, setUserTypes] = useState(null);
+  const [userTypesList, setUserTypesList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showUserDetailsUpdate, setShowUserDetailsUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
 
   /**
    * This is the userPermissionListView that we will display when we attempt to update
@@ -74,6 +81,8 @@ const Users = () => {
     ],
     contacts: userList,
   };
+
+  console.log("User List Data: ", userListData);
 
   const changePassword = () => {
     let userName = document.getElementById("user-add-user").value,
@@ -236,7 +245,10 @@ const Users = () => {
       newUserPassword = md5(document.getElementById("password-add-user").value),
       newUserConfirmPassword = md5(
         document.getElementById("confirm-password-add-user").value
-      );
+      ),
+      jobDesc = userTypesList.filter(({ id }) => id === newUserType);
+
+    console.log(" Single User Type: ", jobDesc);
 
     /** get the userPermissionList data */
     const permission = getPermissionData();
@@ -255,8 +267,9 @@ const Users = () => {
       password: newUserPassword,
       "password-confirm": newUserConfirmPassword,
       permission: permission,
-      validation: selectOptions[0].validation,
+      validation: jobDesc[0].validation,
     };
+
     return addUserData;
   };
   /** Retrive update user form data for client validation */
@@ -392,51 +405,51 @@ const Users = () => {
       }
     });
   };
-  const warningAlert3 = (title, userName, userId) => {
+  const warningAlert3 = (
+    title,
+    deleteUserName,
+    deleteUserId,
+    userName,
+    userId
+  ) => {
     Swal.fire({
       icon: "warning",
       title: title,
       confirmButtonText: "Yes",
       showCancelButton: true,
     }).then((value) => {
-      const loggedInUserDetails = JSON.parse(localStorage.getItem("user"));
-      const loggedInUser = loggedInUserDetails.username;
-      const loggedInUserId = loggedInUserDetails.id;
+      const loggedInUser = userName;
+      const loggedInUserId = userId;
       const deleteUserData = {
         user: loggedInUser,
         "user-id": loggedInUserId,
-        "delete-user": userName,
-        "delete-id": userId,
+        "delete-user": deleteUserName,
+        "delete-id": deleteUserId,
       };
-      //console.log("Sweet Alert: ", value);
+      console.log("Sweet Alert: ", deleteUserData);
       if (value.isConfirmed) {
         deleteContact(deleteUserData);
       }
     });
   };
 
-  //console.log("Individual User State", user);
+  /** Fetch job description/usertypes from app settings store and subscribe it's state to a useEffect to get the async value on page load  */
+  useGetAppSettings(setUserTypesList);
+  console.log("Users types list: ", userTypesList);
+  useEffect(() => {
+    Array.isArray(userTypesList) &&
+      userTypesList.unshift({
+        user_type: "Select Job Description",
+        id: "0",
+        validation: "Can't select this option",
+      });
+  }, [userTypesList]);
 
-  const selectOptions = [
-    {
-      user_type: "Select Job Description",
-      id: "0",
-      validation: "Can't select this option",
-    },
-    { user_type: "Super Admin", id: "2" },
-    { user_type: "Admin", id: "3" },
-    { user_type: "Loader", id: "4" },
-    { user_type: "Production Master", id: "5" },
-    { user_type: "Loading Inspector", id: "6" },
-    { user_type: "Security", id: "7" },
-    { user_type: "Operation Staff", id: "8" },
-  ];
-  //console.log("Individual User Type: ", userTypes);
-  const { formData } = useAddContactFormData(selectOptions);
-  const { updateFormData } = useUpdateContactFormData();
+  const { formData } = useAddContactFormData(userTypesList);
   const { updateUserDetailsFormData } = useUpdateUserDetailsFormData(
-    selectOptions
+    userTypesList
   );
+  const { updateFormData } = useUpdateContactFormData();
 
   /**
    * This component will return both the permissionListAccordion and the
@@ -459,7 +472,8 @@ const Users = () => {
       const data = res.data.data;
       let body = [];
       data.map((item, i) => {
-        const userName = item.user;
+        const gottenUserName = item.user;
+        const gottenUserId = item.id;
         const userImage = "assets/img/profile-5.jpeg";
         const userType = item.user_type;
         const userEmail = item.email;
@@ -468,7 +482,7 @@ const Users = () => {
         const permission = item.permission;
 
         const currentUser = {
-          metaInfo: { name: userName, image: userImage },
+          metaInfo: { name: gottenUserName, image: userImage },
           fields: [
             {
               fieldName: "Job description",
@@ -516,17 +530,24 @@ const Users = () => {
           setUser: setUser,
           suspend: warningAlert1,
           enable: warningAlert2,
-          delete: warningAlert3,
+          delete: () =>
+            warningAlert3(
+              `Are you sure you want to delete ${gottenUserName} ?`,
+              gottenUserName,
+              gottenUserId,
+              userName,
+              userId
+            ),
           // setShowUpdateModal: setShowUpdateModal,
         };
         return (body = body.concat(currentUser));
       });
       setUserList(body);
       ////console.log("Users Main data: ", body);
-      ////console.log("Users Main DATA: ", userList);
+      console.log("Users Main DATA: ", userList);
     });
     ////console.log("Show modal: ", showModal);
-  }, [refreshData]);
+  }, [refreshData, userName, userId]);
 
   return (
     <>

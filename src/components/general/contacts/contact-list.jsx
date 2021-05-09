@@ -90,20 +90,21 @@ const Contact = ({
                 /** set this state variable so that the popup open, the permission list for this user is shown */
                 setUserPermissionListView(PermissionListForUser);
 
-                console.log(content.user, "the user ");
+                console.log("the user: ", content.user);
 
+                /** open the update window */
+                setShowUserDetailsUpdate(true);
                 /** set the initial values for our form input before we open */
                 document.getElementById("user-add-user").value =
                   content.user.user;
                 document.getElementById("user-add-user-id").value =
                   content.user.id;
+                document.getElementById("select-add-user").value =
+                  content.user.user_type;
                 document.getElementById("phone-add-user").value =
                   content.user.phone;
                 document.getElementById("email-add-user").value =
                   content.user.email;
-
-                /** open the update window */
-                setShowUserDetailsUpdate(true);
               }}
             >
               Edit
@@ -157,11 +158,7 @@ const Contact = ({
               onClick={() => {
                 console.log("Individual User Data: ", content.user);
                 content.setUser(content.user);
-                content.delete(
-                  `Are you sure you want to delete ${content.metaInfo.name} ?`,
-                  content.user.user,
-                  content.user.id
-                );
+                content.delete();
               }}
             >
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
