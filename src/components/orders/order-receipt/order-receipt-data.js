@@ -5,7 +5,7 @@ export const orderReceiptData = {
   header: {
     logoSection: {
       image: "assets/img/cork-logo.png",
-      brandName: "M-Dredge",
+      brandName: "Atop",
     },
     contactSection: [
       "No. 4 Odienna Close, Libreville Street, Wuse 2, Abuja.",

@@ -30,15 +30,10 @@ const OrderReceipt = () => {
   const handleChange = () => {
     // Get form values with document,getById
     const qtyValue = document.getElementById("qty").value;
-    console.log("Qty Value: ", qtyValue);
     const truckNoValue = document.getElementById("truckNo").value;
-    console.log("truckNo Value: ", truckNoValue);
     const orderPrice = JSON.parse(order.unit_price);
-    console.log("Order Price: ", orderPrice);
     // Calculate the cost of an order
     const orderCost = qtyValue * orderPrice;
-    // console.log("Order Price: ", order.price);
-    console.log("Order Cost: ", orderCost);
     // Set the value of an order to the UI
     setTotalPrice(orderCost);
   };
@@ -57,7 +52,6 @@ const OrderReceipt = () => {
   const handleUpdateOrder = () => {
     const qtyValue = document.getElementById("qty").value;
     const truckNoValue = document.getElementById("truckNo").value;
-    console.log(" Order", order);
     const orderId = order.id;
     const orderRef = order.order_ref;
     const user = order.user;
@@ -116,7 +110,6 @@ const OrderReceipt = () => {
   const getUpdateOrderFormData = () => {
     const qtyValue = document.getElementById("qty").value;
     const truckNoValue = document.getElementById("truckNo").value;
-    console.log(" Order", order);
     const orderId = order.id;
     const orderRef = order.order_ref;
     const user = order.user;
@@ -239,9 +232,9 @@ const OrderReceipt = () => {
   useEffect(() => {}, [order]);
 
   return (
-    <div className="row invoice  layout-spacing layout-top-spacing">
+    <div  className="row invoice  layout-spacing layout-top-spacing">
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div className="doc-container">
+        <div id="order-receipt-view" className="doc-container">
           <div className="row">
             <div className="col-xl-9">
               <div className="invoice-container">
@@ -288,7 +281,7 @@ const OrderReceipt = () => {
               </div>
             </div>
             {/* BEGINNING OF ORDER RECIEPT LINKS */}
-            <div className="col-xl-3">
+            <div id="order-receipt-view-links" className="col-xl-3">
               <DispatchComment
                 rows={5}
                 cols={3}
@@ -388,7 +381,8 @@ const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", o
   const receiptContentLayer = document.getElementById(orderReceiptLayer);
 
   const canvasOptions = {
-    scale:1,
+    //scale:0.83,
+    scale:1.05,
     backgroundColor:"#ffffff"
   }
   const pdfOptions = {
@@ -401,7 +395,7 @@ const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", o
 
     var img = canvas.toDataURL("image/png");
     var doc = new jsPDF(pdfOptions);
-    doc.addImage(img, 'JPEG', 10, 15);
+    doc.addImage(img, 'JPEG', 15, 15);
 
     if (saveReceipt === true) {
       return doc.save(receiptName);
@@ -415,13 +409,15 @@ const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", o
 }
 
 export const OrderReceiptLinks = ({ setShowModal }) => (
-  <div className="">
+  <div  className="">
     <div className="invoice-actions-btn">
       <div className="invoice-action-btn">
         <div className="row">
           <div className="col-xl-12 col-md-4 col-sm-6">
             <a
-              onClick={() => window.print()}
+              onClick={() => {
+                printOrderReceipt()
+              }}
               href="javascript:void(0)"
               className="btn btn-secondary btn-print  action-print"
             >
@@ -430,6 +426,9 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
           </div>
           <div className="col-xl-12 col-md-4 col-sm-6">
             <a
+            onClick={()=>{
+              printOrderReceipt(true)
+            }}
               href="javascript:void(0)"
               className="btn btn-success btn-download"
             >

@@ -33,7 +33,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
         <div className="nav-logo align-self-center">
           <Link className="navbar-brand" to="index.html">
             <img alt="logo" src="assets/img/logo.svg" />{" "}
-            <span className="navbar-brand-name">M-Dredge</span>
+            <span className="navbar-brand-name">Atop</span>
           </Link>
         </div>
 
