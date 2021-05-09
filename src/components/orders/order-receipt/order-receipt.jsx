@@ -14,6 +14,9 @@ import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
 import { FormDetails } from "../order-form/order-form-details";
 import { functionUtils } from "../../../hooks/function-utils";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
 
 const OrderReceipt = () => {
   const { state } = useLocation();
