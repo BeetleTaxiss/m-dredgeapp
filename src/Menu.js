@@ -295,6 +295,16 @@ export const createUserMenu = (userMenu) => {
         }
       });
     }
+
+    /**
+     * for each menuObject we create, if there is an entry in the main menuObject, but the link is empty or #
+     * we will add the first element in the subMenuItems as the link for this menu location
+     * This implementation is to make the menu fully based on the user permission
+     * */
+    if (menuObject["link"] === "#" || menuObject["link"] === "/") {
+      menuObject["link"] = subMenuItems[0]["link"];
+    }
+
     /** assign the submenu Items created to the subMenuObject **/
     menuObject = { ...menuObject, subMenuItems };
 
@@ -766,8 +776,10 @@ export const Menu = {
  * This will hold the icons, the main style and the dropdown icon
  */
 export const MenuStyles = {
-  /** No styling for default menu entry. We will most likely not be
-   * showing them on the menu bar */
+  /** 
+   * No styling for default menu entry. We will most likely not be
+   * showing them on the menu bar 
+   * */
   default: null,
 
   order: {
@@ -823,21 +835,21 @@ export const MenuStyles = {
     icon: null,
     text: "Inspector",
     dropdownIcon: dropdownIcon,
-    link: "inspect",
+    link: "#",
     menuClass: "inspector",
   },
   loader: {
     icon: null,
     text: "Loader",
     dropdownIcon: dropdownIcon,
-    link: "/loader",
+    link: "#",
     menuClass: "loader",
   },
   security: {
     icon: null,
     text: "Security",
     dropdownIcon: dropdownIcon,
-    link: "security",
+    link: "#",
     menuClass: "security",
   },
   activityReport: {
@@ -846,5 +858,5 @@ export const MenuStyles = {
     dropdownIcon: dropdownIcon,
     link: "#",
     menuClass: "activity-report",
-  }
+  },
 };
