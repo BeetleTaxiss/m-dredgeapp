@@ -1176,6 +1176,7 @@ code { color: #e7515a; }
         display: flex;
         margin-bottom: 0;
         margin-left: 5px;
+        overflow-y: auto;
     }
     .topbar-nav.header nav#topbar ul.menu-categories li.menu {
         position: relative;

@@ -79,6 +79,8 @@ const ViewOrders = () => {
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
   const [listCount, setListCount] = useState("7");
+  const [lastItemId, setLastItemId] = useState();
+  const [lastItem, setLastItem] = useState();
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
@@ -90,6 +92,7 @@ const ViewOrders = () => {
         .get(`${BASE_API_URL}/api/v1/order/list.php`, {
           params: {
             count: listCount,
+            "last-item-id": lastItem,
           },
         })
         .then((res) => {
@@ -100,7 +103,9 @@ const ViewOrders = () => {
             data["userName"] = userName;
             data["userId"] = userId;
             setOrdersList(data);
+            setLastItemId(res.data["last-item-id"]);
             console.log("Item: ", ordersList, data);
+            console.log("Last Item Id: ", res.data);
           }
         })
         .catch((error) => {
@@ -111,7 +116,7 @@ const ViewOrders = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, listCount]);
+  }, [userName, userId, listCount, lastItem]);
 
   /** Refetch order list when list count state changes */
   const handleCountChange = () => {
@@ -120,6 +125,20 @@ const ViewOrders = () => {
       countValue = document.getElementById("order-list-count").value;
     }
     setListCount(countValue);
+  };
+
+  const handlePagination = (lastItemId) => {
+    let paginatedArray = [];
+    let pageNumber = 1;
+    let currentItem = {
+      number: pageNumber++,
+      last_item_id: lastItemId,
+    };
+    paginatedArray.concat(currentItem);
+    console.log("Paginated Array: ", paginatedArray, pageNumber, currentItem);
+    console.log("Id in function: ", lastItemId);
+    setLastItem(lastItemId);
+    console.log("Paginated Array: ", paginatedArray);
   };
 
   const handleSearchList = () => {};
@@ -156,7 +175,9 @@ const ViewOrders = () => {
             </table>
           </div>
           {/* BEGINNING OF VIEW ORDERS TABLE PAGINAITION*/}
-          <ViewordersTablepaiginaition />
+          <ViewordersTablepaiginaition
+            handlePagination={() => handlePagination(lastItemId)}
+          />
           {/* END OF VIEW ORDERS TABLE PAGINAITION*/}
         </div>
       </div>

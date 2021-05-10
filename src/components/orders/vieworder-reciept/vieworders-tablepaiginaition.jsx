@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const ViewordersTablepaiginaition = () => {
+const ViewordersTablepaiginaition = ({ handlePagination }) => {
   return (
     <div className="dt--bottom-section d-sm-flex justify-content-sm-between text-center">
       <div className="dt--pages-count  mb-sm-0 mb-3">
@@ -25,7 +25,10 @@ const ViewordersTablepaiginaition = () => {
             >
               <Link
                 to="javascript:void(0)"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePagination();
+                }}
                 aria-controls="default-ordering"
                 data-dt-idx="0"
                 tabIndex="0"
@@ -51,7 +54,10 @@ const ViewordersTablepaiginaition = () => {
             <li className="paginate_button page-item active">
               <Link
                 to="javascript:void(0)"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePagination();
+                }}
                 aria-controls="default-ordering"
                 data-dt-idx="1"
                 tabIndex="0"
@@ -63,7 +69,10 @@ const ViewordersTablepaiginaition = () => {
             <li className="paginate_button page-item ">
               <Link
                 to="javascript:void(0)"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePagination();
+                }}
                 aria-controls="default-ordering"
                 data-dt-idx="2"
                 tabIndex="0"
@@ -75,7 +84,10 @@ const ViewordersTablepaiginaition = () => {
             <li className="paginate_button page-item ">
               <Link
                 to="javascript:void(0)"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePagination();
+                }}
                 aria-controls="default-ordering"
                 data-dt-idx="3"
                 tabIndex="0"
@@ -87,7 +99,10 @@ const ViewordersTablepaiginaition = () => {
             <li className="paginate_button page-item ">
               <Link
                 to="javascript:void(0)"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePagination();
+                }}
                 aria-controls="default-ordering"
                 data-dt-idx="4"
                 tabIndex="0"
@@ -102,7 +117,10 @@ const ViewordersTablepaiginaition = () => {
             >
               <Link
                 to="javascript:void(0)"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePagination();
+                }}
                 aria-controls="default-ordering"
                 data-dt-idx="5"
                 tabIndex="0"
