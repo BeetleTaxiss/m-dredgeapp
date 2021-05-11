@@ -8,7 +8,10 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
       <header className="header navbar navbar-expand-sm">
         <Link
           to="javascript:void(0)"
-          onClick={() => setShowMenu((prev) => !prev)}
+          onClick={(e) => {
+            e.preventDefault();
+            setShowMenu((prev) => !prev);
+          }}
           className="sidebarCollapse"
           data-placement="bottom"
         >

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 export const MobileLogo = () => (
   <ul className="navbar-nav theme-brand flex-row  text-center">
     <li className="nav-item theme-logo">
-      <Link to="index.html">
+      <Link to="#">
         <img src="assets/img/logo2.svg" className="navbar-logo" alt="logo" />
       </Link>
     </li>
@@ -19,10 +19,21 @@ export const MobileLogo = () => (
 );
 
 // TOP NAV BAR MENU ITEM COMPONENT
-export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
+export const MenuItem = ({ item, showSubMenu }) => {
   //const { icon, menuItem, dropdown, link } = item.menuItem;
   const { icon, menuItem, dropdown, link } = item;
 
+  const offsetSubMenu = () => {
+    const topNavBar = document.getElementById("topbar");
+    const topNavBarPosition = topNavBar.scrollLeft;
+    const subMenu = document.getElementById(`dashboard-${menuItem}`);
+    if (topNavBarPosition !== 0) {
+      subMenu.style.transform = `translateX(-${topNavBarPosition / 2}%)`;
+    }
+    if (topNavBarPosition !== 0 && menuItem === "Security") {
+      subMenu.style.transform = `translateX(-${topNavBarPosition / 2}%)`;
+    }
+  };
   return (
     <li className="menu single-menu active">
       <Link
@@ -31,7 +42,11 @@ export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
         aria-expanded="true"
         className="dropdown-toggle autodroprown"
         style={{ alignItems: "center" }}
-        onClick={() => setShowSubMenu((prev) => !prev)}
+        onClick={(e) => {
+          e.preventDefault();
+          offsetSubMenu();
+        }}
+        onMouseEnter={() => offsetSubMenu()}
       >
         {/* MENU ITEM CONTAINER */}
         <div
@@ -56,7 +71,7 @@ export const MenuItem = ({ item, showSubMenu, setShowSubMenu }) => {
           className={`${item.menuItem.class} submenu list-unstyled ${
             showSubMenu && "show"
           }`}
-          id="dashboard"
+          id={`dashboard-${menuItem}`}
           data-parent="#topAccordion"
         >
           {item.subMenuItems.map((subItem, i) => {

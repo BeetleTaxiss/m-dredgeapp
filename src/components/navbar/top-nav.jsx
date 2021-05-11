@@ -8,18 +8,24 @@ const TopNavbar = ({
   setShowSubMenu,
   topNavBarData,
 }) => {
+  const offsetSubMenu = () => {
+    const topNavBar = document.getElementById("topbar");
+    const topNavBarPosition = topNavBar.scrollLeft;
+    console.log("Nav bar : ", topNavBarPosition);
+  };
   return (
     <div
       className={`topbar-nav header navbar ${showMenu && "showMenu"}`}
       role="banner"
       // style={{ overflowY: "auto" }}
     >
-      <nav id="topbar">
+      <nav id="topbar" onScroll={offsetSubMenu}>
         {/* BEGINNING OF MOBILE LOGO */}
         <MobileLogo />
         {/* END OF MOBILE LOGO */}
         {/* BEGINNING OF MENU BAR */}
         <ul className="list-unstyled menu-categories" id="topAccordion">
+          {/* <div className=""> */}
           {topNavBarData &&
             topNavBarData.map((item, i) => (
               <MenuItem
@@ -29,6 +35,7 @@ const TopNavbar = ({
                 setShowSubMenu={setShowSubMenu}
               />
             ))}
+          {/* </div> */}
         </ul>
         {/* END OF MENU BAR */}
       </nav>

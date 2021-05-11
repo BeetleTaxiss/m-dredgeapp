@@ -30,7 +30,7 @@ import { enUs as language } from "../../Language";
 const Users = () => {
   const [userList, setUserList] = useState(null);
   const [user, setUser] = useState(null);
-  const [userTypesList, setUserTypesList] = useState();
+  const [userTypesList, setUserTypesList] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showUserDetailsUpdate, setShowUserDetailsUpdate] = useState(false);

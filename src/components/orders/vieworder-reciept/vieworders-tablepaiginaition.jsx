@@ -20,7 +20,7 @@ const ViewordersTablepaiginaition = ({ handlePagination }) => {
         >
           <ul className="pagination pagination-style-13 pagination-bordered mb-5">
             <li
-              className="paginate_button page-item previous disabled"
+              className="paginate_button page-item previous"
               id="default-ordering_previous"
             >
               <Link
@@ -56,7 +56,6 @@ const ViewordersTablepaiginaition = ({ handlePagination }) => {
                 to="javascript:void(0)"
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePagination();
                 }}
                 aria-controls="default-ordering"
                 data-dt-idx="1"
@@ -64,51 +63,6 @@ const ViewordersTablepaiginaition = ({ handlePagination }) => {
                 className="page-link"
               >
                 1
-              </Link>
-            </li>
-            <li className="paginate_button page-item ">
-              <Link
-                to="javascript:void(0)"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePagination();
-                }}
-                aria-controls="default-ordering"
-                data-dt-idx="2"
-                tabIndex="0"
-                className="page-link"
-              >
-                2
-              </Link>
-            </li>
-            <li className="paginate_button page-item ">
-              <Link
-                to="javascript:void(0)"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePagination();
-                }}
-                aria-controls="default-ordering"
-                data-dt-idx="3"
-                tabIndex="0"
-                className="page-link"
-              >
-                3
-              </Link>
-            </li>
-            <li className="paginate_button page-item ">
-              <Link
-                to="javascript:void(0)"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePagination();
-                }}
-                aria-controls="default-ordering"
-                data-dt-idx="4"
-                tabIndex="0"
-                className="page-link"
-              >
-                4
               </Link>
             </li>
             <li
