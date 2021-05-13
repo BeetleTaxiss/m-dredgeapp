@@ -305,8 +305,9 @@ export const createUserMenu = (userMenu) => {
      * we will add the first element in the subMenuItems as the link for this menu location
      * This implementation is to make the menu fully based on the user permission
      * */
-    if (menuObject["link"] === "#" || menuObject["link"] === "/") {
-      menuObject["link"] = subMenuItems[0]["link"];
+    if ((menuObject["link"] === "#" || menuObject["link"] === "/") && subMenuItems && subMenuItems[0]) {
+        //menuObject["link"] = subMenuItems[0]  && subMenuItems[0]["link"] ? subMenuItems[0]["link"]: null;
+        menuObject["link"] = subMenuItems[0]["link"];
     }
 
     /** assign the submenu Items created to the subMenuObject **/

@@ -16,7 +16,8 @@ function createWindow() {
 
     const startURL = isDev
     ? "http://localhost:3000"
-    : `file://${path.join(__dirname, "./../build/index.html")}`;
+    //: `file://${path.join(__dirname, "./../build/index.html")}`;
+    : `file://${path.join(__dirname, "index.html")}`;
 
 
  // const startURL = `file://${path.join(__dirname, "./../build/index.html")}`;
@@ -26,7 +27,7 @@ function createWindow() {
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
     mainWindow.maximize();
-    mainWindow.title="Atop"
+    //mainWindow.title="Atop"
   });
 
   mainWindow.on("closed", () => {
