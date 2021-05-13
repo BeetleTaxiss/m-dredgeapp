@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route} from "react-router";
-//import { BrowserRouter as Router } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router";
+import { getUserStoreInstance } from "./hooks/function-utils";
+import { BrowserRouter as Router } from "react-router-dom";
 import DashboardRouter from "./pages/DashboardRouter";
 import LoginPage from "./pages/login-page";
-import {MemoryRouter as Router } from "react-router-dom";
-
+import { findAllByDisplayValue } from "@testing-library/react";
 
 export default function App({ loginStatus }) {
+  const UserStore = getUserStoreInstance();
 
   /** hold the current view user will see */
   const [appView, setAppView] = useState([]);
 
-  /** this will be set to true once we are able to secure valid login status */
+  /** this will be set to tru once we are able to secure valid login status */
   const [loginStatusValid, setLoginStatusValid] = useState(false);
 
   /** the default login view  */
@@ -34,7 +35,6 @@ export default function App({ loginStatus }) {
     if (loginStatus) {
       /**
        * set loginStatusValid. We set this state variable so that when the page refresh
-       * we will still be able to track if user was login previously before we refresh
        */
       setLoginStatusValid(true);
 

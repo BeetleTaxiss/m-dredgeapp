@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
+require("electron-debug")();
 
 let mainWindow;
 
@@ -19,8 +20,6 @@ function createWindow() {
     //: `file://${path.join(__dirname, "./../build/index.html")}`;
     : `file://${path.join(__dirname, "index.html")}`;
 
-
- // const startURL = `file://${path.join(__dirname, "./../build/index.html")}`;
 
   mainWindow.loadURL(startURL);
 
