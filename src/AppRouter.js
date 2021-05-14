@@ -1,4 +1,4 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import App from "./App";
 import { getUserStoreInstance } from "./hooks/function-utils";
 

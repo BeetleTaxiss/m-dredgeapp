@@ -19,6 +19,20 @@ const Security = () => {
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
 
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(
     () =>
       axios
@@ -125,7 +139,7 @@ const Security = () => {
           setBodyData(body);
           console.log("BODY ARRAY: ", body);
         }),
-    [bodyData]
+    [bodyData, userName, userId, refreshData]
   );
 
   const loaderListData = {
@@ -177,6 +191,7 @@ const Security = () => {
           link = "<a href='/security'>View Clearance List</a>";
         successAlert(title, message, link);
         setShowModal(false);
+        reloadServerData();
       }
     });
   };

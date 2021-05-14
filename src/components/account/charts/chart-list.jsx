@@ -18,6 +18,20 @@ const ChartList = () => {
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
 
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -102,7 +116,7 @@ const ChartList = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId]);
+  }, [userName, userId, refreshData]);
 
   /**
    * Account types API call for the select dropdown
@@ -297,6 +311,7 @@ const ChartList = () => {
             text = res.data.message,
             link = `<a href="/chartlist">View Chart List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       });
   };
@@ -321,6 +336,7 @@ const ChartList = () => {
             text = res.data.message,
             link = `<a href="/chartlist">View Chart List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       });
   };

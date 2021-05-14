@@ -20,6 +20,20 @@ const Products = () => {
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
 
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -96,7 +110,11 @@ const Products = () => {
                       editScroll: true,
                       scrollLocation: "update-form",
                       onClick: () => {
-                        handleUpdateFormFields(productItemData);
+                        setShowUpdateProduct(true);
+                        setTimeout(
+                          () => handleUpdateFormFields(productItemData),
+                          500
+                        );
                       },
                     },
                     {
@@ -140,7 +158,7 @@ const Products = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId]);
+  }, [userName, userId, refreshData]);
 
   useEffect(() => {}, [showUpdateProduct]);
 
@@ -188,6 +206,7 @@ const Products = () => {
             text = res.data.message,
             link = `<a href="/products">View Product List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       });
   };
@@ -220,6 +239,8 @@ const Products = () => {
             text = res.data.message,
             link = `<a href="/products">View Product List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
+          setShowUpdateProduct(false);
         }
       });
   };
@@ -258,17 +279,13 @@ const Products = () => {
             text = res.data.message,
             link = `<a href="/products">View Product List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
+          setShowUpdateProduct(false);
         }
       });
   };
   const handleUpdateFormFields = (productItemData) => {
-    if (
-      document.getElementById("add-form-btn") !== null &&
-      document.getElementById("edit-btn-icon") !== null
-    ) {
-      document.getElementsByClassName("edit-btn-icon").disabled = true;
-      console.log(document.getElementById("add-form-btn"));
-    } else {
+    if (document.getElementById("add-form-btn") !== null) {
       document.getElementById("user").value = productItemData.user;
       document.getElementById("user-id").value = productItemData.user_id;
       document.getElementById("product-id").value = productItemData.product_id;
@@ -280,7 +297,6 @@ const Products = () => {
       document.getElementById("product-description").value =
         productItemData.description;
     }
-    console.log("Update State", showUpdateProduct);
   };
 
   /** Retrive add products form data for client validation */
@@ -423,7 +439,7 @@ const Products = () => {
             style={{ display: "grid", padding: "2rem", gap: "2rem" }}
           >
             <AddUpdateProduct
-              onClick={() => setShowUpdateProduct((prev) => !prev)}
+              onClick={() => setShowUpdateProduct(false)}
               showUpdateProduct={showUpdateProduct}
               content={addUpdateProductformData}
               loading={loading}

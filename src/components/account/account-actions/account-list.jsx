@@ -18,6 +18,20 @@ const AccountList = () => {
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
 
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -117,7 +131,7 @@ const AccountList = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, showUpdateForm]);
+  }, [userName, userId, showUpdateForm, refreshData]);
 
   /**
    * Chart API call for the select dropdown
@@ -248,6 +262,7 @@ const AccountList = () => {
             text = res.data.message,
             link = `<a href="/accountlist">View Account List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       });
   };
@@ -292,6 +307,7 @@ const AccountList = () => {
             text = res.data.message,
             link = `<a href="/accountlist">View Account List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       });
   };
@@ -372,6 +388,7 @@ const AccountList = () => {
             <UpdateAccountForm
               content={updateAccountFormData}
               // loading={loading}
+              setShowUpdateForm={() => setShowUpdateForm(false)}
               subtitle="Update account information"
               btnText="Update account"
               handleAddSubmit={() => {

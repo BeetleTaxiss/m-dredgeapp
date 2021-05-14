@@ -1,6 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const ViewordersTablepaiginaition = ({ handlePagination }) => {
+const ViewordersTablepaiginaition = ({
+  handleNextPagination,
+  handlePrevPagination,
+}) => {
   return (
     <div className="dt--bottom-section d-sm-flex justify-content-sm-between text-center">
       <div className="dt--pages-count  mb-sm-0 mb-3">
@@ -27,7 +30,7 @@ const ViewordersTablepaiginaition = ({ handlePagination }) => {
                 to="javascript:void(0)"
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePagination();
+                  handlePrevPagination();
                 }}
                 aria-controls="default-ordering"
                 data-dt-idx="0"
@@ -73,7 +76,7 @@ const ViewordersTablepaiginaition = ({ handlePagination }) => {
                 to="javascript:void(0)"
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePagination();
+                  handleNextPagination();
                 }}
                 aria-controls="default-ordering"
                 data-dt-idx="5"

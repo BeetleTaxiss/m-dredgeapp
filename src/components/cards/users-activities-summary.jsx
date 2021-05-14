@@ -89,7 +89,7 @@ const UsersActivitiesSummary = () => {
               text = res.data.message;
             errorAlert(title, text);
           } else {
-            activitiesSummaryResponse.reverse().map((item, id) => {
+            activitiesSummaryResponse.map((item, id) => {
               const action_instigator = item.user;
               const action_taken = item.action;
               const action_received = item.action_table;

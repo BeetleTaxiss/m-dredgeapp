@@ -110,7 +110,7 @@ export const showDetailedLogItem = (logItem) => {
     }
     /** Detailed Log List Table Data */
     const detailedLogListTableData = {
-      tableTitle: "Deleted Item",
+      tableTitle: "Old Item",
       header: [
         { class: "", title: "Data Field" },
         { class: "", title: "Value" },

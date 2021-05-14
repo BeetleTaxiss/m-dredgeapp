@@ -30,7 +30,13 @@ import { enUs as language } from "../../Language";
 const Users = () => {
   const [userList, setUserList] = useState(null);
   const [user, setUser] = useState(null);
-  const [userTypesList, setUserTypesList] = useState([]);
+  const [userTypesList, setUserTypesList] = useState([
+    {
+      user_type: "Select Job Description",
+      id: "0",
+      validation: "Can't select this option",
+    },
+  ]);
   const [showModal, setShowModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showUserDetailsUpdate, setShowUserDetailsUpdate] = useState(false);
@@ -437,12 +443,24 @@ const Users = () => {
   useGetAppSettings(setUserTypesList);
   console.log("Users types list: ", userTypesList);
   useEffect(() => {
-    Array.isArray(userTypesList) &&
-      userTypesList.unshift({
+    console.log("Use Effect Types List 1: ", userTypesList);
+    alert("Fired");
+    let typesList = [
+      {
         user_type: "Select Job Description",
         id: "0",
         validation: "Can't select this option",
-      });
+      },
+    ].concat(userTypesList);
+
+    setUserTypesList(typesList);
+
+    alert("Fired twice");
+    console.log("Use Effect Types List 2: ", userTypesList);
+  }, [showModal]);
+
+  useEffect(() => {
+    console.log("Use Effect Types List 3: ", userTypesList);
   }, [userTypesList]);
 
   const { formData } = useAddContactFormData(userTypesList);

@@ -84,6 +84,21 @@ const ViewOrders = () => {
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
+
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(() => {
     const source = axios.CancelToken.source();
 
@@ -116,7 +131,7 @@ const ViewOrders = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, listCount, lastItem]);
+  }, [userName, userId, listCount, lastItem, refreshData]);
 
   /** Refetch order list when list count state changes */
   const handleCountChange = () => {
@@ -127,18 +142,38 @@ const ViewOrders = () => {
     setListCount(countValue);
   };
 
-  const handlePagination = (lastItemId) => {
-    let paginatedArray = [];
-    let pageNumber = 1;
-    let currentItem = {
-      number: pageNumber++,
-      last_item_id: lastItemId,
-    };
-    paginatedArray.concat(currentItem);
-    console.log("Paginated Array: ", paginatedArray, pageNumber, currentItem);
-    console.log("Id in function: ", lastItemId);
+  let paginatedArray = [];
+  let globalArray = [];
+
+  let pageNumber = 1;
+
+  let prevItem = {
+    number: pageNumber++,
+    last_item_id: lastItemId,
+  };
+
+  let nextItem = {
+    number: pageNumber++,
+    last_item_id: lastItemId,
+  };
+  const handleNextPagination = (lastItemId, paginatedArray) => {
+    paginatedArray = paginatedArray?.concat(prevItem);
+    console.log("Paginated Left Array: ", paginatedArray);
     setLastItem(lastItemId);
-    console.log("Paginated Array: ", paginatedArray);
+
+    return paginatedArray;
+  };
+
+  let nextPaginated = ["john", "Hannah", "Biodun"];
+  // let nextPaginated = handleNextPagination();
+
+  globalArray = [...nextPaginated];
+  console.log("Mutated Paginated Array: ", globalArray);
+
+  const handlePrevPagination = (lastItemId) => {
+    paginatedArray = paginatedArray.concat(nextItem);
+    console.log("Paginated Right Array: ", paginatedArray);
+    setLastItem(lastItemId);
   };
 
   const handleSearchList = () => {};
@@ -167,7 +202,10 @@ const ViewOrders = () => {
               <ViewordersTablehead content={viewOrdersData.tableHeader} />
               {/* END OF VIEW ORDERS TABLE HEADER */}
               {/* BEGINNING OF VIEW ORDERS TABLE BODY */}
-              <ViewordersTableBody content={ordersList} />
+              <ViewordersTableBody
+                content={ordersList}
+                reloadData={() => reloadServerData()}
+              />
               {/* END OF VIEW ORDERS TABLE BODY */}
               {/* BEGINNING OF VIEW ORDERS TABLE FOOTER*/}
               <ViewordersTablefooter content={viewOrdersData.tableFooter} />
@@ -176,7 +214,10 @@ const ViewOrders = () => {
           </div>
           {/* BEGINNING OF VIEW ORDERS TABLE PAGINAITION*/}
           <ViewordersTablepaiginaition
-            handlePagination={() => handlePagination(lastItemId)}
+            handleNextPagination={() =>
+              handleNextPagination(lastItemId, paginatedArray)
+            }
+            handlePrevPagination={() => handlePrevPagination(lastItemId)}
           />
           {/* END OF VIEW ORDERS TABLE PAGINAITION*/}
         </div>

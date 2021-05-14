@@ -18,6 +18,20 @@ const WetSand = () => {
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
 
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -66,6 +80,7 @@ const WetSand = () => {
                   "production-id": production_id,
                   "batch-no": batch,
                 };
+                console.log("data: ", toStockpileData);
                 const currentWetSandItem = {
                   id: production_id,
                   fields: [
@@ -119,8 +134,16 @@ const WetSand = () => {
                     {
                       class: "text-center",
                       itemClass: "btn btn-primary",
+                      stockpileReady: stockpileReady,
                       toStockpile: toStockpileData,
-                      warningAlert: warningAlert,
+                      warningAlert: () =>
+                        warningAlert(
+                          "Are you sure you want to Stockpile this wet sand ?",
+                          toStockpileData
+                        ),
+                      warningAlertFalse: () =>
+                        warningAlertFalse("Not yet ready for stockpile"),
+
                       link: true,
                       linkText: "Stockpile",
                     },
@@ -153,7 +176,7 @@ const WetSand = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId]);
+  }, [userName, userId, refreshData]);
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -183,6 +206,12 @@ const WetSand = () => {
       }
     });
   };
+  const warningAlertFalse = (title) => {
+    Swal.fire({
+      icon: "warning",
+      title: title,
+    });
+  };
   /** Handle stockpile function which moves the wet sand over to the stockpile list after drying has taken place */
   const handleStockpile = (toStockpile) => {
     axios
@@ -198,6 +227,7 @@ const WetSand = () => {
             text = res.data.message,
             link = `<a href="/wetsand"> View Wet sand list</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       })
       .catch((error) => {
