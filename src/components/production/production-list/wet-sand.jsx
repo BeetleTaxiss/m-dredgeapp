@@ -256,7 +256,10 @@ const WetSand = () => {
   console.log(wetsandListTableData);
   /** Wet sand list component display */
   const WetSandListComponent = () => (
-    <CustomTableList content={wetsandListTableData} />
+    <CustomTableList
+      content={wetsandListTableData}
+      filler="Check back soon, production hasn't started finished"
+    />
   );
   return <WetSandListComponent />;
 };

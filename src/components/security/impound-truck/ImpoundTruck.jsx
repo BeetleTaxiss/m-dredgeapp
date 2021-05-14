@@ -299,7 +299,10 @@ const ImpoundTruck = () => {
                 }
               }}
             />
-            <CustomTableList content={impoundTruckListTableData} />
+            <CustomTableList
+              content={impoundTruckListTableData}
+              filler="No Trucks impounded yet"
+            />
           </div>
         </div>
       </div>

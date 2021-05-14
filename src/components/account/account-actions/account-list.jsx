@@ -402,7 +402,10 @@ const AccountList = () => {
               }}
             />
           )}
-          <CustomTableList content={accountListTableData} />
+          <CustomTableList
+            content={accountListTableData}
+            filler="No Business Accounts Added"
+          />
         </div>
       </div>
     </div>

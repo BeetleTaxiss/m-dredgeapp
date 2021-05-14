@@ -441,7 +441,10 @@ const ChartList = () => {
             }}
           />
           )
-          <CustomTableList content={chartListTableData} />
+          <CustomTableList
+            content={chartListTableData}
+            filler="Chart List Empty. Add New Chart"
+          />
         </div>
       </div>
     </div>

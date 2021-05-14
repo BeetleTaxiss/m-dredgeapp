@@ -43,7 +43,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
         <ul className="navbar-item flex-row mr-auto"></ul>
 
         <ul className="navbar-item flex-row nav-dropdowns">
-          <li className="nav-item dropdown notification-dropdown">
+          {/* <li className="nav-item dropdown notification-dropdown">
             <Link
               to="javascript:void(0)"
               onClick={(e) => e.preventDefault()}
@@ -225,7 +225,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
                 </div>
               </div>
             </div>
-          </li>
+          </li> */}
 
           <li
             id="nav-item-user-dropdown"

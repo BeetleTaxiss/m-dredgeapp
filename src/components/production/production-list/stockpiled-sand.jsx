@@ -230,7 +230,10 @@ const StockpiledSand = () => {
   console.log(stockpiledSandListTableData);
   /** stockpiled sand list component display */
   const StockpiledSandListComponent = () => (
-    <CustomTableList content={stockpiledSandListTableData} />
+    <CustomTableList
+      content={stockpiledSandListTableData}
+      filler="Stock hasn't been stockiled yet!"
+    />
   );
   return <StockpiledSandListComponent />;
 };

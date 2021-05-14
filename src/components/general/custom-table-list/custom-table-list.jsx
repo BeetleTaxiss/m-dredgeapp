@@ -4,7 +4,7 @@ import WidgetHeader from "../widget-header";
 import CustomTableListBody from "./custom-table-list-body";
 import CustomTableListHeader from "./custom-table-list-header";
 import { ReactComponent as NoTasks } from "../../../assets/noTasks.svg";
-const CustomTableList = ({ content, setLoad }) => {
+const CustomTableList = ({ content, setLoad, filler }) => {
   console.log("Content: ", content.body);
   const arrayContent = Array.isArray(content.body);
   return (
@@ -37,7 +37,7 @@ const CustomTableList = ({ content, setLoad }) => {
                   marginBottom: "3rem",
                 }}
               >
-                No Order to process
+                {filler && filler}
               </h1>
               <NoTasks
                 style={{ width: "25rem", height: "15rem", minWidth: "5rem" }}

@@ -198,7 +198,11 @@ const Security = () => {
 
   return (
     <>
-      <CustomTableList setLoad={setLoad} content={loaderListData} />
+      <CustomTableList
+        setLoad={setLoad}
+        content={loaderListData}
+        filler="No order to clear, check back soon!"
+      />
       <FormModal
         showModal={showModal}
         setShowModal={setShowModal}

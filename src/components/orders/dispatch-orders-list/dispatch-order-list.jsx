@@ -149,7 +149,10 @@ const DispatchOrderList = () => {
   };
   return (
     <>
-      <CustomTableList content={dispatchListData} />
+      <CustomTableList
+        content={dispatchListData}
+        filler="No dispatched orders, check back soon! "
+      />
     </>
   );
 };

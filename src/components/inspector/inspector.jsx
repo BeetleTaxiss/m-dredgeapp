@@ -214,7 +214,11 @@ const Inspector = () => {
 
   return (
     <>
-      <CustomTableList setLoad={setLoad} content={loaderListData} />
+      <CustomTableList
+        setLoad={setLoad}
+        content={loaderListData}
+        filler="No orders to inspect, checkback soon!"
+      />
       <FormModal
         formData={formData}
         showModal={showModal}

@@ -99,6 +99,22 @@ const Users = () => {
 
     const encNewUserPassword = md5(newUserPassword);
 
+    /** Validate Username Length */
+    if (userName.length < 5) {
+      return errorAlert(
+        "Username not long enough",
+        "Make sure your password is longer than five (5) characters"
+      );
+    }
+
+    /** Validate Password Length */
+    if (newUserPassword.length < 6) {
+      return errorAlert(
+        "Password not strong enough",
+        "Make sure your password is longer than six (6) characters"
+      );
+    }
+
     const changePasswordData = {
       user: userName,
       "user-id": userId,
@@ -142,6 +158,24 @@ const Users = () => {
     /** ensure user select userType */
     if (parseInt(userType) === 0) {
       return errorAlert("Update Alert", "Please select job description");
+    }
+
+    /** Validate Email address */
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
+    if (!emailRegex.test(email)) {
+      return errorAlert(
+        "Wrong Email Address",
+        "You must give a correct email address"
+      );
+    }
+
+    /** Validate Username Length */
+    if (userName.length < 5) {
+      return errorAlert(
+        "Username not long enough",
+        "Make sure your password is longer than five (5) characters"
+      );
     }
 
     if (!userId || !userName || !phone || !email || !userType) {
@@ -249,12 +283,48 @@ const Users = () => {
       newUserEmail = document.getElementById("email-add-user").value,
       newUserPhoneNo = document.getElementById("phone-add-user").value,
       newUserPassword = md5(document.getElementById("password-add-user").value),
+      passwordWithoutEncryption = document.getElementById("password-add-user")
+        .value,
       newUserConfirmPassword = md5(
         document.getElementById("confirm-password-add-user").value
       ),
       jobDesc = userTypesList.filter(({ id }) => id === newUserType);
 
     console.log(" Single User Type: ", jobDesc);
+
+    /** Validate Email address */
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
+    if (!emailRegex.test(newUserEmail)) {
+      return errorAlert(
+        "Wrong Email Address",
+        "You must give a correct email address"
+      );
+    }
+
+    /** Validate Username Length */
+    if (newUserName.length < 5) {
+      return errorAlert(
+        "Username not long enough",
+        "Make sure your password is longer than five (5) characters"
+      );
+    }
+
+    /** Validate Password Length */
+    if (passwordWithoutEncryption.length < 6) {
+      return errorAlert(
+        "Password not strong enough",
+        "Make sure your password is longer than six (6) characters"
+      );
+    }
+
+    /** Validate Passwords */
+    if (newUserPassword !== newUserConfirmPassword) {
+      return errorAlert(
+        "Password does not match",
+        "Confirm your password by giving exactly the same password"
+      );
+    }
 
     /** get the userPermissionList data */
     const permission = getPermissionData();
@@ -265,6 +335,7 @@ const Users = () => {
         "You must give new user at least one permission"
       );
     }
+
     const addUserData = {
       user: newUserName,
       "user-type": newUserType,
@@ -444,7 +515,7 @@ const Users = () => {
   console.log("Users types list: ", userTypesList);
   useEffect(() => {
     console.log("Use Effect Types List 1: ", userTypesList);
-    alert("Fired");
+    // alert("Fired");
     let typesList = [
       {
         user_type: "Select Job Description",
@@ -455,7 +526,7 @@ const Users = () => {
 
     setUserTypesList(typesList);
 
-    alert("Fired twice");
+    // alert("Fired twice");
     console.log("Use Effect Types List 2: ", userTypesList);
   }, [showModal]);
 

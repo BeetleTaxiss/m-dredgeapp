@@ -246,7 +246,11 @@ const Loader = () => {
   console.log("Load DATA: ", load);
   return (
     <>
-      <CustomTableList setLoad={setLoad} content={loaderListData} />
+      <CustomTableList
+        setLoad={setLoad}
+        content={loaderListData}
+        filler="No order to process, check back soon!"
+      />
       <FormModal
         formData={formData}
         showModal={showModal}

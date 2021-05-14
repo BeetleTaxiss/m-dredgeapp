@@ -216,7 +216,12 @@ const ActivityReportList = () => {
 
     body: activityReportList,
   };
-  return <CustomTableList content={activityReportListTableData} />;
+  return (
+    <CustomTableList
+      content={activityReportListTableData}
+      filler="No Reports to Review yet"
+    />
+  );
 };
 
 export default ActivityReportList;

@@ -425,7 +425,10 @@ const Machinery = () => {
                 }
               }}
             />
-            <CustomTableList content={machineryListTableData} />
+            <CustomTableList
+              content={machineryListTableData}
+              filler="No Machines added yet!"
+            />
           </div>
         </div>
       </div>

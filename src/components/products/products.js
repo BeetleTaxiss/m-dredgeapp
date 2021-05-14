@@ -460,7 +460,10 @@ const Products = () => {
                 }
               }}
             />
-            <CustomTableList content={productListTableData} />
+            <CustomTableList
+              content={productListTableData}
+              filler="No Product added yet"
+            />
           </div>
         </div>
       </div>

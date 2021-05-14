@@ -129,7 +129,10 @@ const FuelIssueList = () => {
   console.log(fuelIssueListTableData);
   /** Fuel list component display */
   const FuelListComponent = () => (
-    <CustomTableList content={fuelIssueListTableData} />
+    <CustomTableList
+      content={fuelIssueListTableData}
+      filler="Your Fuel list is empty, check back soon!"
+    />
   );
   return <FuelListComponent />;
 };
