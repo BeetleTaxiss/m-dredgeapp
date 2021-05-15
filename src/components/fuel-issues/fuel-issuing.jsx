@@ -7,9 +7,9 @@ import IssueFuelForm from "./add-Fuel-Form";
 import "./machinery.css";
 import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 import CustomDetailedStats from "../cards/CustomDetailedStats";
-import Followers from "../../assets/followers.svg";
-import Linkk from "../../assets/link.svg";
-import Chat from "../../assets/chat.svg";
+import Followers from "../../assets/reserveIcon.svg";
+import Linkk from "../../assets/incomingIcon.svg";
+import Chat from "../../assets/outgoingIcon.svg";
 import moment from "moment";
 
 const FuelIssuing = () => {
@@ -68,9 +68,8 @@ const FuelIssuing = () => {
                   description: description,
                 };
 
-                return (machineryListBody = machineryListBody.concat(
-                  currentMachineryItem
-                ));
+                return (machineryListBody =
+                  machineryListBody.concat(currentMachineryItem));
               });
               machineryListBody.unshift({
                 id: 0,
@@ -155,9 +154,8 @@ const FuelIssuing = () => {
                 array: true,
               };
 
-              return (detailedStatsList = detailedStatsList.concat(
-                detailedStatsSchema
-              ));
+              return (detailedStatsList =
+                detailedStatsList.concat(detailedStatsSchema));
             });
             setDetailedStats(detailedStatsList);
             console.log("Recent order list: ", detailedStats);

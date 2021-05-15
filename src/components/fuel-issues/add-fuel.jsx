@@ -9,9 +9,9 @@ import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 import moment from "moment";
 
 import CustomDetailedStats from "../cards/CustomDetailedStats";
-import Followers from "../../assets/followers.svg";
-import Linkk from "../../assets/link.svg";
-import Chat from "../../assets/chat.svg";
+import Followers from "../../assets/reserveIcon.svg";
+import Linkk from "../../assets/incomingIcon.svg";
+import Chat from "../../assets/outgoingIcon.svg";
 
 const AddFuel = () => {
   const [detailedStats, setDetailedStats] = useState([
@@ -92,9 +92,8 @@ const AddFuel = () => {
                 array: true,
               };
 
-              return (detailedStatsList = detailedStatsList.concat(
-                detailedStatsSchema
-              ));
+              return (detailedStatsList =
+                detailedStatsList.concat(detailedStatsSchema));
             });
             setDetailedStats(detailedStatsList);
             console.log("Recent order list: ", detailedStats);
