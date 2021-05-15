@@ -12,7 +12,7 @@ export const MobileLogo = () => (
     <li className="nav-item theme-text">
       <Link to="index.html" className="nav-link">
         {" "}
-        M-Dredge{" "}
+        Atup{" "}
       </Link>
     </li>
   </ul>

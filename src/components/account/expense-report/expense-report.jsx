@@ -106,7 +106,7 @@ const expenseReportData = {
     "Amount",
     "Issuer",
     "Serial No",
-  ],
+  ]
 };
 const ExpenseReport = () => {
   return (

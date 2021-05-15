@@ -1,13 +1,13 @@
 {
-  "name": "Atop",
+  "name": "Atup",
   "version": "1.0.0",
   "homepage": "./",
   "main": "./public/electron.js",
   "private": true,
-  "author": "Atop Development Team",
-  "description": "A full featured dredging and sales, and account management application",
+  "author": "Atup Development Team",
+  "description": "A full featured dredging, sales, and account management application",
   "build": {
-    "appId": "com.atop.TheBeetleTaxis.atop.dredge",
+    "appId": "com.atup.TheBeetleTaxis.atup.dredge",
     "files": [
       "build/**/*",
       "node_modules/**/*"
