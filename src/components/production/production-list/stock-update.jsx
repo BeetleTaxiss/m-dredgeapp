@@ -142,7 +142,10 @@ const StockUpdate = () => {
   console.log(stockUpdateListTableData);
   /** stock list component display */
   const StockListComponent = () => (
-    <CustomTableList content={stockUpdateListTableData} />
+    <CustomTableList
+      content={stockUpdateListTableData}
+      filler="Stock Trends Not Avaliable Yet"
+    />
   );
   return <StockListComponent />;
 };

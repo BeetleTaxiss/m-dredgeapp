@@ -49,7 +49,7 @@ export default function App({ loginStatus }) {
       setLoginStatusValid(true);
 
       setAppView(
-        <div className="App">
+        <div className="App" id="app-view">
           <Router>
             <Switch>
               <DashboardRouter />

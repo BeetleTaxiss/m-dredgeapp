@@ -160,11 +160,7 @@ export const useGetAppSettings = async (
 
   /** Fetch users types list and set it to state */
   Store.useStateAsync("userTypes").then((typesList) => {
-    // typesList.unshift({
-    //   user_type: "Select Job Description",
-    //   id: "0",
-    //   validation: "Can't select this option",
-    // });
+    console.log("Types state: ", typesList);
     typeof setUserTypesList === "function" && setUserTypesList(typesList);
   });
 
@@ -1318,7 +1314,7 @@ export const functionUtils = {
    * @param  {order_ref} order_ref
    * ----------------------------------------------------------------------------------------------------------
    */
-  handleDeleteOrder: async (id, order_ref, userName, userId) => {
+  handleDeleteOrder: async (id, order_ref, userName, userId, reloadData) => {
     await axios
       .post(`${BASE_API_URL}/api/v1/order/delete.php`, {
         "order-id": id,
@@ -1331,6 +1327,7 @@ export const functionUtils = {
           errorAlert("Order wasn't deleted", res.data.message);
         } else {
           successAlert("Order deleted successfully", res.data.message);
+          reloadData();
         }
       })
       .catch((error) => {

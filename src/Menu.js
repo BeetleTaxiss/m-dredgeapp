@@ -424,7 +424,6 @@ export const createUserDashboardOld = (userMenu) => {
   return userDashboardGroup;
 };
 
-
 export const createUserDashboard = (userMenu) => {
   if (typeof userMenu !== "object") {
     const msg = "user permission provide must be an object";
@@ -481,7 +480,7 @@ export const createUserDashboard = (userMenu) => {
       /** check if we are showing this menu entry on the dashboard
        * Please see `Menu` definition under the `dashboard` property for details
        */
-      const { showOnDashboard, menuGroup} = globalDashboardMenu[menuLocation];
+      const { showOnDashboard, menuGroup } = globalDashboardMenu[menuLocation];
 
       /** Assign this dashboard view for this user
        * @todo: in the future, we could perform more function here to assign based on each menu row
@@ -489,12 +488,12 @@ export const createUserDashboard = (userMenu) => {
        * This is all to help in our display styling.
        */
       if (showOnDashboard === true) {
-
         /** the dashboard component to display */
-        let CurrentDashboardComponent =globalDashboardMenu[menuLocation]["component"];
+        let CurrentDashboardComponent =
+          globalDashboardMenu[menuLocation]["component"];
 
-        /** 
-         * This is the dummy component to use in case the user does not have  
+        /**
+         * This is the dummy component to use in case the user does not have
          * permission to seee the dashboard content
         */
        const CurrentDummyComponent=globalDashboardMenu[menuLocation]["dummy"]? 
@@ -503,16 +502,16 @@ export const createUserDashboard = (userMenu) => {
         
        const menuId = `${menuLocation}-${k}`;
 
-        /** 
-         * check if this user has the permission to see this dashboard content 
-         * if yes, we will add the dashboard content for user, but if not, we will 
+        /**
+         * check if this user has the permission to see this dashboard content
+         * if yes, we will add the dashboard content for user, but if not, we will
          * add a dummy content for the `menuGroup` this dashboard content belongs to
          * by seetting the `CurrentDashboardComponent` to `CurrentDummyComponent`
          * */
-        if(!userDashboardViewsAllowed[menuLocation]) {
+        if (!userDashboardViewsAllowed[menuLocation]) {
           /** use a dummy dashboard content*/
-          CurrentDashboardComponent= ()=><CurrentDummyComponent/>;
-        } 
+          CurrentDashboardComponent = () => <CurrentDummyComponent />;
+        }
 
         if (!userDashboardGroup[menuGroup]) {
           /** add dashboard as an array */
@@ -875,19 +874,6 @@ export const Menu = {
       component: Inspector,
     },
   },
-  /** activity report menu  */
-  activityReport: {
-    inspect: {
-      text: "Activity sheet",
-      link: "/activityreport",
-      component: ActivityReport,
-    },
-    reportList: {
-      text: "Report List",
-      link: "/reportlist",
-      component: ActivityReportList,
-    },
-  },
   /** security menu  */
   security: {
     inspect: {
@@ -901,6 +887,19 @@ export const Menu = {
       component: ImpoundTruck,
     },
   },
+  /** activity report menu  */
+  activityReport: {
+    inspect: {
+      text: "Activity sheet",
+      link: "/activityreport",
+      component: ActivityReport,
+    },
+    reportList: {
+      text: "Report List",
+      link: "/reportlist",
+      component: ActivityReportList,
+    },
+  },
 };
 
 /**
@@ -908,9 +907,9 @@ export const Menu = {
  * This will hold the icons, the main style and the dropdown icon
  */
 export const MenuStyles = {
-  /** 
+  /**
    * No styling for default menu entry. We will most likely not be
-   * showing them on the menu bar 
+   * showing them on the menu bar
    * */
   default: null,
 

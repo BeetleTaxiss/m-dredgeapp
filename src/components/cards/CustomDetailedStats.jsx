@@ -9,6 +9,10 @@ import excavator from "../../assets/excavator.jpg";
 import stockImg from "../../assets/excavator2.jpg";
 import stockpiledImg from "../../assets/excavator3.jpg";
 
+import { ReactComponent as WetSandIcon } from "../../assets/rain-cloud.svg";
+import { ReactComponent as StockpliedIcon } from "../../assets/shine.svg";
+import { ReactComponent as StockIcon } from "../../assets/container.svg";
+
 const CustomDetailedStats = ({ data }) => {
   return (
     <div
@@ -125,11 +129,11 @@ const CustomDetailedStats = ({ data }) => {
                       <div className="w-title">
                         <div className="w-icon">
                           {item.followers ? (
-                            <Followers />
+                            <StockpliedIcon />
                           ) : item.linkk ? (
-                            <Linkk />
+                            <WetSandIcon />
                           ) : item.chat ? (
-                            <Chat />
+                            <StockIcon />
                           ) : null}
                         </div>
                         <div className="">

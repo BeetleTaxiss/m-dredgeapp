@@ -19,10 +19,11 @@ const CustomTableListBody = ({ content, setLoad }) => {
                     className={field.itemClass}
                     onClick={() => {
                       /** Wet sand Button function to add wet sand to stockpile */
-                      if (field.toStockpile) {
-                        const title =
-                          "Are you sure you want to Stockpile this wet sand ?";
-                        field.warningAlert(title, field.toStockpile);
+                      if (field.stockpileReady === true) {
+                        field.warningAlert();
+                      }
+                      if (field.stockpileReady === false) {
+                        field.warningAlertFalse();
                       }
                       /** Add stockpile sand to stock list */
                       if (field.addToStock) {

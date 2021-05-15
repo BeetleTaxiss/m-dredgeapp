@@ -159,7 +159,10 @@ const ProductionList = () => {
   };
   /** Production list component display */
   const ProductionListComponent = () => (
-    <CustomTableList content={productionListTableData} />
+    <CustomTableList
+      content={productionListTableData}
+      filler="No production sessions to report"
+    />
   );
 
   return <ProductionListComponent />;

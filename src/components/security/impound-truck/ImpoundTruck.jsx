@@ -22,6 +22,20 @@ const ImpoundTruck = () => {
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
 
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -116,7 +130,7 @@ const ImpoundTruck = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId]);
+  }, [userName, userId, refreshData]);
 
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
@@ -164,6 +178,7 @@ const ImpoundTruck = () => {
             text = res.data.message;
           // link = `<a href="/operationss">View Machinery List</a>`;
           successAlert(title, text);
+          reloadServerData();
         }
       });
   };
@@ -200,6 +215,7 @@ const ImpoundTruck = () => {
           let title = "Impounded Truck Successfully",
             text = res.data.message;
           successAlert(title, text);
+          reloadServerData();
         }
       });
   };
@@ -279,11 +295,14 @@ const ImpoundTruck = () => {
                   getAddImpoundedTruckFormDataWrapper()
                 );
                 if (validation === true) {
-                  handleAddImpoundedTruck();
+                  handleAddImpoundedTruck(userName, userId);
                 }
               }}
             />
-            <CustomTableList content={impoundTruckListTableData} />
+            <CustomTableList
+              content={impoundTruckListTableData}
+              filler="No Trucks impounded yet"
+            />
           </div>
         </div>
       </div>

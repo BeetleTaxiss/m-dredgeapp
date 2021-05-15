@@ -27,17 +27,17 @@ const AddUpdateProduct = ({
                   ? "Update product information"
                   : "Add new product information"}
               </p>
-              <button
-                id={showUpdateProduct ? "update-form-btn" : "add-form-btn"}
-                className="btn btn-success mb-3"
-                onClick={() => {
-                  return onClick ? onClick() : null;
-                }}
-              >
-                {showUpdateProduct
-                  ? "Go to add Products"
-                  : "Go to update products"}
-              </button>
+              {showUpdateProduct ? (
+                <button
+                  id="add-form-btn"
+                  className="btn btn-success mb-3"
+                  onClick={() => {
+                    return onClick ? onClick() : null;
+                  }}
+                >
+                  Go to add Products
+                </button>
+              ) : null}
             </div>
 
             {content?.map((item, i) => (

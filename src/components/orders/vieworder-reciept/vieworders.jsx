@@ -79,9 +79,26 @@ const ViewOrders = () => {
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
   const [listCount, setListCount] = useState("7");
+  const [lastItemId, setLastItemId] = useState();
+  const [lastItem, setLastItem] = useState();
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
+
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(() => {
     const source = axios.CancelToken.source();
 
@@ -90,6 +107,7 @@ const ViewOrders = () => {
         .get(`${BASE_API_URL}/api/v1/order/list.php`, {
           params: {
             count: listCount,
+            "last-item-id": lastItem,
           },
         })
         .then((res) => {
@@ -100,7 +118,9 @@ const ViewOrders = () => {
             data["userName"] = userName;
             data["userId"] = userId;
             setOrdersList(data);
+            setLastItemId(res.data["last-item-id"]);
             console.log("Item: ", ordersList, data);
+            console.log("Last Item Id: ", res.data);
           }
         })
         .catch((error) => {
@@ -111,7 +131,7 @@ const ViewOrders = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, listCount]);
+  }, [userName, userId, listCount, lastItem, refreshData]);
 
   /** Refetch order list when list count state changes */
   const handleCountChange = () => {
@@ -120,6 +140,40 @@ const ViewOrders = () => {
       countValue = document.getElementById("order-list-count").value;
     }
     setListCount(countValue);
+  };
+
+  let paginatedArray = [];
+  let globalArray = [];
+
+  let pageNumber = 1;
+
+  let prevItem = {
+    number: pageNumber++,
+    last_item_id: lastItemId,
+  };
+
+  let nextItem = {
+    number: pageNumber++,
+    last_item_id: lastItemId,
+  };
+  const handleNextPagination = (lastItemId, paginatedArray) => {
+    paginatedArray = paginatedArray?.concat(prevItem);
+    console.log("Paginated Left Array: ", paginatedArray);
+    setLastItem(lastItemId);
+
+    return paginatedArray;
+  };
+
+  let nextPaginated = ["john", "Hannah", "Biodun"];
+  // let nextPaginated = handleNextPagination();
+
+  globalArray = [...nextPaginated];
+  console.log("Mutated Paginated Array: ", globalArray);
+
+  const handlePrevPagination = (lastItemId) => {
+    paginatedArray = paginatedArray.concat(nextItem);
+    console.log("Paginated Right Array: ", paginatedArray);
+    setLastItem(lastItemId);
   };
 
   const handleSearchList = () => {};
@@ -148,7 +202,10 @@ const ViewOrders = () => {
               <ViewordersTablehead content={viewOrdersData.tableHeader} />
               {/* END OF VIEW ORDERS TABLE HEADER */}
               {/* BEGINNING OF VIEW ORDERS TABLE BODY */}
-              <ViewordersTableBody content={ordersList} />
+              <ViewordersTableBody
+                content={ordersList}
+                reloadData={() => reloadServerData()}
+              />
               {/* END OF VIEW ORDERS TABLE BODY */}
               {/* BEGINNING OF VIEW ORDERS TABLE FOOTER*/}
               <ViewordersTablefooter content={viewOrdersData.tableFooter} />
@@ -156,7 +213,12 @@ const ViewOrders = () => {
             </table>
           </div>
           {/* BEGINNING OF VIEW ORDERS TABLE PAGINAITION*/}
-          <ViewordersTablepaiginaition />
+          <ViewordersTablepaiginaition
+            handleNextPagination={() =>
+              handleNextPagination(lastItemId, paginatedArray)
+            }
+            handlePrevPagination={() => handlePrevPagination(lastItemId)}
+          />
           {/* END OF VIEW ORDERS TABLE PAGINAITION*/}
         </div>
       </div>

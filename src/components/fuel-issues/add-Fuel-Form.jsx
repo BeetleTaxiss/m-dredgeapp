@@ -7,6 +7,7 @@ const AddUpdateProduct = ({
   loading,
   subtitle,
   btnText,
+  setShowUpdateForm,
 }) => {
   return (
     <div className="row">
@@ -14,8 +15,24 @@ const AddUpdateProduct = ({
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
             {/* SUB-TITLE FOR THE FORM */}
-
-            <p>{subtitle}</p>
+            <span
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-end",
+              }}
+            >
+              <p>{subtitle}</p>
+              {setShowUpdateForm ? (
+                <button
+                  // style={}
+                  className="btn btn-warning mb-3"
+                  onClick={() => setShowUpdateForm()}
+                >
+                  Close
+                </button>
+              ) : null}
+            </span>
 
             {content?.map((item, i) => (
               <FormDetails key={i} item={item} />

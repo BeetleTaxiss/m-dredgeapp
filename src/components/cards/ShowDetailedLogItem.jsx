@@ -4,13 +4,21 @@ export const showDetailedLogItem = (logItem) => {
   let keyValuePair = [];
   let oldKeyValuePair = [];
   let newData;
+  let extendedNewData = JSON.parse(logItem.data);
   let oldData;
+
   if (logItem.data) {
-    newData = JSON.parse(logItem.data && logItem.data);
+    if (extendedNewData.data) {
+      console.log("Extended data: ", extendedNewData.data);
+      newData = extendedNewData.data && extendedNewData.data;
+    } else {
+      newData = JSON.parse(logItem.data && logItem.data);
+    }
   }
   if (logItem.data_old) {
     oldData = JSON.parse(logItem.data_old && logItem.data_old);
   }
+
   if (logItem["tasks-completed"]) {
     for (const [key, value] of Object.entries(logItem)) {
       keyValuePair = keyValuePair.concat({
@@ -72,9 +80,11 @@ export const showDetailedLogItem = (logItem) => {
   }
 
   if (logItem.action === "update") {
+    console.log("LOG ITEM nODE", newData);
+
     for (const [key, value] of Object.entries(newData)) {
-      console.log(`${key}: ${value}`);
-      keyValuePair = keyValuePair.concat({
+      console.log("LOG ITEM", `${key}: ${value}`);
+      keyValuePair = keyValuePair?.concat({
         id: key,
         fields: [
           {
@@ -110,7 +120,73 @@ export const showDetailedLogItem = (logItem) => {
     }
     /** Detailed Log List Table Data */
     const detailedLogListTableData = {
-      tableTitle: "Deleted Item",
+      tableTitle: "Old Item",
+      header: [
+        { class: "", title: "Data Field" },
+        { class: "", title: "Value" },
+      ],
+      body: keyValuePair,
+    };
+    /** Detailed Log List Table Data */
+    const detailedOldLogListTableData = {
+      tableTitle: "Updated Item",
+      header: [
+        { class: "", title: "Data Field" },
+        { class: "", title: "Value" },
+      ],
+      body: oldKeyValuePair,
+    };
+    return (
+      <>
+        <CustomTableList content={detailedLogListTableData} />
+        <br />
+        <CustomTableList content={detailedOldLogListTableData} />
+      </>
+    );
+  }
+
+  if (logItem.action === "update" && extendedNewData.data) {
+    console.log("LOG ITEM nODE", newData);
+
+    for (const [key, value] of Object.entries(extendedNewData.data)) {
+      console.log("LOG ITEM", `${key}: ${value}`);
+      keyValuePair = keyValuePair?.concat({
+        id: key,
+        fields: [
+          {
+            class: "text-left",
+            itemClass: "text-center",
+            item: key,
+          },
+          {
+            class: "text-left",
+            itemClass: "text-center",
+            item: value,
+          },
+        ],
+      });
+    }
+    for (const [key, value] of Object.entries(oldData)) {
+      console.log(`${key}: ${value}`);
+      oldKeyValuePair = oldKeyValuePair.concat({
+        id: key,
+        fields: [
+          {
+            class: "text-left",
+            itemClass: "text-center",
+            item: key,
+          },
+          {
+            class: "text-left",
+            itemClass: "text-center",
+            item: value,
+          },
+        ],
+      });
+    }
+    /** Detailed Log List Table Data */
+    const detailedLogListTableData = {
+      tableTitle: "Old Item",
       header: [
         { class: "", title: "Data Field" },
         { class: "", title: "Value" },

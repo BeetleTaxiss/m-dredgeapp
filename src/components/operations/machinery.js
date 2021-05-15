@@ -20,6 +20,20 @@ const Machinery = () => {
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
 
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   *  an helper function to always refresh the page
+   * */
+  const reloadServerData = () => {
+    /** refresh the page so we can newly added users */
+    setRefreshData(refreshData.concat(true));
+  };
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -80,7 +94,10 @@ const Machinery = () => {
                       editScroll: true,
                       scrollLocation: "update-form",
                       onClick: () => {
-                        handleUpdateFormFields(machineryItemData);
+                        setShowUpdateMachinery(true);
+                        setTimeout(() => {
+                          handleUpdateFormFields(machineryItemData);
+                        }, 500);
                       },
                     },
                     {
@@ -124,7 +141,7 @@ const Machinery = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId]);
+  }, [userName, userId, refreshData]);
 
   useEffect(() => {}, [showUpdateMachinery]);
 
@@ -176,6 +193,7 @@ const Machinery = () => {
             text = res.data.message,
             link = `<a href="/operations">View Machinery List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       });
   };
@@ -210,6 +228,7 @@ const Machinery = () => {
             text = res.data.message,
             link = `<a href="/operations">View Machinery List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       });
   };
@@ -245,17 +264,12 @@ const Machinery = () => {
             text = res.data.message,
             link = `<a href="/operations">View Machinery List</a>`;
           successAlert(title, text, link);
+          reloadServerData();
         }
       });
   };
   const handleUpdateFormFields = (machineryItemData) => {
-    if (
-      document.getElementById("add-form-btn") !== null &&
-      document.getElementById("edit-btn-icon") !== null
-    ) {
-      document.getElementsByClassName("edit-btn-icon").disabled = true;
-      console.log(document.getElementById("add-form-btn"));
-    } else {
+    if (document.getElementById("add-form-btn") !== null) {
       document.getElementById("machinery-id").value = machineryItemData.id;
       document.getElementById("machinery").value =
         machineryItemData.machinery_name;
@@ -265,7 +279,6 @@ const Machinery = () => {
         machineryItemData.identification_no;
       document.getElementById("machinery-identification").hidden = true;
     }
-    console.log("Update State", showUpdateMachinery);
   };
 
   /** Retrive form data for client validation */
@@ -389,7 +402,7 @@ const Machinery = () => {
           >
             <AddUpdateMachinery
               onClick={() => {
-                setShowUpdateMachinery((prev) => !prev);
+                setShowUpdateMachinery(false);
                 hideIdentificationField();
               }}
               showUpdateMachinery={showUpdateMachinery}
@@ -412,7 +425,10 @@ const Machinery = () => {
                 }
               }}
             />
-            <CustomTableList content={machineryListTableData} />
+            <CustomTableList
+              content={machineryListTableData}
+              filler="No Machines added yet!"
+            />
           </div>
         </div>
       </div>

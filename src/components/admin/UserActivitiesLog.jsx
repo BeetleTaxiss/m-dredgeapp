@@ -123,7 +123,12 @@ const UserActivitiesLog = () => {
     body: userActivitiesLog,
   };
 
-  return <CustomTableList content={detailedOldLogListTableData} />;
+  return (
+    <CustomTableList
+      content={detailedOldLogListTableData}
+      filler="No User Activity to report. Check back soon!"
+    />
+  );
 };
 
 export default UserActivitiesLog;

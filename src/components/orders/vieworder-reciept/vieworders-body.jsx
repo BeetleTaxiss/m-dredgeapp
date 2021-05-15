@@ -5,15 +5,15 @@ import { Link } from "react-router-dom";
 import { functionUtils } from "../../../hooks/function-utils";
 import { ReactComponent as DeleteIcon } from "../../../assets/deleteIcon.svg";
 
-const ViewordersTableBody = ({ content }) => {
+const ViewordersTableBody = ({ content, reloadData }) => {
   const title = "Are you sure you want to Delete this order ?";
-  const warningAlert = (title, id, ref, userName, userId) => {
+  const warningAlert = (title, id, ref, userName, userId, reloadData) => {
     Swal.fire({
       icon: "warning",
       title: title,
     }).then((value) => {
       if (value.isConfirmed) {
-        functionUtils.handleDeleteOrder(id, ref, userName, userId);
+        functionUtils.handleDeleteOrder(id, ref, userName, userId, reloadData);
       }
     });
   };
@@ -53,7 +53,8 @@ const ViewordersTableBody = ({ content }) => {
                         item.id,
                         item.order_ref,
                         content.userName,
-                        content.userId
+                        content.userId,
+                        reloadData
                       )
                 }
               />
