@@ -499,10 +499,9 @@ export const createUserDashboard = (userMenu) => {
         */
        const CurrentDummyComponent=globalDashboardMenu[menuLocation]["dummy"]? 
        globalDashboardMenu[menuLocation]["dummy"] :
-       ()=><div>DUMMY COMPONENT</div>;
-       
-       console.log(CurrentDummyComponent, "current dummy  location");
-        const menuId = `${menuLocation}-${k}`;
+       ()=>null;
+        
+       const menuId = `${menuLocation}-${k}`;
 
         /** 
          * check if this user has the permission to see this dashboard content 

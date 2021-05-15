@@ -162,16 +162,49 @@ code { color: #e7515a; }
 =====================
 */
 
-.header-container {
-    max-height: 64px;
-    background: #0e1726;
+.electron-window {
+    display:flex;
+    flex-direction: row;
+    position:fixed;
+    top:0;
+    z-index: 1033;
+    height:50px;
+    background-color:#4361ee;
+    padding:10px;
+    padding-left:50px;
+    width:60%;
+    margin-left:20%;
+    cursor:pointer;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    opacity:0;
+    color: white;
+    justify-content:flex-start;
+    align-items: center;
+}
 
+.electron-window:hover {
+    opacity:1  
+}
+
+.electron-window-menu, .electron-window-menu-end{
+    display:flex;
+}
+.electron-window-menu-end{
+    margin-left:"auto"
+}
+
+.header-container {
+    min-height: 64px;
+    height: "auto";
+    background: #0e1726;
     position: fixed;
     top: 0;
     right: 0;
     left: 0;
     z-index: 1032;
 }
+
 .header-container .header {
     max-width: 1600px;
     margin: 0 auto;

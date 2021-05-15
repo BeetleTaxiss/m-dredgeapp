@@ -3,11 +3,21 @@ import { Switch, Route} from "react-router";
 //import { BrowserRouter as Router } from "react-router-dom";
 import DashboardRouter from "./pages/DashboardRouter";
 import LoginPage from "./pages/login-page";
-import {MemoryRouter as Router } from "react-router-dom";
-
+import  AppRouter  from "./AppRouter";
+import {functionUtils} from "./hooks/function-utils";
+import {MemoryRouter, BrowserRouter} from "react-router-dom";
 
 export default function App({ loginStatus }) {
 
+  /** 
+   * If we are within electron enviroment, we will use `MemoryRouter`
+   * but within the web, we will `BrowserRouter`
+   * The memory router is to avoid the blank screen error in electron
+   *  */
+  const Router = functionUtils.isElectronApp()? MemoryRouter : BrowserRouter;
+
+  console.log(Router, "the router");
+  
   /** hold the current view user will see */
   const [appView, setAppView] = useState([]);
 
@@ -17,7 +27,7 @@ export default function App({ loginStatus }) {
   /** the default login view  */
   const LoginView = () => (
     <div className="App">
-      <Router forceRefresh>
+      <Router forceRefresh={true}>
         <Switch>
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/" component={LoginPage} />

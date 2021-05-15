@@ -1,9 +1,28 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import profileImg from "../../assets/blankProfileImg.png";
+import {functionUtils} from "./../../hooks/function-utils"
 
 const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
+
+  /** 
+   * for our electron app, we will create a custom menu bar
+   * by default, this menu bar will be empty   
+   * */
+  let ElectronWindowBar=()=>null;
+
+  /** set if we are within an electron environment  */
+  if (functionUtils.isElectronApp()) {
+    ElectronWindowBar=()=><div  id="electron-window" className="electron-window">
+      <button id="app-menu-file"  class="electron-window-menu">File</button>
+      <button id="app-minimize" class="electron-window-menu">Min</button>
+      <button id="app-close" class="electron-window-menu-end">Close</button>
+      </div>
+  }
+
   return (
+    <>
+    <ElectronWindowBar/>
     <div className="header-container">
       <header className="header navbar navbar-expand-sm">
         <Link
@@ -311,6 +330,7 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
         </ul>
       </header>
     </div>
+    </>
   );
 };
 

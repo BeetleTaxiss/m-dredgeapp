@@ -6,7 +6,7 @@ import { functionUtils, getUserStoreInstance } from "./../hooks/function-utils";
 
 export default function  Dashboard ()  {
   /** use this function to always validate if a user is logged in */
-  functionUtils.useValidateLogin("/");
+  functionUtils.useValidateLogin("/login");
 
   /** hold user permission. This is retrieve from our StoreManager */
   const [userPermission, setUserPermission] = useState([]);
