@@ -129,10 +129,7 @@ const Stock = () => {
   console.log(stockListTableData);
   /** stock list component display */
   const StockListComponent = () => (
-    <CustomTableList
-      content={stockListTableData}
-      filler="Product hasn't been stocked yet!"
-    />
+    <CustomTableList content={stockListTableData} filler="No product stocked" />
   );
   return <StockListComponent />;
 };
