@@ -133,7 +133,8 @@ export const StockPileInformation = ({ content }) => (
       style={{ display: "flex", gap: "0.2rem", alignItems: "flex-end" }}
     >
       <p className="value">
-        {content?.value} <span>{content?.duration}</span>{" "}
+        {content?.value && content?.value}{" "}
+        <span>{content?.duration && content?.duration}</span>{" "}
       </p>
       {/* Beginning of Duration Chartline SVG */}
       <ChartLine />

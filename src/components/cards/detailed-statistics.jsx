@@ -21,7 +21,7 @@ const DetailedStatistics = () => {
         .then((res) => {
           let detailedStatsResponseList;
           let detailedStatsResponse = res.data;
-          const stock = detailedStatsResponse.stock[0].stock;
+          const stock = detailedStatsResponse?.stock[0]?.stock;
           detailedStatsResponseList = [
             // detailedStatsResponse.completed,
             detailedStatsResponse.stockpiled,
@@ -62,9 +62,8 @@ const DetailedStatistics = () => {
                 img: true,
               };
 
-              return (detailedStatsList = detailedStatsList.concat(
-                detailedStatsSchema
-              ));
+              return (detailedStatsList =
+                detailedStatsList.concat(detailedStatsSchema));
             });
             setDetailedStats(detailedStatsList);
             console.log("Recent order list: ", detailedStats);

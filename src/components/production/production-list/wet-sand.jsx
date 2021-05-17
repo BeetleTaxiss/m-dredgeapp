@@ -55,19 +55,19 @@ const WetSand = () => {
               const wetSandItems = res.data.data;
               wetSandItems.map((item) => {
                 /** Get required response data values */
-                const production_id = item.id;
-                const batch = item.batch;
-                const total_qty_pumped = item.total_qty_pumped;
-                const production_date = item.production_date;
-                const production_start_time = item.start_time;
-                const production_end_time = item.end_time;
-                const production_capacity = item.production_capacity;
+                const production_id = item?.id;
+                const batch = item?.batch;
+                const total_qty_pumped = item?.total_qty_pumped;
+                const production_date = item?.production_date;
+                const production_start_time = item?.start_time;
+                const production_end_time = item?.end_time;
+                const production_capacity = item?.production_capacity;
                 const pumping_distance_in_meters =
-                  item.pumping_distance_in_meters;
+                  item?.pumping_distance_in_meters;
                 const duration_pumped_in_seconds =
-                  item.duration_pumped_in_seconds;
+                  item?.duration_pumped_in_seconds;
                 /** Logic to get pumped quantity which is ready tobe stockpiled */
-                const date_in = item.date_in;
+                const date_in = item?.date_in;
                 const new_date = moment().format("DD/MM/YYYY");
                 let stockpileReady = new_date > date_in ? true : false;
                 console.log("difference in days: ", stockpileReady);
@@ -214,7 +214,7 @@ const WetSand = () => {
   /** Handle stockpile function which moves the wet sand over to the stockpile list after drying has taken place */
   const handleStockpile = (toStockpile) => {
     axios
-      .put(`${BASE_API_URL}/api/v1/production/stockpile.php`, toStockpile)
+      .post(`${BASE_API_URL}/api/v1/production/stockpile.php`, toStockpile)
       .then((res) => {
         console.log("Stockpile response Data: ", res.data.data);
         if (res.data.error) {

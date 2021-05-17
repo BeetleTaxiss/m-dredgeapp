@@ -29,10 +29,10 @@ const ActivitiesSummary = () => {
           } else {
             activitiesSummaryResponse.map((item, id) => {
               console.log("Detailed Item: ", item);
-              const completed = item.completed;
-              const start_time = item.time_in;
-              const date_in = item.date_in;
-              const stockpiled = item.stockpiled;
+              const completed = item?.completed;
+              const start_time = item?.time_in;
+              const date_in = item?.date_in;
+              const stockpiled = item?.stockpiled;
               const new_time = moment();
               const extended_new_time = moment().add(5, "minutes");
               const start_time_moment = moment(
@@ -49,9 +49,8 @@ const ActivitiesSummary = () => {
                 start_time_moment.format("hh:mm:ss") <
                 extended_new_time.format("hh:mm:ss");
 
-              const pumping_started_ago = start_time_moment.from(
-                extended_new_time
-              );
+              const pumping_started_ago =
+                start_time_moment.from(extended_new_time);
 
               const activitiesSummarySchema = {
                 status: {

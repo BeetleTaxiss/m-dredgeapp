@@ -31,29 +31,29 @@ const CurrentActivity = () => {
               text = res.data.message;
             errorAlert(title, text);
           } else {
-            const user = reversedCurrentActivityResponse[1].user,
+            const user = reversedCurrentActivityResponse[1]?.user,
               date = moment(
-                `${reversedCurrentActivityResponse[1].date_in} ${reversedCurrentActivityResponse[0].start_time}`,
+                `${reversedCurrentActivityResponse[1]?.date_in} ${reversedCurrentActivityResponse[0]?.start_time}`,
                 "DD/MM/YYYY hh:mm:ss"
               ).format("dddd, mm yyyy"),
               wet_sand_pumped = Math.round(
-                reversedCurrentActivityResponse[1].total_qty_pumped
+                reversedCurrentActivityResponse[1]?.total_qty_pumped
               ),
               duration =
-                reversedCurrentActivityResponse[1].duration_pumped_in_seconds <
+                reversedCurrentActivityResponse[1]?.duration_pumped_in_seconds <
                 3600
                   ? reversedCurrentActivityResponse[1]
-                      .duration_pumped_in_seconds
+                      ?.duration_pumped_in_seconds
                   : reversedCurrentActivityResponse[1]
-                      .duration_pumped_in_seconds >= 3600
+                      ?.duration_pumped_in_seconds >= 3600
                   ? reversedCurrentActivityResponse[1]
-                      .duration_pumped_in_seconds / 3600
+                      ?.duration_pumped_in_seconds / 3600
                   : reversedCurrentActivityResponse[1]
-                      .duration_pumped_in_seconds,
+                      ?.duration_pumped_in_seconds,
               distance_pumped = Math.round(
-                reversedCurrentActivityResponse[1].pumping_distance_in_meters
+                reversedCurrentActivityResponse[1]?.pumping_distance_in_meters
               ),
-              completed = reversedCurrentActivityResponse[1].completed;
+              completed = reversedCurrentActivityResponse[1]?.completed;
             const currentActivitySchema = {
               link: "/productionlist",
               user: user,
@@ -89,7 +89,7 @@ const CurrentActivity = () => {
             console.log(
               "Current Acyivity list: ",
               moment(
-                `${reversedCurrentActivityResponse[0].date_in} ${reversedCurrentActivityResponse[0].start_time}`,
+                `${reversedCurrentActivityResponse[0]?.date_in} ${reversedCurrentActivityResponse[0]?.start_time}`,
                 "DD/MM/YYYY hh:mm:ss"
               ).format("dddd, mm yyyy"),
               moment()
@@ -135,7 +135,7 @@ const CurrentActivity = () => {
                 <span
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <h6>{currentActivity.user}</h6>
+                  <h6>{currentActivity?.user}</h6>
                   <div className="usr-name">
                     <span
                       id="span-pending"

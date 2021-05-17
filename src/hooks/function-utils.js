@@ -510,10 +510,10 @@ export const functionUtils = {
         productName = product[0].product,
         validation = product[0].validation;
       const productionCapacityOnStart = parseInt(formInput[""]);
-      const pumping_distance_in_meters = document.getElementById("distance")
-        .value;
-      const pumping_elevation_in_meters = document.getElementById("elevation")
-        .value;
+      const pumping_distance_in_meters =
+        document.getElementById("distance").value;
+      const pumping_elevation_in_meters =
+        document.getElementById("elevation").value;
       const addMarkerData = {
         user: userName,
         "user-id": parseInt(userId),
@@ -540,9 +540,8 @@ export const functionUtils = {
       };
       console.log("add Marker Values: ", addMarkerData);
       /** Client form validation before https call */
-      const validationStatus = functionUtils.validateFormInputs(
-        addMarkerClientData
-      );
+      const validationStatus =
+        functionUtils.validateFormInputs(addMarkerClientData);
       if (validationStatus === true) {
         try {
           axios
@@ -572,28 +571,22 @@ export const functionUtils = {
                 console.log("timeline Items: ", timelineItems);
                 res.data["initial_production_capacity"] = formInput[""];
                 res.data["product_id"] = productId;
-                res.data[
-                  "pumping_distance_in_meters"
-                ] = pumping_distance_in_meters;
-                res.data[
-                  "pumping_elevation_in_meters"
-                ] = pumping_elevation_in_meters;
+                res.data["pumping_distance_in_meters"] =
+                  pumping_distance_in_meters;
+                res.data["pumping_elevation_in_meters"] =
+                  pumping_elevation_in_meters;
                 res.data["product_name"] = productName;
 
                 setProductionDetails(res.data);
                 setCounter({ hours, minutes, seconds });
-                document.getElementById(
-                  "distance"
-                ).value = pumping_distance_in_meters;
-                document.getElementById(
-                  "elevation"
-                ).value = pumping_elevation_in_meters;
-                document.getElementById(
-                  "current-production-capacity"
-                ).value = productionCapacityOnStart;
-                document.getElementById(
-                  "range-count-number"
-                ).innerHTML = productionCapacityOnStart;
+                document.getElementById("distance").value =
+                  pumping_distance_in_meters;
+                document.getElementById("elevation").value =
+                  pumping_elevation_in_meters;
+                document.getElementById("current-production-capacity").value =
+                  productionCapacityOnStart;
+                document.getElementById("range-count-number").innerHTML =
+                  productionCapacityOnStart;
 
                 functionUtils.showTimeLine(
                   timelineItems,
@@ -715,12 +708,10 @@ export const functionUtils = {
     sessionStorage.setItem("New Time", LogTime);
     const getNewLoggedTime = sessionStorage.getItem("New Time");
     const getPrevLoggedTime = sessionStorage.getItem("prevTime");
-    const prevloggedProductionTimeToServer = moment(getPrevLoggedTime).format(
-      "hh:mm:ss"
-    );
-    const prevloggedProductionDateToServer = moment(getPrevLoggedTime).format(
-      "dd/MM/YY"
-    );
+    const prevloggedProductionTimeToServer =
+      moment(getPrevLoggedTime).format("hh:mm:ss");
+    const prevloggedProductionDateToServer =
+      moment(getPrevLoggedTime).format("dd/MM/YY");
     const endloggedProductionTimeToServer = moment().format("hh:mm:ss");
     const newloggedProductionDateToServer = moment().format("dd/MM/YYYY");
     console.log("New logged time: ", getNewLoggedTime);
@@ -945,14 +936,14 @@ export const functionUtils = {
     if (document.getElementById("distance").value === "") {
       new_pumping_distance_in_meters = parseInt(pumping_distance_in_meters);
     } else {
-      new_pumping_distance_in_meters = document.getElementById("distance")
-        .value;
+      new_pumping_distance_in_meters =
+        document.getElementById("distance").value;
     }
     if (document.getElementById("elevation").value === "") {
       new_pumping_elevation_in_meters = parseInt(pumping_elevation_in_meters);
     } else {
-      new_pumping_elevation_in_meters = document.getElementById("elevation")
-        .value;
+      new_pumping_elevation_in_meters =
+        document.getElementById("elevation").value;
     }
 
     /** Validation Pumping distance and elevation to be Numbers only */
@@ -1005,8 +996,10 @@ export const functionUtils = {
         } else {
           productDetailsStateless.production_id = response.data.production_id;
           productDetailsStateless.batch_no = response.data.batch_no;
-          productDetailsStateless.pumping_distance_in_meters = new_pumping_distance_in_meters;
-          productDetailsStateless.pumping_elevation_in_meters = new_pumping_elevation_in_meters;
+          productDetailsStateless.pumping_distance_in_meters =
+            new_pumping_distance_in_meters;
+          productDetailsStateless.pumping_elevation_in_meters =
+            new_pumping_elevation_in_meters;
           console.log("Product Details stateless: ", productDetailsStateless);
 
           /**
@@ -1041,7 +1034,7 @@ export const functionUtils = {
         console.log("Button  clicked stop", stopProductionBtnId);
 
         axios
-          .put(
+          .post(
             `${BASE_API_URL}/api/v1/production/stop-marker.php`,
             stopMarkerData
           )
@@ -1081,9 +1074,8 @@ export const functionUtils = {
           showCancelButton: true,
         }).then((value) => {
           if (value.isDismissed) {
-            let stopStartProductionBtnId = document.getElementById(
-              "stop-start-marker"
-            );
+            let stopStartProductionBtnId =
+              document.getElementById("stop-start-marker");
 
             if (stopStartProductionBtnId !== null) {
               stopStartProductionBtnId.dataset.runStopStartMarker = true;
@@ -1108,7 +1100,7 @@ export const functionUtils = {
           console.log("Button  clicked stop", pauseProductionBtnId);
 
           axios
-            .put(
+            .post(
               `${BASE_API_URL}/api/v1/production/stop-marker.php`,
               stopMarkerData
             )
@@ -1177,8 +1169,10 @@ export const functionUtils = {
             } else {
               productDetailsStateless.production_id = res.data.production_id;
               productDetailsStateless.batch_no = res.data.batch_no;
-              productDetailsStateless.pumping_distance_in_meters = new_pumping_distance_in_meters;
-              productDetailsStateless.pumping_elevation_in_meters = new_pumping_elevation_in_meters;
+              productDetailsStateless.pumping_distance_in_meters =
+                new_pumping_distance_in_meters;
+              productDetailsStateless.pumping_elevation_in_meters =
+                new_pumping_elevation_in_meters;
               stopStartProductionBtnId.disabled = false;
 
               const title = "Shift Resumed Successfully";
@@ -1201,9 +1195,8 @@ export const functionUtils = {
                 dotColor: "primary",
                 text: `Shift resumed at production capacity of ${currentProductionCapacity}%`,
               };
-              functionUtils.globalTimeline = functionUtils.globalTimeline.concat(
-                resumeTimelineItem
-              );
+              functionUtils.globalTimeline =
+                functionUtils.globalTimeline.concat(resumeTimelineItem);
               console.log(
                 "Global timeline items 3: ",
                 functionUtils.globalTimeline
@@ -1243,9 +1236,8 @@ export const functionUtils = {
     if (functionUtils.globalTimeline === null) {
       functionUtils.globalTimeline = timelineItems;
     }
-    functionUtils.globalTimeline = functionUtils.globalTimeline.concat(
-      endTimelineItem
-    );
+    functionUtils.globalTimeline =
+      functionUtils.globalTimeline.concat(endTimelineItem);
     console.log("Global timeline: ", functionUtils.globalTimeline);
     functionUtils.showTimeLine(
       functionUtils.globalTimeline,
@@ -1428,19 +1420,19 @@ export const functionUtils = {
 
       if (response && response.status === true) {
         /**
-         * we are dealing with 2 approach here 
+         * we are dealing with 2 approach here
          * our app could either be in electron which uses MemoryRouter
          * or the web which uses BrowserRouter. If this is an electron env
          * we will use the window reload method to refresh so that login can be validated
          * else, we will use the loction.push of router-dom to enforce page refresh
          */
-        if(functionUtils.isElectronApp()) {
+        if (functionUtils.isElectronApp()) {
           window.location.reload();
-        } else{
+        } else {
           history.push({
-          pathname: state?.from || successLocation,
-          state: response,
-        });
+            pathname: state?.from || successLocation,
+            state: response,
+          });
         }
       } else {
         return false;
@@ -1578,8 +1570,7 @@ export const functionUtils = {
   },
   /** Function to add comma after every third number in a number string */
   addCommaToNumbers: (number) => {
-
-    if(!number) return 0;
+    if (!number) return 0;
 
     if (typeof number !== "string") {
       /** Convert numbers to string */
@@ -1699,8 +1690,8 @@ export const functionUtils = {
   /**
    * Check if our app is running withing electron
    */
-  isElectronApp:()=>{
+  isElectronApp: () => {
     let userAgent = navigator.userAgent.toLowerCase();
-    return (userAgent.indexOf(" electron/") !==-1)
-  }
+    return userAgent.indexOf(" electron/") !== -1;
+  },
 };

@@ -25,15 +25,15 @@ const FuelIssueList = () => {
               const fuelIssueItems = res.data.data;
               fuelIssueItems.reverse().map((item) => {
                 /** Get required response data values */
-                const fuel_issue_user = item.user;
-                const fuel_issue_user_id = item.user_id;
-                const fuel_issue_id = item.id;
-                const machinery_name = item.machinery_name;
-                const fuel_issue_date = item.date_in;
-                const fuel_issue_time = item.time_in;
-                const qty_issued = item.qty_issued;
-                const identification_no = item.identification_no;
-                const description = item.description;
+                const fuel_issue_user = item?.user;
+                const fuel_issue_user_id = item?.user_id;
+                const fuel_issue_id = item?.id;
+                const machinery_name = item?.machinery_name;
+                const fuel_issue_date = item?.date_in;
+                const fuel_issue_time = item?.time_in;
+                const qty_issued = item?.qty_issued;
+                const identification_no = item?.identification_no;
+                const description = item?.description;
 
                 const currentFuelIssueItem = {
                   id: fuel_issue_id,

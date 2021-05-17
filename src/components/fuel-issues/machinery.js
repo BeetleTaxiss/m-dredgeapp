@@ -36,10 +36,10 @@ const Machinery = () => {
             } else {
               const machineryListItems = res.data.data;
               machineryListItems.map((item) => {
-                const machinery_id = parseInt(item.id),
-                  machinery_name = item.machinery_name,
-                  identification_no = item.identification_no,
-                  description = item.description;
+                const machinery_id = parseInt(item?.id),
+                  machinery_name = item?.machinery_name,
+                  identification_no = item?.identification_no,
+                  description = item?.description;
 
                 const machineryItemData = {
                   user: userName,
@@ -228,7 +228,7 @@ const Machinery = () => {
     };
     console.log("Update machinery API values: ", updateMachineryData);
     axios
-      .put(
+      .post(
         `${BASE_API_URL}/api/v1/operations/machinery-update.php`,
         updateMachineryData
       )

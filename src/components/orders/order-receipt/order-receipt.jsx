@@ -17,7 +17,6 @@ import { functionUtils } from "../../../hooks/function-utils";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-
 const OrderReceipt = () => {
   const { state } = useLocation();
   const [order, setOrder] = useState(state);
@@ -81,7 +80,7 @@ const OrderReceipt = () => {
       document.getElementById("loading-btn").disabled = true;
     }
     axios
-      .put(`${BASE_API_URL}/api/v1/order/update.php`, updateOrderData)
+      .post(`${BASE_API_URL}/api/v1/order/update.php`, updateOrderData)
       .then((res) => {
         console.log("UPDATE ORDER: ", res.data);
         if (res.data.error) {
@@ -140,8 +139,7 @@ const OrderReceipt = () => {
     Swal.fire({
       icon: "success",
       title: "Order Updated Successfully",
-      text:
-        "Your order has been updated, you can close this pop-up and keep browsing",
+      text: "Your order has been updated, you can close this pop-up and keep browsing",
     });
   };
   const updateErrorAlert = (errorMsg) => {
@@ -232,7 +230,7 @@ const OrderReceipt = () => {
   useEffect(() => {}, [order]);
 
   return (
-    <div  className="row invoice  layout-spacing layout-top-spacing">
+    <div className="row invoice  layout-spacing layout-top-spacing">
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div id="order-receipt-view" className="doc-container">
           <div className="row">
@@ -329,51 +327,80 @@ const OrderReceipt = () => {
 };
 
 /** use this function to print out the order receipt  */
-const printOrderReceiptOld = (printTitle = "Order Receipt", orderReceiptLayer = "order-receipt-view") => {
-
-  const receiptContentLayer = document.getElementById(orderReceiptLayer).cloneNode(true);
+const printOrderReceiptOld = (
+  printTitle = "Order Receipt",
+  orderReceiptLayer = "order-receipt-view"
+) => {
+  const receiptContentLayer = document
+    .getElementById(orderReceiptLayer)
+    .cloneNode(true);
 
   /** get the content to print without the links */
   let receiptContent = receiptContentLayer.innerHTML;
 
-  let printWindow = window.open('', 'PRINT', 'height=400,width=600');
+  let printWindow = window.open("", "PRINT", "height=400,width=600");
 
   const receiptView = `<div style="padding:5px">${receiptContent}</div>`;
 
-  const printCommand = '<scr' + 'ipt type="text/javascript">' + 'window.onload = function() {' +
+  const printCommand =
+    "<scr" +
+    'ipt type="text/javascript">' +
+    "window.onload = function() {" +
     'document.getElementById("order-receipt-view-link").innerHTML=null;' +
-    'window.print();' +
-    'window.close();' +
-    '};' + '</sc' + 'ript>';
+    "window.print();" +
+    "window.close();" +
+    "};" +
+    "</sc" +
+    "ript>";
 
   printWindow.document.write(`<html><head><title>${printTitle}</title>`);
-  printWindow.document.write('<link rel="stylesheet" href="./assets/css/bootstrap/css/bootstrap.min.css" type="text/css" />');
-  printWindow.document.write('<link rel="stylesheet" href="./assets/css/dashboard/dash_1.css" type="text/css" />');
-  printWindow.document.write('<link rel="stylesheet" href="./assets/css/dashboard/dash_2.css" type="text/css" />');
-  printWindow.document.write('<link rel="stylesheet" href="./assets/css/main.css" type="text/css" />');
-  printWindow.document.write('<link rel="stylesheet" href="./assets/css/structure.css" type="text/css" />');
-  printWindow.document.write('<link rel="stylesheet" href="./assets/css/tables/table-basic.css" type="text/css" />');
-  printWindow.document.write('<link rel="stylesheet" href="./assets/css/apps/invoice-preview.css" type="text/css" />');
+  printWindow.document.write(
+    '<link rel="stylesheet" href="./assets/css/bootstrap/css/bootstrap.min.css" type="text/css" />'
+  );
+  printWindow.document.write(
+    '<link rel="stylesheet" href="./assets/css/dashboard/dash_1.css" type="text/css" />'
+  );
+  printWindow.document.write(
+    '<link rel="stylesheet" href="./assets/css/dashboard/dash_2.css" type="text/css" />'
+  );
+  printWindow.document.write(
+    '<link rel="stylesheet" href="./assets/css/main.css" type="text/css" />'
+  );
+  printWindow.document.write(
+    '<link rel="stylesheet" href="./assets/css/structure.css" type="text/css" />'
+  );
+  printWindow.document.write(
+    '<link rel="stylesheet" href="./assets/css/tables/table-basic.css" type="text/css" />'
+  );
+  printWindow.document.write(
+    '<link rel="stylesheet" href="./assets/css/apps/invoice-preview.css" type="text/css" />'
+  );
   printWindow.document.write(printCommand);
-  printWindow.document.write('</head><body>');
+  printWindow.document.write("</head><body>");
   printWindow.document.write(receiptView);
-  printWindow.document.write('</body></html>');
+  printWindow.document.write("</body></html>");
 
   printWindow.addEventListener("load", () => {
-    printWindow.document.getElementsByClassName("order-receipt-view-links")[0].innerHTML = null;
+    printWindow.document.getElementsByClassName(
+      "order-receipt-view-links"
+    )[0].innerHTML = null;
   });
 
-  printWindow.document.close(); 
-  printWindow.focus(); 
+  printWindow.document.close();
+  printWindow.focus();
 
-  return true
-}
+  return true;
+};
 
 /**
  * Use to create a printable and downloadable orderReceipt
  */
-const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", orderReceiptLayer = "order-receipt-view", orderReceiptLayerLinks = "order-receipt-view-links") => {
-
+const printOrderReceipt = (
+  saveReceipt = false,
+  receiptName = "Order Receipt",
+  orderReceiptLayer = "order-receipt-view",
+  orderReceiptLayerLinks = "order-receipt-view-links"
+) => {
   /** hide the links layer.  */
   const links = document.getElementById(orderReceiptLayerLinks);
   links.setAttribute("style", "display:none");
@@ -382,41 +409,39 @@ const printOrderReceipt = (saveReceipt = false, receiptName = "Order Receipt", o
 
   const canvasOptions = {
     //scale:0.83,
-    scale:1.05,
-    backgroundColor:"#ffffff"
-  }
+    scale: 1.05,
+    backgroundColor: "#ffffff",
+  };
   const pdfOptions = {
-    orientation: 'p',
-    unit: 'mm',
-    format: 'a4',
-  }
+    orientation: "p",
+    unit: "mm",
+    format: "a4",
+  };
 
-  html2canvas(receiptContentLayer, canvasOptions).then(canvas => {
-
+  html2canvas(receiptContentLayer, canvasOptions).then((canvas) => {
     var img = canvas.toDataURL("image/png");
     var doc = new jsPDF(pdfOptions);
-    doc.addImage(img, 'JPEG', 15, 15);
+    doc.addImage(img, "JPEG", 15, 15);
 
     if (saveReceipt === true) {
       return doc.save(receiptName);
     }
     /** by default attempt to open the receipt  */
-    window.open(doc.output('bloburl'), '_blank');
-
+    window.open(doc.output("bloburl"), "_blank");
   });
   /** show link layer  */
   links.setAttribute("style", "display:block");
-}
+};
 
 export const OrderReceiptLinks = ({ setShowModal }) => (
-  <div  className="">
+  <div className="">
     <div className="invoice-actions-btn">
       <div className="invoice-action-btn">
         <div className="row">
           <div className="col-xl-12 col-md-4 col-sm-6">
             <a
               onClick={() => {
-                printOrderReceipt()
+                printOrderReceipt();
               }}
               href="javascript:void(0)"
               className="btn btn-secondary btn-print  action-print"
@@ -426,9 +451,9 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
           </div>
           <div className="col-xl-12 col-md-4 col-sm-6">
             <a
-            onClick={()=>{
-              printOrderReceipt(true)
-            }}
+              onClick={() => {
+                printOrderReceipt(true);
+              }}
               href="javascript:void(0)"
               className="btn btn-success btn-download"
             >

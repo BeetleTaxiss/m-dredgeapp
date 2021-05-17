@@ -25,15 +25,15 @@ const FuelUpdateList = () => {
               const fuelUpdateItems = res.data.data;
               fuelUpdateItems.reverse().map((item) => {
                 /** Get required response data values */
-                const fuel_update_user = item.user;
-                const fuel_update_user_id = item.user_id;
-                const fuel_update_id = item.id;
-                const supplier = item.supplier;
-                const supplier_id = item.supplier_id;
-                const amount = item.amount;
-                const fuel_update_date = item.date_in;
-                const fuel_update_time = item.time_in;
-                const qty_stocked = item.qty_stocked;
+                const fuel_update_user = item?.user;
+                const fuel_update_user_id = item?.user_id;
+                const fuel_update_id = item?.id;
+                const supplier = item?.supplier;
+                const supplier_id = item?.supplier_id;
+                const amount = item?.amount;
+                const fuel_update_date = item?.date_in;
+                const fuel_update_time = item?.time_in;
+                const qty_stocked = item?.qty_stocked;
 
                 const currentFuelUpdateItem = {
                   id: fuel_update_id,

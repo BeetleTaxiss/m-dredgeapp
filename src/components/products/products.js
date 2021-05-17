@@ -130,9 +130,8 @@ const Products = () => {
                   ],
                 };
 
-                return (productsListBody = productsListBody.concat(
-                  currentProductItem
-                ));
+                return (productsListBody =
+                  productsListBody.concat(currentProductItem));
               });
               setProductsList(productsListBody);
               console.log("Product List Body: ", productsList);
@@ -214,10 +213,12 @@ const Products = () => {
     const product_name = document.getElementById("product").value;
     const product_unit = document.getElementById("product-unit").value;
     const product_price = document.getElementById("product-price").value;
-    const product_measurement = document.getElementById("product-measurement")
-      .value;
-    const product_description = document.getElementById("product-description")
-      .value;
+    const product_measurement = document.getElementById(
+      "product-measurement"
+    ).value;
+    const product_description = document.getElementById(
+      "product-description"
+    ).value;
     const addProductData = {
       product: product_name,
       unit: product_unit,
@@ -251,10 +252,12 @@ const Products = () => {
     const product_name = document.getElementById("product").value;
     const product_unit = document.getElementById("product-unit").value;
     const product_price = document.getElementById("product-price").value;
-    const product_measurement = document.getElementById("product-measurement")
-      .value;
-    const product_description = document.getElementById("product-description")
-      .value;
+    const product_measurement = document.getElementById(
+      "product-measurement"
+    ).value;
+    const product_description = document.getElementById(
+      "product-description"
+    ).value;
     const updateProductData = {
       user: user,
       "user-id": user_id,
@@ -267,7 +270,7 @@ const Products = () => {
     };
     console.log("Update product API values: ", updateProductData);
     axios
-      .put(`${BASE_API_URL}/api/v1/product/update.php`, updateProductData)
+      .post(`${BASE_API_URL}/api/v1/product/update.php`, updateProductData)
       .then((res) => {
         console.log("Add product response data: ", res.data);
         if (res.data.error) {
@@ -304,10 +307,12 @@ const Products = () => {
     const product_name = document.getElementById("product").value;
     const product_unit = document.getElementById("product-unit").value;
     const product_price = document.getElementById("product-price").value;
-    const product_measurement = document.getElementById("product-measurement")
-      .value;
-    const product_description = document.getElementById("product-description")
-      .value;
+    const product_measurement = document.getElementById(
+      "product-measurement"
+    ).value;
+    const product_description = document.getElementById(
+      "product-description"
+    ).value;
     const addProductData = {
       product: product_name,
       unit: product_unit,
@@ -325,10 +330,12 @@ const Products = () => {
     const product_name = document.getElementById("product").value;
     const product_unit = document.getElementById("product-unit").value;
     const product_price = document.getElementById("product-price").value;
-    const product_measurement = document.getElementById("product-measurement")
-      .value;
-    const product_description = document.getElementById("product-description")
-      .value;
+    const product_measurement = document.getElementById(
+      "product-measurement"
+    ).value;
+    const product_description = document.getElementById(
+      "product-description"
+    ).value;
     const updateProductData = {
       user: user,
       "user-id": user_id,
