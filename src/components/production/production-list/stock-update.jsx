@@ -144,7 +144,7 @@ const StockUpdate = () => {
   const StockListComponent = () => (
     <CustomTableList
       content={stockUpdateListTableData}
-      filler="Stock Trends Not Avaliable Yet"
+      filler="Stock trends not avaliable"
     />
   );
   return <StockListComponent />;

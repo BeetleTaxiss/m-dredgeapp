@@ -462,7 +462,7 @@ const Products = () => {
             />
             <CustomTableList
               content={productListTableData}
-              filler="No Product added yet"
+              filler="No Product added"
             />
           </div>
         </div>

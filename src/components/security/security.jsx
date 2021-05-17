@@ -201,7 +201,7 @@ const Security = () => {
       <CustomTableList
         setLoad={setLoad}
         content={loaderListData}
-        filler="No order to clear, check back soon!"
+        filler="No order to clear"
       />
       <FormModal
         showModal={showModal}

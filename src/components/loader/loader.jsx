@@ -249,7 +249,7 @@ const Loader = () => {
       <CustomTableList
         setLoad={setLoad}
         content={loaderListData}
-        filler="No order to process, check back soon!"
+        filler="No orders to process"
       />
       <FormModal
         formData={formData}

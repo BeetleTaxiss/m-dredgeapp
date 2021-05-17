@@ -126,7 +126,7 @@ const UserActivitiesLog = () => {
   return (
     <CustomTableList
       content={detailedOldLogListTableData}
-      filler="No User Activity to report. Check back soon!"
+      filler="No User Activity to report"
     />
   );
 };

@@ -105,9 +105,8 @@ const AccountList = () => {
                   ],
                 };
 
-                return (accountListBody = accountListBody.concat(
-                  currentAccountItem
-                ));
+                return (accountListBody =
+                  accountListBody.concat(currentAccountItem));
               });
               setAccountList(accountListBody);
               console.log("Account Sand List Body: ", accountList);
@@ -404,7 +403,7 @@ const AccountList = () => {
           )}
           <CustomTableList
             content={accountListTableData}
-            filler="No Business Accounts Added"
+            filler="No business accounts added"
           />
         </div>
       </div>

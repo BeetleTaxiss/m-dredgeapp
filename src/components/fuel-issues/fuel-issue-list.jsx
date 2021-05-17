@@ -75,9 +75,8 @@ const FuelIssueList = () => {
                   ],
                 };
 
-                return (fuelIssueListBody = fuelIssueListBody.concat(
-                  currentFuelIssueItem
-                ));
+                return (fuelIssueListBody =
+                  fuelIssueListBody.concat(currentFuelIssueItem));
               });
               setFuelIssueList(fuelIssueListBody);
               console.log("Fuel Sand List Body: ", fuelIssueList);
@@ -131,7 +130,7 @@ const FuelIssueList = () => {
   const FuelListComponent = () => (
     <CustomTableList
       content={fuelIssueListTableData}
-      filler="Your Fuel list is empty, check back soon!"
+      filler="Your Fuel list is empty"
     />
   );
   return <FuelListComponent />;

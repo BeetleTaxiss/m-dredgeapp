@@ -94,9 +94,8 @@ const Machinery = () => {
                   ],
                 };
 
-                return (machineryListBody = machineryListBody.concat(
-                  currentMachineryItem
-                ));
+                return (machineryListBody =
+                  machineryListBody.concat(currentMachineryItem));
               });
               setMachineryList(machineryListBody);
               console.log("Machinery List Body: ", machineryList);
@@ -360,7 +359,7 @@ const Machinery = () => {
             />
             <CustomTableList
               content={machineryListTableData}
-              filler="No Machines added yet!"
+              filler="No Machines added"
             />
           </div>
         </div>

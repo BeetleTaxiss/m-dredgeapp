@@ -184,8 +184,8 @@ const ImpoundTruck = () => {
   };
   const handleAddImpoundedTruck = (userName, userId) => {
     const truck_no = document.getElementById("truck-no").value;
-    const truck_description = document.getElementById("truck-description")
-      .value;
+    const truck_description =
+      document.getElementById("truck-description").value;
     const impounded_comment = document.getElementById("comment").value;
 
     const addImpoundedTruckData = {
@@ -223,8 +223,8 @@ const ImpoundTruck = () => {
   /** Retrive form data for client validation */
   const getAddImpoundedTruckFormDataWrapper = () => {
     const truck_no = document.getElementById("truck-no").value;
-    const truck_description = document.getElementById("truck-description")
-      .value;
+    const truck_description =
+      document.getElementById("truck-description").value;
     const comment = document.getElementById("comment").value;
 
     const addImpoundedData = {
@@ -301,7 +301,7 @@ const ImpoundTruck = () => {
             />
             <CustomTableList
               content={impoundTruckListTableData}
-              filler="No Trucks impounded yet"
+              filler="No Truck impounded"
             />
           </div>
         </div>
