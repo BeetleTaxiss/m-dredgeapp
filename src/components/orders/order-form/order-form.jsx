@@ -108,7 +108,6 @@ const OrderForm = () => {
           setError(true);
           errorAlert("Order not completed", res.data.message);
         } else {
-          setError(false);
           /** Handle order on successful confirmation */
           const handleConfirmed = () =>
             document.getElementById("order-success").click();
@@ -127,6 +126,8 @@ const OrderForm = () => {
           document.getElementById("select").value = 0;
           // document.getElementById("comment").value = "";
           setTotalPrice(0);
+          setError(false);
+          setLoading(false);
         }
       });
   };

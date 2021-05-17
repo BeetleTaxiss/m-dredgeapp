@@ -642,8 +642,8 @@ export const Menu = {
       menuGroup: 2,
       dummy: MenuGroupTwoDummy,
     },
-    recentSummary: {
-      text: "Recent Summary",
+    recentExpenses: {
+      text: "Recent Expenses",
       link: "#",
       component: RecentExpenses,
       usePageWrapper: false,
