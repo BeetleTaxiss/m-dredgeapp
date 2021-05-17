@@ -125,12 +125,12 @@ const Contact = ({
                 content.setUser(content.user);
                 console.log(
                   "Before value: ",
-                  document.getElementById("user-add-user").value
+                  document.getElementById("user-add-user")
                 );
                 console.log("User Item: ", content.user);
                 console.log(
                   "After value: ",
-                  document.getElementById("user-add-user").value
+                  document.getElementById("user-add-user")
                 );
                 document.getElementById("user-add-user").value =
                   content.user.user;
