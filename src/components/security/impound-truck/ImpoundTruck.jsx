@@ -15,7 +15,7 @@ import {
 
 const ImpoundTruck = () => {
   const [impoundTruckList, setImpoundTruckList] = useState(["loading"]);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
 
@@ -207,6 +207,7 @@ const ImpoundTruck = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           document.getElementById("truck-no").value = "";
           document.getElementById("truck-description").value = "";
@@ -216,7 +217,12 @@ const ImpoundTruck = () => {
             text = res.data.message;
           successAlert(title, text);
           reloadServerData();
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
 
@@ -295,6 +301,7 @@ const ImpoundTruck = () => {
                   getAddImpoundedTruckFormDataWrapper()
                 );
                 if (validation === true) {
+                  setLoading(true);
                   handleAddImpoundedTruck(userName, userId);
                 }
               }}

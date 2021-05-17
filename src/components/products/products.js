@@ -13,7 +13,7 @@ import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 const Products = () => {
   const [productsList, setProductsList] = useState(["loading"]);
   const [showUpdateProduct, setShowUpdateProduct] = useState(false);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
 
@@ -235,6 +235,7 @@ const Products = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Product Added Successfully",
             text = res.data.message,
@@ -242,7 +243,12 @@ const Products = () => {
           successAlert(title, text, link);
           reloadServerData();
           setShowUpdateProduct(false);
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
   const handleUpdateProduct = () => {
@@ -277,6 +283,7 @@ const Products = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Product Updated Successfully",
             text = res.data.message,
@@ -284,7 +291,12 @@ const Products = () => {
           successAlert(title, text, link);
           reloadServerData();
           setShowUpdateProduct(false);
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
   const handleUpdateFormFields = (productItemData) => {
@@ -455,6 +467,7 @@ const Products = () => {
                   getAddProductsFormData()
                 );
                 if (validation === true) {
+                  setLoading(true);
                   handleAddProduct();
                 }
               }}
@@ -463,6 +476,7 @@ const Products = () => {
                   getUpdateProductsFormData()
                 );
                 if (validation === true) {
+                  setLoading(true);
                   handleUpdateProduct();
                 }
               }}

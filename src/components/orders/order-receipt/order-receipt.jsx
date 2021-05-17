@@ -13,9 +13,10 @@ import { useUpdateOrderFormData } from "../../../hooks/useFormData";
 import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
 import { FormDetails } from "../order-form/order-form-details";
-import { functionUtils } from "../../../hooks/function-utils";
+import { errorAlert, functionUtils } from "../../../hooks/function-utils";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import LoadingButton from "../../general/loading-button";
 
 const OrderReceipt = () => {
   const { state } = useLocation();
@@ -75,10 +76,10 @@ const OrderReceipt = () => {
       "truck-no": truckNoValue,
     };
     console.log("Submitted Update Order", updateOrderData);
-    if (error || !error) {
-      setLoading(true);
-      document.getElementById("loading-btn").disabled = true;
-    }
+    // if (error || !error) {
+    //   setLoading(true);
+    //   document.getElementById("loading-btn").disabled = true;
+    // }
     axios
       .post(`${BASE_API_URL}/api/v1/order/update.php`, updateOrderData)
       .then((res) => {
@@ -88,6 +89,7 @@ const OrderReceipt = () => {
           setShowModal(true);
           setErrorMsg(res.data.message);
           updateErrorAlert(res.data.message);
+          setLoading(false);
         } else {
           setError(false);
           setShowModal(true);
@@ -98,12 +100,17 @@ const OrderReceipt = () => {
           document.getElementById("qty").value = "";
           document.getElementById("truckNo").value = "";
           setTotalPrice(0);
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        updateErrorAlert(error);
+        setLoading(false);
       });
-    if (!errorMsg) {
-      setLoading(false);
-      document.getElementById("loading-btn").disabled = false;
-    }
+    // if (!errorMsg) {
+    //   setLoading(false);
+    //   document.getElementById("loading-btn").disabled = false;
+    // }
   };
 
   const getUpdateOrderFormData = () => {
@@ -189,6 +196,7 @@ const OrderReceipt = () => {
           const title = "Order  dispatch failed",
             text = `Your order was not dispatched, the reason is:  ${errorMsg}`;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           const title =
               res.data.message === "Order already dispatched"
@@ -200,8 +208,13 @@ const OrderReceipt = () => {
                 : `Click on the link to view your dispatch list`,
             link = "<a href='/dispatchlist'>View Dispatch List</a>";
           successAlert(title, text, link);
-          document.getElementById("edit-order").disabled = true;
+          setLoading(false);
+          setOrder((state) => ({ ...state, dispatched: "1" }));
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
 
@@ -284,9 +297,14 @@ const OrderReceipt = () => {
                 rows={5}
                 cols={3}
                 content={dispatchFormData}
-                dispatchOrder={dispatchOrder}
+                loading={loading}
+                dispatchOrder={() => {
+                  setLoading(true);
+                  dispatchOrder();
+                }}
               />
               <OrderReceiptLinks
+                dispatched={order?.dispatched}
                 setShowModal={() => {
                   setShowModal(true);
                   setTimeout(() => {
@@ -315,6 +333,7 @@ const OrderReceipt = () => {
               getUpdateOrderFormData()
             );
             if (validationStatus === true) {
+              setLoading(true);
               handleUpdateOrder();
             }
           }}
@@ -433,7 +452,7 @@ const printOrderReceipt = (
   links.setAttribute("style", "display:block");
 };
 
-export const OrderReceiptLinks = ({ setShowModal }) => (
+export const OrderReceiptLinks = ({ setShowModal, dispatched }) => (
   <div className="">
     <div className="invoice-actions-btn">
       <div className="invoice-action-btn">
@@ -461,21 +480,38 @@ export const OrderReceiptLinks = ({ setShowModal }) => (
             </a>
           </div>
           <div className="col-xl-12 col-md-4 col-sm-6">
-            <a
+            <LoadingButton
+              handleSubmit={() => {
+                if (dispatched === "1") {
+                  errorAlert("Order Already dispatched can't be edited");
+                } else {
+                  setShowModal();
+                }
+              }}
+              text="Edit"
+              extraClass="edit-order-loading-btn btn btn-dark btn-edit"
+            />
+            {/* <a
               id="edit-order"
               href="javascript:void(0)"
               onClick={() => setShowModal()}
               className="btn btn-dark btn-edit"
             >
               Edit
-            </a>
+            </a> */}
           </div>
         </div>
       </div>
     </div>
   </div>
 );
-export const DispatchComment = ({ content, rows, cols, dispatchOrder }) => (
+export const DispatchComment = ({
+  content,
+  rows,
+  cols,
+  dispatchOrder,
+  loading,
+}) => (
   <div className="mb-4">
     <div className="invoice-actions-btn">
       <div className="invoice-action-btn">
@@ -486,14 +522,20 @@ export const DispatchComment = ({ content, rows, cols, dispatchOrder }) => (
             ))}
           </div>
           <div className="col-xl-12">
-            <a
+            <LoadingButton
+              handleSubmit={dispatchOrder}
+              loading={loading}
+              text="Dispatch Order"
+              extraClass="dispatch-order-loading-btn btn btn-primary btn-send"
+            />
+            {/* <a
               id="dispatch-order"
               onClick={() => dispatchOrder()}
               href="javascript:void(0)"
               className="btn btn-primary btn-send"
             >
               Dispatch Order
-            </a>
+            </a> */}
           </div>
           {/* 
           <div className="col-xl-12 col-md-3 col-sm-6">

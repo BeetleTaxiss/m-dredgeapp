@@ -134,11 +134,13 @@ const Users = () => {
           const title = "Password update failed",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           const title = "Password changed",
             text = res.data.message;
           successAlert(title, text);
           reloadServerData();
+          setLoading(false);
         }
       })
       .catch((error) => {
@@ -146,6 +148,7 @@ const Users = () => {
           error.message,
           language.popUps.checkYourInternetConnectionMsg
         );
+        setLoading(false);
       });
   };
 
@@ -195,6 +198,8 @@ const Users = () => {
       "user-type": userType,
       permission: permission,
     };
+    /** Start loading button */
+    setLoading(true);
 
     axios
       .post(`${BASE_API_URL}/api/v1/user/update.php`, userUpdateData)
@@ -203,11 +208,13 @@ const Users = () => {
           const title = "Update Alert",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           const title = "Update Alert",
             text = res.data.message;
           successAlert(title, text);
           reloadServerData();
+          setLoading(false);
         }
       })
       .catch((error) => {
@@ -215,6 +222,7 @@ const Users = () => {
           error.message,
           language.popUps.checkYourInternetConnectionMsg
         );
+        setLoading(false);
       });
   };
 
@@ -255,6 +263,7 @@ const Users = () => {
           const title = "Add User Failed",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           const title = "User Added",
             text = res.data.message;
@@ -267,6 +276,7 @@ const Users = () => {
           newUserConfirmPassword = "";
           /** refresh the page so we can newly added users */
           reloadServerData();
+          setLoading(false);
         }
       })
       .catch((error) => {
@@ -274,6 +284,7 @@ const Users = () => {
           error.message,
           language.popUps.checkYourInternetConnectionMsg
         );
+        setLoading(false);
       });
   };
 
@@ -667,6 +678,7 @@ const Users = () => {
               getAddUserFormData()
             );
             if (validation === true) {
+              setLoading(true);
               addContact();
             }
           }}

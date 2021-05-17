@@ -1,7 +1,8 @@
 import React from "react";
+import LoadingButton from "../general/loading-button";
 import { FormDetails } from "../orders/order-form/order-form-details";
 
-const ActivityReportForm = ({ data, handleSubmit }) => {
+const ActivityReportForm = ({ data, handleSubmit, loading }) => {
   return (
     <div
       className="input-group"
@@ -274,17 +275,12 @@ const ActivityReportForm = ({ data, handleSubmit }) => {
           marginBottom: "4rem",
         }}
       >
-        <button
-          onClick={() => {
-            return handleSubmit ? handleSubmit() : null;
-          }}
-          type="button"
-          name="txt"
-          className="mt-4 btn btn-primary"
-          style={{ width: "18rem", height: "3rem", fontSize: "1.5rem" }}
-        >
-          Submit Report
-        </button>
+        <LoadingButton
+          handleSubmit={handleSubmit}
+          loading={loading}
+          text="Submit Report"
+          extraClass="activity-report-loading-btn"
+        />
       </div>
     </div>
   );

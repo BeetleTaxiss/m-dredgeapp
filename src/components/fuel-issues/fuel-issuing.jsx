@@ -19,7 +19,7 @@ const FuelIssuing = () => {
     "loading",
     "loading",
   ]);
-
+  const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
 
@@ -202,13 +202,19 @@ const FuelIssuing = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Fuel issued Successfully",
             text = res.data.message,
             link = `<a href="/fuelissuelist">View Fuel Issue List</a>`;
           successAlert(title, text, link);
           reloadServerData();
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
 
@@ -286,7 +292,7 @@ const FuelIssuing = () => {
             <CustomDetailedStats data={detailedStats} />
             <IssueFuelForm
               content={issueFuelFormData}
-              // loading={loading}
+              loading={loading}
               subtitle="Add new fuel information"
               btnText="Dispense Fuel"
               handleAddSubmit={() => {
@@ -295,6 +301,7 @@ const FuelIssuing = () => {
                 );
 
                 if (validation === true) {
+                  setLoading(true);
                   handleIssueFuel(userName, userId);
                 }
               }}
