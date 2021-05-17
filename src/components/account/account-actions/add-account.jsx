@@ -8,6 +8,7 @@ import { functionUtils } from "../../../hooks/function-utils";
 
 const AddAccount = () => {
   const [chartList, setChartList] = useState();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -92,11 +93,13 @@ const AddAccount = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Account created Successfully",
             text = res.data.message,
             link = `<a href="/accountlist">View Account List</a>`;
           successAlert(title, text, link);
+          setLoading(false);
         }
       });
   };
@@ -180,7 +183,7 @@ const AddAccount = () => {
           >
             <AddAccountForm
               content={addAccountFormData}
-              // loading={loading}
+              loading={loading}
               subtitle="Add new account information"
               btnText="Add account"
               handleAddSubmit={() => {
@@ -188,6 +191,7 @@ const AddAccount = () => {
                   getAddAccountFormData()
                 );
                 if (validation === true) {
+                  setLoading(true);
                   handleAddAccount();
                 }
               }}

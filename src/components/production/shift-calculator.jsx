@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import moment from "moment";
 import { FormDetails } from "../orders/order-form/order-form-details";
 import TimeKeeper from "react-timekeeper";
+import LoadingButton from "../general/loading-button";
 
 const ShiftCalculator = ({
   calculateShift,
@@ -15,6 +16,7 @@ const ShiftCalculator = ({
   handleDateChange,
   selectedEndDate,
   handleEndDateChange,
+  loading,
 }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [showEndPicker, setEndShowPicker] = useState(false);
@@ -201,9 +203,8 @@ const ShiftCalculator = ({
                     } else {
                       selectedDate = "0" + selectedDate;
                     }
-                    document.getElementById(
-                      "startdateTimeFlatpickr"
-                    ).value = selectedDate;
+                    document.getElementById("startdateTimeFlatpickr").value =
+                      selectedDate;
                     console.log("Logged start time: ", selectedDate);
                   }}
                   switchToMinuteOnHourSelect
@@ -254,9 +255,8 @@ const ShiftCalculator = ({
                       } else {
                         selectedEndDate = "0" + selectedEndDate;
                       }
-                      document.getElementById(
-                        "enddateTimeFlatpickr"
-                      ).value = selectedEndDate;
+                      document.getElementById("enddateTimeFlatpickr").value =
+                        selectedEndDate;
                       setEndShowPicker((prev) => !prev);
                     }}
                     switchToMinuteOnHourSelect
@@ -310,7 +310,13 @@ const ShiftCalculator = ({
         <div
           style={{ display: "flex", width: "100%", justifyContent: "center" }}
         >
-          <button
+          <LoadingButton
+            handleSubmit={() => calculateShift()}
+            loading={loading}
+            text="Start Shift"
+            extraClass="shift-calculator-loading-btn"
+          />
+          {/* <button
             onClick={() => calculateShift()}
             type="button"
             name="txt"
@@ -318,7 +324,7 @@ const ShiftCalculator = ({
             style={{ width: "15rem", height: "3rem", fontSize: "1.5rem" }}
           >
             Start Shift
-          </button>
+          </button> */}
         </div>
         {/* END OF SUBMIT BUTTON */}
       </form>

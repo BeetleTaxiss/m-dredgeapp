@@ -1,14 +1,24 @@
 import React from "react";
 
-const LoadingButton = ({ handleSubmit, loading, text, setLoad }) => {
+const LoadingButton = ({
+  handleSubmit,
+  loading,
+  text,
+  setLoad,
+  extraClass,
+}) => {
   return (
     <button
       id="loading-btn"
-      onClick={() => handleSubmit()}
-      className="mt-4 btn btn-primary"
+      onClick={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+      className={`mt-4 btn btn-primary ${extraClass && extraClass}`}
       style={{
         display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         gap: "0.5rem",
       }}
     >

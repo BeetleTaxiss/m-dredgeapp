@@ -96,10 +96,10 @@ const OrderForm = () => {
       comment: "",
     };
     console.log("Add Order Data: ", addOrderData);
-    if (error || !error) {
-      setLoading(true);
-      document.getElementById("loading-btn").disabled = true;
-    }
+    // if (error || !error) {
+    //   setLoading(true);
+    //   document.getElementById("loading-btn").disabled = true;
+    // }
     axios
       .post(`${BASE_API_URL}/api/v1/order/add.php`, addOrderData)
       .then((res) => {
@@ -107,8 +107,8 @@ const OrderForm = () => {
         if (res.data.error) {
           setError(true);
           errorAlert("Order not completed", res.data.message);
+          setLoading(false);
         } else {
-          setError(false);
           /** Handle order on successful confirmation */
           const handleConfirmed = () =>
             document.getElementById("order-success").click();
@@ -127,6 +127,8 @@ const OrderForm = () => {
           document.getElementById("select").value = 0;
           // document.getElementById("comment").value = "";
           setTotalPrice(0);
+          setError(false);
+          setLoading(false);
         }
       });
   };
@@ -198,6 +200,7 @@ const OrderForm = () => {
                       );
                       console.log("Validate status: ", validate);
                       if (validate === true) {
+                        setLoading(true);
                         return handleOrderSubmit();
                       }
                     }}

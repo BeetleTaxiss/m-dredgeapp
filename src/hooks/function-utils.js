@@ -84,7 +84,7 @@ export const validateForm = (errors) => {
 };
 
 // Login function to
-const Login = async (user, password) => {
+const Login = async (user, password, setLoading) => {
   const data = JSON.stringify({ user, password });
 
   const response = await axios
@@ -98,6 +98,7 @@ const Login = async (user, password) => {
         error.message,
         "Could not login. Please check internet connection"
       );
+      setLoading(false);
     });
 
   if (response === null || response === undefined) {
@@ -106,6 +107,7 @@ const Login = async (user, password) => {
       "Login Error",
       "Could not login. Please check internet connection"
     );
+    setLoading(false);
     return { status: false };
   }
 
@@ -114,7 +116,7 @@ const Login = async (user, password) => {
     let title = "Login Error",
       text = response.data.message;
     errorAlert(title, text);
-
+    setLoading(false);
     /** user not logged in */
     return { status: false };
   } else {
@@ -127,6 +129,7 @@ const Login = async (user, password) => {
         text =
           "Could not login. Something went wrong from the server. Please contact system admin";
       errorAlert(title, text);
+      setLoading(false);
       return { status: false };
     }
 
@@ -146,6 +149,7 @@ const Login = async (user, password) => {
       "permission",
       functionUtils.parseUserPermission(responseData.permission)
     );
+    setLoading(false);
     return responseData;
   }
 };
@@ -395,7 +399,8 @@ export const functionUtils = {
     selectedDate,
     selectedEndDate,
     userName,
-    userId
+    userId,
+    setLoading
   ) => {
     /**
      * Counter state for countdown timer which tracks time in hours, minutes and seconds
@@ -544,6 +549,7 @@ export const functionUtils = {
         functionUtils.validateFormInputs(addMarkerClientData);
       if (validationStatus === true) {
         try {
+          setLoading(true);
           axios
             .post(
               `${BASE_API_URL}/api/v1/production/add-marker.php`,
@@ -556,9 +562,10 @@ export const functionUtils = {
                 let title = "Shift failed",
                   text = res.data.message;
                 errorAlert(title, text);
+                setLoading(false);
               } else {
                 // Once the singular time values are gotten, they are set to the component's state using the setCounter function which will start the count down timer. Once this is done, the shift Calculator component is removed from the UI and the countdown timer, production capacity calculator and timeline notifications are shown by setting their respective display states to true while showing an inital timeline notification saying the shift has started.
-
+                setLoading(false);
                 setDisplayTimer(true);
                 setDisplayTimeline(true);
 
@@ -1406,7 +1413,8 @@ export const functionUtils = {
     password,
     history,
     location,
-    successLocation = "/"
+    successLocation = "/",
+    setLoading
   ) => {
     const handleSubmit = async (event) => {
       if (validateForm(errors)) {
@@ -1415,7 +1423,7 @@ export const functionUtils = {
         console.error("Invalid Form");
       }
 
-      const response = await Login(user.user, password.password);
+      const response = await Login(user.user, password.password, setLoading);
       const { state } = location;
 
       if (response && response.status === true) {

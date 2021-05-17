@@ -17,6 +17,7 @@ const ChartList = () => {
   const [accountTypes, setAccountTypes] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+  const [loading, setLoading] = useState(false);
 
   /**
    * use this state value to check when we have addeed or updated data and need to refresh
@@ -90,9 +91,8 @@ const ChartList = () => {
                   ],
                 };
 
-                return (chartListBody = chartListBody.concat(
-                  currentAccountItem
-                ));
+                return (chartListBody =
+                  chartListBody.concat(currentAccountItem));
               });
               setChartList(chartListBody);
               console.log("Account Sand List Body: ", chartList);
@@ -306,12 +306,14 @@ const ChartList = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Chart Added Successfully",
             text = res.data.message,
             link = `<a href="/chartlist">View Chart List</a>`;
           successAlert(title, text, link);
           reloadServerData();
+          setLoading(false);
         }
       });
   };
@@ -425,22 +427,22 @@ const ChartList = () => {
           className="widget-content widget-content-area searchable-container list"
           style={{ display: "grid", padding: "2rem", gap: "2rem" }}
         >
-          (
           <UpdateAccountForm
             content={chartListFormData}
             // loading={loading}
             subtitle="Add new chart information"
             btnText="Add to chart"
+            loading={loading}
             handleAddSubmit={() => {
               const validation = functionUtils.validateFormInputs(
                 getChartFormData()
               );
               if (validation === true) {
+                setLoading(true);
                 handleAddToChart();
               }
             }}
           />
-          )
           <CustomTableList
             content={chartListTableData}
             filler="Chart List Empty"
