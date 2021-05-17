@@ -1427,10 +1427,21 @@ export const functionUtils = {
       const { state } = location;
 
       if (response && response.status === true) {
-        history.push({
+        /**
+         * we are dealing with 2 approach here 
+         * our app could either be in electron which uses MemoryRouter
+         * or the web which uses BrowserRouter. If this is an electron env
+         * we will use the window reload method to refresh so that login can be validated
+         * else, we will use the loction.push of router-dom to enforce page refresh
+         */
+        if(functionUtils.isElectronApp()) {
+          window.location.reload();
+        } else{
+          history.push({
           pathname: state?.from || successLocation,
           state: response,
         });
+        }
       } else {
         return false;
       }
@@ -1567,6 +1578,9 @@ export const functionUtils = {
   },
   /** Function to add comma after every third number in a number string */
   addCommaToNumbers: (number) => {
+
+    if(!number) return 0;
+
     if (typeof number !== "string") {
       /** Convert numbers to string */
       number = `${number}`;
@@ -1580,10 +1594,8 @@ export const functionUtils = {
 
       for (let i = lastItem; i >= 0; i--) {
         counter += 1;
-        console.log(counter);
         if (counter % 3 === 0 && i > 0) {
           newNumber = `${comma}${number[i]}` + newNumber;
-          console.log("New number: ", newNumber);
         } else {
           newNumber = number[i] + newNumber;
         }
@@ -1674,7 +1686,7 @@ export const functionUtils = {
   },
 
   /**
-   *
+   * get the user position using the typeID
    */
   getUserPositionFromTypeId: (userTypes, userTypeId) => {
     if (!userTypes || userTypes.length <= 0) return null;
@@ -1684,4 +1696,11 @@ export const functionUtils = {
       if (id === userTypeId) return user_type;
     }
   },
+  /**
+   * Check if our app is running withing electron
+   */
+  isElectronApp:()=>{
+    let userAgent = navigator.userAgent.toLowerCase();
+    return (userAgent.indexOf(" electron/") !==-1)
+  }
 };

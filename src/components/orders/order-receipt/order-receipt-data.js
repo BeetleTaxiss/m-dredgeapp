@@ -5,7 +5,7 @@ export const orderReceiptData = {
   header: {
     logoSection: {
       image: "assets/img/cork-logo.png",
-      brandName: "Atop",
+      brandName: "Atup",
     },
     contactSection: [
       "No. 4 Odienna Close, Libreville Street, Wuse 2, Abuja.",

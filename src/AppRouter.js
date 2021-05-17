@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import App from "./App";
 import { getUserStoreInstance } from "./hooks/function-utils";
 
-export default function useAppRouter() {
+const AppRouter=()=> {
+  
   const UserStore = getUserStoreInstance();
 
   const [loginStatus, setLoginStatus] = useState(false);
@@ -13,3 +14,4 @@ export default function useAppRouter() {
 
   return <App loginStatus={loginStatus} />;
 }
+export default AppRouter;

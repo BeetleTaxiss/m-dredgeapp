@@ -1,33 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route} from "react-router";
-//import { BrowserRouter as Router } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router";
+import { getUserStoreInstance } from "./hooks/function-utils";
+import { BrowserRouter as Router } from "react-router-dom";
 import DashboardRouter from "./pages/DashboardRouter";
 import LoginPage from "./pages/login-page";
-import  AppRouter  from "./AppRouter";
-import {functionUtils} from "./hooks/function-utils";
-import {MemoryRouter, BrowserRouter} from "react-router-dom";
+import { findAllByDisplayValue } from "@testing-library/react";
 
 export default function App({ loginStatus }) {
+  const UserStore = getUserStoreInstance();
 
-  /** 
-   * If we are within electron enviroment, we will use `MemoryRouter`
-   * but within the web, we will `BrowserRouter`
-   * The memory router is to avoid the blank screen error in electron
-   *  */
-  const Router = functionUtils.isElectronApp()? MemoryRouter : BrowserRouter;
-
-  console.log(Router, "the router");
-  
   /** hold the current view user will see */
   const [appView, setAppView] = useState([]);
 
-  /** this will be set to true once we are able to secure valid login status */
+  /** this will be set to tru once we are able to secure valid login status */
   const [loginStatusValid, setLoginStatusValid] = useState(false);
 
   /** the default login view  */
   const LoginView = () => (
     <div className="App">
-      <Router forceRefresh={true}>
+      <Router forceRefresh>
         <Switch>
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/" component={LoginPage} />
@@ -44,12 +35,11 @@ export default function App({ loginStatus }) {
     if (loginStatus) {
       /**
        * set loginStatusValid. We set this state variable so that when the page refresh
-       * we will still be able to track if user was login previously before we refresh
        */
       setLoginStatusValid(true);
 
       setAppView(
-        <div className="App" id="app-view">
+        <div className="App">
           <Router>
             <Switch>
               <DashboardRouter />
