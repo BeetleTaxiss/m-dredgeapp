@@ -90,7 +90,7 @@ const PostAccount = () => {
     };
   }, []);
 
-  useEffect(() => {}, [userName, userId]);
+  useEffect(() => {}, [userName, userId, loading]);
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
@@ -234,7 +234,7 @@ const PostAccount = () => {
           >
             <PostAccountForm
               content={postAccountFormData}
-              // loading={loading}
+              loading={loading}
               subtitle="Post expense information"
               btnText="Post Transaction"
               handleAddSubmit={() => {
