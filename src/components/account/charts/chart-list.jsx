@@ -443,7 +443,7 @@ const ChartList = () => {
           )
           <CustomTableList
             content={chartListTableData}
-            filler="Chart List Empty. Add New Chart"
+            filler="Chart List Empty"
           />
         </div>
       </div>

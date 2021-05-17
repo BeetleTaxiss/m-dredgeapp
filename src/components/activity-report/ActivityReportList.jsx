@@ -219,7 +219,7 @@ const ActivityReportList = () => {
   return (
     <CustomTableList
       content={activityReportListTableData}
-      filler="No Reports to Review yet"
+      filler="No Reports yet"
     />
   );
 };

@@ -232,7 +232,7 @@ const StockpiledSand = () => {
   const StockpiledSandListComponent = () => (
     <CustomTableList
       content={stockpiledSandListTableData}
-      filler="Stock hasn't been stockiled yet!"
+      filler="Stock hasn't been stockiled"
     />
   );
   return <StockpiledSandListComponent />;

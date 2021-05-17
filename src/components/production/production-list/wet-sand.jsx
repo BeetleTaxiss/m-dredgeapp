@@ -150,9 +150,8 @@ const WetSand = () => {
                   ],
                 };
 
-                return (wetSandListBody = wetSandListBody.concat(
-                  currentWetSandItem
-                ));
+                return (wetSandListBody =
+                  wetSandListBody.concat(currentWetSandItem));
               });
               setWetSandList(wetSandListBody);
               console.log("Wet Sand List Body: ", wetsandList);
@@ -258,7 +257,7 @@ const WetSand = () => {
   const WetSandListComponent = () => (
     <CustomTableList
       content={wetsandListTableData}
-      filler="Check back soon, production hasn't started finished"
+      filler="No production sessions"
     />
   );
   return <WetSandListComponent />;

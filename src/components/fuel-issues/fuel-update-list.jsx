@@ -133,7 +133,7 @@ const FuelUpdateList = () => {
   const FuelListComponent = () => (
     <CustomTableList
       content={fuelUpdateListTableData}
-      filler="Your Updated Fuel list is empty, check back soon!"
+      filler="Your Updated Fuel list is empty"
     />
   );
   return <FuelListComponent />;

@@ -151,7 +151,7 @@ const DispatchOrderList = () => {
     <>
       <CustomTableList
         content={dispatchListData}
-        filler="No dispatched orders, check back soon! "
+        filler="No dispatched orders"
       />
     </>
   );
