@@ -189,6 +189,10 @@ export const createUserMenu = (userMenu) => {
     alert("user permission provide must be an object");
     return console.error("user permission provide must be an object");
   }
+
+  /** if userMenu is empty, return []  */
+  if (!userMenu) return [];
+
   /** get global Menu definition */
   const globalMenu = Menu;
 
@@ -305,9 +309,13 @@ export const createUserMenu = (userMenu) => {
      * we will add the first element in the subMenuItems as the link for this menu location
      * This implementation is to make the menu fully based on the user permission
      * */
-    if ((menuObject["link"] === "#" || menuObject["link"] === "/") && subMenuItems && subMenuItems[0]) {
-        //menuObject["link"] = subMenuItems[0]  && subMenuItems[0]["link"] ? subMenuItems[0]["link"]: null;
-        menuObject["link"] = subMenuItems[0]["link"];
+    if (
+      (menuObject["link"] === "#" || menuObject["link"] === "/") &&
+      subMenuItems &&
+      subMenuItems[0]
+    ) {
+      //menuObject["link"] = subMenuItems[0]  && subMenuItems[0]["link"] ? subMenuItems[0]["link"]: null;
+      menuObject["link"] = subMenuItems[0]["link"];
     }
 
     /** assign the submenu Items created to the subMenuObject **/
@@ -495,12 +503,12 @@ export const createUserDashboard = (userMenu) => {
         /**
          * This is the dummy component to use in case the user does not have
          * permission to seee the dashboard content
-        */
-       const CurrentDummyComponent=globalDashboardMenu[menuLocation]["dummy"]? 
-       globalDashboardMenu[menuLocation]["dummy"] :
-       ()=>null;
-        
-       const menuId = `${menuLocation}-${k}`;
+         */
+        const CurrentDummyComponent = globalDashboardMenu[menuLocation]["dummy"]
+          ? globalDashboardMenu[menuLocation]["dummy"]
+          : () => null;
+
+        const menuId = `${menuLocation}-${k}`;
 
         /**
          * check if this user has the permission to see this dashboard content

@@ -44,7 +44,7 @@ const ActivityReportList = () => {
             } else {
               const activityReportListItems = res.data.data;
               activityReportListItems.reverse().map((item) => {
-                const user_name = item.user,
+                const user_name = item?.user,
                   user_id = parseInt(item.user_id),
                   date = item.date_in,
                   work_week = item.work_week,

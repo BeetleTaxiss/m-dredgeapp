@@ -24,13 +24,13 @@ const UserActivitiesLog = () => {
             errorAlert(title, text);
           } else {
             userActivitiesLogResponse.reverse().map((item, id) => {
-              const action_instigator = item.user;
-              const action_taken = item.action;
-              const action_received = item.action_table;
-              const action_data = JSON.parse(item.data);
-              const action_old_data = JSON.parse(item.data_old);
-              const start_time = item.time_in;
-              const date_in = item.date_in;
+              const action_instigator = item?.user;
+              const action_taken = item?.action;
+              const action_received = item?.action_table;
+              const action_data = JSON.parse(item?.data);
+              const action_old_data = JSON.parse(item?.data_old);
+              const start_time = item?.time_in;
+              const date_in = item?.date_in;
               // const updatedItems = handleUpdatedItem(
               //   action_data,
               //   action_old_data

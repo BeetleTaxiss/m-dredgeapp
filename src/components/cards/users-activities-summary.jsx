@@ -47,7 +47,7 @@ const UsersActivitiesSummary = () => {
         : action_taken === "delete" && action_received === "account_accounts"
         ? `${action_instigator} deleted ${action_data.description} from accounts`
         : action_taken === "delete" && action_received === "users"
-        ? `${action_instigator} deleted ${action_data.user} from users data`
+        ? `${action_instigator} deleted ${action_data?.user} from users data`
         : action_taken === "delete" && action_received === "product"
         ? `${action_instigator} deleted ${action_data.description} from products list`
         : action_taken === "delete" && action_received === "operation_machinery"
@@ -56,7 +56,7 @@ const UsersActivitiesSummary = () => {
           action_received === "security_impounded_trucks"
         ? `${action_instigator} deleted impounded truck ${action_data.truck_no} from impounded trucks list`
         : action_taken === "delete" && action_received === "task"
-        ? `${action_instigator} deleted an activity report from ${action_data.user}`
+        ? `${action_instigator} deleted an activity report from ${action_data?.user}`
         : action_taken === "delete" && action_received === "orders"
         ? `${action_instigator} deleted an order with order reference: "${action_data.order_ref}" from orders list`
         : /**Updated items description */
@@ -96,7 +96,7 @@ const UsersActivitiesSummary = () => {
               const action_data = JSON.parse(item.data);
               const action_old_data = JSON.parse(item.data_old);
               const start_time = item.time_in;
-              const date_in = item.date_in;
+              const date_in = item?.date_in;
               const new_time = moment();
               const extended_new_time = moment().add(5, "minutes");
               const start_time_moment = moment(
@@ -113,9 +113,8 @@ const UsersActivitiesSummary = () => {
                 start_time_moment.format("hh:mm:ss") <
                 extended_new_time.format("hh:mm:ss");
 
-              const pumping_started_ago = start_time_moment.from(
-                extended_new_time
-              );
+              const pumping_started_ago =
+                start_time_moment.from(extended_new_time);
 
               console.log(
                 "Detailed Item: ",

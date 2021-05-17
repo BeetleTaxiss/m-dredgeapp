@@ -53,18 +53,18 @@ const StockpiledSand = () => {
               const stockpiledSandItems = res.data.data;
               stockpiledSandItems.map((item) => {
                 /** Get required response data values */
-                const product_id = item.product_id;
-                const production_id = item.id;
-                const batch = item.batch;
-                const total_qty_pumped = item.total_qty_pumped;
-                const production_date = item.production_date;
-                const production_start_time = item.start_time;
-                const production_end_time = item.end_time;
-                const production_capacity = item.production_capacity;
+                const product_id = item?.product_id;
+                const production_id = item?.id;
+                const batch = item?.batch;
+                const total_qty_pumped = item?.total_qty_pumped;
+                const production_date = item?.production_date;
+                const production_start_time = item?.start_time;
+                const production_end_time = item?.end_time;
+                const production_capacity = item?.production_capacity;
                 const pumping_distance_in_meters =
-                  item.pumping_distance_in_meters;
+                  item?.pumping_distance_in_meters;
                 const duration_pumped_in_seconds =
-                  item.duration_pumped_in_seconds;
+                  item?.duration_pumped_in_seconds;
 
                 /** to stockpile API data */
                 const addToStockData = {
