@@ -399,7 +399,8 @@ export const functionUtils = {
     selectedDate,
     selectedEndDate,
     userName,
-    userId
+    userId,
+    setLoading
   ) => {
     /**
      * Counter state for countdown timer which tracks time in hours, minutes and seconds
@@ -548,6 +549,7 @@ export const functionUtils = {
         functionUtils.validateFormInputs(addMarkerClientData);
       if (validationStatus === true) {
         try {
+          setLoading(true);
           axios
             .post(
               `${BASE_API_URL}/api/v1/production/add-marker.php`,
@@ -560,9 +562,10 @@ export const functionUtils = {
                 let title = "Shift failed",
                   text = res.data.message;
                 errorAlert(title, text);
+                setLoading(false);
               } else {
                 // Once the singular time values are gotten, they are set to the component's state using the setCounter function which will start the count down timer. Once this is done, the shift Calculator component is removed from the UI and the countdown timer, production capacity calculator and timeline notifications are shown by setting their respective display states to true while showing an inital timeline notification saying the shift has started.
-
+                setLoading(false);
                 setDisplayTimer(true);
                 setDisplayTimeline(true);
 

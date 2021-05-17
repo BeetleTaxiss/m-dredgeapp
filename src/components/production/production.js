@@ -19,6 +19,7 @@ export const Production = () => {
   const [displayTimer, setDisplayTimer] = useState(false);
   const [timelineItem, setTimelineItem] = React.useState([]);
   const [displayTimeLine, setDisplayTimeLine] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState();
   const [productionDetails, setProductionDetails] = useState();
   let time = moment().format("HH:MM");
@@ -73,7 +74,7 @@ export const Production = () => {
     return () => {
       source.cancel();
     };
-  }, [selectedDate, setSelectedDate]);
+  }, [selectedDate, setSelectedDate, loading]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -121,9 +122,8 @@ export const Production = () => {
   /**
    *  Handle Input Change function for handling input changes across multiple forms if required, in this case we are concerned about the range count input field
    *  */
-  const { formInput, handleCapacityChange } = functionUtils.HandleInputChange(
-    formState
-  );
+  const { formInput, handleCapacityChange } =
+    functionUtils.HandleInputChange(formState);
   console.log("range selector: ", formInput);
 
   /**
@@ -151,8 +151,8 @@ export const Production = () => {
     selectedDate,
     selectedEndDate,
     userName,
-    userId
-    
+    userId,
+    setLoading
   );
 
   /**Handle Production Capacity submit and get it's return value */
@@ -173,6 +173,9 @@ export const Production = () => {
   };
   console.log("New Time Line Items: ", timelineItems);
   // // timelineItems = newTimelineItems;
+
+  /** Retrive shift caLculator form values for client validation */
+  // const getShiftFormData = () => {};
   const selectProductFormData = [
     {
       id: "select",
@@ -233,7 +236,7 @@ export const Production = () => {
               <ShiftCalculator
                 shiftDuration={shiftDuration}
                 handleChange={handleChange}
-                calculateShift={calculateShift}
+                calculateShift={() => calculateShift()}
                 setTimeline={setDisplayTimeLine}
                 selectProductData={selectProductFormData}
                 distanceFormData={distanceFormData}
@@ -243,6 +246,7 @@ export const Production = () => {
                 handleDateChange={handleDateChange}
                 selectedEndDate={selectedEndDate}
                 handleEndDateChange={handleEndDateChange}
+                loading={loading}
               />
             )}
 

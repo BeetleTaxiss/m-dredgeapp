@@ -14,6 +14,7 @@ const PostAccount = () => {
   const [debitAccount, setDebitAccount] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -126,11 +127,13 @@ const PostAccount = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Transaction Posted Successfully",
             text = res.data.message,
             link = `<a href="/accountlist">View Account List</a>`;
           successAlert(title, text, link);
+          setLoading(false);
         }
       });
   };
@@ -239,6 +242,7 @@ const PostAccount = () => {
                   getPostAccountFormData(userName, userId)
                 );
                 if (validation === true) {
+                  setLoading(true);
                   handlePostAccount(userName, userId);
                 }
               }}
