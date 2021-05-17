@@ -94,8 +94,9 @@ const Users = () => {
     let userName = document.getElementById("user-add-user").value,
       userId = document.getElementById("user-id-add-user").value,
       userPassword = document.getElementById("password-add-user").value;
-    let newUserPassword = document.getElementById("new-password-add-user")
-      .value;
+    let newUserPassword = document.getElementById(
+      "new-password-add-user"
+    ).value;
 
     const encNewUserPassword = md5(newUserPassword);
 
@@ -123,7 +124,7 @@ const Users = () => {
     };
 
     axios
-      .put(
+      .post(
         `${BASE_API_URL}/api/v1/user/change-password.php`,
         changePasswordData
       )
@@ -196,7 +197,7 @@ const Users = () => {
     };
 
     axios
-      .put(`${BASE_API_URL}/api/v1/user/update.php`, userUpdateData)
+      .post(`${BASE_API_URL}/api/v1/user/update.php`, userUpdateData)
       .then((res) => {
         if (res.data.error) {
           const title = "Update Alert",
@@ -283,8 +284,8 @@ const Users = () => {
       newUserEmail = document.getElementById("email-add-user").value,
       newUserPhoneNo = document.getElementById("phone-add-user").value,
       newUserPassword = md5(document.getElementById("password-add-user").value),
-      passwordWithoutEncryption = document.getElementById("password-add-user")
-        .value,
+      passwordWithoutEncryption =
+        document.getElementById("password-add-user").value,
       newUserConfirmPassword = md5(
         document.getElementById("confirm-password-add-user").value
       ),
@@ -354,8 +355,9 @@ const Users = () => {
     let userName = document.getElementById("user-add-user").value,
       userId = document.getElementById("user-id-add-user").value,
       userPassword = document.getElementById("password-add-user").value;
-    let newUserPassword = document.getElementById("new-password-add-user")
-      .value;
+    let newUserPassword = document.getElementById(
+      "new-password-add-user"
+    ).value;
 
     // const encNewUserPassword = newUserPassword;
 
@@ -404,7 +406,7 @@ const Users = () => {
   // Suspend User Function
   const suspendContact = (suspendUserData) => {
     axios
-      .put(`${BASE_API_URL}/api/v1/user/suspend.php`, suspendUserData)
+      .post(`${BASE_API_URL}/api/v1/user/suspend.php`, suspendUserData)
       .then((res) => {
         //console.log("Suspend User Data", res.data);
         if (res.data.error) {
@@ -427,7 +429,7 @@ const Users = () => {
   };
   const enableContact = (enableUserData) => {
     axios
-      .put(`${BASE_API_URL}/api/v1/user/enable.php`, enableUserData)
+      .post(`${BASE_API_URL}/api/v1/user/enable.php`, enableUserData)
       .then((res) => {
         //console.log("Enable User Data", res.data);
         if (res.data.error) {
@@ -535,9 +537,8 @@ const Users = () => {
   }, [userTypesList]);
 
   const { formData } = useAddContactFormData(userTypesList);
-  const { updateUserDetailsFormData } = useUpdateUserDetailsFormData(
-    userTypesList
-  );
+  const { updateUserDetailsFormData } =
+    useUpdateUserDetailsFormData(userTypesList);
   const { updateFormData } = useUpdateContactFormData();
 
   /**
@@ -548,9 +549,8 @@ const Users = () => {
   const BlankPermissionListForNewUser = (props) => {
     const permissionListData = createPermissionList({});
 
-    const [PermissionList] = createUserPermissionListComponent(
-      permissionListData
-    );
+    const [PermissionList] =
+      createUserPermissionListComponent(permissionListData);
     return <>{PermissionList}</>;
   };
 

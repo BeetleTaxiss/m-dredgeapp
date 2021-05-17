@@ -186,7 +186,7 @@ const Loader = () => {
   const Processing = (load) => {
     console.log("processing: ", load);
     axios
-      .put(`${BASE_API_URL}/api/v1/order/processing.php`, load)
+      .post(`${BASE_API_URL}/api/v1/order/processing.php`, load)
       .then((res) => {
         console.log("PROCESSING API RESPONSE: ", res.data);
         if (res.data.error) {
@@ -224,7 +224,7 @@ const Loader = () => {
     console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
-    axios.put(`${BASE_API_URL}/api/v1/order/load.php`, load).then((res) => {
+    axios.post(`${BASE_API_URL}/api/v1/order/load.php`, load).then((res) => {
       console.log("LOAD API RESPONSE: ", res.data);
       if (res.data.error) {
         const title = "Order Loading failed",

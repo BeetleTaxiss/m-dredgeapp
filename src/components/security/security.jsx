@@ -178,7 +178,7 @@ const Security = () => {
   const clearOrder = () => {
     console.log("Load DATA: ", load);
 
-    axios.put(`${BASE_API_URL}/api/v1/order/clear.php`, load).then((res) => {
+    axios.post(`${BASE_API_URL}/api/v1/order/clear.php`, load).then((res) => {
       console.log("LOAD API RESPONSE: ", res.data);
       if (res.data.error) {
         const title = "Clearance failed",

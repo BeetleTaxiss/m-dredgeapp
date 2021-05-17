@@ -1034,7 +1034,7 @@ export const functionUtils = {
         console.log("Button  clicked stop", stopProductionBtnId);
 
         axios
-          .put(
+          .post(
             `${BASE_API_URL}/api/v1/production/stop-marker.php`,
             stopMarkerData
           )
@@ -1100,7 +1100,7 @@ export const functionUtils = {
           console.log("Button  clicked stop", pauseProductionBtnId);
 
           axios
-            .put(
+            .post(
               `${BASE_API_URL}/api/v1/production/stop-marker.php`,
               stopMarkerData
             )

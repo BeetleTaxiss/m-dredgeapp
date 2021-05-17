@@ -248,7 +248,7 @@ const Machinery = () => {
     };
     console.log("Update machinery API values: ", updateMachineryData);
     axios
-      .put(
+      .post(
         `${BASE_API_URL}/api/v1/operations/machinery-update.php`,
         updateMachineryData
       )

@@ -36,7 +36,7 @@ const Profile = () => {
     };
     console.log("UserDetails: ", changePasswordData);
     axios
-      .put(
+      .post(
         `${BASE_API_URL}/api/v1/user/change-password.php`,
         changePasswordData
       )

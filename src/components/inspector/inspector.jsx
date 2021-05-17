@@ -194,7 +194,7 @@ const Inspector = () => {
     console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
-    axios.put(`${BASE_API_URL}/api/v1/order/inspect.php`, load).then((res) => {
+    axios.post(`${BASE_API_URL}/api/v1/order/inspect.php`, load).then((res) => {
       console.log("LOAD API RESPONSE: ", res.data);
       if (res.data.error) {
         const title = "Inspection failed",

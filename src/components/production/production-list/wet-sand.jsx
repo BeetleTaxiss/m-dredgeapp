@@ -214,7 +214,7 @@ const WetSand = () => {
   /** Handle stockpile function which moves the wet sand over to the stockpile list after drying has taken place */
   const handleStockpile = (toStockpile) => {
     axios
-      .put(`${BASE_API_URL}/api/v1/production/stockpile.php`, toStockpile)
+      .post(`${BASE_API_URL}/api/v1/production/stockpile.php`, toStockpile)
       .then((res) => {
         console.log("Stockpile response Data: ", res.data.data);
         if (res.data.error) {
