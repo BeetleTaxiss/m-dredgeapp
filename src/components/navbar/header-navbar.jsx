@@ -14,9 +14,9 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
   /** set if we are within an electron environment  */
   if (functionUtils.isElectronApp()) {
     ElectronWindowBar=()=><div  id="electron-window" className="electron-window">
-      <button id="app-menu-file"  class="electron-window-menu">File</button>
-      <button id="app-minimize" class="electron-window-menu">Min</button>
-      <button id="app-close" class="electron-window-menu-end">Close</button>
+      <button id="app-menu-file"  className="electron-window-menu">File</button>
+      <button id="app-minimize" className="electron-window-menu">Min</button>
+      <button id="app-close" className="electron-window-menu-end">Close</button>
       </div>
   }
 

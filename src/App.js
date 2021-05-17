@@ -15,9 +15,7 @@ export default function App({ loginStatus }) {
    * The memory router is to avoid the blank screen error in electron
    *  */
   const Router = functionUtils.isElectronApp()? MemoryRouter : BrowserRouter;
-
-  console.log(Router, "the router");
-  
+    
   /** hold the current view user will see */
   const [appView, setAppView] = useState([]);
 

@@ -21,13 +21,8 @@ const maximizeWindow=(currentWindow= getCurrentWindow())=>{
         currentWindow.maximize();
 }
 
-type menuLocationArgs= {
-    x: number,
-    y: number
-}
-
 /** show the menu */
-const showMenu=(e: menuLocationArgs)=>{
+const showMenu=(e)=>{
     ipcRenderer.send("show-custom-menu", {x: e.x, y:e.y})
 }
 

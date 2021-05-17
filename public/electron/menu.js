@@ -1,13 +1,13 @@
-const  {Menu} = require("electron");
+const  {app, Menu} = require("electron");
 
 const isMac= process.platform==="darwin";
 
 const menuLocations=[
     {
-        label:"App",
+        label:"Menu",
         subMenu:[
-            {role:"reload"},
-            isMac? { role:"close"} : {role:"quit"},
+            {label:"Reload", role:"reload"},
+            isMac? { label:"Exit",role:"close"} : {label:"Exit",role:"quit"},
         ]
     }
 ];
