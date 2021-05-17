@@ -1,26 +1,30 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useHistory, useLocation } from "react-router-dom";
 import { FormDetails } from "../components/orders/order-form/order-form-details";
 import { BASE_API_URL } from "../hooks/API";
-import { functionUtils, errorAlert, getUserStoreInstance, getAppSettingStoreInstance} from "../hooks/function-utils";
+import {
+  functionUtils,
+  errorAlert,
+  getUserStoreInstance,
+  getAppSettingStoreInstance,
+} from "../hooks/function-utils";
 
-import {StoreManager} from "react-persistent-store-manager"
-import {Stores, AppStore} from "./../state/store";
-
+import { StoreManager } from "react-persistent-store-manager";
+import { Stores, AppStore } from "./../state/store";
+import LoadingButton from "../components/general/loading-button";
 
 const LoginPage = () => {
+  const UserStore = getUserStoreInstance();
 
-  const UserStore= getUserStoreInstance();
-
-  /** 
-   * each time we load the login page, we must clear any existing user permission saved 
+  /**
+   * each time we load the login page, we must clear any existing user permission saved
    * during the last session. This is to force user to always login
    *  */
- //  UserStore.update("permission", null);
+  //  UserStore.update("permission", null);
 
   /** create a store  */
-  const Store= getAppSettingStoreInstance();
+  const Store = getAppSettingStoreInstance();
 
   const [user, setUsername] = useState({
     user: "",
@@ -33,6 +37,8 @@ const LoginPage = () => {
     user: "",
     password: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const history = useHistory();
   const location = useLocation();
@@ -48,7 +54,9 @@ const LoginPage = () => {
     user,
     password,
     history,
-    location
+    location,
+    "/",
+    setLoading
   );
 
   const showPassword = () => {
@@ -84,27 +92,32 @@ const LoginPage = () => {
     className: "form-control",
     holder: "Password",
   };
-  
-/** get the system settings only once we load */
-  useEffect(()=>{
 
-    axios.get(`${BASE_API_URL}/api/v1/system/app-settings.php`).then((response) => {
+  /** get the system settings only once we load */
+  useEffect(() => {
+    axios
+      .get(`${BASE_API_URL}/api/v1/system/app-settings.php`)
+      .then((response) => {
+        const data = response.data.data;
 
-      const data=response.data.data;
+        Store.update("measurements", data["measurement"]);
+        Store.update("userTypes", data["user_types"]);
 
-      Store.update("measurements", data['measurement']);    
-      Store.update("userTypes", data['user_types']);  
-
-      /** parse permissionList as object
-       * @todo the server might need to return a simpler permission list data
-       *  **/ 
-      const userPermissions=functionUtils.parseUserPermission(data['user_permission'][0]['permission']);
-      Store.update("user_permission", userPermissions);  
-
-    }).catch(error=>{
-      errorAlert("Oops!","could not load settings. Check Internet connection");
-    })
-  }, []);
+        /** parse permissionList as object
+         * @todo the server might need to return a simpler permission list data
+         *  **/
+        const userPermissions = functionUtils.parseUserPermission(
+          data["user_permission"][0]["permission"]
+        );
+        Store.update("user_permission", userPermissions);
+      })
+      .catch((error) => {
+        errorAlert(
+          "Oops!",
+          "could not load settings. Check Internet connection"
+        );
+      });
+  }, [loading]);
 
   return (
     <section className="form">
@@ -214,7 +227,24 @@ const LoginPage = () => {
                     </div>
                     <div className="d-sm-flex justify-content-between">
                       <div className="field-wrapper">
-                        <button
+                        <LoadingButton
+                          handleSubmit={() => {
+                            setLoading(true);
+                            if (errors.user !== "" || errors.password !== "") {
+                              setErrorDisplay(true);
+                              console.log(errorDisplay);
+                            } else if (
+                              errors.user === "" ||
+                              errors.password === ""
+                            ) {
+                              setErrorDisplay(false);
+                              handleSubmit();
+                            }
+                          }}
+                          loading={loading}
+                          text="Log in"
+                        />
+                        {/* <button
                           onClick={() => {
                             if (errors.user !== "" || errors.password !== "") {
                               setErrorDisplay(true);
@@ -232,7 +262,7 @@ const LoginPage = () => {
                           value=""
                         >
                           Log In
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                     <p className="signup-link"></p>

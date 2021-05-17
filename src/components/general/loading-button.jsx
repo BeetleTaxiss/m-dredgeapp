@@ -9,6 +9,7 @@ const LoadingButton = ({ handleSubmit, loading, text, setLoad }) => {
       style={{
         display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         gap: "0.5rem",
       }}
     >
