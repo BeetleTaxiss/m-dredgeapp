@@ -1,68 +1,75 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import profileImg from "../../assets/blankProfileImg.png";
-import {functionUtils} from "./../../hooks/function-utils"
+import { functionUtils } from "./../../hooks/function-utils";
 
 const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
-
-  /** 
+  /**
    * for our electron app, we will create a custom menu bar
-   * by default, this menu bar will be empty   
+   * by default, this menu bar will be empty
    * */
-  let ElectronWindowBar=()=>null;
+  let ElectronWindowBar = () => null;
 
   /** set if we are within an electron environment  */
   if (functionUtils.isElectronApp()) {
-    ElectronWindowBar=()=><div  id="electron-window" className="electron-window">
-      <button id="app-menu-file"  className="electron-window-menu">File</button>
-      <button id="app-minimize" className="electron-window-menu">Min</button>
-      <button id="app-close" className="electron-window-menu-end">Close</button>
+    ElectronWindowBar = () => (
+      <div id="electron-window" className="electron-window">
+        <button id="app-menu-file" className="electron-window-menu">
+          File
+        </button>
+        <button id="app-minimize" className="electron-window-menu">
+          Min
+        </button>
+        <button id="app-close" className="electron-window-menu-end">
+          Close
+        </button>
       </div>
+    );
   }
 
   return (
     <>
-    <ElectronWindowBar/>
-    <div className="header-container">
-      <header className="header navbar navbar-expand-sm">
-        <Link
-          to="javascript:void(0)"
-          onClick={(e) => {
-            e.preventDefault();
-            setShowMenu((prev) => !prev);
-          }}
-          className="sidebarCollapse"
-          data-placement="bottom"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="feather feather-menu"
+      <ElectronWindowBar />
+      <div className="header-container">
+        <header className="header navbar navbar-expand-sm">
+          <Link
+            to="javascript:void(0)"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowMenu();
+            }}
+            className="sidebarCollapse"
+            data-placement="bottom"
           >
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </Link>
-
-        <div className="nav-logo align-self-center">
-          <Link className="navbar-brand" to="index.html">
-            <img alt="logo" src="assets/img/logo.svg" />{" "}
-            <span className="navbar-brand-name">Atup</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-menu"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
           </Link>
-        </div>
 
-        <ul className="navbar-item flex-row mr-auto"></ul>
+          <div className="nav-logo align-self-center">
+            <Link className="navbar-brand" to="index.html">
+              <img alt="logo" src="assets/img/logo.svg" />{" "}
+              <span className="navbar-brand-name">Atup</span>
+            </Link>
+          </div>
 
-        <ul className="navbar-item flex-row nav-dropdowns">
-          {/* <li className="nav-item dropdown notification-dropdown">
+          <ul className="navbar-item flex-row mr-auto"></ul>
+
+          <ul className="navbar-item flex-row nav-dropdowns">
+            {/* <li className="nav-item dropdown notification-dropdown">
             <Link
               to="javascript:void(0)"
               onClick={(e) => e.preventDefault()}
@@ -246,93 +253,93 @@ const HeaderNavbar = ({ logUserOut, setShowMenu, userName, userType }) => {
             </div>
           </li> */}
 
-          <li
-            id="nav-item-user-dropdown"
-            className="nav-item dropdown user-profile-dropdown order-lg-0 order-1"
-            onClick={() => {
-              document.getElementById("nav-item-user-dropdown").class =
-                "nav-item dropdown user-profile-dropdown order-lg-0 order-1 show";
-            }}
-          >
-            <Link
-              to="javascript:void(0)"
-              onClick={(e) => e.preventDefault()}
-              className="nav-link dropdown-toggle user"
-              id="user-profile-dropdown"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
+            <li
+              id="nav-item-user-dropdown"
+              className="nav-item dropdown user-profile-dropdown order-lg-0 order-1"
+              onClick={() => {
+                document.getElementById("nav-item-user-dropdown").class =
+                  "nav-item dropdown user-profile-dropdown order-lg-0 order-1 show";
+              }}
             >
-              <div className="media">
-                <div className="media-body align-self-center">
-                  <h6>{userName}</h6>
-                  <p>{userType}</p>
+              <Link
+                to="javascript:void(0)"
+                onClick={(e) => e.preventDefault()}
+                className="nav-link dropdown-toggle user"
+                id="user-profile-dropdown"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <div className="media">
+                  <div className="media-body align-self-center">
+                    <h6>{userName}</h6>
+                    <p>{userType}</p>
+                  </div>
+                  <img
+                    src={profileImg}
+                    className="img-fluid"
+                    alt="admin-profile"
+                  />
+                  <span className="badge badge-success"></span>
                 </div>
-                <img
-                  src={profileImg}
-                  className="img-fluid"
-                  alt="admin-profile"
-                />
-                <span className="badge badge-success"></span>
-              </div>
-            </Link>
+              </Link>
 
-            <div
-              className="dropdown-menu position-absolute"
-              aria-labelledby="userProfileDropdown"
-            >
-              <div className="dropdown-item">
-                <Link to="/profile">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="feather feather-user"
+              <div
+                className="dropdown-menu position-absolute"
+                aria-labelledby="userProfileDropdown"
+              >
+                <div className="dropdown-item">
+                  <Link to="/profile">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="feather feather-user"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>{" "}
+                    <span> Settings</span>
+                  </Link>
+                </div>
+                <div className="dropdown-item">
+                  <Link
+                    to="javascript:void(0)"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      logUserOut();
+                    }}
                   >
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>{" "}
-                  <span> Settings</span>
-                </Link>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="feather feather-log-out"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                      <polyline points="16 17 21 12 16 7"></polyline>
+                      <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>{" "}
+                    <span>Log Out</span>
+                  </Link>
+                </div>
               </div>
-              <div className="dropdown-item">
-                <Link
-                  to="javascript:void(0)"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    logUserOut();
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="feather feather-log-out"
-                  >
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                  </svg>{" "}
-                  <span>Log Out</span>
-                </Link>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </header>
-    </div>
+            </li>
+          </ul>
+        </header>
+      </div>
     </>
   );
 };

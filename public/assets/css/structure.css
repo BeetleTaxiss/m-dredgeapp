@@ -1559,7 +1559,8 @@ code { color: #e7515a; }
         padding: 20px 0 20px 0;
         margin: auto;
         width: 100%;
-        overflow: auto;
+        height: 100%;
+        overflow: scroll;
     }
     .topbar-nav.header nav#topbar {
         height: 100vh!important;

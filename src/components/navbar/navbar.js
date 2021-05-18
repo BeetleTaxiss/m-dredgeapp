@@ -19,7 +19,6 @@ const Navbar = ({ userPermission }) => {
 
   const [showMenu, setShowMenu] = useState(false);
   const [showSubMenu, setShowSubMenu] = useState(false);
-  const [showSubMenuTab, setShowSubMenuTab] = useState(false);
 
   const history = useHistory();
 
@@ -29,6 +28,11 @@ const Navbar = ({ userPermission }) => {
   const [userTypeId, setUserTypeId] = useState(0);
   const [userTypes, setUserTypes] = useState(null);
 
+  // useEffect(() => {
+  //   console.log("Show Menu: ", showMenu);
+  //   alert("Menu opened");
+  //   setShowMenu(showMenu);
+  // }, [showMenu]);
   /** a state variable to hold our navigation view
    *initially, we will set it to empty
    */
@@ -54,7 +58,7 @@ const Navbar = ({ userPermission }) => {
     setUserTypes(userTypes);
   });
 
-  const createUserNavigationBar = () => {
+  const createUserNavigationBar = (showMenu, setShowMenu) => {
     const userAllowedMenus = createUserMenu(userPermission);
     const userPosition = functionUtils.getUserPositionFromTypeId(
       userTypes,
@@ -65,7 +69,7 @@ const Navbar = ({ userPermission }) => {
       <div>
         <HeaderNavbar
           logUserOut={logUserOut}
-          setShowMenu={setShowMenu}
+          setShowMenu={() => setShowMenu(true)}
           userName={userName}
           userType={userPosition}
         />
@@ -125,8 +129,8 @@ const Navbar = ({ userPermission }) => {
 
   /** load the navigation bar when the systems loads and when the userPermission change */
   useEffect(() => {
-    createUserNavigationBar();
-  }, [userPermission, userName, userTypeId, userTypes, userId]);
+    createUserNavigationBar(showMenu, setShowMenu);
+  }, [userPermission, userName, userTypeId, userTypes, userId, showMenu]);
 
   return <>{userNavigationBar}</>;
 };
