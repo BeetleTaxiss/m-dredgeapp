@@ -178,22 +178,30 @@ const Security = () => {
   const clearOrder = () => {
     console.log("Load DATA: ", load);
 
-    axios.post(`${BASE_API_URL}/api/v1/order/clear.php`, load).then((res) => {
-      console.log("LOAD API RESPONSE: ", res.data);
-      if (res.data.error) {
-        const title = "Clearance failed",
-          message = res.data.message;
-        errorAlert(title, message);
-      } else {
-        document.getElementById("loading-btn").disabled = true;
-        const title = "Clearance Successful",
-          message = res.data.message,
-          link = "<a href='/security'>View Clearance List</a>";
-        successAlert(title, message, link);
-        setShowModal(false);
-        reloadServerData();
-      }
-    });
+    axios
+      .post(`${BASE_API_URL}/api/v1/order/clear.php`, load)
+      .then((res) => {
+        console.log("LOAD API RESPONSE: ", res.data);
+        if (res.data.error) {
+          const title = "Clearance failed",
+            message = res.data.message;
+          errorAlert(title, message);
+          setLoading(false);
+        } else {
+          document.getElementById("loading-btn").disabled = true;
+          const title = "Clearance Successful",
+            message = res.data.message,
+            link = "<a href='/security'>View Clearance List</a>";
+          successAlert(title, message, link);
+          setShowModal(false);
+          reloadServerData();
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
+      });
   };
 
   return (
@@ -210,7 +218,10 @@ const Security = () => {
         setLoading={setLoading}
         errorMsg={errorMsg}
         status={error}
-        handleSubmit={clearOrder}
+        handleSubmit={() => {
+          setLoading(true);
+          clearOrder();
+        }}
         Btntext="Clearance Finished"
         // noClickOutside
         // closeBtn

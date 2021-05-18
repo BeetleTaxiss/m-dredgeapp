@@ -194,22 +194,30 @@ const Inspector = () => {
     console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
-    axios.post(`${BASE_API_URL}/api/v1/order/inspect.php`, load).then((res) => {
-      console.log("LOAD API RESPONSE: ", res.data);
-      if (res.data.error) {
-        const title = "Inspection failed",
-          message = res.data.message;
-        errorAlert(title, message);
-      } else {
-        document.getElementById("loading-btn").disabled = true;
-        const title = "Inspection Successful",
-          message = res.data.message,
-          link = "<a href='/inspect'>View Inspection List</a>";
-        successAlert(title, message, link);
-        setShowModal(false);
-        reloadServerData();
-      }
-    });
+    axios
+      .post(`${BASE_API_URL}/api/v1/order/inspect.php`, load)
+      .then((res) => {
+        console.log("LOAD API RESPONSE: ", res.data);
+        if (res.data.error) {
+          const title = "Inspection failed",
+            message = res.data.message;
+          errorAlert(title, message);
+          setLoading(false);
+        } else {
+          document.getElementById("loading-btn").disabled = true;
+          const title = "Inspection Successful",
+            message = res.data.message,
+            link = "<a href='/inspect'>View Inspection List</a>";
+          successAlert(title, message, link);
+          setShowModal(false);
+          reloadServerData();
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
+      });
   };
 
   return (
@@ -227,7 +235,10 @@ const Inspector = () => {
         setLoading={setLoading}
         errorMsg={errorMsg}
         status={error}
-        handleSubmit={InspectOrder}
+        handleSubmit={() => {
+          setLoading(true);
+          InspectOrder();
+        }}
         Btntext="Inspection Completed"
         // noClickOutside
         // closeBtn

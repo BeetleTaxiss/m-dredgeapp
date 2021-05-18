@@ -224,23 +224,31 @@ const Loader = () => {
     console.log("COMMENT: ", comment);
     console.log("Load DATA: ", load);
 
-    axios.post(`${BASE_API_URL}/api/v1/order/load.php`, load).then((res) => {
-      console.log("LOAD API RESPONSE: ", res.data);
-      if (res.data.error) {
-        const title = "Order Loading failed",
-          text = res.data.message;
-        console.log("Order loading failed: ", text);
-        errorAlert(title, text);
-      } else {
-        document.getElementById("loading-btn").disabled = true;
-        const title = "Loaded Successfully",
-          text = res.data.message,
-          link = "<a href='/loader'>View Loading List</a>";
-        successAlert(title, text, link);
-        setShowModal(false);
-        reloadServerData();
-      }
-    });
+    axios
+      .post(`${BASE_API_URL}/api/v1/order/load.php`, load)
+      .then((res) => {
+        console.log("LOAD API RESPONSE: ", res.data);
+        if (res.data.error) {
+          const title = "Order Loading failed",
+            text = res.data.message;
+          console.log("Order loading failed: ", text);
+          errorAlert(title, text);
+          setLoading(false);
+        } else {
+          document.getElementById("loading-btn").disabled = true;
+          const title = "Loaded Successfully",
+            text = res.data.message,
+            link = "<a href='/loader'>View Loading List</a>";
+          successAlert(title, text, link);
+          setShowModal(false);
+          reloadServerData();
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
+      });
   };
 
   console.log("Load DATA: ", load);
@@ -259,7 +267,10 @@ const Loader = () => {
         setLoading={setLoading}
         errorMsg={errorMsg}
         status={error}
-        handleSubmit={loadOrder}
+        handleSubmit={() => {
+          setLoading(true);
+          loadOrder();
+        }}
         Btntext="Loading completed"
         // noClickOutside
         // closeBtn

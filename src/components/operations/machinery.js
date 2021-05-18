@@ -13,7 +13,7 @@ import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 const Machinery = () => {
   const [machineryList, setMachineryList] = useState(["loading"]);
   const [showUpdateMachinery, setShowUpdateMachinery] = useState(false);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
 
@@ -222,13 +222,19 @@ const Machinery = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Machinery Added Successfully",
             text = res.data.message,
             link = `<a href="/operations">View Machinery List</a>`;
           successAlert(title, text, link);
           reloadServerData();
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
   const handleUpdateMachinery = () => {
@@ -258,13 +264,19 @@ const Machinery = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Machinery Updated Successfully",
             text = res.data.message,
             link = `<a href="/operations">View Machinery List</a>`;
           successAlert(title, text, link);
           reloadServerData();
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
   const handleUpdateFormFields = (machineryItemData) => {
@@ -412,6 +424,7 @@ const Machinery = () => {
                   getAddMachineFormDataWrapper()
                 );
                 if (validation === true) {
+                  setLoading(true);
                   handleAddMachinery();
                 }
               }}
@@ -420,6 +433,7 @@ const Machinery = () => {
                   getUpdateMachineFormDataWrapper()
                 );
                 if (validation === true) {
+                  setLoading(true);
                   handleUpdateMachinery();
                 }
               }}

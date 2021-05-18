@@ -19,7 +19,7 @@ const AddFuel = () => {
     "loading",
     "loading",
   ]);
-
+  const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
 
@@ -100,9 +100,7 @@ const AddFuel = () => {
           }
         })
         .catch((error) => {
-          let title = "Network Error",
-            text = error;
-          errorAlert(title, text);
+          errorAlert("Network Error", error);
         });
     };
 
@@ -131,13 +129,19 @@ const AddFuel = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           let title = "Fuel Added Successfully",
             text = res.data.message,
             link = `<a href="/fuelupdatelist">View Fuel Update List</a>`;
           successAlert(title, text, link);
           reloadServerData();
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
 
@@ -206,7 +210,7 @@ const AddFuel = () => {
             <CustomDetailedStats data={detailedStats} />
             <AddFuelForm
               content={addFuelformData}
-              // loading={loading}
+              loading={loading}
               subtitle="Add new fuel information"
               btnText="Add Fuel"
               handleAddSubmit={() => {
@@ -215,6 +219,7 @@ const AddFuel = () => {
                 );
                 console.log("Validation: ", validation);
                 if (validation === true) {
+                  setLoading(true);
                   handleAddFuel(userName, userId);
                 }
               }}

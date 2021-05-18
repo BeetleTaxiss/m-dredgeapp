@@ -92,7 +92,7 @@ const Users = () => {
 
   const changePassword = () => {
     let userName = document.getElementById("user-add-user").value,
-      userId = document.getElementById("user-id-add-user").value,
+      userId = parseInt(document.getElementById("user-id-add-user").value),
       userPassword = document.getElementById("password-add-user").value;
     let newUserPassword = document.getElementById(
       "new-password-add-user"
@@ -122,7 +122,7 @@ const Users = () => {
       password: userPassword,
       "password-new": encNewUserPassword,
     };
-
+    console.log("Password Data: ", changePasswordData);
     axios
       .post(
         `${BASE_API_URL}/api/v1/user/change-password.php`,
@@ -134,11 +134,19 @@ const Users = () => {
           const title = "Password update failed",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           const title = "Password changed",
             text = res.data.message;
+          document.getElementById("user-add-user").value = "";
+          document.getElementById("user-id-add-user").value = "";
+          document.getElementById("password-add-user").value = "";
+          document.getElementById("new-password-add-user").value = "";
+          setShowUpdateModal(false);
           successAlert(title, text);
           reloadServerData();
+
+          setLoading(false);
         }
       })
       .catch((error) => {
@@ -146,6 +154,7 @@ const Users = () => {
           error.message,
           language.popUps.checkYourInternetConnectionMsg
         );
+        setLoading(false);
       });
   };
 
@@ -195,6 +204,8 @@ const Users = () => {
       "user-type": userType,
       permission: permission,
     };
+    /** Start loading button */
+    setLoading(true);
 
     axios
       .post(`${BASE_API_URL}/api/v1/user/update.php`, userUpdateData)
@@ -203,11 +214,13 @@ const Users = () => {
           const title = "Update Alert",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           const title = "Update Alert",
             text = res.data.message;
           successAlert(title, text);
           reloadServerData();
+          setLoading(false);
         }
       })
       .catch((error) => {
@@ -215,6 +228,7 @@ const Users = () => {
           error.message,
           language.popUps.checkYourInternetConnectionMsg
         );
+        setLoading(false);
       });
   };
 
@@ -255,6 +269,7 @@ const Users = () => {
           const title = "Add User Failed",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           const title = "User Added",
             text = res.data.message;
@@ -267,6 +282,7 @@ const Users = () => {
           newUserConfirmPassword = "";
           /** refresh the page so we can newly added users */
           reloadServerData();
+          setLoading(false);
         }
       })
       .catch((error) => {
@@ -274,6 +290,7 @@ const Users = () => {
           error.message,
           language.popUps.checkYourInternetConnectionMsg
         );
+        setLoading(false);
       });
   };
 
@@ -374,7 +391,7 @@ const Users = () => {
       password: userPassword,
       "password-new": newUserPassword,
     };
-
+    console.log("change pass data: ", changePasswordData);
     return changePasswordData;
   };
 
@@ -667,6 +684,7 @@ const Users = () => {
               getAddUserFormData()
             );
             if (validation === true) {
+              setLoading(true);
               addContact();
             }
           }}
@@ -711,6 +729,7 @@ const Users = () => {
             getUpdateUserFormData()
           );
           if (validation === true) {
+            setLoading(true);
             changePassword();
           }
         }}

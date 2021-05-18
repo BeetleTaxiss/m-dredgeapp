@@ -10,6 +10,7 @@ const ActivityReport = () => {
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
   const [userType, setUserType] = useState();
+  const [loading, setLoading] = useState(false);
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId, setUserType);
@@ -76,6 +77,7 @@ const ActivityReport = () => {
           let title = "Server Error Response",
             text = res.data.message;
           errorAlert(title, text);
+          setLoading(false);
         } else {
           document.getElementById("work-week").value = "";
           document.getElementById("ongoing-tasks").value = "";
@@ -87,7 +89,12 @@ const ActivityReport = () => {
           let title = "Submitted Activity Report Successfully",
             text = res.data.message;
           successAlert(title, text);
+          setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
 
@@ -207,11 +214,13 @@ const ActivityReport = () => {
   return (
     <ActivityReportForm
       data={distanceFormData}
+      loading={loading}
       handleSubmit={() => {
         const validation = functionUtils.validateFormInputs(
           getAddActivityReportFormDataWrapper()
         );
         if (validation === true) {
+          setLoading(true);
           handleAddActivityReport(userName, userId);
         }
       }}
