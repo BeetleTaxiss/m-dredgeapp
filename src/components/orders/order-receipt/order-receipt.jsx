@@ -404,8 +404,20 @@ const printOrderReceipt = (
   /** hide the links layer.  */
   const links = document.getElementById(orderReceiptLayerLinks);
   links.setAttribute("style", "display:none");
-
+  
   const receiptContentLayer = document.getElementById(orderReceiptLayer);
+
+  /** 
+   * Get the window scroll top size.  This is usually added to the top of the 
+   * And this has the effect of adding too much top margin to our report 
+   * so we want to avoid this by all means. If we have  scroll top
+   * we will simply remove this from the the top margin of report
+   */
+  const windowScrollTop= receiptContentLayer.scrollTop;
+
+
+  return alert(windowScrollTop);
+
 
   const canvasOptions = {
     //scale:0.83,
@@ -414,7 +426,7 @@ const printOrderReceipt = (
   };
   const pdfOptions = {
     orientation: "p",
-    unit: "mm",
+    unit: "px",
     format: "a4",
   };
 
