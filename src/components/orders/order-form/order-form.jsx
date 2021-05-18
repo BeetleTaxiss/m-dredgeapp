@@ -239,7 +239,7 @@ const OrderForm = () => {
         <WidgetHeader title="Make an order" />
         <div
           className="widget-content widget-content-area"
-          style={{ padding: "3rem" }}
+          style={{ padding: "3rem", display: "grid" }}
         >
           <CustomDetailedStats data={detailedStats} />
           <div className="row">

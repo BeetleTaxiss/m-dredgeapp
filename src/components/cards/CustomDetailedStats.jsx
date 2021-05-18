@@ -17,11 +17,14 @@ const CustomDetailedStats = ({ data }) => {
   return (
     <div
       className="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12"
-      style={{ justifySelf: "center" }}
+      style={{
+        // display: "flex",
+        justifySelf: "center",
+      }}
     >
       <div
         className="row widget-statistic"
-        style={{ justifyContent: "center" }}
+        style={{ justifyContent: "center", justifySelf: "center" }}
       >
         {data[0] === "load"
           ? data.map((item, i) => (
