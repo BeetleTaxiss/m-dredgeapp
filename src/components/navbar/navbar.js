@@ -19,6 +19,7 @@ const Navbar = ({ userPermission }) => {
 
   const [showMenu, setShowMenu] = useState(false);
   const [showSubMenu, setShowSubMenu] = useState(false);
+  const [showSubMenuTab, setShowSubMenuTab] = useState(false);
 
   const history = useHistory();
 
@@ -42,7 +43,7 @@ const Navbar = ({ userPermission }) => {
   UserStore.useStateAsync("userType").then((userTypeId) => {
     setUserTypeId(userTypeId);
   });
-  
+
   UserStore.useStateAsync("userId").then((userId) => {
     setUserId(userId);
   });
@@ -86,7 +87,6 @@ const Navbar = ({ userPermission }) => {
 
   /** ue logout function */
   const logUserOut = () => {
-
     const Store = getUserStoreInstance();
 
     const userLogOutData = {
@@ -103,8 +103,7 @@ const Navbar = ({ userPermission }) => {
             text = res.data.message;
           errorAlert(title, text);
         } else {
-
-          const takeToPage="/login";
+          const takeToPage = "/login";
 
           /** check to see if user is indeed logged in */
 
