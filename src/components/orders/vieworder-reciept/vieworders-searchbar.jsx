@@ -9,7 +9,7 @@ const ViewordersSearchbar = ({
     <div className="dt--top-section">
       <div className="row">
         <div className="col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center">
-          <div className="dataTables_length" id="default-ordering_length">
+          {/* <div className="dataTables_length" id="default-ordering_length">
             <label>
               Results :{" "}
               <select
@@ -28,7 +28,7 @@ const ViewordersSearchbar = ({
                 <option value="50">50</option>
               </select>
             </label>
-          </div>
+          </div> */}
         </div>
         <div className="col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3">
           <div id="default-ordering_filter" className="dataTables_filter">
