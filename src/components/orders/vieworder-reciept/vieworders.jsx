@@ -80,7 +80,7 @@ const ViewOrders = () => {
   const [currentPageArray, setCurrentPageArray] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
-  const [listCount, setListCount] = useState("2");
+  const [listCount, setListCount] = useState("10");
   const [lastItemStore, setLastItemStore] = useState();
   const [lastItemId, setLastItemId] = useState("0");
 
@@ -108,7 +108,7 @@ const ViewOrders = () => {
       await axios
         .get(`${BASE_API_URL}/api/v1/order/list.php`, {
           params: {
-            count: "20",
+            count: "50",
             "last-item-id": lastItemId,
           },
         })
@@ -163,7 +163,7 @@ const ViewOrders = () => {
                 document.getElementById("default-ordering_next").className +=
                   " disabled";
               }
-              alert("fired 2");
+              // alert("fired 2");
             } else {
               parentArray = handleParentPaginationArray(data);
               if (document.getElementById("default-ordering_next") !== null) {
@@ -274,10 +274,10 @@ const ViewOrders = () => {
         });
         console.log("Check 1: ", data.length === pageNumber + 1);
       } else if (data.length === pageNumber + 1) {
-        if (lastItemStore !== undefined || lastItemStore !== null) {
-          setLastItemId(lastItemStore);
-          console.log("Page limit reached: ", lastItemStore);
-        }
+        // if (lastItemStore !== undefined || lastItemStore !== null) {
+        //   setLastItemId(lastItemStore);
+        //   console.log("Page limit reached: ", lastItemStore);
+        // }
         console.log("Page limit reached: ", lastItemStore);
       }
       console.log("Check 2: ", data.length === pageNumber + 1);
