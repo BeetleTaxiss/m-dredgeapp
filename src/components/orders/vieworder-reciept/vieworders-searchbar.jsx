@@ -1,6 +1,10 @@
 import React from "react";
 
-const ViewordersSearchbar = ({ handleCountChange, handleSearchList }) => {
+const ViewordersSearchbar = ({
+  currentPageNumber,
+  handleCountChange,
+  handleSearchList,
+}) => {
   return (
     <div className="dt--top-section">
       <div className="row">
@@ -16,6 +20,7 @@ const ViewordersSearchbar = ({ handleCountChange, handleSearchList }) => {
                 onChange={() => {
                   return handleCountChange && handleCountChange();
                 }}
+                disabled={currentPageNumber !== 1 ? true : false}
               >
                 <option value="7">7</option>
                 <option value="10">10</option>

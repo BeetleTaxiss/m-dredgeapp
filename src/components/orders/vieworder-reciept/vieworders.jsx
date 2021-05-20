@@ -76,11 +76,13 @@ const viewOrdersData = {
 };
 const ViewOrders = () => {
   const [ordersList, setOrdersList] = useState();
+  const [rawData, setRawData] = useState();
+  const [currentPageArray, setCurrentPageArray] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
-  const [listCount, setListCount] = useState("7");
-  const [lastItemId, setLastItemId] = useState();
-  const [lastItem, setLastItem] = useState();
+  const [listCount, setListCount] = useState("2");
+  const [lastItemStore, setLastItemStore] = useState();
+  const [lastItemId, setLastItemId] = useState("0");
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
@@ -106,21 +108,78 @@ const ViewOrders = () => {
       await axios
         .get(`${BASE_API_URL}/api/v1/order/list.php`, {
           params: {
-            count: listCount,
-            "last-item-id": lastItem,
+            count: "20",
+            "last-item-id": lastItemId,
           },
         })
         .then((res) => {
           if (res.data.error === true) {
             errorAlert("Server Error", res.data.message);
           } else {
+            console.log("Server data: ", res.data);
+
             let data = res.data.data;
+            let newData = rawData;
             data["userName"] = userName;
             data["userId"] = userId;
-            setOrdersList(data);
-            setLastItemId(res.data["last-item-id"]);
-            console.log("Item: ", ordersList, data);
-            console.log("Last Item Id: ", res.data);
+            let parentArray;
+
+            if (
+              res.data.message !== "No order found" &&
+              (data !== null || data !== undefined) &&
+              Array.isArray(rawData)
+            ) {
+              newData = newData.concat(data);
+              data = newData;
+              console.log("Mutated raw data: ", data, newData);
+
+              parentArray = handleParentPaginationArray(data);
+
+              console.log("Mutated new array: ", parentArray);
+
+              let newPageNumber = currentPageArray?.id + 1;
+              setCurrentPageArray({
+                id: newPageNumber,
+                page: parentArray[currentPageArray.id],
+              });
+              console.log("Mutated current array: ", currentPageArray);
+
+              setOrdersList(parentArray);
+
+              setLastItemStore(res.data["last-item-id"]);
+              setRawData(data);
+              if (document.getElementById("default-ordering_next") !== null) {
+                document.getElementById("default-ordering_next").className =
+                  "paginate_button page-item next";
+              }
+              // alert("fired 1");
+            } else if (
+              res.data.message === "No order found"
+              // ||
+              // res.data.data === null ||
+              // res.data.data === undefined
+            ) {
+              if (document.getElementById("default-ordering_next") !== null) {
+                document.getElementById("default-ordering_next").className +=
+                  " disabled";
+              }
+              alert("fired 2");
+            } else {
+              parentArray = handleParentPaginationArray(data);
+              if (document.getElementById("default-ordering_next") !== null) {
+                document.getElementById("default-ordering_next").className =
+                  "paginate_button page-item next";
+              }
+              setOrdersList(parentArray);
+              setCurrentPageArray({ id: 0, page: parentArray[0] });
+              setLastItemStore(res.data["last-item-id"]);
+              setRawData(data);
+              // alert("fired 3");
+            }
+
+            console.log("Parent Page: ", parentArray);
+
+            console.log("Raw Data: ", rawData);
           }
         })
         .catch((error) => {
@@ -131,7 +190,66 @@ const ViewOrders = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, listCount, lastItem, refreshData]);
+  }, [userName, userId, listCount, lastItemId, lastItemStore, refreshData]);
+
+  useEffect(() => {}, [currentPageArray, rawData]);
+
+  /**
+   * Handle parent pagination array and children array creation
+   */
+  const handleParentPaginationArray = (data) => {
+    /**
+     * When data items exceed ten in number, divide the total number by list count value/state and arrange results in a parent array
+     */
+    // let dataItemsReminder = data.length % listCount;
+    let listCountValue = data.length / listCount;
+    let subListCount = parseInt(listCount);
+    let parentPaginationArray = [];
+
+    /**
+     * Check if data items fetched is up to seven in number and take no further action
+     */
+    if (data?.length < 7 || data?.length < 10) {
+      parentPaginationArray[0] = data;
+    }
+
+    const isInteger = (num) => {
+      if (isNaN(num) === false && num % 1 === 0) {
+        return num;
+      } else {
+        return "Not an Integer";
+      }
+    };
+    const isFloat = (num) => {
+      if (isNaN(num) === false && num % 1 !== 0) {
+        return num;
+      } else {
+        return "Not a Float";
+      }
+    };
+    const arrayLengthInt = isInteger(listCountValue);
+    const arrayLengthFloat = isFloat(listCountValue);
+
+    /**
+     * Check if the length of the data array can be divided without a reminder nd populate the parent pagination array with the data values in children arrays
+     */
+    if (typeof arrayLengthInt === "number") {
+      for (let i = 0; i < data.length; i += subListCount) {
+        parentPaginationArray.push(data.slice(i, i + subListCount));
+      }
+      console.log("Parent array: ", parentPaginationArray);
+    }
+    /**
+     * Check if the length of the data array will be divided with a reminder and populate the parent pagination array with the data values in children arrays
+     */
+    if (typeof arrayLengthFloat === "number") {
+      for (let i = 0; i < data.length; i += subListCount) {
+        parentPaginationArray.push(data.slice(i, i + subListCount));
+      }
+      console.log("Parent array: ", parentPaginationArray);
+    }
+    return parentPaginationArray;
+  };
 
   /** Refetch order list when list count state changes */
   const handleCountChange = () => {
@@ -142,38 +260,53 @@ const ViewOrders = () => {
     setListCount(countValue);
   };
 
-  let paginatedArray = [];
-  let globalArray = [];
+  const handleNextPagination = (data, currentPage, lastItemStore) => {
+    let pageNumber = currentPage?.id;
+    console.log("Page number: ", pageNumber);
+    console.log("Parent array ", data);
+    console.log("Current page: ", currentPage);
 
-  let pageNumber = 1;
-
-  let prevItem = {
-    number: pageNumber++,
-    last_item_id: lastItemId,
+    for (let i = 0; i < data.length - 1; i++) {
+      if (pageNumber === i) {
+        setCurrentPageArray({
+          id: pageNumber + 1,
+          page: data[pageNumber + 1],
+        });
+        console.log("Check 1: ", data.length === pageNumber + 1);
+      } else if (data.length === pageNumber + 1) {
+        if (lastItemStore !== undefined || lastItemStore !== null) {
+          setLastItemId(lastItemStore);
+          console.log("Page limit reached: ", lastItemStore);
+        }
+        console.log("Page limit reached: ", lastItemStore);
+      }
+      console.log("Check 2: ", data.length === pageNumber + 1);
+    }
   };
 
-  let nextItem = {
-    number: pageNumber++,
-    last_item_id: lastItemId,
-  };
-  const handleNextPagination = (lastItemId, paginatedArray) => {
-    paginatedArray = paginatedArray?.concat(prevItem);
-    console.log("Paginated Left Array: ", paginatedArray);
-    setLastItem(lastItemId);
+  console.log("Current page after outside: ", currentPageArray);
+  const handlePrevPagination = (data, currentPage) => {
+    if (document.getElementById("default-ordering_next") !== null) {
+      document.getElementById("default-ordering_next").className ===
+      "paginate_button page-item next disabled"
+        ? (document.getElementById("default-ordering_next").className =
+            "paginate_button page-item next")
+        : (document.getElementById("default-ordering_next").className =
+            "paginate_button page-item next");
+    }
 
-    return paginatedArray;
-  };
+    let pageNumber = currentPage?.id;
 
-  let nextPaginated = ["john", "Hannah", "Biodun"];
-  // let nextPaginated = handleNextPagination();
-
-  globalArray = [...nextPaginated];
-  console.log("Mutated Paginated Array: ", globalArray);
-
-  const handlePrevPagination = (lastItemId) => {
-    paginatedArray = paginatedArray.concat(nextItem);
-    console.log("Paginated Right Array: ", paginatedArray);
-    setLastItem(lastItemId);
+    for (let i = 0; i < data.length; i++) {
+      if (pageNumber === i && i !== 0) {
+        setCurrentPageArray({
+          id: pageNumber - 1,
+          page: data[pageNumber - 1],
+        });
+      } else {
+        console.log("Previous Page limit reached");
+      }
+    }
   };
 
   const handleSearchList = () => {};
@@ -186,6 +319,7 @@ const ViewOrders = () => {
         >
           {/* BEGINNING OF VIEW ORDERS SEARCH BAR */}
           <ViewordersSearchbar
+            currentPageNumber={currentPageArray?.id + 1}
             handleCountChange={handleCountChange}
             handleSearchList={handleSearchList}
           />
@@ -203,7 +337,7 @@ const ViewOrders = () => {
               {/* END OF VIEW ORDERS TABLE HEADER */}
               {/* BEGINNING OF VIEW ORDERS TABLE BODY */}
               <ViewordersTableBody
-                content={ordersList}
+                content={currentPageArray?.page}
                 reloadData={() => reloadServerData()}
               />
               {/* END OF VIEW ORDERS TABLE BODY */}
@@ -214,10 +348,14 @@ const ViewOrders = () => {
           </div>
           {/* BEGINNING OF VIEW ORDERS TABLE PAGINAITION*/}
           <ViewordersTablepaiginaition
+            currentPageNumber={currentPageArray?.id + 1}
+            totalPageNumbers={ordersList?.length}
             handleNextPagination={() =>
-              handleNextPagination(lastItemId, paginatedArray)
+              handleNextPagination(ordersList, currentPageArray, lastItemStore)
             }
-            handlePrevPagination={() => handlePrevPagination(lastItemId)}
+            handlePrevPagination={() =>
+              handlePrevPagination(ordersList, currentPageArray)
+            }
           />
           {/* END OF VIEW ORDERS TABLE PAGINAITION*/}
         </div>

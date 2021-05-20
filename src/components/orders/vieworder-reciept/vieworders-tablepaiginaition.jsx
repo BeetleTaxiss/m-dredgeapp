@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 const ViewordersTablepaiginaition = ({
+  currentPageNumber,
+  totalPageNumbers,
   handleNextPagination,
   handlePrevPagination,
 }) => {
@@ -13,7 +15,8 @@ const ViewordersTablepaiginaition = ({
           role="status"
           aria-live="polite"
         >
-          Showing page 1 of 4
+          Showing page {isNaN(currentPageNumber) ? 0 : currentPageNumber} of{" "}
+          {isNaN(totalPageNumbers) ? 0 : totalPageNumbers}
         </div>
       </div>
       <div className="dt--pagination">
@@ -23,7 +26,9 @@ const ViewordersTablepaiginaition = ({
         >
           <ul className="pagination pagination-style-13 pagination-bordered mb-5">
             <li
-              className="paginate_button page-item previous"
+              className={`paginate_button page-item previous ${
+                currentPageNumber === 1 && "disabled"
+              }`}
               id="default-ordering_previous"
             >
               <Link
@@ -65,7 +70,7 @@ const ViewordersTablepaiginaition = ({
                 tabIndex="0"
                 className="page-link"
               >
-                1
+                {isNaN(currentPageNumber) ? 0 : currentPageNumber}
               </Link>
             </li>
             <li
