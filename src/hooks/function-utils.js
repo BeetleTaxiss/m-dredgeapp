@@ -1086,7 +1086,7 @@ export const functionUtils = {
               clearTimeout(restartMarker);
               document.getElementById("stop-marker").id = "stop-start-marker";
               // window.location.reload();
-              history.push("/production");
+              history.push("/");
             }
           })
           .catch((error) => {
