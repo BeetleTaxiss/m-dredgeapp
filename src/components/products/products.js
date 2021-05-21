@@ -320,6 +320,7 @@ const Products = () => {
     const product_description = document.getElementById(
       "product-description"
     ).value;
+
     const addProductData = {
       product: product_name,
       unit: product_unit,

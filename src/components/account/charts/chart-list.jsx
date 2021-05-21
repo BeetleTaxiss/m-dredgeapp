@@ -303,6 +303,9 @@ const ChartList = () => {
           reloadServerData();
           setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
       });
   };
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
@@ -327,6 +330,9 @@ const ChartList = () => {
           successAlert(title, text, link);
           reloadServerData();
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
       });
   };
 
@@ -337,27 +343,33 @@ const ChartList = () => {
     const account_type_id = parseInt(
       document.getElementById("account-type-id").value
     );
-    const accountTypeItem = accountTypes.filter(
+
+    const accountTypeItem = accountTypes?.filter(
       ({ id }) => id === account_type_id
     );
-    const account = accountTypeItem[0].account_type;
-    const statement_type_id = parseInt(
-      document.getElementById("statement-type-id").value
-    );
-    const statementTypeItem = statementTypes.filter(
-      ({ id }) => id === statement_type_id
-    );
-    const statement = statementTypeItem[0].description;
 
-    const chartListData = {
-      "account-type": account,
-      statement: statement,
-      "statement-id": statement_type_id,
-      description: description,
-      validation:
-        statementTypeItem[0].validation || accountTypeItem[0].validation,
-    };
-    return chartListData;
+    if (accountTypeItem === undefined || accountTypeItem === null) {
+      errorAlert("Network Error", "Refresh Page");
+    } else {
+      const account = accountTypeItem[0].account_type;
+      const statement_type_id = parseInt(
+        document.getElementById("statement-type-id").value
+      );
+      const statementTypeItem = statementTypes.filter(
+        ({ id }) => id === statement_type_id
+      );
+      const statement = statementTypeItem[0].description;
+
+      const chartListData = {
+        "account-type": account,
+        statement: statement,
+        "statement-id": statement_type_id,
+        description: description,
+        validation:
+          statementTypeItem[0].validation || accountTypeItem[0].validation,
+      };
+      return chartListData;
+    }
   };
 
   /** Account List Table Data */

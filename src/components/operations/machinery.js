@@ -190,6 +190,10 @@ const Machinery = () => {
           successAlert(title, text, link);
           reloadServerData();
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+        setLoading(false);
       });
   };
   const handleAddMachinery = () => {

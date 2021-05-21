@@ -257,6 +257,9 @@ const AccountList = () => {
           successAlert(title, text, link);
           reloadServerData();
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
       });
   };
 

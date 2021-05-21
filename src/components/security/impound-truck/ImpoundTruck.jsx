@@ -177,6 +177,9 @@ const ImpoundTruck = () => {
           successAlert(title, text);
           reloadServerData();
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
       });
   };
   const handleAddImpoundedTruck = (userName, userId) => {
