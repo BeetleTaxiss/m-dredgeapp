@@ -7,6 +7,7 @@ import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 
 import ImpoundTruckForm from "./ImpoundTruckForm";
+
 import {
   functionUtils,
   useGetUserDetails,
