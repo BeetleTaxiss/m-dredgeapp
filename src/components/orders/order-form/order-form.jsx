@@ -117,15 +117,19 @@ const OrderForm = () => {
     const selectValue = document.getElementById("select").value;
 
     // Filter Products Array to get single product
-    const product = products?.filter((product) => product.id === selectValue);
-    // Calculate the cost of an order
-    const orderCost = qtyValue * product[0].price;
-    // Set the value of an order to the UI
-    setTotalPrice(orderCost);
+    let product = products?.filter((product) => product.id === selectValue);
 
-    return {
-      product,
-    };
+    if (product === null || product === undefined) {
+      errorAlert("Network Error", "Refresh Page");
+    } else {
+      // Calculate the cost of an order
+      const orderCost = qtyValue * product[0].price;
+      // Set the value of an order to the UI
+      setTotalPrice(orderCost);
+      return {
+        product,
+      };
+    }
   };
 
   const handleOrderSubmit = () => {
@@ -195,24 +199,33 @@ const OrderForm = () => {
     const selectValue = /^\d+$/.test(document.getElementById("select").value)
       ? parseInt(document.getElementById("select").value)
       : NaN;
-    const { product } = handleOrderChange();
     const userid = /^\d+$/.test(userId) ? parseInt(userId) : NaN;
-    const addOrderData = {
-      "product-id": selectValue,
-      product: product[0].product,
-      validation: product[0].validation,
-      user: userName,
-      "user-id": userid,
-      qty: qtyValue,
-      unit: product[0].unit,
-      "unit-price": product[0].price,
-      measurement: product[0].measurement,
-      "total-price": totalPrice,
-      "truck-no": truckNoValue,
-      description: product[0].description,
-    };
 
-    return addOrderData;
+    //let { product } = handleOrderChange();
+    let productData = handleOrderChange() ?? {};
+
+    let { product } = productData;
+
+    /** Error handler for product value */
+    if (product === null || product === undefined) {
+      errorAlert("Network Error", "Refresh Page");
+    } else {
+      const addOrderData = {
+        "product-id": selectValue,
+        product: product[0].product,
+        validation: product[0].validation,
+        user: userName,
+        "user-id": userid,
+        qty: qtyValue,
+        unit: product[0].unit,
+        "unit-price": product[0].price,
+        measurement: product[0].measurement,
+        "total-price": totalPrice,
+        "truck-no": truckNoValue,
+        description: product[0].description,
+      };
+      return addOrderData;
+    }
   };
 
   /** Validate total price before sendind */
