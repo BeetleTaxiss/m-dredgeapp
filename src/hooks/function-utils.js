@@ -721,7 +721,8 @@ export const functionUtils = {
     productionDetails,
     products,
     userName,
-    userId
+    userId,
+    history
   ) => {
     // Variable to get the accurate time a given production capacity is logged and it's then formated to hours and minutes display and finally used to set the time value property of the timeline item state
     const loggedProductionTime = moment().format("hh:mm");
@@ -1084,7 +1085,8 @@ export const functionUtils = {
               successAlert(title, text, link);
               clearTimeout(restartMarker);
               document.getElementById("stop-marker").id = "stop-start-marker";
-              window.location.reload();
+              // window.location.reload();
+              history.push("/production");
             }
           })
           .catch((error) => {

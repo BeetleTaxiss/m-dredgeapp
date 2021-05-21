@@ -14,6 +14,7 @@ import {
 import { BASE_API_URL } from "../../hooks/API";
 import moment from "moment";
 import "./production.scss";
+import { useHistory } from "react-router";
 
 export const Production = () => {
   // DISPLAY STATES FOR TIMER, PRODUCTION-CAPACITY AND TIMELINE COMPONENTS
@@ -161,6 +162,8 @@ export const Production = () => {
   );
 
   /**Handle Production Capacity submit and get it's return value */
+  const history = useHistory();
+
   const getReturnValueAndHandleSubmit = async () => {
     functionUtils
       .getTimeAndProductionStamp(
@@ -169,7 +172,8 @@ export const Production = () => {
         productionDetails,
         products,
         userName,
-        userId
+        userId,
+        history
       )
       .then((value) => {
         timelineItems = value;
