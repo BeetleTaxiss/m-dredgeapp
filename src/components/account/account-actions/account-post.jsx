@@ -130,6 +130,9 @@ const PostAccount = () => {
           successAlert(title, text, link);
           setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
       });
   };
 
@@ -140,25 +143,34 @@ const PostAccount = () => {
     const debitValue = parseInt(document.getElementById("debit-id").value);
     const creditValue = parseInt(document.getElementById("credit-id").value);
 
-    const debitItem = debitAccount.filter(({ id }) => id === debitValue),
-      creditItem = creditAccount.filter(({ id }) => id === creditValue),
-      credit_account = creditItem[0].account,
-      chart_id = creditItem[0]["chart-id"],
-      debit_account = debitItem[0].account;
+    const debitItem = debitAccount?.filter(({ id }) => id === debitValue),
+      creditItem = creditAccount?.filter(({ id }) => id === creditValue);
+    if (
+      creditAccount === null ||
+      creditAccount === undefined ||
+      debitAccount === null ||
+      debitAccount === undefined
+    ) {
+      errorAlert("Network Error", "Refresh Page");
+    } else {
+      const credit_account = creditItem[0].account,
+        chart_id = creditItem[0]["chart-id"],
+        debit_account = debitItem[0].account;
 
-    const postAccountData = {
-      user: userName,
-      "user-id": userId,
-      "chart-id": chart_id,
-      "credit-account": credit_account,
-      "debit-account": debit_account,
-      "credit-account-id": creditValue,
-      "debit-account-id": debitValue,
-      narration: narration,
-      amount: amount,
-      validation: debitItem[0].validation || creditItem[0].validation,
-    };
-    return postAccountData;
+      const postAccountData = {
+        user: userName,
+        "user-id": userId,
+        "chart-id": chart_id,
+        "credit-account": credit_account,
+        "debit-account": debit_account,
+        "credit-account-id": creditValue,
+        "debit-account-id": debitValue,
+        narration: narration,
+        amount: amount,
+        validation: debitItem[0].validation || creditItem[0].validation,
+      };
+      return postAccountData;
+    }
   };
 
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */

@@ -187,6 +187,9 @@ const OrderForm = () => {
           setError(false);
           setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
       });
   };
 

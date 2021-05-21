@@ -96,6 +96,9 @@ const AddAccount = () => {
           successAlert(title, text, link);
           setLoading(false);
         }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
       });
   };
 
@@ -105,16 +108,21 @@ const AddAccount = () => {
     const account = document.getElementById("account-name").value;
     const description = document.getElementById("account-description").value;
     const chartValue = parseInt(document.getElementById("chart-id").value);
-    const chartItem = chartList.filter(({ id }) => id === chartValue);
 
-    const addAccountData = {
-      account: account,
-      "chart-id": chartValue,
-      description: description,
-      validation: chartItem[0].validation,
-    };
+    if (chartList === undefined || chartList === null) {
+      errorAlert("Network Error", "Refresh Page");
+    } else {
+      const chartItem = chartList?.filter(({ id }) => id === chartValue);
 
-    return addAccountData;
+      const addAccountData = {
+        account: account,
+        "chart-id": chartValue,
+        description: description,
+        validation: chartItem[0].validation,
+      };
+
+      return addAccountData;
+    }
   };
 
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */

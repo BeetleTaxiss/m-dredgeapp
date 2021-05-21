@@ -300,65 +300,70 @@ const Users = () => {
         document.getElementById("password-add-user").value,
       newUserConfirmPassword = md5(
         document.getElementById("confirm-password-add-user").value
-      ),
-      jobDesc = userTypesList.filter(({ id }) => id === newUserType);
-
-    /** Validate Email address */
-    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-
-    if (!emailRegex.test(newUserEmail)) {
-      return errorAlert(
-        "Wrong Email Address",
-        "You must give a correct email address"
       );
+
+    if (userTypesList === undefined || userTypesList === null) {
+      errorAlert("Network Error", "Refresh Page");
+    } else {
+      let jobDesc = userTypesList.filter(({ id }) => id === newUserType);
+
+      /** Validate Email address */
+      const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
+      if (!emailRegex.test(newUserEmail)) {
+        return errorAlert(
+          "Wrong Email Address",
+          "You must give a correct email address"
+        );
+      }
+
+      /** Validate Username Length */
+      if (newUserName.length < 5) {
+        return errorAlert(
+          "Username not long enough",
+          "Make sure your password is longer than five (5) characters"
+        );
+      }
+
+      /** Validate Password Length */
+      if (passwordWithoutEncryption.length < 6) {
+        return errorAlert(
+          "Password not strong enough",
+          "Make sure your password is longer than six (6) characters"
+        );
+      }
+
+      /** Validate Passwords */
+      if (newUserPassword !== newUserConfirmPassword) {
+        return errorAlert(
+          "Password does not match",
+          "Confirm your password by giving exactly the same password"
+        );
+      }
+
+      /** get the userPermissionList data */
+      const permission = getPermissionData();
+
+      if (!permission) {
+        return errorAlert(
+          "Permission Error",
+          "You must give new user at least one permission"
+        );
+      }
+
+      const addUserData = {
+        user: newUserName,
+        "user-type": newUserType,
+        email: newUserEmail,
+        phone: newUserPhoneNo,
+        password: newUserPassword,
+        "password-confirm": newUserConfirmPassword,
+        permission: permission,
+        validation: jobDesc[0].validation,
+      };
+
+      return addUserData;
     }
-
-    /** Validate Username Length */
-    if (newUserName.length < 5) {
-      return errorAlert(
-        "Username not long enough",
-        "Make sure your password is longer than five (5) characters"
-      );
-    }
-
-    /** Validate Password Length */
-    if (passwordWithoutEncryption.length < 6) {
-      return errorAlert(
-        "Password not strong enough",
-        "Make sure your password is longer than six (6) characters"
-      );
-    }
-
-    /** Validate Passwords */
-    if (newUserPassword !== newUserConfirmPassword) {
-      return errorAlert(
-        "Password does not match",
-        "Confirm your password by giving exactly the same password"
-      );
-    }
-
-    /** get the userPermissionList data */
-    const permission = getPermissionData();
-
-    if (!permission) {
-      return errorAlert(
-        "Permission Error",
-        "You must give new user at least one permission"
-      );
-    }
-
-    const addUserData = {
-      user: newUserName,
-      "user-type": newUserType,
-      email: newUserEmail,
-      phone: newUserPhoneNo,
-      password: newUserPassword,
-      "password-confirm": newUserConfirmPassword,
-      permission: permission,
-      validation: jobDesc[0].validation,
-    };
-
-    return addUserData;
   };
   /** Retrive update user form data for client validation */
   const getUpdateUserFormData = () => {
