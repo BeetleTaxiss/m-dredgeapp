@@ -166,7 +166,7 @@
     font-size: 21px;
     font-weight: 600;
     color: #3b3f5c;
-    margin: 6px 0px 40px 0;
+    margin: 6px 0px 20px 0;
 }
 .bio .widget-content-area h3:after {
     position: absolute;
@@ -184,8 +184,9 @@
     color: #3b3f5c;
 }
 .bio .widget-content-area p {
-    color: #888ea8;
+    color: black;
     font-size: 15px;
+    margin-bottom: 1.5rem;
 }
 .bio .widget-content-area .bio-skill-box {
     padding-top: 30px;

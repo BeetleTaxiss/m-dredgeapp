@@ -30,6 +30,26 @@ const ModalBackdrop = ({
             setShowModal(false);
             setLoading(false);
             document.getElementById("loading-btn").disabled = false;
+            if (document.getElementById("span-comment-dispatcher") !== null) {
+              document.getElementById(
+                "span-comment-dispatcher"
+              ).innerHTML = `Dispatcher comment: No comment from dispatcher`;
+            }
+
+            if (document.getElementById("span-comment-dispatcher") !== null) {
+              document.getElementById(
+                "span-comment-loader"
+              ).innerHTML = `Loader comment: No comment from loader`;
+            }
+
+            if (document.getElementById("span-comment-inspector") !== null) {
+              document.getElementById(
+                "span-comment-loader"
+              ).innerHTML = `Inspector comment: No comment from inspector`;
+            }
+            if (document.getElementById("comment") !== null) {
+              document.getElementById("comment").value = "";
+            }
           }}
         ></div>
       )}

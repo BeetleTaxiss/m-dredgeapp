@@ -23,17 +23,15 @@ const TotalStockpile = () => {
               text = res.data.message;
             errorAlert(title, text);
           } else {
-            const max_stockpiled_capacity = 40000;
+            const max_stockpiled_capacity = 10000;
             const max_stockpiled_percentage = 100 / 100;
             const stockpiled_value = Math.round(
               totalStockpileResponse.stockpiled.total_stockpiled
             );
-            const current_stockpiled_percentage = Math.round(
+            const current_stockpiled_percentage =
               ((stockpiled_value * max_stockpiled_percentage) /
                 max_stockpiled_capacity) *
-                100
-            );
-
+              100;
             totalStockpileSchema = {
               info: {
                 value: `${functionUtils.addCommaToNumbers(
@@ -41,11 +39,20 @@ const TotalStockpile = () => {
                 )}cm³`,
                 duration: "this week",
               },
-              progressPercentage: `${current_stockpiled_percentage}`,
+              progressPercentage: `${current_stockpiled_percentage.toFixed(2)}`,
             };
 
             setTotalStockpile(totalStockpileSchema);
             console.log("Total order list: ", totalStockpile);
+            console.log(
+              "Total order list: ",
+              totalStockpileSchema,
+              totalStockpileResponse.stockpiled.total_stockpiled,
+              stockpiled_value,
+              current_stockpiled_percentage,
+              max_stockpiled_percentage,
+              max_stockpiled_capacity
+            );
           }
         })
         .catch((error) => {

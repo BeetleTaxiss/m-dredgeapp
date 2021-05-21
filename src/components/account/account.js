@@ -9,7 +9,6 @@ import PostAccount from "./account-actions/account-post";
 import AddAccount from "./account-actions/add-account";
 import ChartList from "./charts/chart-list";
 import ExpenseReport from "./expense-report/expense-report";
-import PostExpense from "./post-expense";
 import SingleExpenseReport from "./single-expense-report/single-expense-report";
 
 const Account = () => {
@@ -19,9 +18,7 @@ const Account = () => {
   const { url } = useRouteMatch();
   return (
     <PageWrapper>
-      {url === "/postexpense" ? (
-        <PostExpense />
-      ) : url === "/expensereport" ? (
+      {url === "/expensereport" ? (
         <ExpenseReport />
       ) : url === "/singleexpensereport" ? (
         <SingleExpenseReport />

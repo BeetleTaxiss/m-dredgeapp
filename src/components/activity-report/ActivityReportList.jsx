@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
-import { useGetUserDetails } from "../../hooks/function-utils";
+import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
 import { showLogItem } from "../cards/custom-activities-summary";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 
@@ -59,6 +59,7 @@ const ActivityReportList = () => {
                   date: date,
                   week: work_week,
                   "submitted-by": user_name,
+                  "submitted-date": date,
                   "tasks-completed": completed_tasks,
                   "tasks-ongoing": ongoing_tasks,
                   "nextweek-tasks": next_week_tasks,
@@ -69,6 +70,8 @@ const ActivityReportList = () => {
                   user: userName,
                   "task-id": task_id,
                 };
+
+                const increasedWidth = true;
 
                 const currentActivityReportItem = {
                   id: task_id,
@@ -91,17 +94,17 @@ const ActivityReportList = () => {
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: completed_tasks,
+                      item: functionUtils.truncate(completed_tasks, 20),
                     },
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: ongoing_tasks,
+                      item: functionUtils.truncate(ongoing_tasks, 20),
                     },
                     {
                       class: "text-left",
                       itemClass: "text-center",
-                      item: next_week_tasks,
+                      item: functionUtils.truncate(next_week_tasks, 20),
                     },
                     {
                       class: "text-left",
@@ -115,7 +118,8 @@ const ActivityReportList = () => {
                     },
                     {
                       class: "text-left",
-                      link: () => showLogItem(singleActivityReportPopup),
+                      link: () =>
+                        showLogItem(singleActivityReportPopup, increasedWidth),
                       userLog: true,
                       linkText: "View Activity Report",
                       itemClass: "btn btn-primary",

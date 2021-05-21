@@ -6,7 +6,6 @@ import WidgetHeader from "../../general/widget-header";
 import { BASE_API_URL } from "../../../hooks/API";
 import CustomTableList from "../../general/custom-table-list/custom-table-list";
 
-// import "./machinery.css";
 import ImpoundTruckForm from "./ImpoundTruckForm";
 import {
   functionUtils,

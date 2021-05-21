@@ -1,4 +1,0 @@
-export const ORDERS_TYPE = {
-  ADD_CHANGE: "ADD_CHANGE",
-  SUBMIT_FORM: "SUBMIT_FORM",
-};

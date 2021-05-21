@@ -445,170 +445,188 @@ export const functionUtils = {
      *---------------------------------------------------------------------------------------------------------
      */
     const calculateShift = () => {
-      // e.preventDefault();
-      // Variable to get the accurate time a shift started then formated to hours and minutes display and finally used to set the time value property of the timeline item state
-      const loggedShiftStart = moment().format("hh:mm");
-      const loggedShiftStartDate = moment().format("dd/mm/yy");
-      // Variable to set the previous time in the session storage which will help in calculating the duration between two production capacity inputs by the production manager and the logged to the timeline
-      const prevLoggedShiftTime = moment();
-      // Destructured shift duration state to access the to and from properties which will be used as the values for the date-time input fields in the shift Calculator component
-      const endDate = document.getElementById("enddateFlatpickr").value;
-      console.log("End value: ", endDate);
-      let newEndTime;
-      if (selectedEndDate.length >= 5) {
-        console.log("String not altered");
-        newEndTime = selectedEndDate;
+      /** Validate Production Capacity Before running function */
+      const validateProductionCapacityOnStart = parseInt(formInput[""]);
+      if (validateProductionCapacityOnStart === 0) {
+        errorAlert("Form Error", "Production Capacity can't be Zero (0)");
       } else {
-        newEndTime = "0" + selectedEndDate;
-      }
-      let newEndDate = endDate + `T${newEndTime}`;
-
-      // New Start Date
-      const startDate = document.getElementById("enddateFlatpickr").value;
-      console.log("Start value: ", startDate);
-      let newStartTime;
-      if (selectedDate.length >= 5) {
-        console.log("String not altered");
-        newStartTime = selectedDate;
-      } else {
-        newStartTime = "0" + selectedDate;
-      }
-      let newStartDate = startDate + `T${newStartTime}`;
-
-      // Convert Shift duration form input values to date-time values which can be used in calculations
-      let shiftStart = new Date(newStartDate),
-        shiftEnd = new Date(newEndDate),
-        // Calaculated difference between both shift duration form values and get the result in milliseconds
-        durationInMilliseconds = shiftEnd.getTime() - shiftStart.getTime(),
-        // Process to retrive single time values in hours, minutes and seconds from shift duration
-        shiftObject = new Date(durationInMilliseconds),
-        hours = shiftObject.getUTCHours(),
-        minutes = shiftObject.getUTCMinutes(),
-        seconds = shiftObject.getSeconds();
-      console.log(
-        "New start date: ",
-        newStartDate,
-        "New End date: ",
-        newEndDate
-      );
-      console.log("Shift start: ", shiftStart);
-      console.log("Shift end: ", shiftEnd);
-      console.log("Duration in milliseconds: ", durationInMilliseconds);
-      console.log("New Shift Object: ", shiftObject);
-      console.log(
-        "Hours: ",
-        hours,
-        " Minutes: ",
-        minutes,
-        " seconds: ",
-        seconds
-      );
-
-      // Add Marker Values to be sent to the server
-      const selectValue = document.getElementById("select").value;
-      console.log("Select Value: ", selectValue);
-
-      // Filter Products Array to get single product
-      const product = products?.filter((product) => product.id === selectValue);
-      console.log("Product: ", product);
-      const productId = product[0].id,
-        productName = product[0].product,
-        validation = product[0].validation;
-      const productionCapacityOnStart = parseInt(formInput[""]);
-      const pumping_distance_in_meters =
-        document.getElementById("distance").value;
-      const pumping_elevation_in_meters =
-        document.getElementById("elevation").value;
-      const addMarkerData = {
-        user: userName,
-        "user-id": parseInt(userId),
-        "product-id": productId,
-        product: productName,
-        "production-capacity": productionCapacityOnStart,
-        "start-time": loggedShiftStart,
-        "production-date": loggedShiftStartDate,
-        "pumping-distance-in-meters": pumping_distance_in_meters,
-        "pumping-elevation-in-meters": pumping_elevation_in_meters,
-      };
-      /** Retrive Add marker form data for client validation */
-      const addMarkerClientData = {
-        user: userName,
-        "user-id": parseInt(userId),
-        "product-id": productId,
-        product: productName,
-        "production-capacity": productionCapacityOnStart,
-        "start-time": durationInMilliseconds === 0 ? NaN : loggedShiftStart,
-        "production-date": loggedShiftStartDate,
-        "pumping-distance-in-meters": pumping_distance_in_meters,
-        "pumping-elevation-in-meters": pumping_elevation_in_meters,
-        validation: validation,
-      };
-      console.log("add Marker Values: ", addMarkerData);
-      /** Client form validation before https call */
-      const validationStatus =
-        functionUtils.validateFormInputs(addMarkerClientData);
-      if (validationStatus === true) {
-        try {
-          setLoading(true);
-          axios
-            .post(
-              `${BASE_API_URL}/api/v1/production/add-marker.php`,
-              addMarkerData
-            )
-            .then((res) => {
-              // alert("Axios Working");
-              console.log("Add Marker Data: ", res.data);
-              if (res.data.error) {
-                let title = "Shift failed",
-                  text = res.data.message;
-                errorAlert(title, text);
-                setLoading(false);
-              } else {
-                // Once the singular time values are gotten, they are set to the component's state using the setCounter function which will start the count down timer. Once this is done, the shift Calculator component is removed from the UI and the countdown timer, production capacity calculator and timeline notifications are shown by setting their respective display states to true while showing an inital timeline notification saying the shift has started.
-                setLoading(false);
-                setDisplayTimer(true);
-                setDisplayTimeline(true);
-
-                timelineItems = timelineItems.concat({
-                  time: loggedShiftStart,
-                  dotColor: "primary",
-                  text: `Shift started and Production running at ${productionCapacityOnStart}%`,
-                });
-                setTimelineItem(timelineItems);
-                console.log("timeline Items: ", timelineItems);
-                res.data["initial_production_capacity"] = formInput[""];
-                res.data["product_id"] = productId;
-                res.data["pumping_distance_in_meters"] =
-                  pumping_distance_in_meters;
-                res.data["pumping_elevation_in_meters"] =
-                  pumping_elevation_in_meters;
-                res.data["product_name"] = productName;
-
-                setProductionDetails(res.data);
-                setCounter({ hours, minutes, seconds });
-                document.getElementById("distance").value =
-                  pumping_distance_in_meters;
-                document.getElementById("elevation").value =
-                  pumping_elevation_in_meters;
-                document.getElementById("current-production-capacity").value =
-                  productionCapacityOnStart;
-                document.getElementById("range-count-number").innerHTML =
-                  productionCapacityOnStart;
-
-                functionUtils.showTimeLine(
-                  timelineItems,
-                  "timeline-notification-single"
-                );
-              }
-            });
-        } catch (error) {
-          let title = "Shift failed",
-            text = error;
-          errorAlert(title, text);
+        // e.preventDefault();
+        // Variable to get the accurate time a shift started then formated to hours and minutes display and finally used to set the time value property of the timeline item state
+        const loggedShiftStart = moment().format("hh:mm");
+        const loggedShiftStartDate = moment().format("DD/MM/YYYY");
+        // Variable to set the previous time in the session storage which will help in calculating the duration between two production capacity inputs by the production manager and the logged to the timeline
+        const prevLoggedShiftTime = moment();
+        // Destructured shift duration state to access the to and from properties which will be used as the values for the date-time input fields in the shift Calculator component
+        const endDate = document.getElementById("enddateFlatpickr").value;
+        console.log("End value: ", endDate);
+        let newEndTime;
+        if (selectedEndDate.length >= 5) {
+          console.log("String not altered");
+          newEndTime = selectedEndDate;
+        } else {
+          newEndTime = "0" + selectedEndDate;
         }
+        let newEndDate = endDate + `T${newEndTime}`;
 
-        // Set the previous time/start time of the shift on shift start to help ascertain difference in shift durations when production capacity is being calculated
-        sessionStorage.setItem("prevTime", prevLoggedShiftTime);
+        // New Start Date
+        const startDate = document.getElementById("enddateFlatpickr").value;
+        console.log("Start value: ", startDate);
+        let newStartTime;
+        if (selectedDate.length >= 5) {
+          console.log("String not altered");
+          newStartTime = selectedDate;
+        } else {
+          newStartTime = "0" + selectedDate;
+        }
+        let newStartDate = startDate + `T${newStartTime}`;
+
+        // Convert Shift duration form input values to date-time values which can be used in calculations
+        let shiftStart = new Date(newStartDate),
+          shiftEnd = new Date(newEndDate),
+          // Calaculated difference between both shift duration form values and get the result in milliseconds
+          durationInMilliseconds = shiftEnd.getTime() - shiftStart.getTime(),
+          // Process to retrive single time values in hours, minutes and seconds from shift duration
+          shiftObject = new Date(durationInMilliseconds),
+          hours = shiftObject.getUTCHours(),
+          minutes = shiftObject.getUTCMinutes(),
+          seconds = shiftObject.getSeconds();
+        console.log(
+          "New start date: ",
+          newStartDate,
+          "New End date: ",
+          newEndDate
+        );
+        console.log("Shift start: ", shiftStart);
+        console.log("Shift end: ", shiftEnd);
+        console.log("Duration in milliseconds: ", durationInMilliseconds);
+        console.log("New Shift Object: ", shiftObject);
+        console.log(
+          "Hours: ",
+          hours,
+          " Minutes: ",
+          minutes,
+          " seconds: ",
+          seconds
+        );
+
+        // Add Marker Values to be sent to the server
+        const selectValue = document.getElementById("select").value;
+        console.log("Select Value: ", selectValue);
+
+        // Filter Products Array to get single product
+        const product = products?.filter(
+          (product) => product.id === selectValue
+        );
+        console.log("Product: ", product);
+        const productId = product[0].id,
+          productName = product[0].product,
+          validation = product[0].validation;
+        const productionCapacityOnStart = parseInt(formInput[""]);
+        const pumping_distance_in_meters =
+          document.getElementById("distance").value;
+        const pumping_elevation_in_meters =
+          document.getElementById("elevation").value;
+        const addMarkerData = {
+          user: userName,
+          "user-id": parseInt(userId),
+          "product-id": productId,
+          product: productName,
+          "production-capacity": productionCapacityOnStart,
+          "start-time": loggedShiftStart,
+          "production-date": loggedShiftStartDate,
+          "pumping-distance-in-meters": pumping_distance_in_meters,
+          "pumping-elevation-in-meters": pumping_elevation_in_meters,
+        };
+        /** Retrive Add marker form data for client validation */
+        const addMarkerClientData = {
+          user: userName,
+          "user-id": parseInt(userId),
+          "product-id": productId,
+          product: productName,
+          "production-capacity": productionCapacityOnStart,
+          "start-time": durationInMilliseconds === 0 ? NaN : loggedShiftStart,
+          "production-date": loggedShiftStartDate,
+          "pumping-distance-in-meters": pumping_distance_in_meters,
+          "pumping-elevation-in-meters": pumping_elevation_in_meters,
+          validation: validation,
+        };
+        console.log("add Marker Values: ", addMarkerData);
+
+        /** Client form validation before https call */
+        const validationStatus = functionUtils.validateFormInputs(
+          addMarkerClientData,
+          {
+            "production-capacity": {
+              validationValue: 1,
+              validator: "gt",
+              message: "Production capacity can't be Zero (0)",
+            },
+          }
+        );
+
+        if (validationStatus === true) {
+          try {
+            setLoading(true);
+            axios
+              .post(
+                `${BASE_API_URL}/api/v1/production/add-marker.php`,
+                addMarkerData
+              )
+              .then((res) => {
+                // alert("Axios Working");
+                console.log("Add Marker Data: ", res.data);
+                if (res.data.error) {
+                  let title = "Shift failed",
+                    text = res.data.message;
+                  errorAlert(title, text);
+                  setLoading(false);
+                } else {
+                  // Once the singular time values are gotten, they are set to the component's state using the setCounter function which will start the count down timer. Once this is done, the shift Calculator component is removed from the UI and the countdown timer, production capacity calculator and timeline notifications are shown by setting their respective display states to true while showing an inital timeline notification saying the shift has started.
+                  setLoading(false);
+                  setDisplayTimer(true);
+                  setDisplayTimeline(true);
+
+                  timelineItems = timelineItems.concat({
+                    time: loggedShiftStart,
+                    dotColor: "primary",
+                    text: `Shift started and Production running at ${productionCapacityOnStart}%`,
+                  });
+                  setTimelineItem(timelineItems);
+                  console.log("timeline Items: ", timelineItems);
+                  res.data["initial_production_capacity"] = formInput[""];
+                  res.data["product_id"] = productId;
+                  res.data["pumping_distance_in_meters"] =
+                    pumping_distance_in_meters;
+                  res.data["pumping_elevation_in_meters"] =
+                    pumping_elevation_in_meters;
+                  res.data["product_name"] = productName;
+
+                  setProductionDetails(res.data);
+                  setCounter({ hours, minutes, seconds });
+                  document.getElementById("distance").value =
+                    pumping_distance_in_meters;
+                  document.getElementById("elevation").value =
+                    pumping_elevation_in_meters;
+                  document.getElementById("current-production-capacity").value =
+                    productionCapacityOnStart;
+                  document.getElementById("range-count-number").innerHTML =
+                    productionCapacityOnStart;
+
+                  functionUtils.showTimeLine(
+                    timelineItems,
+                    "timeline-notification-single"
+                  );
+                }
+              });
+          } catch (error) {
+            let title = "Shift failed",
+              text = error;
+            errorAlert(title, text);
+          }
+
+          // Set the previous time/start time of the shift on shift start to help ascertain difference in shift durations when production capacity is being calculated
+          sessionStorage.setItem("prevTime", prevLoggedShiftTime);
+        }
       }
     };
     /**--------------------------------------------------------------------------------------------------------
@@ -769,10 +787,13 @@ export const functionUtils = {
     const MAX_PRODUCTION_OUTPUT = 350;
     const SECONDS = 3600;
     const DISTANCE_BENCHMARK = 1000;
-    const pumping_distance_in_meters =
-      productDetailsStateless.pumping_distance_in_meters;
     const pumping_elevation_in_meters =
       productDetailsStateless.pumping_elevation_in_meters;
+
+    const pumping_distance_in_meters =
+      productDetailsStateless.pumping_distance_in_meters +
+      parseInt(pumping_elevation_in_meters);
+
     const calDistance = DISTANCE_BENCHMARK / pumping_distance_in_meters;
     const MAX_PRODUCTION_OUTPUT_PER_SECONDS = MAX_PRODUCTION_OUTPUT / SECONDS;
     const MAX_PRODUCTION_CAPACITY = 100 / 100;
@@ -793,10 +814,12 @@ export const functionUtils = {
       MAX_PRODUCTION_CAPACITY;
     const calcProductionOutput = calcProductionOutputPerDistance * calDistance;
 
-    const productionOutputForUser = Math.round(calcProductionOutput);
+    const productionOutputForUser = parseFloat(calcProductionOutput.toFixed(2));
+    // const productionOutputForUser = Math.round(calcProductionOutput);
 
     console.log("Output: ", productionOutputForUser);
     console.log("Calculated Production Capacity: ", PRODUCTION_CAPACITY);
+    console.log("Calculated Production Output: ", calcProductionOutput);
     console.log("Pumping distance in meters: ", pumping_distance_in_meters);
 
     /*---------------------------------------------------------------------------------------------------------
@@ -855,6 +878,7 @@ export const functionUtils = {
     const productName = productDetailsStateless.product_name;
     const production_id = productDetailsStateless.production_id;
     const batch_no = productDetailsStateless.batch_no;
+
     /**Add Stop Production Data */
     const addStopMarkerData = {
       user: userName,
@@ -916,6 +940,7 @@ export const functionUtils = {
     if (stopProductionBtnId !== null) {
       stopProductionBtnIdAttribute =
         stopProductionBtnId.dataset.runStopStartMarker;
+      // stopProductionBtnId.dataset.runStopMarker;
     }
 
     let pauseProductionBtnId = document.getElementById("pause-marker");
@@ -995,7 +1020,7 @@ export const functionUtils = {
             errorAlert(title, text);
           });
 
-        console.log("Add Stop Marker Response Data: ", response.data);
+        console.log("Add Stop Marker Response Data: ", response?.data);
         if (response.data.error) {
           const title = "Server Error Response",
             text = response.data.message;
@@ -1059,6 +1084,7 @@ export const functionUtils = {
               successAlert(title, text, link);
               clearTimeout(restartMarker);
               document.getElementById("stop-marker").id = "stop-start-marker";
+              window.location.reload();
             }
           })
           .catch((error) => {
@@ -1121,6 +1147,7 @@ export const functionUtils = {
                 restartStopMarker();
               } else {
                 stopStartProductionBtnId.disabled = true;
+                stopProductionBtnId.disabled = true;
                 /** indicate that the shift ispaused */
                 functionUtils.shiftPausedStatus = true;
                 const title = "Shift paused Successfully";
@@ -1181,6 +1208,7 @@ export const functionUtils = {
               productDetailsStateless.pumping_elevation_in_meters =
                 new_pumping_elevation_in_meters;
               stopStartProductionBtnId.disabled = false;
+              stopProductionBtnId.disabled = false;
 
               const title = "Shift Resumed Successfully";
               successAlert(title);
@@ -1624,13 +1652,14 @@ export const functionUtils = {
    * @param {*} formData `formData` is passed as a key value pair
    * @returns
    */
-  validateFormInputs: (formData) => {
+  validateFormInputs: (formData, validationParam = null) => {
     console.log("Form data in validation: ", formData);
     let formInputValue = true;
     /** Check if form data is undefined */
     if (formData === undefined || formData === null) {
       return (formInputValue = false);
     }
+
     for (const [key, value] of Object.entries(formData)) {
       /** Convert value to string without spacing */
       let stringValue = `${value}`;
@@ -1658,6 +1687,32 @@ export const functionUtils = {
           text = `${key}: Must be a number`;
         errorAlert(title, text);
         return (formInputValue = false);
+      }
+
+      /** Validate for optional values */
+      if (validationParam && validationParam[key]) {
+        let { validationValue, validator, message } = validationParam[key];
+        console.log("Validation param: ", validationParam[key]);
+
+        if (validationValue !== null && validator !== null) {
+          message = message === null || message === undefined ? "" : message;
+          switch (validator) {
+            case "gt":
+              if (value < validationValue) {
+                errorAlert("Form Error", message);
+                return (formInputValue = false);
+              }
+              break;
+            case "eq":
+              if (value == validationValue) {
+                errorAlert("Form Error", message);
+                return (formInputValue = false);
+              }
+              break;
+            default:
+              return (formInputValue = true);
+          }
+        }
       }
 
       /** Validate for undefined and null */

@@ -97,12 +97,21 @@ export const Activities = ({ content, showItem }) => {
   );
 };
 
-export const showLogItem = (item) => {
+export const showLogItem = (item, increasedWidth) => {
   console.log("Item: ", item);
   const logTable = DOMSERVER.renderToString(showDetailedLogItem(item));
 
-  Swal.fire({
-    html: logTable,
-    showConfirmButton: false,
-  });
+  !increasedWidth &&
+    Swal.fire({
+      html: logTable,
+      showConfirmButton: false,
+      width: "800px",
+    });
+
+  increasedWidth &&
+    Swal.fire({
+      html: logTable,
+      showConfirmButton: false,
+      width: "1000px",
+    });
 };

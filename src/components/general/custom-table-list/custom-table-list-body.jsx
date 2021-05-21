@@ -31,6 +31,27 @@ const CustomTableListBody = ({ content, setLoad }) => {
                           "Are you sure you want to add this stockpile to Stock ?";
                         field.warningAlert(title, field.addToStock);
                       }
+
+                      /** Render Order details to either loader, Inspector or Clearance UI modal on button click  */
+                      if (field.load) {
+                        document.getElementById("span-product").innerHTML =
+                          field.loadDisplay.product;
+                        document.getElementById("quantity").innerHTML =
+                          functionUtils.addCommaToNumbers(
+                            field.loadDisplay.qty
+                          );
+                        document.getElementById("truckNo").innerHTML =
+                          field.loadDisplay.truckNo === ""
+                            ? "No Truck Number"
+                            : field.loadDisplay.truckNo;
+                        document.getElementById("cost").innerHTML =
+                          functionUtils.addCommaToNumbers(
+                            field.loadDisplay.price
+                          );
+                        setLoad(field.load);
+                        field.link(true);
+                      }
+
                       // console.log("Processing Data: ", field.isProcessing);
                       if (field.processing) {
                         field.processing(field.isProcessing);
@@ -132,27 +153,6 @@ const CustomTableListBody = ({ content, setLoad }) => {
                             `;
                       }
 
-                      /** Render Order details to either loader, Inspector or Clearance UI modal on button click  */
-                      if (field.load) {
-                        document.getElementById("span-product").innerHTML =
-                          field.loadDisplay.product;
-                        document.getElementById(
-                          "quantity"
-                        ).innerHTML = functionUtils.addCommaToNumbers(
-                          field.loadDisplay.qty
-                        );
-                        document.getElementById("truckNo").innerHTML =
-                          field.loadDisplay.truckNo === ""
-                            ? "No Truck Number"
-                            : field.loadDisplay.truckNo;
-                        document.getElementById(
-                          "cost"
-                        ).innerHTML = functionUtils.addCommaToNumbers(
-                          field.loadDisplay.price
-                        );
-                        setLoad(field.load);
-                        field.link(true);
-                      }
                       /** Render detailed User activities with popup  */
                       if (field.userLog) {
                         // alert("fired");

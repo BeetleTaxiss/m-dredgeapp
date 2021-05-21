@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 import { getShiftPausedStatus } from "../../hooks/function-utils";
 import { FormDetails } from "../orders/order-form/order-form-details";
@@ -124,18 +125,16 @@ const ProductionCapacity = ({
               isShiftPaused = getShiftPausedStatus();
               console.log("isResumed: ", isShiftPaused);
 
-              let stopStartProductionBtnId = document.getElementById(
-                "stop-start-marker"
-              );
+              let stopStartProductionBtnId =
+                document.getElementById("stop-start-marker");
 
               if (isShiftPaused === false) {
                 if (stopStartProductionBtnId !== null) {
                   stopStartProductionBtnId.dataset.runStopStartMarker = false;
                 }
 
-                let pauseProductionBtnId = document.getElementById(
-                  "pause-marker"
-                );
+                let pauseProductionBtnId =
+                  document.getElementById("pause-marker");
 
                 if (pauseProductionBtnId !== null) {
                   pauseProductionBtnId.dataset.runPauseResumeMarker = true;
@@ -155,9 +154,8 @@ const ProductionCapacity = ({
 
               const cleanUpProductionId = (isShiftPaused) => {
                 if (isShiftPaused === true) {
-                  let resumeProductionBtnId = document.getElementById(
-                    "resume-marker"
-                  );
+                  let resumeProductionBtnId =
+                    document.getElementById("resume-marker");
                   if (resumeProductionBtnId !== null) {
                     resumeProductionBtnId.dataset.runPauseResumeMarker = false;
                     stopStartProductionBtnId.dataset.runStopStartMarker = true;
@@ -174,6 +172,29 @@ const ProductionCapacity = ({
             style={{ width: "16rem", height: "3rem", fontSize: "1rem" }}
           >
             Pause Shift
+          </button>
+
+          <button
+            onClick={async () => {
+              const loggedShiftEnd = moment().format("hh:mm");
+              let endTimelineItem = {
+                time: loggedShiftEnd,
+                dotColor: "primary",
+                text: "Shift ended",
+              };
+              if (document.getElementById("stop-start-marker") !== null) {
+                document.getElementById("stop-start-marker").id = "stop-marker";
+                await handleSubmit();
+              }
+            }}
+            name="txt"
+            id="stop-marker"
+            data-run-stop-marker="false"
+            data-btn-text=""
+            className="mt-4 btn btn-danger"
+            style={{ width: "16rem", height: "3rem", fontSize: "1rem" }}
+          >
+            End Shift
           </button>
         </div>
       </form>

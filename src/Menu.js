@@ -14,7 +14,6 @@ import DispatchOrderList from "./components/orders/dispatch-orders-list/dispatch
 
 import RevenueReport from "./components/revenue/revenue-report/revenue-report";
 import SingleRevenueReport from "./components/revenue/single-revenue-report/single-revenue-report";
-import PostExpense from "./components/account/post-expense";
 import ExpenseReport from "./components/account/expense-report/expense-report";
 import ChartList from "./components/account/charts/chart-list";
 import AddAccount from "./components/account/account-actions/add-account";
@@ -597,6 +596,12 @@ export const Menu = {
       usePageWrapper: false,
     },
 
+    orderDispatchList: {
+      text: "Orders Dispatch",
+      link: "/dashboarddispatch",
+      component: DispatchOrderList,
+    },
+
     /** The entries below define items to show only on the dashboard
      * @note: `showOnDashboard:true` and `showInMenu:false` property for each entry.
      * Our dashboard creation method will check if `showOnDashboard` property is true before showing on the dashboard
@@ -785,15 +790,10 @@ export const Menu = {
 
   /** Account menu items goes here */
   account: {
-    postExpenses: {
-      text: "Post Expenses",
-      link: "/postexpense",
-      component: PostExpense,
-    },
-    expenseReport: {
-      text: "Expenses Report",
-      link: "/expensereport",
-      component: ExpenseReport,
+    postToAccount: {
+      text: "Post Entry",
+      link: "/postaccount",
+      component: PostAccount,
     },
     chartOfAccount: {
       text: "Chart of Account",
@@ -809,11 +809,6 @@ export const Menu = {
       text: "Business Accounts",
       link: "/accountlist",
       component: AccountList,
-    },
-    postToAccount: {
-      text: "Post Entry",
-      link: "/postaccount",
-      component: PostAccount,
     },
   },
 
@@ -909,6 +904,12 @@ export const Menu = {
     },
   },
 };
+
+//     expenseReport: {
+//       text: "Expenses Report",
+//       link: "/expensereport",
+//       component: ExpenseReport,
+//     },
 
 /**
  * This is the menu definition for our individual menu entries

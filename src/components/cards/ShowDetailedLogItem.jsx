@@ -1,13 +1,48 @@
 import React from "react";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
+import ReportCard from "./ReportCard";
 export const showDetailedLogItem = (logItem) => {
+  console.log("Log Item: ", logItem);
+  // alert("Fired at");
   let keyValuePair = [];
   let oldKeyValuePair = [];
   let newData;
-  let extendedNewData = JSON.parse(logItem.data);
   let oldData;
 
-  if (logItem.data) {
+  if (logItem["tasks-completed"]) {
+    // for (const [key, value] of Object.entries(logItem)) {
+    //   keyValuePair = keyValuePair.concat({
+    //     id: key,
+    //     fields: [
+    //       {
+    //         class: "text-left",
+    //         itemClass: "text-center",
+    //         item: key,
+    //       },
+    //       {
+    //         class: "text-left",
+    //         itemClass: "text-center",
+    //         item: value,
+    //       },
+    //     ],
+    //   });
+    // }
+    // /** Detailed Log List Table Data */
+    // const detailedLogListTableData = {
+    //   tableTitle: "Single Activity Report",
+    //   header: [
+    //     { class: "", title: "Activity Field" },
+    //     { class: "", title: "Value" },
+    //   ],
+    //   body: keyValuePair,
+    // };
+    return <ReportCard content={logItem} />;
+    // return <CustomTableList content={detailedLogListTableData} />;
+  }
+
+  let extendedNewData = JSON.parse(logItem.data && logItem.data);
+
+  if (logItem?.data) {
     if (extendedNewData.data) {
       console.log("Extended data: ", extendedNewData.data);
       newData = extendedNewData.data && extendedNewData.data;
@@ -15,38 +50,8 @@ export const showDetailedLogItem = (logItem) => {
       newData = JSON.parse(logItem.data && logItem.data);
     }
   }
-  if (logItem.data_old) {
+  if (logItem?.data_old) {
     oldData = JSON.parse(logItem.data_old && logItem.data_old);
-  }
-
-  if (logItem["tasks-completed"]) {
-    for (const [key, value] of Object.entries(logItem)) {
-      keyValuePair = keyValuePair.concat({
-        id: key,
-        fields: [
-          {
-            class: "text-left",
-            itemClass: "text-center",
-            item: key,
-          },
-          {
-            class: "text-left",
-            itemClass: "text-center",
-            item: value,
-          },
-        ],
-      });
-    }
-    /** Detailed Log List Table Data */
-    const detailedLogListTableData = {
-      tableTitle: "Single Activity Report",
-      header: [
-        { class: "", title: "Activity Field" },
-        { class: "", title: "Value" },
-      ],
-      body: keyValuePair,
-    };
-    return <CustomTableList content={detailedLogListTableData} />;
   }
 
   if (logItem.action === "delete") {

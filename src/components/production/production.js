@@ -6,6 +6,7 @@ import TimelineNotification from "./timeline-notification";
 import ProductionCapacity from "./production-capacity";
 import PageWrapper from "../general/page-wrapper";
 import {
+  errorAlert,
   functionUtils,
   useGetUserDetails,
   warningAlert,
@@ -59,6 +60,10 @@ export const Production = () => {
               console.log("New Data", data);
               setProducts(data);
             }
+          })
+          .catch((error) => {
+            // errorAlert("Network Error", error);
+            console.log("Error: ", error);
           });
       } catch (error) {
         if (axios.isCancel(error)) {
