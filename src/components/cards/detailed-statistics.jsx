@@ -29,14 +29,12 @@ const DetailedStatistics = () => {
             { stock },
           ];
 
-          console.log("Detailed: ", detailedStatsResponse);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
             errorAlert(title, text);
           } else {
             detailedStatsResponseList.map((item, id) => {
-              console.log("Detailed Item: ", item);
               const total_wet_sand = Math.round(item.total_wet_sand);
               const total_stockpiled = Math.round(item.total_stockpiled);
               const total_stock = Math.round(item.stock);
@@ -66,7 +64,6 @@ const DetailedStatistics = () => {
                 detailedStatsList.concat(detailedStatsSchema));
             });
             setDetailedStats(detailedStatsList);
-            console.log("Recent order list: ", detailedStats);
           }
         })
         .catch((error) => {

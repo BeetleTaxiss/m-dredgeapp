@@ -21,7 +21,6 @@ const TotalOrders = () => {
         })
         .then((res) => {
           let totalOrdersResponse = res.data;
-          console.log("Total orders: ", totalOrdersResponse);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -32,7 +31,6 @@ const TotalOrders = () => {
             totalOrdersSchema = { title: "Total Orders", value: orders_count };
 
             setTotalOrders(totalOrdersSchema);
-            console.log("Total order list: ", totalOrders);
           }
         })
         .catch((error) => {

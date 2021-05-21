@@ -15,7 +15,6 @@ const TotalRevenue = () => {
         .get(`${BASE_API_URL}/api/v1/order/summary.php`)
         .then((res) => {
           let totalRevenueResponse = res.data;
-          console.log("Total revenue: ", totalRevenueResponse);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -31,7 +30,6 @@ const TotalRevenue = () => {
             };
 
             setTotalRevenue(totalRevenueSchema);
-            console.log("Total revenue list: ", totalRevenue);
           }
         })
         .catch((error) => {

@@ -42,7 +42,6 @@ const ChartList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/account/chart-list.php`)
           .then((res) => {
-            console.log("Chart List data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -95,7 +94,6 @@ const ChartList = () => {
                   chartListBody.concat(currentAccountItem));
               });
               setChartList(chartListBody);
-              console.log("Account Sand List Body: ", chartList);
             }
           })
           .catch((error) => {
@@ -129,7 +127,6 @@ const ChartList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/account/account-types.php`)
           .then((res) => {
-            console.log("Account types response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -157,7 +154,6 @@ const ChartList = () => {
                 validation: "Can't select this option",
               });
               setAccountTypes(accountTypeBody);
-              console.log("Account types Body: ", accountTypes);
             }
           })
           .catch((error) => {
@@ -192,7 +188,6 @@ const ChartList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/account/account-statement-types.php`)
           .then((res) => {
-            console.log("Statement types response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -218,7 +213,6 @@ const ChartList = () => {
                 validation: "Can't select this option",
               });
               setStatementTypes(statementTypeBody);
-              console.log("statement types Body: ", statementTypes);
             }
           })
           .catch((error) => {
@@ -286,10 +280,6 @@ const ChartList = () => {
       ({ id }) => id === statement_type_id
     );
     const statement = statementTypeItem[0].description;
-    console.log("Statement types item hd: ", statementTypeItem);
-    console.log("Account types hd : ", accountTypes);
-    console.log("Account type ID hd : ", account_type_id);
-    console.log("Account types item hd: ", accountTypeItem);
 
     const chartListData = {
       "account-type": account,
@@ -297,11 +287,9 @@ const ChartList = () => {
       "statement-id": statement_type_id,
       description: description,
     };
-    console.log("Update API values: ", chartListData);
     axios
       .post(`${BASE_API_URL}/api/v1/account/chart-add.php`, chartListData)
       .then((res) => {
-        console.log("Add Chart response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -328,7 +316,6 @@ const ChartList = () => {
         "chart-id": id,
       })
       .then((res) => {
-        console.log("Delete response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error",
             text = res.data.message;
@@ -414,7 +401,6 @@ const ChartList = () => {
     },
   ];
 
-  console.log(chartListTableData);
   /** Account list component display */
   const ChartListComponent = () => (
     <div id="basic" className="col-lg-12 layout-spacing">

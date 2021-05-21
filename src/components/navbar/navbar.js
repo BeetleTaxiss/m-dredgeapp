@@ -101,7 +101,6 @@ const Navbar = ({ userPermission }) => {
     axios
       .post(`${BASE_API_URL}/api/v1/user/logout.php`, userLogOutData)
       .then((res) => {
-        console.log("Logged out User Data", res.data);
         if (res.data.error) {
           const title = "Log Out failed",
             text = res.data.message;

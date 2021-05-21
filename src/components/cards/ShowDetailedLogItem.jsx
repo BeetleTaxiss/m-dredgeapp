@@ -2,8 +2,6 @@ import React from "react";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 import ReportCard from "./ReportCard";
 export const showDetailedLogItem = (logItem) => {
-  console.log("Log Item: ", logItem);
-  // alert("Fired at");
   let keyValuePair = [];
   let oldKeyValuePair = [];
   let newData;
@@ -44,7 +42,6 @@ export const showDetailedLogItem = (logItem) => {
 
   if (logItem?.data) {
     if (extendedNewData.data) {
-      console.log("Extended data: ", extendedNewData.data);
       newData = extendedNewData.data && extendedNewData.data;
     } else {
       newData = JSON.parse(logItem.data && logItem.data);
@@ -85,10 +82,7 @@ export const showDetailedLogItem = (logItem) => {
   }
 
   if (logItem.action === "update") {
-    console.log("LOG ITEM nODE", newData);
-
     for (const [key, value] of Object.entries(newData)) {
-      console.log("LOG ITEM", `${key}: ${value}`);
       keyValuePair = keyValuePair?.concat({
         id: key,
         fields: [
@@ -106,7 +100,6 @@ export const showDetailedLogItem = (logItem) => {
       });
     }
     for (const [key, value] of Object.entries(oldData)) {
-      console.log(`${key}: ${value}`);
       oldKeyValuePair = oldKeyValuePair.concat({
         id: key,
         fields: [
@@ -151,10 +144,7 @@ export const showDetailedLogItem = (logItem) => {
   }
 
   if (logItem.action === "update" && extendedNewData.data) {
-    console.log("LOG ITEM nODE", newData);
-
     for (const [key, value] of Object.entries(extendedNewData.data)) {
-      console.log("LOG ITEM", `${key}: ${value}`);
       keyValuePair = keyValuePair?.concat({
         id: key,
         fields: [
@@ -172,7 +162,6 @@ export const showDetailedLogItem = (logItem) => {
       });
     }
     for (const [key, value] of Object.entries(oldData)) {
-      console.log(`${key}: ${value}`);
       oldKeyValuePair = oldKeyValuePair.concat({
         id: key,
         fields: [

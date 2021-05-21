@@ -46,7 +46,6 @@ const WetSand = () => {
             },
           })
           .then((res) => {
-            console.log("Wet sand response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -70,9 +69,7 @@ const WetSand = () => {
                 const date_in = item?.date_in;
                 const new_date = moment().format("DD/MM/YYYY");
                 let stockpileReady = new_date > date_in ? true : false;
-                console.log("difference in days: ", stockpileReady);
-                console.log("Date in: ", date_in);
-                console.log("New Date: ", new_date);
+
                 /** to stockpile API data */
                 const toStockpileData = {
                   "user-id": parseInt(userId),
@@ -80,7 +77,7 @@ const WetSand = () => {
                   "production-id": production_id,
                   "batch-no": batch,
                 };
-                console.log("data: ", toStockpileData);
+
                 const currentWetSandItem = {
                   id: production_id,
                   fields: [
@@ -154,7 +151,6 @@ const WetSand = () => {
                   wetSandListBody.concat(currentWetSandItem));
               });
               setWetSandList(wetSandListBody);
-              console.log("Wet Sand List Body: ", wetsandList);
             }
           })
           .catch((error) => {
@@ -216,7 +212,6 @@ const WetSand = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/production/stockpile.php`, toStockpile)
       .then((res) => {
-        console.log("Stockpile response Data: ", res.data.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -252,7 +247,7 @@ const WetSand = () => {
 
     body: wetsandList,
   };
-  console.log(wetsandListTableData);
+
   /** Wet sand list component display */
   const WetSandListComponent = () => (
     <CustomTableList

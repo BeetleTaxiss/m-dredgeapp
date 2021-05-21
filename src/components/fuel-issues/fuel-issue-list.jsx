@@ -16,7 +16,6 @@ const FuelIssueList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/operations/fuel-issue-list.php`)
           .then((res) => {
-            console.log("Fuel response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -79,7 +78,6 @@ const FuelIssueList = () => {
                   fuelIssueListBody.concat(currentFuelIssueItem));
               });
               setFuelIssueList(fuelIssueListBody);
-              console.log("Fuel Sand List Body: ", fuelIssueList);
             }
           })
           .catch((error) => {
@@ -89,7 +87,6 @@ const FuelIssueList = () => {
           });
       } catch (error) {
         if (axios.isCancel(error)) {
-          console.log("Axios error: ", error);
         } else {
           throw error;
         }
@@ -125,7 +122,7 @@ const FuelIssueList = () => {
 
     body: fuelIssueList,
   };
-  console.log(fuelIssueListTableData);
+
   /** Fuel list component display */
   const FuelListComponent = () => (
     <CustomTableList

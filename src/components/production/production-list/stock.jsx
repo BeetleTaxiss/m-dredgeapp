@@ -15,7 +15,6 @@ const Stock = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/production/list-stock-entry.php`)
           .then((res) => {
-            console.log("stock response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -79,7 +78,6 @@ const Stock = () => {
                 return (stockListBody = stockListBody.concat(currentstockItem));
               });
               setStockList(stockListBody);
-              console.log("stock Sand List Body: ", stockList);
             }
           })
           .catch((error) => {
@@ -126,7 +124,7 @@ const Stock = () => {
 
     body: stockList,
   };
-  console.log(stockListTableData);
+
   /** stock list component display */
   const StockListComponent = () => (
     <CustomTableList content={stockListTableData} filler="No product stocked" />

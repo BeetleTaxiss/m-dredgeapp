@@ -75,7 +75,6 @@ export const MenuItem = ({ item, showSubMenu }) => {
           data-parent="#topAccordion"
         >
           {item.subMenuItems.map((subItem, i) => {
-            console.log(subItem.subItem, "Sub Item");
             return (
               <li key={i} className={subItem.class}>
                 <Link to={subItem.link}>

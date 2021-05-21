@@ -81,9 +81,7 @@ const FormModal = ({
               onClick={() => {
                 // document.getElementById("main-modal-backdrop").style.display =
                 //   "none";
-                console.log("Close State: ", showModal);
                 setShowModal(false);
-                console.log("Close State after click: ", showModal);
               }}
               className="mt-4 btn btn-danger"
             >

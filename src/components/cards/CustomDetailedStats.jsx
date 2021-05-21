@@ -62,7 +62,6 @@ const CustomDetailedStats = ({ data }) => {
             ))
           : data[0].array === true
           ? data.map((item, i) => {
-              console.log("string: ", item.stats);
               return (
                 <div
                   key={i}
@@ -121,7 +120,6 @@ const CustomDetailedStats = ({ data }) => {
               );
             })
           : data.map((item, i) => {
-              console.log("string: ", item.stats);
               return (
                 <div
                   key={i}

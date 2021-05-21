@@ -45,7 +45,7 @@ const Security = () => {
         })
         .then((res) => {
           let body = [];
-          console.log("Table Body: ", res.data.data);
+
           res.data.data.map((item) => {
             const dispatchId = item.id;
             const orderId = item.order_id;
@@ -75,19 +75,7 @@ const Security = () => {
               dispatcherComment: dispatcherComment,
               loaderComment: loaderComment,
             };
-            console.log(
-              "Body Items: ",
-              dispatchId,
-              orderId,
-              orderRef,
-              product,
-              qty,
-              total_price,
-              total_volume,
-              userId,
-              "Load Data: ",
-              loadingData
-            );
+
             const currentDispatch = {
               id: dispatchId,
               fields: [
@@ -133,11 +121,10 @@ const Security = () => {
                 },
               ],
             };
-            console.log("Current Dispatch: ", currentDispatch);
+
             return (body = body.concat(currentDispatch));
           });
           setBodyData(body);
-          console.log("BODY ARRAY: ", body);
         }),
     [bodyData, userName, userId, refreshData]
   );
@@ -176,12 +163,9 @@ const Security = () => {
 
   // Load Prompter/ Popup
   const clearOrder = () => {
-    console.log("Load DATA: ", load);
-
     axios
       .post(`${BASE_API_URL}/api/v1/order/clear.php`, load)
       .then((res) => {
-        console.log("LOAD API RESPONSE: ", res.data);
         if (res.data.error) {
           const title = "Clearance failed",
             message = res.data.message;

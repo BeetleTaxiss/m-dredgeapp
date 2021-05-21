@@ -44,7 +44,6 @@ const StockpiledSand = () => {
             },
           })
           .then((res) => {
-            console.log("stockpiled sand response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -135,7 +134,6 @@ const StockpiledSand = () => {
                 ));
               });
               setStockpiledSandList(stockpiledSandListBody);
-              console.log("stockpiled Sand List Body: ", stockpiledSandList);
             }
           })
           .catch((error) => {
@@ -191,7 +189,6 @@ const StockpiledSand = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/production/stock.php`, addToStock)
       .then((res) => {
-        console.log("Stockpile response Data: ", res.data.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -227,7 +224,6 @@ const StockpiledSand = () => {
 
     body: stockpiledSandList,
   };
-  console.log(stockpiledSandListTableData);
   /** stockpiled sand list component display */
   const StockpiledSandListComponent = () => (
     <CustomTableList

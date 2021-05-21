@@ -17,7 +17,6 @@ const UserActivitiesLog = () => {
         .get(`${BASE_API_URL}/api/v1/system/system-logs.php`)
         .then((res) => {
           let userActivitiesLogResponse = res.data.data;
-          console.log("Users Activities: ", userActivitiesLogResponse);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -36,15 +35,6 @@ const UserActivitiesLog = () => {
               //   action_old_data
               // );
               // items(updatedItems);
-
-              console.log(
-                "Detailed Item: ",
-                item,
-                "Action data: ",
-                action_data,
-                "Action old data: ",
-                action_old_data
-              );
 
               const userActivitiesLogSchema = {
                 id: date_in,
@@ -84,7 +74,6 @@ const UserActivitiesLog = () => {
               ));
             });
             setUserActivitiesLog(userActivitiesLogList);
-            console.log("Recent Pumping list: ", userActivitiesLog);
           }
         })
         .catch((error) => {

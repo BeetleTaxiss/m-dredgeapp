@@ -19,7 +19,6 @@ const ModalBackdrop = ({
             setShowModal(true);
             setLoading(false);
             document.getElementById("loading-btn").disabled = false;
-            console.log("Outside Modal Clicked !!!");
           }}
           className="modalBackdrop"
         ></div>

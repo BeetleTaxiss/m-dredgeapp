@@ -23,8 +23,6 @@ const ProductionCapacity = ({
   handleChange,
   distanceFormData,
 }) => {
-  console.log("Range Count: ", document.getElementById("range-count-number"));
-
   return (
     <div className="custom-progress progress-up" style={{ width: "100%" }}>
       <form
@@ -123,7 +121,6 @@ const ProductionCapacity = ({
             onClick={async () => {
               let isShiftPaused;
               isShiftPaused = getShiftPausedStatus();
-              console.log("isResumed: ", isShiftPaused);
 
               let stopStartProductionBtnId =
                 document.getElementById("stop-start-marker");
@@ -146,7 +143,6 @@ const ProductionCapacity = ({
 
               setTimeout(() => {
                 isShiftPaused = getShiftPausedStatus();
-                console.log("Is Paused: ", isShiftPaused);
                 if (isShiftPaused === true) {
                   cleanUpProductionId(isShiftPaused);
                 }

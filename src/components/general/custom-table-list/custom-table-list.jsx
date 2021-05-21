@@ -5,7 +5,6 @@ import CustomTableListBody from "./custom-table-list-body";
 import CustomTableListHeader from "./custom-table-list-header";
 import { ReactComponent as NoTasks } from "../../../assets/noTasks.svg";
 const CustomTableList = ({ content, setLoad, filler }) => {
-  console.log("Content: ", content.body);
   const arrayContent = Array.isArray(content.body);
   return (
     <div className="statbox widget box box-shadow col-md-12">

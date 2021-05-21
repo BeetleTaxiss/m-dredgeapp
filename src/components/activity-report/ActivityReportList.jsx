@@ -36,7 +36,6 @@ const ActivityReportList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/task/list.php`)
           .then((res) => {
-            console.log("Impound Truck list response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -54,7 +53,6 @@ const ActivityReportList = () => {
 
                 const task_id = parseInt(item.id);
 
-                console.log("Item log: ", item);
                 const singleActivityReportPopup = {
                   date: date,
                   week: work_week,
@@ -132,7 +130,6 @@ const ActivityReportList = () => {
                 ));
               });
               setActivityReportList(activityReportListBody);
-              console.log("Impound Truck List Body: ", activityReportList);
             }
           })
           .catch((error) => {

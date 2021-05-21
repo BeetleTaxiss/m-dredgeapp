@@ -44,7 +44,6 @@ const Inspector = () => {
       })
       .then((res) => {
         let body = [];
-        console.log("Table Body: ", res.data);
         res.data.data.map((item) => {
           const dispatchId = item.id;
           const orderId = item.order_id;
@@ -56,7 +55,7 @@ const Inspector = () => {
           const truck_Number = item.truck_no;
           const dispatcherComment = item.dispatcher_comment;
           const loaderComment = item.loader_comment;
-          console.log("Dispatcher comment: ", dispatcherComment);
+
           const loadingData = {
             "order-id": orderId,
             "order-ref": orderRef,
@@ -73,20 +72,7 @@ const Inspector = () => {
             loaderComment: loaderComment,
             dispatcherComment: dispatcherComment,
           };
-          console.log("DISPATCH DATA: ", res.data);
-          console.log(
-            "Body Items: ",
-            dispatchId,
-            orderId,
-            orderRef,
-            product,
-            qty,
-            total_price,
-            total_volume,
-            userId,
-            "Load Data: ",
-            loadingData
-          );
+
           const currentDispatch = {
             id: dispatchId,
             fields: [
@@ -132,12 +118,10 @@ const Inspector = () => {
               },
             ],
           };
-          console.log("Current Dispatch: ", currentDispatch);
+
           return (body = body.concat(currentDispatch));
         });
         setBodyData(body);
-        console.log("BODY ARRAY: ", body);
-        console.log("BODY Data: ", bodyData);
       });
   }, [bodyData, userName, userId, refreshData]);
 
@@ -154,7 +138,7 @@ const Inspector = () => {
 
     body: bodyData,
   };
-  console.log("List Data: ", loaderListData);
+
   const formData = [
     {
       id: "comment",
@@ -191,13 +175,10 @@ const Inspector = () => {
   const InspectOrder = () => {
     const comment = document.getElementById("comment").value;
     load.comment = comment;
-    console.log("COMMENT: ", comment);
-    console.log("Load DATA: ", load);
 
     axios
       .post(`${BASE_API_URL}/api/v1/order/inspect.php`, load)
       .then((res) => {
-        console.log("LOAD API RESPONSE: ", res.data);
         if (res.data.error) {
           const title = "Inspection failed",
             message = res.data.message;

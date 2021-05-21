@@ -17,8 +17,6 @@ const Profile = () => {
 
   useEffect(() => {}, [userName, userId]);
 
-  console.log("UserDetails: ", userName, userId);
-
   const handleSubmit = () => {
     let oldPassword = md5(
       document.getElementById("password-update-user").value
@@ -34,14 +32,13 @@ const Profile = () => {
       password: oldPassword,
       "password-new": newPassword,
     };
-    console.log("UserDetails: ", changePasswordData);
+
     axios
       .post(
         `${BASE_API_URL}/api/v1/user/change-password.php`,
         changePasswordData
       )
       .then((res) => {
-        console.log("Change User password Data", res.data);
         if (res.data.error) {
           const title = "Password update failed",
             text = res.data.message;

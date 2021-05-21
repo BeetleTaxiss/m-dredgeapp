@@ -15,7 +15,6 @@ const StockUpdate = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/production/list-stock-update.php`)
           .then((res) => {
-            console.log("stock response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -91,7 +90,6 @@ const StockUpdate = () => {
                 ));
               });
               setStockUpdateList(stockUpdateListBody);
-              console.log("stock Sand List Body: ", stockUpdateList);
             }
           })
           .catch((error) => {
@@ -139,7 +137,7 @@ const StockUpdate = () => {
 
     body: stockUpdateList,
   };
-  console.log(stockUpdateListTableData);
+
   /** stock list component display */
   const StockListComponent = () => (
     <CustomTableList

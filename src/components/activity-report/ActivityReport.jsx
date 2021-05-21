@@ -68,11 +68,10 @@ const ActivityReport = () => {
       "next-week-task": next_week_tasks,
       "completed-task": completed_tasks,
     };
-    console.log("Add Activity Report API values: ", addActivityReportData);
+
     axios
       .post(`${BASE_API_URL}/api/v1/task/add.php`, addActivityReportData)
       .then((res) => {
-        console.log("Add Activity Report response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -119,9 +118,7 @@ const ActivityReport = () => {
     year = moment().format("YYYY"),
     currentWeek = `${year}-W${week}`;
 
-  console.log("Week: ", currentWeek);
   let date = moment().format("YYYY-MM-DD");
-  console.log("Date: ", date);
 
   const distanceFormData = {
     employeeName: [

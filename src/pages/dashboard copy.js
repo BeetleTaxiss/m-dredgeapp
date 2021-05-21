@@ -6,7 +6,7 @@ import { StoreManager } from "react-persistent-store-manager";
 import { Stores, AppStore } from "./../state/store";
 import { functionUtils, getUserStoreInstance } from "./../hooks/function-utils";
 
-export default function  Dashboard ()  {
+export default function Dashboard() {
   /** use this function to always validate if a user is logged in */
   functionUtils.useValidateLogin("/");
 
@@ -16,7 +16,7 @@ export default function  Dashboard ()  {
   /** contains  the dashboard view */
   const [dashboardViews, setDashboardViews] = useState([]);
 
-  /*** a StoreManager instance. 
+  /*** a StoreManager instance.
    * Now you must pass the three parameters to locate our actual menu location
    * see `state/store.js` for sample definition
    */
@@ -24,7 +24,7 @@ export default function  Dashboard ()  {
 
   /** set get the user permission and set */
   Store.useStateAsync("permission").then((permission) => {
-    console.log(permission, "user perm");
+    // console.log(permission, "user perm");
     setUserPermission(permission);
   });
 
@@ -50,6 +50,6 @@ export default function  Dashboard ()  {
     createDashboardViews();
   }, [userPermission]);
 
-   // return <>{<div>Hello page</div>}</>;
+  // return <>{<div>Hello page</div>}</>;
   return <>{dashboardViews}</>;
-};
+}

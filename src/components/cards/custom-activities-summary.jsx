@@ -23,7 +23,6 @@ export const CustomActivitiesSummary = ({ data, popup }) => {
   );
 };
 export const Activities = ({ content, showItem }) => {
-  console.log("Pop up content: ", content);
   return (
     <div
       className="mt-container mx-auto ps ps--active-y"
@@ -98,7 +97,6 @@ export const Activities = ({ content, showItem }) => {
 };
 
 export const showLogItem = (item, increasedWidth) => {
-  console.log("Item: ", item);
   const logTable = DOMSERVER.renderToString(showDetailedLogItem(item));
 
   !increasedWidth &&

@@ -41,7 +41,6 @@ const AccountList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/account/account-list.php`)
           .then((res) => {
-            console.log("Account response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -54,7 +53,7 @@ const AccountList = () => {
                 const account_id = item.id;
                 const chart_id = item.chart_id;
                 const description = item.description;
-                console.log("User deetails in map: ", userName, userId);
+
                 const updateData = {
                   account_name: account_name,
                   account_id: account_id,
@@ -109,7 +108,6 @@ const AccountList = () => {
                   accountListBody.concat(currentAccountItem));
               });
               setAccountList(accountListBody);
-              console.log("Account Sand List Body: ", accountList);
             }
           })
           .catch((error) => {
@@ -143,7 +141,6 @@ const AccountList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/account/chart-list.php`)
           .then((res) => {
-            console.log("Chart list response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -173,7 +170,6 @@ const AccountList = () => {
                 validation: "Can't select this option",
               });
               setChartList(chartListBody);
-              console.log("Chart List Body: ", chartList);
             }
           })
           .catch((error) => {
@@ -227,7 +223,7 @@ const AccountList = () => {
   };
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
-  console.log("User Deetails: ", userName, userId);
+
   const handleUpdateAccount = (userName, userId) => {
     const account = document.getElementById("account-name").value;
     const account_id = document.getElementById("account-id").value;
@@ -235,7 +231,6 @@ const AccountList = () => {
     const chartValue = parseInt(document.getElementById("chart-id").value);
     const chartItem = chartList.filter(({ id }) => id === chartValue);
 
-    console.log("chart item: ", chartItem);
     const updateAccountData = {
       user: userName,
       "user-id": userId,
@@ -244,14 +239,13 @@ const AccountList = () => {
       "chart-id": chartValue,
       description: description,
     };
-    console.log("Update API values: ", updateAccountData);
+
     axios
       .post(
         `${BASE_API_URL}/api/v1/account/account-update.php`,
         updateAccountData
       )
       .then((res) => {
-        console.log("Update account response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -274,7 +268,6 @@ const AccountList = () => {
     const chartValue = parseInt(document.getElementById("chart-id").value);
     const chartItem = chartList.filter(({ id }) => id === chartValue);
 
-    console.log("chart item: ", chartItem);
     const updateAccountData = {
       user: userName,
       "user-id": userId,
@@ -288,7 +281,6 @@ const AccountList = () => {
     return updateAccountData;
   };
   const handleDeleteAccount = (id, userName, userId) => {
-    console.log("User deetails in delete", userName, userId);
     axios
       .post(`${BASE_API_URL}/api/v1/account/account-delete.php`, {
         user: userName,
@@ -296,7 +288,6 @@ const AccountList = () => {
         "account-id": id,
       })
       .then((res) => {
-        console.log("Delete response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error",
             text = res.data.message;
@@ -370,7 +361,6 @@ const AccountList = () => {
     },
   ];
 
-  console.log(accountListTableData);
   /** Account list component display */
   const AccountListComponent = () => (
     <div id="basic" className="col-lg-12 layout-spacing">

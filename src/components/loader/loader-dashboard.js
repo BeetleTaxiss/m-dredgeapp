@@ -5,7 +5,6 @@ import Loader from "./loader";
 
 const LoaderDashboard = () => {
   const { url } = useRouteMatch();
-  console.log("Loader Dashboard: ", url);
 
   return <PageWrapper>{url === "/loader" ? <Loader /> : null}</PageWrapper>;
 };

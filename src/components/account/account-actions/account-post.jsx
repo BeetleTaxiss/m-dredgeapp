@@ -24,7 +24,6 @@ const PostAccount = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/account/account-list.php`)
           .then((res) => {
-            console.log("Post Account response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -57,7 +56,6 @@ const PostAccount = () => {
                 validation: "Can't select this option",
               });
               setDebitAccount(debitAccountBody);
-              console.log("Account Post Body: ", debitAccount);
 
               creditAccountBody.unshift({
                 id: 0,
@@ -65,7 +63,6 @@ const PostAccount = () => {
                 validation: "Can't select this option",
               });
               setCreditAccount(creditAccountBody);
-              console.log("Account Post Body: ", creditAccount);
             }
           })
           .catch((error) => {
@@ -117,12 +114,10 @@ const PostAccount = () => {
       narration: narration,
       amount: amount,
     };
-    console.log("Post Account API values: ", postAccountData);
 
     axios
       .post(`${BASE_API_URL}/api/v1/account/account-post.php`, postAccountData)
       .then((res) => {
-        console.log("Add account response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;

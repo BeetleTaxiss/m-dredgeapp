@@ -23,7 +23,6 @@ const UsersActivitiesSummary = () => {
         });
       }
     });
-    console.log("Updated Items Array: ", updatedItems);
     return updatedItems;
   };
   const handleActionUIUpdate = (
@@ -83,7 +82,6 @@ const UsersActivitiesSummary = () => {
         })
         .then((res) => {
           let activitiesSummaryResponse = res.data.data;
-          console.log("Users Activities: ", activitiesSummaryResponse);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -115,17 +113,6 @@ const UsersActivitiesSummary = () => {
 
               const pumping_started_ago =
                 start_time_moment.from(extended_new_time);
-
-              console.log(
-                "Detailed Item: ",
-                item,
-                "Action data: ",
-                action_data,
-                "Action old data: ",
-                action_old_data,
-                "Action recieved: ",
-                action_received
-              );
 
               const activitiesSummarySchema = {
                 status: {
@@ -159,7 +146,6 @@ const UsersActivitiesSummary = () => {
               ));
             });
             setActivitiesSummary(activitiesSummaryList);
-            console.log("Recent Pumping list: ", activitiesSummary);
           }
         })
         .catch((error) => {

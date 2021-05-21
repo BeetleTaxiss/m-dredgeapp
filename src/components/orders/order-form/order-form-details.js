@@ -20,7 +20,6 @@ export const FormDetails = ({
   color,
   noMB,
 }) => {
-  // console.log("Select value: ", value);
   return (
     <>
       {type === "select" ? (
@@ -109,7 +108,6 @@ export const SelectInput = ({
   item: { id, type, className, name, value, ...otherProps },
   handleChange,
 }) => {
-  console.log("Select Input: ", value);
   return (
     <div style={{ marginBottom: "2rem", padding: "0 0 0 0" }}>
       <select

@@ -25,7 +25,6 @@ const RecentOrders = () => {
             errorAlert(title, text);
           } else {
             recentOrdersResponse.map((item, id) => {
-              console.log(item);
               const order_paid_status = item.paid;
               const order_dispatched_status = item.dispatched;
 
@@ -48,12 +47,10 @@ const RecentOrders = () => {
                     : "warning",
               };
 
-              return (recentOrdersList = recentOrdersList.concat(
-                currentOrderSchema
-              ));
+              return (recentOrdersList =
+                recentOrdersList.concat(currentOrderSchema));
             });
             setRecentOrders(recentOrdersList);
-            console.log("Recent order list: ", recentOrders);
           }
         })
         .catch((error) => {

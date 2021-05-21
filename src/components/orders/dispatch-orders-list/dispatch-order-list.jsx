@@ -11,7 +11,7 @@ const DispatchOrderList = () => {
         .get(`${BASE_API_URL}/api/v1/order/dispatch-list.php`)
         .then((res) => {
           let body = [];
-          console.log("Table Body: ", res.data.data);
+
           res.data.data.map((item) => {
             const dispatchId = item.id;
             const orderId = item.order_id;
@@ -23,17 +23,7 @@ const DispatchOrderList = () => {
             const inspected = item.inspected;
             const cleared = item.security;
             const processing = item.processing;
-            console.log(
-              "Body Items: ",
-              dispatchId,
-              orderId,
-              orderRef,
-              product,
-              loaded,
-              inspected,
-              cleared,
-              processing
-            );
+
             const currentDispatch = {
               id: dispatchId,
               fields: [
@@ -123,11 +113,10 @@ const DispatchOrderList = () => {
                 },
               ],
             };
-            console.log("Current Dispatch: ", currentDispatch);
+
             return (body = body.concat(currentDispatch));
           });
           setBodyData(body);
-          console.log("BODY ARRAY: ", body);
         }),
     [bodyData]
   );

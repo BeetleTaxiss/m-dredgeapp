@@ -21,11 +21,7 @@ const CurrentActivity = () => {
         .then((res) => {
           let activitiesSummaryResponse = res.data.data;
           let reversedCurrentActivityResponse = [...activitiesSummaryResponse];
-          console.log(
-            "Current Activity: ",
-            activitiesSummaryResponse,
-            reversedCurrentActivityResponse[1]
-          );
+
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -85,15 +81,6 @@ const CurrentActivity = () => {
               ],
             };
             setCurrentActivity(currentActivitySchema);
-            console.log("Current Acyivity list: ", currentActivity);
-            console.log(
-              "Current Acyivity list: ",
-              moment(
-                `${reversedCurrentActivityResponse[0]?.date_in} ${reversedCurrentActivityResponse[0]?.start_time}`,
-                "DD/MM/YYYY hh:mm:ss"
-              ).format("dddd, mm yyyy"),
-              moment()
-            );
           }
         })
         .catch((error) => {

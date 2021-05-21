@@ -16,7 +16,6 @@ const FuelUpdateList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/operations/fuel-update-list.php`)
           .then((res) => {
-            console.log("Fuel response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -82,7 +81,6 @@ const FuelUpdateList = () => {
                 ));
               });
               setFuelUpdateList(fuelUpdateListBody);
-              console.log("Fuel Sand List Body: ", fuelUpdateList);
             }
           })
           .catch((error) => {
@@ -128,7 +126,7 @@ const FuelUpdateList = () => {
 
     body: fuelUpdateList,
   };
-  console.log(fuelUpdateListTableData);
+
   /** Fuel list component display */
   const FuelListComponent = () => (
     <CustomTableList

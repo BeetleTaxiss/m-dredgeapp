@@ -48,7 +48,6 @@ const FuelIssuing = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/operations/machinery-list.php`)
           .then((res) => {
-            console.log("Machinery list response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -78,7 +77,6 @@ const FuelIssuing = () => {
               });
             }
             setMachineryList(machineryListBody);
-            console.log("Machinery List Body: ", machineryList);
           })
           .catch((error) => {
             console.log("API error: ", error);
@@ -105,7 +103,7 @@ const FuelIssuing = () => {
   /** Get Fuel Summary data */
 
   const currentDate = moment().format("DD/MM/YYYY");
-  console.log("Current date: ", currentDate);
+
   useEffect(() => {
     const source = axios.CancelToken.source();
 
@@ -136,8 +134,6 @@ const FuelIssuing = () => {
             detailedStatsResponse.outgoing_fuel,
           ];
 
-          console.log("Detailed: ", detailedStatsResponse);
-          console.log("Detailed List: ", detailedStatsResponseList);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -158,7 +154,6 @@ const FuelIssuing = () => {
                 detailedStatsList.concat(detailedStatsSchema));
             });
             setDetailedStats(detailedStatsList);
-            console.log("Recent order list: ", detailedStats);
           }
         })
         .catch((error) => {
@@ -183,7 +178,6 @@ const FuelIssuing = () => {
 
     const machineItem = machineryList.filter(({ id }) => id === machineValue);
 
-    console.log("machine item: ", machineItem);
     const issueFuelData = {
       user: userName,
       "user-id": userId,
@@ -193,11 +187,10 @@ const FuelIssuing = () => {
       "machinery-id": 0,
       description: machineItem[0].description,
     };
-    console.log("issue machinery API values: ", issueFuelData);
+
     axios
       .post(`${BASE_API_URL}/api/v1/operations/fuel-issue.php`, issueFuelData)
       .then((res) => {
-        console.log("Issue Machinery response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -227,7 +220,6 @@ const FuelIssuing = () => {
 
     const machineItem = machineryList.filter(({ id }) => id === machineValue);
 
-    console.log("machine item: ", machineItem);
     const issueFuelData = {
       user: userName,
       "user-id": userId,

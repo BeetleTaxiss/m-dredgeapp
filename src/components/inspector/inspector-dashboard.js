@@ -5,7 +5,6 @@ import Inspector from "./inspector";
 
 const InspectorDashboard = () => {
   const { url } = useRouteMatch();
-  console.log("Loader Dashboard: ", url);
 
   return <PageWrapper>{url === "/inspect" ? <Inspector /> : null}</PageWrapper>;
 };

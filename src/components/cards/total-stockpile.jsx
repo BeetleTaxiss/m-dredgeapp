@@ -17,7 +17,6 @@ const TotalStockpile = () => {
         .get(`${BASE_API_URL}/api/v1/production/summary.php`)
         .then((res) => {
           let totalStockpileResponse = res.data;
-          console.log("Total orders: ", totalStockpileResponse);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -43,16 +42,6 @@ const TotalStockpile = () => {
             };
 
             setTotalStockpile(totalStockpileSchema);
-            console.log("Total order list: ", totalStockpile);
-            console.log(
-              "Total order list: ",
-              totalStockpileSchema,
-              totalStockpileResponse.stockpiled.total_stockpiled,
-              stockpiled_value,
-              current_stockpiled_percentage,
-              max_stockpiled_percentage,
-              max_stockpiled_capacity
-            );
           }
         })
         .catch((error) => {

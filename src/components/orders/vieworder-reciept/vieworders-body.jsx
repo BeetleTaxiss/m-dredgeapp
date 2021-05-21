@@ -24,7 +24,7 @@ const ViewordersTableBody = ({ content, reloadData }) => {
       showConfirmButton: false,
     });
   };
-  // console.log(content);
+
   return (
     <tbody>
       {content ? (

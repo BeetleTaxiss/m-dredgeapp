@@ -90,8 +90,6 @@ const Contact = ({
                 /** set this state variable so that the popup open, the permission list for this user is shown */
                 setUserPermissionListView(PermissionListForUser);
 
-                console.log("the user: ", content.user);
-
                 /** open the update window */
                 setShowUserDetailsUpdate(true);
                 /** set the initial values for our form input before we open */
@@ -123,15 +121,7 @@ const Contact = ({
               className="feather feather-edit-2 edit"
               onClick={() => {
                 content.setUser(content.user);
-                console.log(
-                  "Before value: ",
-                  document.getElementById("user-add-user")
-                );
-                console.log("User Item: ", content.user);
-                console.log(
-                  "After value: ",
-                  document.getElementById("user-add-user")
-                );
+
                 document.getElementById("user-add-user").value =
                   content.user.user;
                 document.getElementById("user-id-add-user").value =
@@ -156,7 +146,6 @@ const Contact = ({
               strokeLinejoin="round"
               className="feather feather-user-minus delete"
               onClick={() => {
-                console.log("Individual User Data: ", content.user);
                 content.setUser(content.user);
                 content.delete();
               }}
@@ -178,7 +167,6 @@ const Contact = ({
                 strokeLinejoin="round"
                 className="feather feather-users delete"
                 onClick={() => {
-                  console.log("Individual User Data: ", content.user);
                   content.setUser(content.user);
                   content.enable(
                     `Are you sure you want to enable ${content.metaInfo.name} from suspension ?`,
@@ -205,7 +193,6 @@ const Contact = ({
                 strokeLinejoin="round"
                 className="feather feather-user-x delete"
                 onClick={() => {
-                  console.log("Individual User Data: ", content.user);
                   content.setUser(content.user);
                   content.suspend(
                     `Are you sure you want to Suspend ${content.metaInfo.name}  ?`,

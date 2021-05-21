@@ -21,14 +21,12 @@ const ActivitiesSummary = () => {
         })
         .then((res) => {
           let activitiesSummaryResponse = res.data.data;
-          console.log("Activities: ", activitiesSummaryResponse);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
             errorAlert(title, text);
           } else {
             activitiesSummaryResponse.map((item, id) => {
-              console.log("Detailed Item: ", item);
               const completed = item?.completed;
               const start_time = item?.time_in;
               const date_in = item?.date_in;
@@ -97,7 +95,6 @@ const ActivitiesSummary = () => {
               ));
             });
             setActivitiesSummary(activitiesSummaryList);
-            console.log("Recent Pumping list: ", activitiesSummary);
           }
         })
         .catch((error) => {

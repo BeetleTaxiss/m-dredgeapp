@@ -43,7 +43,6 @@ const ImpoundTruck = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/order/truck-impounded-list.php`)
           .then((res) => {
-            console.log("Impound Truck list response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -106,7 +105,6 @@ const ImpoundTruck = () => {
                 ));
               });
               setImpoundTruckList(impoundTruckListBody);
-              console.log("Impound Truck List Body: ", impoundTruckList);
             }
           })
           .catch((error) => {
@@ -194,14 +192,13 @@ const ImpoundTruck = () => {
       "truck-description": truck_description,
       comment: impounded_comment,
     };
-    console.log("Add Impound truck API values: ", addImpoundedTruckData);
+
     axios
       .post(
         `${BASE_API_URL}/api/v1/order/truck-impound.php`,
         addImpoundedTruckData
       )
       .then((res) => {
-        console.log("Add impounded response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;

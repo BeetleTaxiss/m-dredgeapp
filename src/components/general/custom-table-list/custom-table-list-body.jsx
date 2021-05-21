@@ -52,7 +52,6 @@ const CustomTableListBody = ({ content, setLoad }) => {
                         field.link(true);
                       }
 
-                      // console.log("Processing Data: ", field.isProcessing);
                       if (field.processing) {
                         field.processing(field.isProcessing);
                       }

@@ -45,7 +45,7 @@ const Loader = () => {
         })
         .then((res) => {
           let body = [];
-          console.log("Table Body: ", res.data.data);
+
           res.data.data.map((item) => {
             const dispatchId = item.id;
             const orderId = item.order_id;
@@ -69,7 +69,7 @@ const Loader = () => {
               "user-id": parseInt(userId),
               comment: comment,
             };
-            // console.log("User Details: ", userDetails);
+
             const loadingDisplayData = {
               product: product,
               qty: qty,
@@ -87,22 +87,6 @@ const Loader = () => {
               "user-id": parseInt(userId),
             };
 
-            console.log(
-              "Body Items: ",
-              dispatchId,
-              orderId,
-              orderRef,
-              product,
-              qty,
-              total_price,
-              total_volume,
-              userId,
-              comment,
-              "Load Data: ",
-              loadingData,
-              { loaded, inspected, cleared },
-              loadingDisplayData
-            );
             const currentDispatch = {
               id: dispatchId,
               fields: [
@@ -150,11 +134,9 @@ const Loader = () => {
                 },
               ],
             };
-            console.log("Current Dispatch: ", currentDispatch);
             return (body = body.concat(currentDispatch));
           });
           setBodyData(body);
-          console.log("BODY ARRAY: ", body);
         }),
     [bodyData, showModal, userName, userId, refreshData]
   );
@@ -184,15 +166,12 @@ const Loader = () => {
   ];
 
   const Processing = (load) => {
-    console.log("processing: ", load);
     axios
       .post(`${BASE_API_URL}/api/v1/order/processing.php`, load)
       .then((res) => {
-        console.log("PROCESSING API RESPONSE: ", res.data);
         if (res.data.error) {
           console.log(res.data.message);
         } else {
-          console.log(res.data.message);
           document.getElementById("span-pending").style.display =
             "inline-block";
         }
@@ -221,17 +200,13 @@ const Loader = () => {
   const loadOrder = () => {
     const comment = document.getElementById("comment").value;
     load.comment = comment;
-    console.log("COMMENT: ", comment);
-    console.log("Load DATA: ", load);
 
     axios
       .post(`${BASE_API_URL}/api/v1/order/load.php`, load)
       .then((res) => {
-        console.log("LOAD API RESPONSE: ", res.data);
         if (res.data.error) {
           const title = "Order Loading failed",
             text = res.data.message;
-          console.log("Order loading failed: ", text);
           errorAlert(title, text);
           setLoading(false);
         } else {
@@ -268,7 +243,6 @@ const Loader = () => {
       });
   };
 
-  console.log("Load DATA: ", load);
   return (
     <>
       <CustomTableList

@@ -45,7 +45,7 @@ const OrderReceipt = () => {
     if (document.getElementById("truckNo") !== null) {
       document.getElementById("truckNo").value = order.truck_no;
     }
-    console.log("Order details: ", order);
+
     setTotalPrice(order.total_price);
   };
 
@@ -75,7 +75,6 @@ const OrderReceipt = () => {
       "total-price": totalPrice,
       "truck-no": truckNoValue,
     };
-    console.log("Submitted Update Order", updateOrderData);
     // if (error || !error) {
     //   setLoading(true);
     //   document.getElementById("loading-btn").disabled = true;
@@ -83,7 +82,6 @@ const OrderReceipt = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/order/update.php`, updateOrderData)
       .then((res) => {
-        console.log("UPDATE ORDER: ", res.data);
         if (res.data.error) {
           setError(true);
           setShowModal(true);
@@ -94,9 +92,7 @@ const OrderReceipt = () => {
           setError(false);
           setShowModal(true);
           updateSuccessAlert();
-          console.log("Before: ", order);
           setOrder(res.data.data);
-          console.log("After: ", order);
           document.getElementById("qty").value = "";
           document.getElementById("truckNo").value = "";
           setTotalPrice(0);
@@ -190,7 +186,6 @@ const OrderReceipt = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/order/dispatch.php`, dispatchData)
       .then((res) => {
-        console.log("Dispatch Resquest", res.data);
         if (res.data.error) {
           setErrorMsg(res.data.message);
           const title = "Order  dispatch failed",
@@ -423,20 +418,18 @@ const printOrderReceipt = (
   /** hide the links layer.  */
   const links = document.getElementById(orderReceiptLayerLinks);
   links.setAttribute("style", "display:none");
-  
+
   const receiptContentLayer = document.getElementById(orderReceiptLayer);
 
-  /** 
-   * Get the window scroll top size.  This is usually added to the top of the 
-   * And this has the effect of adding too much top margin to our report 
+  /**
+   * Get the window scroll top size.  This is usually added to the top of the
+   * And this has the effect of adding too much top margin to our report
    * so we want to avoid this by all means. If we have  scroll top
    * we will simply remove this from the the top margin of report
    */
-  const windowScrollTop= receiptContentLayer.scrollTop;
-
+  const windowScrollTop = receiptContentLayer.scrollTop;
 
   return alert(windowScrollTop);
-
 
   const canvasOptions = {
     //scale:0.83,

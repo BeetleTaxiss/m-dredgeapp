@@ -1,7 +1,6 @@
 import React from "react";
 
 const ReportCard = ({ content }) => {
-  console.log("Report Details: ", content);
   return (
     <div className="bio layout-spacing ">
       <div

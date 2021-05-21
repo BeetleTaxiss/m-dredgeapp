@@ -17,7 +17,6 @@ const ProductionList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/production/list.php`)
           .then((res) => {
-            console.log("Production List response: ", res.data);
             if (res.data.error) {
               alert("Error from Axios block");
               let title = "Network Error",
@@ -105,7 +104,6 @@ const ProductionList = () => {
                 ));
               });
               setProductionList(productionListBody);
-              console.log("Production List Body: ", productionList);
             }
           })
           .catch((error) => {

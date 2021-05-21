@@ -42,7 +42,6 @@ const Machinery = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/operations/machinery-list.php`)
           .then((res) => {
-            console.log("Machinery list response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -117,7 +116,6 @@ const Machinery = () => {
                   machineryListBody.concat(currentMachineryItem));
               });
               setMachineryList(machineryListBody);
-              console.log("Machinery List Body: ", machineryList);
             }
           })
           .catch((error) => {
@@ -175,14 +173,12 @@ const Machinery = () => {
   };
 
   const handleDeleteMachineryItem = (deleteItem) => {
-    console.log("Delete data: ", deleteItem);
     axios
       .post(
         `${BASE_API_URL}/api/v1/operations/machinery-delete.php`,
         deleteItem
       )
       .then((res) => {
-        console.log("Delete Machinery response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -210,14 +206,13 @@ const Machinery = () => {
       "identification-no": machinery_identification,
       description: machinery_description,
     };
-    console.log("Add machinery API values: ", addMachineryData);
+
     axios
       .post(
         `${BASE_API_URL}/api/v1/operations/machinery-add.php`,
         addMachineryData
       )
       .then((res) => {
-        console.log("Add Machinery response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -252,14 +247,13 @@ const Machinery = () => {
       description: machinery_description,
       "identification-no": machinery_identification,
     };
-    console.log("Update machinery API values: ", updateMachineryData);
+
     axios
       .post(
         `${BASE_API_URL}/api/v1/operations/machinery-update.php`,
         updateMachineryData
       )
       .then((res) => {
-        console.log("Add Machinery response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;

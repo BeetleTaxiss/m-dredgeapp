@@ -8,18 +8,13 @@ const TopNavbar = ({
   setShowSubMenu,
   topNavBarData,
 }) => {
-  const offsetSubMenu = () => {
-    const topNavBar = document.getElementById("topbar");
-    const topNavBarPosition = topNavBar.scrollLeft;
-    console.log("Nav bar : ", topNavBarPosition);
-  };
   return (
     <div
       className={`topbar-nav header navbar ${showMenu && "showMenu"}`}
       role="banner"
       // style={{ overflowY: "auto" }}
     >
-      <nav id="topbar" onScroll={offsetSubMenu}>
+      <nav id="topbar">
         {/* BEGINNING OF MOBILE LOGO */}
         <MobileLogo />
         {/* END OF MOBILE LOGO */}

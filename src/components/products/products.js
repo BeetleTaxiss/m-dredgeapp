@@ -42,7 +42,6 @@ const Products = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/product/list.php`)
           .then((res) => {
-            console.log("Products list response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -134,7 +133,6 @@ const Products = () => {
                   productsListBody.concat(currentProductItem));
               });
               setProductsList(productsListBody);
-              console.log("Product List Body: ", productsList);
             }
           })
           .catch((error) => {
@@ -195,7 +193,6 @@ const Products = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/product/delete.php`, deleteItem)
       .then((res) => {
-        console.log("Delete product response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -226,11 +223,10 @@ const Products = () => {
       measurement: product_measurement,
       description: product_description,
     };
-    console.log("Add product API values: ", addProductData);
+
     axios
       .post(`${BASE_API_URL}/api/v1/product/add.php`, addProductData)
       .then((res) => {
-        console.log("Add product response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -274,11 +270,10 @@ const Products = () => {
       measurement: product_measurement,
       description: product_description,
     };
-    console.log("Update product API values: ", updateProductData);
+
     axios
       .post(`${BASE_API_URL}/api/v1/product/update.php`, updateProductData)
       .then((res) => {
-        console.log("Add product response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;

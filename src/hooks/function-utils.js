@@ -164,7 +164,6 @@ export const useGetAppSettings = async (
 
   /** Fetch users types list and set it to state */
   Store.useStateAsync("userTypes").then((typesList) => {
-    console.log("Types state: ", typesList);
     typeof setUserTypesList === "function" && setUserTypesList(typesList);
   });
 
@@ -1283,60 +1282,6 @@ export const functionUtils = {
     // alert("How many times ran?", console.log("Alert ran 1 time"));
     // return globalTimeline;
   },
-  /** 4.
-   * ----------------------------------------------------------------------------------------------------------
-   * ------------------------------------HANDLE ORDER FORM SUBMIT FUNCTION-------------------------------------
-   * @param  {formInput} formInput
-   * ----------------------------------------------------------------------------------------------------------
-   */
-  handleOrderChange: (products, setTotalPrice, qtyValue, selectValue) => {
-    // Get form values with document,getById
-
-    // Filter Products Array to get single product
-    const product = products?.filter((product) => product.id === selectValue);
-    console.log("Product: ", product);
-    // Calculate the cost of an order
-    const orderCost = qtyValue * product[0].price;
-    console.log("Order Cost: ", orderCost);
-    // Set the value of an order to the UI
-    setTotalPrice(orderCost);
-
-    return {
-      product,
-    };
-  },
-  /**
-   * @param  {} handleOrderChange
-   * @param  {} totalPrice
-   */
-  handleOrderSubmit: (
-    handleOrderChange,
-    totalPrice,
-    qtyValue,
-    truckNoValue,
-    selectValue,
-    userName,
-    userId
-  ) => {
-    const { product } = handleOrderChange();
-    console.log("Submitted Product", product);
-    const addOrderData = {
-      "product-id": selectValue,
-      product: product[0].product,
-      user: userName,
-      "user-id": parseInt(userId),
-      qty: qtyValue,
-      unit: product[0].unit,
-      "unit-price": product[0].price,
-      measurement: product[0].measurement,
-      "total-price": totalPrice,
-      "truck-no": truckNoValue,
-      description: product[0].description,
-    };
-    axios
-      .post(`${BASE_API_URL}/api/v1/order/add.php`, addOrderData)
-      .then((res) => console.log("ADD ORDER: ", res.data));
-  },
   /** 5.
    * -----------------------------------------------DELETE ORDER-----------------------------------------------
    * @param  {order_id} order_id
@@ -1362,68 +1307,6 @@ export const functionUtils = {
       .catch((error) => {
         errorAlert("Network Error", error);
       });
-    // const response = request.data;
-
-    // if (response.error === false) {
-    //   // window.refresh();
-    // }
-    // console.log("Order deleted? ", response);
-    console.log("Order Id ", id);
-    console.log("Order Ref ", order_ref);
-  },
-  /** 5.
-   * ----------------------------------------------------------------------------------------------------------
-   *-------------------------------------------Handle Unit form Submit-----------------------------------------
-   * @param  {formInput} formInput
-   * @param  {setDisplayUnitList} setDisplayUnitList
-   * @param  {setFormInput} setFormInput
-   * ----------------------------------------------------------------------------------------------------------
-   */
-  handleUnitFormSubmit: (formInput, setDisplayUnitList, setFormInput) => {
-    console.log(formInput);
-    setDisplayUnitList(true);
-    // setFormInput({
-    //   product: "",
-    //   description: "",
-    //   unit: "",
-    //   measurement: "",
-    // });
-  },
-  /** 6.
-   * ----------------------------------------------------------------------------------------------------------
-   * -----------------------------------------Handle Unit Update-----------------------------------------------
-   * @param  {formInput} formInput
-   * @param  {setDisplayUnitList} setDisplayUnitList
-   * @param  {setFormInput} setFormInput
-   * ----------------------------------------------------------------------------------------------------------
-   */
-  handleUnitUpdate: (formInput, setDisplayUnitList, setFormInput) => {
-    console.log(formInput);
-    // setDisplayUnitList(true);
-    // setFormInput({
-    //   product: "",
-    //   description: "",
-    //   unit: "",
-    //   measurement: "",
-    // });
-  },
-  /** 7.
-   * ----------------------------------------------------------------------------------------------------------
-   * ---------------------------------------Handle Post Expense------------------------------------------------
-   * @param  {formInput} formInput
-   * @param  {setFormInput} setFormInput
-   * ----------------------------------------------------------------------------------------------------------
-   */
-  handlePostExpense: (formInput, setFormInput) => {
-    console.log("Expense: ", formInput);
-
-    // setDisplayUnitList(true);
-    // setFormInput({
-    //   product: "",
-    //   description: "",
-    //   unit: "",
-    //   measurement: "",
-    // });
   },
   /** 8.
    * ----------------------------------------------------------------------------------------------------------

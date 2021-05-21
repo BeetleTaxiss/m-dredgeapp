@@ -13,7 +13,6 @@ import ProductionDashboard from "../components/production/production-dashboard";
 
 const Pages = () => {
   const { url } = useRouteMatch();
-  console.log("Pages: ", url);
   return (
     <>
       <Navbar />

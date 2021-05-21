@@ -5,7 +5,6 @@ import Security from "./security";
 
 const SecurityDashboard = () => {
   const { url } = useRouteMatch();
-  console.log("Loader Dashboard: ", url);
 
   return <PageWrapper>{url === "/security" ? <Security /> : null}</PageWrapper>;
 };

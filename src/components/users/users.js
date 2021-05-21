@@ -88,8 +88,6 @@ const Users = () => {
     contacts: userList,
   };
 
-  console.log("User List Data: ", userListData);
-
   const changePassword = () => {
     let userName = document.getElementById("user-add-user").value,
       userId = parseInt(document.getElementById("user-id-add-user").value),
@@ -122,14 +120,13 @@ const Users = () => {
       password: userPassword,
       "password-new": encNewUserPassword,
     };
-    console.log("Password Data: ", changePasswordData);
+
     axios
       .post(
         `${BASE_API_URL}/api/v1/user/change-password.php`,
         changePasswordData
       )
       .then((res) => {
-        //console.log("Change User password Data", res.data);
         if (res.data.error) {
           const title = "Password update failed",
             text = res.data.message;
@@ -194,7 +191,6 @@ const Users = () => {
 
     /** get the permission updates for this user */
     const permission = getPermissionData();
-    //console.log(JSON.parse(permission), "UPdATED permission");
 
     const userUpdateData = {
       user: userName,
@@ -264,7 +260,6 @@ const Users = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/user/add.php`, addUserData)
       .then((res) => {
-        //console.log("Add User Data", res.data);
         if (res.data.error) {
           const title = "Add User Failed",
             text = res.data.message;
@@ -307,8 +302,6 @@ const Users = () => {
         document.getElementById("confirm-password-add-user").value
       ),
       jobDesc = userTypesList.filter(({ id }) => id === newUserType);
-
-    console.log(" Single User Type: ", jobDesc);
 
     /** Validate Email address */
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
@@ -391,7 +384,6 @@ const Users = () => {
       password: userPassword,
       "password-new": newUserPassword,
     };
-    console.log("change pass data: ", changePasswordData);
     return changePasswordData;
   };
 
@@ -400,7 +392,6 @@ const Users = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/user/delete.php`, deleteUserData)
       .then((res) => {
-        //console.log("Delete User Data", res.data);
         if (res.data.error) {
           const title = "Delete User Failed",
             text = res.data.message;
@@ -425,7 +416,6 @@ const Users = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/user/suspend.php`, suspendUserData)
       .then((res) => {
-        //console.log("Suspend User Data", res.data);
         if (res.data.error) {
           const title = "Suspension Failed",
             text = res.data.message;
@@ -448,7 +438,6 @@ const Users = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/user/enable.php`, enableUserData)
       .then((res) => {
-        //console.log("Enable User Data", res.data);
         if (res.data.error) {
           const title = "Enablement Failed",
             text = res.data.message;
@@ -495,7 +484,6 @@ const Users = () => {
         user: userName,
         "user-id": userId,
       };
-      //console.log("Sweet Alert: ", value);
       if (value.isConfirmed) {
         enableContact(enableUserData);
       }
@@ -522,7 +510,6 @@ const Users = () => {
         "delete-user": deleteUserName,
         "delete-id": deleteUserId,
       };
-      console.log("Sweet Alert: ", deleteUserData);
       if (value.isConfirmed) {
         deleteContact(deleteUserData);
       }
@@ -531,10 +518,8 @@ const Users = () => {
 
   /** Fetch job description/usertypes from app settings store and subscribe it's state to a useEffect to get the async value on page load  */
   useGetAppSettings(setUserTypesList);
-  console.log("Users types list: ", userTypesList);
+
   useEffect(() => {
-    console.log("Use Effect Types List 1: ", userTypesList);
-    // alert("Fired");
     let typesList = [
       {
         user_type: "Select Job Description",
@@ -544,14 +529,9 @@ const Users = () => {
     ].concat(userTypesList);
 
     setUserTypesList(typesList);
-
-    // alert("Fired twice");
-    console.log("Use Effect Types List 2: ", userTypesList);
   }, [showModal]);
 
-  useEffect(() => {
-    console.log("Use Effect Types List 3: ", userTypesList);
-  }, [userTypesList]);
+  useEffect(() => {}, [userTypesList]);
 
   const { formData } = useAddContactFormData(userTypesList);
   const { updateUserDetailsFormData } =
@@ -573,86 +553,92 @@ const Users = () => {
 
   /** load the user list on page open */
   useEffect(() => {
-    axios.get(`${BASE_API_URL}/api/v1/user/list.php`).then((res) => {
-      //console.log("User List Data: ", res.data);
-      const data = res.data.data;
-      let body = [];
-      data.map((item, i) => {
-        const gottenUserName = item.user;
-        const gottenUserId = item.id;
-        const userImage = "assets/img/profile-5.jpeg";
-        const userType = item.user_type;
-        const userEmail = item.email;
-        const userPhoneNo = item.phone;
-        const userPassword = item.password;
-        const permission = item.permission;
+    axios
+      .get(`${BASE_API_URL}/api/v1/user/list.php`)
+      .then((res) => {
+        const data = res.data.data;
 
-        const currentUser = {
-          metaInfo: { name: gottenUserName, image: userImage },
-          fields: [
-            {
-              fieldName: "Job description",
-              fieldInfo:
-                userType === "2"
-                  ? "Super Admin"
-                  : userType === "3"
-                  ? "Admin"
-                  : userType === "4"
-                  ? "Loader"
-                  : userType === "5"
-                  ? "Production Master"
-                  : userType === "6"
-                  ? "Loading Inspector"
-                  : userType === "7"
-                  ? "Security"
-                  : userType === "8"
-                  ? "Operation Staff"
-                  : "Select position",
-              fieldClass: "user-meta-info",
-            },
-            {
-              fieldName: "Phone",
-              fieldInfo: userPhoneNo,
-              fieldClass: "user-meta-info",
-            },
-            {
-              fieldName: "Email",
-              fieldInfo: userEmail,
-              fieldClass: "user-meta-info",
-            },
-            {
-              fieldName: "Password",
-              fieldInfo: userPassword,
-              fieldClass: "user-meta-info",
-            },
-            {
-              fieldName: "Confirm Password",
-              fieldInfo: "",
-              fieldClass: "user-meta-info",
-            },
-          ],
-          user: item,
-          permission: permission,
-          setUser: setUser,
-          suspend: warningAlert1,
-          enable: warningAlert2,
-          delete: () =>
-            warningAlert3(
-              `Are you sure you want to delete ${gottenUserName} ?`,
-              gottenUserName,
-              gottenUserId,
-              userName,
-              userId
-            ),
-          // setShowUpdateModal: setShowUpdateModal,
-        };
-        return (body = body.concat(currentUser));
+        let body = [];
+        if (res.data.error) {
+          errorAlert("Network Error", res.data.message);
+        } else {
+          data.map((item, i) => {
+            const gottenUserName = item.user;
+            const gottenUserId = item.id;
+            const userImage = "assets/img/profile-5.jpeg";
+            const userType = item.user_type;
+            const userEmail = item.email;
+            const userPhoneNo = item.phone;
+            const userPassword = item.password;
+            const permission = item.permission;
+
+            const currentUser = {
+              metaInfo: { name: gottenUserName, image: userImage },
+              fields: [
+                {
+                  fieldName: "Job description",
+                  fieldInfo:
+                    userType === "2"
+                      ? "Super Admin"
+                      : userType === "3"
+                      ? "Admin"
+                      : userType === "4"
+                      ? "Loader"
+                      : userType === "5"
+                      ? "Production Master"
+                      : userType === "6"
+                      ? "Loading Inspector"
+                      : userType === "7"
+                      ? "Security"
+                      : userType === "8"
+                      ? "Operation Staff"
+                      : "Select position",
+                  fieldClass: "user-meta-info",
+                },
+                {
+                  fieldName: "Phone",
+                  fieldInfo: userPhoneNo,
+                  fieldClass: "user-meta-info",
+                },
+                {
+                  fieldName: "Email",
+                  fieldInfo: userEmail,
+                  fieldClass: "user-meta-info",
+                },
+                {
+                  fieldName: "Password",
+                  fieldInfo: userPassword,
+                  fieldClass: "user-meta-info",
+                },
+                {
+                  fieldName: "Confirm Password",
+                  fieldInfo: "",
+                  fieldClass: "user-meta-info",
+                },
+              ],
+              user: item,
+              permission: permission,
+              setUser: setUser,
+              suspend: warningAlert1,
+              enable: warningAlert2,
+              delete: () =>
+                warningAlert3(
+                  `Are you sure you want to delete ${gottenUserName} ?`,
+                  gottenUserName,
+                  gottenUserId,
+                  userName,
+                  userId
+                ),
+              // setShowUpdateModal: setShowUpdateModal,
+            };
+            return (body = body.concat(currentUser));
+          });
+          setUserList(body);
+        }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
       });
-      setUserList(body);
-      ////console.log("Users Main data: ", body);
-      console.log("Users Main DATA: ", userList);
-    });
-    ////console.log("Show modal: ", showModal);
   }, [refreshData, userName, userId]);
 
   return (
@@ -693,10 +679,7 @@ const Users = () => {
         />
       )}
 
-      {
-        /** use this to update user permissions */
-        //console.log(updateUserDetailsFormData, "update details form data")
-      }
+      {/** use this to update user permissions */}
       <FormModal
         formTitle="Update User Permission"
         formSubtitle="Add or remove permissions for users"

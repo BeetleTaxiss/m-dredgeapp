@@ -43,7 +43,7 @@ const AddFuel = () => {
   /** Get Fuel Summary data */
 
   const currentDate = moment().format("DD/MM/YYYY");
-  console.log("Current date: ", currentDate);
+
   useEffect(() => {
     const source = axios.CancelToken.source();
 
@@ -74,8 +74,6 @@ const AddFuel = () => {
             detailedStatsResponse.outgoing_fuel,
           ];
 
-          console.log("Detailed: ", detailedStatsResponse);
-          console.log("Detailed List: ", detailedStatsResponseList);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -96,7 +94,6 @@ const AddFuel = () => {
                 detailedStatsList.concat(detailedStatsSchema));
             });
             setDetailedStats(detailedStatsList);
-            console.log("Recent order list: ", detailedStats);
           }
         })
         .catch((error) => {
@@ -120,11 +117,10 @@ const AddFuel = () => {
       qty: fuel_quanity,
       amount: fuel_amount,
     };
-    console.log("Add machinery API values: ", addFuelData);
+
     axios
       .post(`${BASE_API_URL}/api/v1/operations/fuel-add.php`, addFuelData)
       .then((res) => {
-        console.log("Add Machinery response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -217,7 +213,7 @@ const AddFuel = () => {
                 const validation = functionUtils.validateFormInputs(
                   getAddFuelStockFormData(userName, userId)
                 );
-                console.log("Validation: ", validation);
+
                 if (validation === true) {
                   setLoading(true);
                   handleAddFuel(userName, userId);

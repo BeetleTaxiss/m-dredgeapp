@@ -54,7 +54,6 @@ const OrderForm = () => {
           const stock = detailedStatsResponse?.stock[0]?.stock;
           detailedStatsResponseList = [{ stock }];
 
-          console.log("Detailed: ", detailedStatsResponse);
           if (res.data.error) {
             let title = "Server Error",
               text = res.data.message;
@@ -72,7 +71,6 @@ const OrderForm = () => {
                 detailedStatsList.concat(detailedStatsSchema));
             });
             setDetailedStats(detailedStatsList);
-            console.log("Recent order list: ", detailedStats);
           }
         })
         .catch((error) => {
@@ -90,9 +88,8 @@ const OrderForm = () => {
     axios
       .get(`${BASE_API_URL}/api/v1/product/list.php`)
       .then((res) => {
-        console.log(res.data);
         if (res.data.error) {
-          console.log("Products Error: ", res.data.error);
+          errorAlert("Server Error Response", res.data.message);
         } else {
           const data = res.data.data;
           data.unshift({
@@ -111,22 +108,18 @@ const OrderForm = () => {
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
-  console.log("User deetails: ", userName, userId);
+
   const handleOrderChange = () => {
     // Get form values with document,getById
     const qtyValue = document.getElementById("qty").value;
-    console.log("Qty Value: ", qtyValue);
+
     const truckNoValue = document.getElementById("truckNo").value;
-    console.log("truckNo Value: ", truckNoValue);
     const selectValue = document.getElementById("select").value;
-    console.log("Select Value: ", selectValue);
 
     // Filter Products Array to get single product
     const product = products?.filter((product) => product.id === selectValue);
-    console.log("Product: ", product);
     // Calculate the cost of an order
     const orderCost = qtyValue * product[0].price;
-    console.log("Order Cost: ", orderCost);
     // Set the value of an order to the UI
     setTotalPrice(orderCost);
 
@@ -141,8 +134,7 @@ const OrderForm = () => {
     const selectValue = parseInt(document.getElementById("select").value);
     // const commentValue = document.getElementById("comment").value;
     const { product } = handleOrderChange();
-    console.log("Submitted Product", product);
-    console.log("User deetails in submit: ", userName, userId);
+
     const addOrderData = {
       "product-id": selectValue,
       product: product[0].product,
@@ -157,7 +149,7 @@ const OrderForm = () => {
       description: product[0].description,
       comment: "",
     };
-    console.log("Add Order Data: ", addOrderData);
+
     // if (error || !error) {
     //   setLoading(true);
     //   document.getElementById("loading-btn").disabled = true;
@@ -165,7 +157,6 @@ const OrderForm = () => {
     axios
       .post(`${BASE_API_URL}/api/v1/order/add.php`, addOrderData)
       .then((res) => {
-        console.log("ADD ORDER: ", res.data);
         if (res.data.error) {
           setError(true);
           errorAlert("Order not completed", res.data.message);
@@ -220,7 +211,7 @@ const OrderForm = () => {
       "truck-no": truckNoValue,
       description: product[0].description,
     };
-    console.log("Get form data: ", addOrderData);
+
     return addOrderData;
   };
 
@@ -261,7 +252,7 @@ const OrderForm = () => {
                       const validate = functionUtils.validateFormInputs(
                         getFormDataWrapper()
                       );
-                      console.log("Validate status: ", validate);
+
                       if (validate === true) {
                         setLoading(true);
                         return handleOrderSubmit();

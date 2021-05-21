@@ -17,7 +17,6 @@ const AddAccount = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/account/chart-list.php`)
           .then((res) => {
-            console.log("Chart list response data: ", res.data);
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
@@ -47,7 +46,6 @@ const AddAccount = () => {
                 validation: "Can't select this option",
               });
               setChartList(chartListBody);
-              console.log("Chart List Body: ", chartList);
             }
           })
           .catch((error) => {
@@ -78,17 +76,14 @@ const AddAccount = () => {
     const chartValue = parseInt(document.getElementById("chart-id").value);
     const chartItem = chartList.filter(({ id }) => id === chartValue);
 
-    console.log("chart item: ", chartItem);
     const addAccountData = {
       account: account,
       "chart-id": chartValue,
       description: description,
     };
-    console.log("Chart API values: ", addAccountData);
     axios
       .post(`${BASE_API_URL}/api/v1/account/account-add.php`, addAccountData)
       .then((res) => {
-        console.log("Add account response data: ", res.data);
         if (res.data.error) {
           let title = "Server Error Response",
             text = res.data.message;
@@ -112,7 +107,6 @@ const AddAccount = () => {
     const chartValue = parseInt(document.getElementById("chart-id").value);
     const chartItem = chartList.filter(({ id }) => id === chartValue);
 
-    console.log("chart item: ", chartItem);
     const addAccountData = {
       account: account,
       "chart-id": chartValue,
