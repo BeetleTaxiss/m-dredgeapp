@@ -238,9 +238,9 @@ const OrderReceipt = () => {
   useEffect(() => {}, [order]);
 
   return (
-    <div className="row invoice  layout-spacing layout-top-spacing">
+    <div id="order-receipt-view" className="row invoice  layout-spacing layout-top-spacing">
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div id="order-receipt-view" className="doc-container">
+        <div  className="doc-container">
           <div className="row">
             <div className="col-xl-9">
               <div className="invoice-container">
@@ -349,6 +349,12 @@ const printOrderReceiptOld = (
     .getElementById(orderReceiptLayer)
     .cloneNode(true);
 
+    /** get all the style links on our current page */
+    const links= document.getElementsByTagName("link");
+    const scripts= document.getElementsByTagName("script");
+
+    console.log(scripts, "all scripts");
+
   /** get the content to print without the links */
   let receiptContent = receiptContentLayer.innerHTML;
 
@@ -368,36 +374,28 @@ const printOrderReceiptOld = (
     "ript>";
 
   printWindow.document.write(`<html><head><title>${printTitle}</title>`);
-  printWindow.document.write(
-    '<link rel="stylesheet" href="./assets/css/bootstrap/css/bootstrap.min.css" type="text/css" />'
-  );
-  printWindow.document.write(
-    '<link rel="stylesheet" href="./assets/css/dashboard/dash_1.css" type="text/css" />'
-  );
-  printWindow.document.write(
-    '<link rel="stylesheet" href="./assets/css/dashboard/dash_2.css" type="text/css" />'
-  );
-  printWindow.document.write(
-    '<link rel="stylesheet" href="./assets/css/main.css" type="text/css" />'
-  );
-  printWindow.document.write(
-    '<link rel="stylesheet" href="./assets/css/structure.css" type="text/css" />'
-  );
-  printWindow.document.write(
-    '<link rel="stylesheet" href="./assets/css/tables/table-basic.css" type="text/css" />'
-  );
-  printWindow.document.write(
-    '<link rel="stylesheet" href="./assets/css/apps/invoice-preview.css" type="text/css" />'
-  );
-  printWindow.document.write(printCommand);
+
+  /** add all the  css links */
+  for (let link of links) {
+    console.log(link, "current link");
+    printWindow.document.head.appendChild(link);
+  };
+
+  /** append all the links to the print window */
+  for (let script of scripts) {
+    printWindow.document.head.appendChild(script);
+  };
+
+ // printWindow.document.write(printCommand);
   printWindow.document.write("</head><body>");
   printWindow.document.write(receiptView);
   printWindow.document.write("</body></html>");
 
-  printWindow.addEventListener("load", () => {
-    printWindow.document.getElementsByClassName(
-      "order-receipt-view-links"
-    )[0].innerHTML = null;
+  printWindow.addEventListener("DOMContentLoaded", () => {
+    alert("loaded");
+    // printWindow.document.getElementsByClassName(
+    //   "order-receipt-view-links"
+    // )[0].innerHTML = null;
   });
 
   printWindow.document.close();
@@ -415,25 +413,22 @@ const printOrderReceipt = (
   orderReceiptLayer = "order-receipt-view",
   orderReceiptLayerLinks = "order-receipt-view-links"
 ) => {
+
+  /** 
+   * first scroll the window to top. This is to fix the bug of the 
+   * pdf generated adding too much `marginTop` and cutting off receipt
+   */
+  window.scrollTo(0,0);
+
   /** hide the links layer.  */
   const links = document.getElementById(orderReceiptLayerLinks);
   links.setAttribute("style", "display:none");
 
   const receiptContentLayer = document.getElementById(orderReceiptLayer);
 
-  /**
-   * Get the window scroll top size.  This is usually added to the top of the
-   * And this has the effect of adding too much top margin to our report
-   * so we want to avoid this by all means. If we have  scroll top
-   * we will simply remove this from the the top margin of report
-   */
-  const windowScrollTop = receiptContentLayer.scrollTop;
-
-  // return alert(windowScrollTop);
-
   const canvasOptions = {
-    //scale:0.83,
-    scale: 1.05,
+    scale:0.88,
+    //scale: 1,
     backgroundColor: "#ffffff",
   };
   const pdfOptions = {
@@ -443,9 +438,13 @@ const printOrderReceipt = (
   };
 
   html2canvas(receiptContentLayer, canvasOptions).then((canvas) => {
-    var img = canvas.toDataURL("image/png");
-    var doc = new jsPDF(pdfOptions);
-    doc.addImage(img, "JPEG", 15, 15);
+
+    let imgData = canvas.toDataURL("image/png");
+    let doc = new jsPDF(pdfOptions);
+    const marginTop= 30;
+    const marginLeft= 3;
+
+    doc.addImage(imgData, "JPEG", marginLeft, marginTop);
 
     if (saveReceipt === true) {
       return doc.save(receiptName);

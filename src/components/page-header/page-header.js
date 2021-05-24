@@ -73,7 +73,7 @@ const PageHeader = () => {
       ? "Impound Truck"
       : null;
   const breadCrumbsData = [
-    { text: "Dashboard", link: "/dashboard" },
+    { text: "Dashboard", link: "/" },
     { text: page, link: "#", active: true },
   ];
   return (
