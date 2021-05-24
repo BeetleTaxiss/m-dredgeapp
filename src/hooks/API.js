@@ -9,10 +9,10 @@
  * the master (Live Site) we must uncomment this and comment out the
  * development section below so that app will connect to the live version
  */
-// export const BASE_API_URL = "https://mdredge-server-api.herokuapp.com";
+export const BASE_API_URL = "https://mdredge-server-api.herokuapp.com";
 
 /**
  * The developement server. This is the server that runs the development version
  * of our application. We must uncooment this before publishing to development
  * */
-export const BASE_API_URL = "https://mdredge-server-api-dev.herokuapp.com";
+// export const BASE_API_URL = "https://mdredge-server-api-dev.herokuapp.com";
