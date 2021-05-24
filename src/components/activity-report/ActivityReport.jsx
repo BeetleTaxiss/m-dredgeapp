@@ -54,11 +54,26 @@ const ActivityReport = () => {
     });
   };
 
+  /**
+   * Checks for new line in paragraphs and adds a break html element <br/>
+   */
+
+  const handleNewLineInParagraph = (string) => {
+    let convertedString = string.replace(/[\r\n]+/g, "<br/> <br/>");
+    return convertedString;
+  };
+
   const handleAddActivityReport = (userName, userId) => {
     const work_week = document.getElementById("work-week").value;
-    const ongoing_tasks = document.getElementById("ongoing-tasks").value;
-    const completed_tasks = document.getElementById("completed-tasks").value;
-    const next_week_tasks = document.getElementById("next-week-tasks").value;
+    const ongoing_tasks = handleNewLineInParagraph(
+      document.getElementById("ongoing-tasks").value
+    );
+    const completed_tasks = handleNewLineInParagraph(
+      document.getElementById("completed-tasks").value
+    );
+    const next_week_tasks = handleNewLineInParagraph(
+      document.getElementById("next-week-tasks").value
+    );
 
     const addActivityReportData = {
       user: userName,
