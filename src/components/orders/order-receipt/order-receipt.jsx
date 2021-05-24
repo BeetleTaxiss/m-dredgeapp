@@ -429,7 +429,7 @@ const printOrderReceipt = (
    */
   const windowScrollTop = receiptContentLayer.scrollTop;
 
-  return alert(windowScrollTop);
+  // return alert(windowScrollTop);
 
   const canvasOptions = {
     //scale:0.83,
