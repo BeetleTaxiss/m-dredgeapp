@@ -1556,11 +1556,12 @@ code { color: #e7515a; }
 
     #topbar ul.menu-categories {
         position: relative;
-        padding: 20px 0 20px 0;
+        padding: 20px 0 60px 0;
         margin: auto;
         width: 100%;
         height: 100%;
         overflow: scroll;
+
     }
     #topbar ul.menu-categories::-webkit-scrollbar {
         height: 0.1em;
