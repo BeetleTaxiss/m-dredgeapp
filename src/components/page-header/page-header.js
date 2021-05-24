@@ -74,7 +74,7 @@ const PageHeader = () => {
       : null;
   const breadCrumbsData = [
     { text: "Dashboard", link: "/" },
-    { text: page, link: "#", active: true },
+    { text: page, active: true },
   ];
   return (
     <div className="page-header">
