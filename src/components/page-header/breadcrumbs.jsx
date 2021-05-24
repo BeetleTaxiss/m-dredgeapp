@@ -1,7 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const Breadcrumbs = ({ items }) => {
+  const history = useHistory();
   return (
     <nav className="breadcrumb-one" aria-label="breadcrumb">
       <ol className="breadcrumb">
@@ -12,7 +13,17 @@ const Breadcrumbs = ({ items }) => {
             aria-current={item.active && "page"}
             style={{ display: !item.text && "none" }}
           >
-            <Link to={item.link}>{item.text}</Link>
+            <Link
+              onClick={(e) => {
+                e.preventDefault();
+                if (item.link) {
+                  history.push(item.link);
+                }
+              }}
+              to={item.link}
+            >
+              {item.text}
+            </Link>
           </li>
         ))}
       </ol>
