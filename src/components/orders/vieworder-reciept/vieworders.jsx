@@ -78,6 +78,7 @@ const ViewOrders = () => {
   const [ordersList, setOrdersList] = useState();
   const [rawData, setRawData] = useState();
   const [currentPageArray, setCurrentPageArray] = useState();
+  const [persistentCurrentPage, setPersistentCurrentPage] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
   const [listCount, setListCount] = useState("10");
@@ -161,7 +162,10 @@ const ViewOrders = () => {
                 id: newPageNumber,
                 page: parentArray[newPageNumber],
               });
-
+              setPersistentCurrentPage({
+                id: newPageNumber,
+                page: parentArray[newPageNumber],
+              });
               /**
                *  Side effects to ensure data is returned in a loop for next use
                */
@@ -205,6 +209,7 @@ const ViewOrders = () => {
                */
               setOrdersList(parentArray);
               setCurrentPageArray({ id: 0, page: parentArray[0] });
+              setPersistentCurrentPage({ id: 0, page: parentArray[0] });
               setLastItemStore(res.data["last-item-id"]);
               setRawData(data);
             }
@@ -220,7 +225,12 @@ const ViewOrders = () => {
     };
   }, [userName, userId, listCount, lastItemId, refreshData]);
 
-  useEffect(() => {}, [currentPageArray, rawData, lastItemStore]);
+  useEffect(() => {}, [
+    currentPageArray,
+    persistentCurrentPage,
+    rawData,
+    lastItemStore,
+  ]);
 
   /**
    * Handle parent pagination array and children array creation
@@ -321,6 +331,10 @@ const ViewOrders = () => {
           id: pageNumber + 1,
           page: data[pageNumber + 1],
         });
+        setPersistentCurrentPage({
+          id: pageNumber + 1,
+          page: data[pageNumber + 1],
+        });
       } else if (data.length === pageNumber + 1) {
         /**
          * At Last paginated page - check if pageNumber is greater than parent data array and fetch new data if any by setting a new last item id (The id set in lastItemStore when first axios call was made)
@@ -362,6 +376,10 @@ const ViewOrders = () => {
           id: pageNumber - 1,
           page: data[pageNumber - 1],
         });
+        setPersistentCurrentPage({
+          id: pageNumber - 1,
+          page: data[pageNumber - 1],
+        });
       } else {
         /**
          * When the page is on the first page, remove previous functionality and disable previous button.
@@ -371,7 +389,52 @@ const ViewOrders = () => {
     }
   };
 
-  const handleSearchList = () => {};
+  /**
+   * handles current page filtering and searching of data using a persistent page state
+   * @param {persistentCurrentPageArray} persistentCurrentPageArray
+   */
+  const handleSearchList = (persistentCurrentPageArray) => {
+    /**
+     * Set the current page data from the persistent state to a variable
+     */
+    const currentPage = persistentCurrentPage?.page;
+
+    /**
+     * Get value of search value and add it to a dynamic regex function which looks for similar case insensitive values globally when tested
+     */
+    let searchValue;
+    if (document.getElementById("page-filter") !== null) {
+      searchValue = document.getElementById("page-filter").value;
+    }
+    const searchRegex = new RegExp(searchValue, "ig");
+
+    /**
+     * filter current page data by testing for similar values in the date, qty, reference, total price, total volume and truck number
+     */
+    const filteredPage = currentPage.filter(
+      (item) =>
+        item.order_ref == searchValue ||
+        searchRegex.test(item.order_ref) ||
+        item.qty == searchValue ||
+        searchRegex.test(item.qty) ||
+        item.total_price == searchValue ||
+        searchRegex.test(item.total_price) ||
+        item.date_in == searchValue ||
+        searchRegex.test(item.date_in) ||
+        item.total_volume == searchValue ||
+        searchRegex.test(item.truck_no) ||
+        item.truck_no == searchValue
+    );
+
+    /**
+     * Set current page view based on the values gotten from the filtered page
+     */
+    if (filteredPage.length <= 0) {
+      setCurrentPageArray((state) => ({ ...state, page: currentPage }));
+    } else {
+      setCurrentPageArray((state) => ({ ...state, page: filteredPage }));
+    }
+  };
   return (
     <div className="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
       <div className="widget-content widget-content-area br-6">
@@ -383,7 +446,7 @@ const ViewOrders = () => {
           <ViewordersSearchbar
             currentPageNumber={currentPageArray?.id + 1}
             handleCountChange={handleCountChange}
-            handleSearchList={handleSearchList}
+            handleSearchList={() => handleSearchList(persistentCurrentPage)}
           />
           {/* END OF VIEW ORDERS SEARCH BAR */}
           <div className="table-responsive">
