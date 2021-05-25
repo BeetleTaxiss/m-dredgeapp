@@ -38,7 +38,7 @@ const ViewordersTableBody = ({ content, reloadData, userName, userId }) => {
             <td>{item.truck_no}</td>
             <td>{functionUtils.addCommaToNumbers(item.qty)}</td>
             <td>₦{functionUtils.addCommaToNumbers(item.total_price)}</td>
-            <td className="sorting_1">{item.qty}cm³</td>
+            <td className="sorting_1">{item.total_volume}cm³</td>
             <td>{item.order_ref}</td>
             <td className="text-center">
               <DeleteIcon
