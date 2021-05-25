@@ -157,7 +157,7 @@ export const createUserRoutes = (userMenu, addDefaultRoutes = true) => {
   /** this is all the routes user can see, including the default ones*/
   const allAccessibleRoutes = [...userAccess, ...defaultAllowedAccess];
 
-  console.log(allAccessibleRoutes, "All routes cretedd");
+ // console.log(allAccessibleRoutes, "All routes cretedd");
 
   /** return the routes created */
   return allAccessibleRoutes;
@@ -183,6 +183,11 @@ export const createDefaultRoutes = () => {
   return defaultAllowedAccess;
 };
 
+/**
+ * Create user menu based on the user permissions provided
+ * @param {*} userMenu 
+ * @returns 
+ */
 export const createUserMenu = (userMenu) => {
   if (typeof userMenu !== "object") {
     alert("user permission provide must be an object");
@@ -417,8 +422,6 @@ export const createUserDashboardOld = (userMenu) => {
     }
   });
 
-  console.log(userDashboardGroup, "user menu group");
-
   // /** finally, to ensure that we force each menuGroup to its own row */
   // for (let k=0 ; k < userDashboardGroup.length; k++) {
   //   const menuRow= userDashboardGroup[k];
@@ -534,8 +537,6 @@ export const createUserDashboard = (userMenu) => {
       }
     }
   });
-
-  console.log(userDashboardGroup, "user menu group");
 
   // /** finally, to ensure that we force each menuGroup to its own row */
   // for (let k=0 ; k < userDashboardGroup.length; k++) {
@@ -998,5 +999,16 @@ export const MenuStyles = {
     dropdownIcon: dropdownIcon,
     link: "#",
     menuClass: "activity-report",
+  },
+
+  /**
+   * This entry if for the productPermission section which is not supposed to showon the menu bar
+   */
+  productPermissions: {
+    icon: null,
+    text: "",
+    dropdownIcon: null,
+    link: "#",
+    menuClass: null,
   },
 };

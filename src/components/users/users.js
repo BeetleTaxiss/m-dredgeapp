@@ -22,6 +22,7 @@ import {
   successAlert,
   useGetAppSettings,
   useGetUserDetails,
+  getAppSettingStoreInstance,
 } from "../../hooks/function-utils";
 import { enUs as language } from "../../Language";
 
@@ -65,6 +66,22 @@ const Users = () => {
    * it work by concatenating  `true` to the array when we need to refresh
    * */
   const [refreshData, setRefreshData] = useState([]);
+
+  /**
+   * Global menu list that contains both the static global menu defined in `Menu.js` 
+   * and the dynamic product menu added when we run the function `loadAppSettingsAndCreateDynamicGloablMenu()`
+   * We will pass this to all the functions that create our permission accordion both on for new `user` and `update user`
+   * @note: the `loadAppSettingsAndCreateDynamicGloablMenu` method add product to our static menu list
+   */
+  const [dynamicGlobalMenu, setDynamicGlobalMenu] = useState([]);
+  const AppSettingsStore = getAppSettingStoreInstance();
+
+  AppSettingsStore.useStateAsync("user_permission").then(globalPermission => {
+    /** only assign once so we can avoid continous rerun */
+    if (globalPermission && dynamicGlobalMenu.length === 0) {
+      setDynamicGlobalMenu(JSON.parse(globalPermission));
+    }
+  })
 
   /**
    *  an helper function to always refresh the page
@@ -229,6 +246,7 @@ const Users = () => {
   };
 
   const addContact = () => {
+
     let newUserName = document.getElementById("user-add-user").value,
       newUserType = document.getElementById("select-add-user").value,
       newUserEmail = document.getElementById("email-add-user").value,
@@ -278,6 +296,7 @@ const Users = () => {
           /** refresh the page so we can newly added users */
           reloadServerData();
           setLoading(false);
+          
         }
       })
       .catch((error) => {
@@ -524,19 +543,7 @@ const Users = () => {
   /** Fetch job description/usertypes from app settings store and subscribe it's state to a useEffect to get the async value on page load  */
   useGetAppSettings(setUserTypesList);
 
-  useEffect(() => {
-    let typesList = [
-      {
-        user_type: "Select Job Description",
-        id: "0",
-        validation: "Can't select this option",
-      },
-    ].concat(userTypesList);
-
-    setUserTypesList(typesList);
-  }, [showModal]);
-
-  useEffect(() => {}, [userTypesList]);
+  useEffect(() => { }, [userTypesList]);
 
   const { formData } = useAddContactFormData(userTypesList);
   const { updateUserDetailsFormData } =
@@ -549,12 +556,26 @@ const Users = () => {
    * we update them
    */
   const BlankPermissionListForNewUser = (props) => {
-    const permissionListData = createPermissionList({});
+    const permissionListData = createPermissionList({}, dynamicGlobalMenu);
 
     const [PermissionList] =
       createUserPermissionListComponent(permissionListData);
     return <>{PermissionList}</>;
   };
+
+
+  /** run this when we are showing page modal or when dynamicGlobalMenu changes */
+  useEffect(() => {
+    let typesList = [
+      {
+        user_type: "Select Job Description",
+        id: "0",
+        validation: "Can't select this option",
+      },
+    ].concat(userTypesList);
+
+    setUserTypesList(typesList);
+  }, [showModal]);
 
   /** load the user list on page open */
   useEffect(() => {
@@ -586,18 +607,18 @@ const Users = () => {
                     userType === "2"
                       ? "Super Admin"
                       : userType === "3"
-                      ? "Admin"
-                      : userType === "4"
-                      ? "Loader"
-                      : userType === "5"
-                      ? "Production Master"
-                      : userType === "6"
-                      ? "Loading Inspector"
-                      : userType === "7"
-                      ? "Security"
-                      : userType === "8"
-                      ? "Operation Staff"
-                      : "Select position",
+                        ? "Admin"
+                        : userType === "4"
+                          ? "Loader"
+                          : userType === "5"
+                            ? "Production Master"
+                            : userType === "6"
+                              ? "Loading Inspector"
+                              : userType === "7"
+                                ? "Security"
+                                : userType === "8"
+                                  ? "Operation Staff"
+                                  : "Select position",
                   fieldClass: "user-meta-info",
                 },
                 {
@@ -649,6 +670,7 @@ const Users = () => {
   return (
     <>
       <Contacts
+        dynamicGlobalMenu={dynamicGlobalMenu}
         setShowModal={setShowModal}
         setUserGetPermissionData={setUserGetPermissionData}
         content={userListData}
@@ -680,7 +702,7 @@ const Users = () => {
             }
           }}
           Btntext="Add User"
-          // closeBtn
+        // closeBtn
         />
       )}
 
@@ -699,7 +721,7 @@ const Users = () => {
         status={error}
         handleSubmit={updateUserPermission}
         Btntext="Update Permission"
-        // closeBtn
+      // closeBtn
       />
       {/** Update user password with this section */}
       <FormModal
@@ -722,7 +744,7 @@ const Users = () => {
           }
         }}
         Btntext="Update Password"
-        // closeBtn
+      // closeBtn
       />
     </>
   );

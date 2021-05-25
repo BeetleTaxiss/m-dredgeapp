@@ -26,11 +26,13 @@ const ContactListHeader = ({ content }) => (
  * method to getPermissionData to get the updated permission data before
  * update
  */
+
 const PermissionListForExistingUser = ({
-  permission,
+  dynamicGlobalMenu,
   setUserGetPermissionData,
+  permission,
 }) => {
-  const permissionListData = createPermissionList(permission);
+  const permissionListData = createPermissionList(permission, dynamicGlobalMenu);
   /**
    * assign our `getPermissionData` function from `PermissionList` library to
    * `setUserGetPermissionData` state value so that we can call this on the main component when we
@@ -41,7 +43,9 @@ const PermissionListForExistingUser = ({
   /** return our initial userPermissionList component */
   return createUserPermissionListComponent(permissionListData);
 };
+
 const Contact = ({
+  dynamicGlobalMenu,
   content,
   setUserPermissionListView,
   setUserGetPermissionData,
@@ -84,6 +88,7 @@ const Contact = ({
                   <PermissionListForExistingUser
                     setUserGetPermissionData={setUserGetPermissionData}
                     permission={content.permission}
+                    dynamicGlobalMenu={dynamicGlobalMenu}
                   />
                 );
 
@@ -221,7 +226,9 @@ const Contact = ({
     )}
   </>
 );
+
 const ContactList = ({
+  dynamicGlobalMenu,
   content,
   setUserPermissionListView,
   setUserGetPermissionData,
@@ -240,6 +247,7 @@ const ContactList = ({
           <Contact
             key={i}
             content={user}
+            dynamicGlobalMenu={dynamicGlobalMenu}
             setUserPermissionListView={setUserPermissionListView}
             setShowUpdateModal={setShowUpdateModal}
             setUserGetPermissionData={setUserGetPermissionData}
