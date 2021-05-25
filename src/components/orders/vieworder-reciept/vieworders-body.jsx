@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { functionUtils } from "../../../hooks/function-utils";
 import { ReactComponent as DeleteIcon } from "../../../assets/deleteIcon.svg";
 
-const ViewordersTableBody = ({ content, reloadData }) => {
+const ViewordersTableBody = ({ content, reloadData, userName, userId }) => {
   const title = "Are you sure you want to Delete this order ?";
   const warningAlert = (title, id, ref, userName, userId, reloadData) => {
     Swal.fire({
@@ -52,8 +52,8 @@ const ViewordersTableBody = ({ content, reloadData }) => {
                         title,
                         item.id,
                         item.order_ref,
-                        content.userName,
-                        content.userId,
+                        userName,
+                        userId,
                         reloadData
                       )
                 }
