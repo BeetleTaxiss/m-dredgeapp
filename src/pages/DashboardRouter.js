@@ -17,9 +17,17 @@ export default function DashboardRouter() {
 
   const Store = getUserStoreInstance();
 
+  Store.useStateAsync("login").then(
+    login=>{
+      console.log(login, "login status")
+    }
+  )
+
   /** get uer permissions */
   Store.useStateAsync("permission").then((permission) => {
-    setUserPermission(permission);
+    if(permission) {
+      setUserPermission(permission);
+    }
   });
 
   /**

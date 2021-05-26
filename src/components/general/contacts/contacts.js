@@ -5,6 +5,7 @@ import ContactList from "./contact-list";
 import "./contacts.css";
 
 const Contacts = ({
+  dynamicGlobalMenu,
   setShowModal,
   setShowUpdateModal,
   setShowUserDetailsUpdate,
@@ -23,6 +24,7 @@ const Contacts = ({
 
         {/* BEGINNING OF USERS LIST */}
         <ContactList content={contactList} 
+        dynamicGlobalMenu={dynamicGlobalMenu}
         setUserPermissionListView={setUserPermissionListView} 
         setUserGetPermissionData={setUserGetPermissionData}
         setShowUpdateModal={setShowUpdateModal}
