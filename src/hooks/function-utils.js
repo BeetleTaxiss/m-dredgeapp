@@ -1288,6 +1288,8 @@ export const functionUtils = {
    * @param  {order_ref} order_ref
    * ----------------------------------------------------------------------------------------------------------
    */
+  orderId: null,
+  orderRef: null,
   handleDeleteOrder: async (id, order_ref, userName, userId, reloadData) => {
     await axios
       .post(`${BASE_API_URL}/api/v1/order/delete.php`, {
@@ -1302,11 +1304,17 @@ export const functionUtils = {
         } else {
           successAlert("Order deleted successfully", res.data.message);
           reloadData();
+          console.log("Main  data: ", id, order_ref);
+          functionUtils.orderId = id;
+          functionUtils.orderRef = order_ref;
         }
       })
       .catch((error) => {
         errorAlert("Network Error", error);
       });
+  },
+  fetchStatus: () => {
+    return { orderId: functionUtils.orderId, orderRef: functionUtils.orderRef };
   },
   /** 8.
    * ----------------------------------------------------------------------------------------------------------
