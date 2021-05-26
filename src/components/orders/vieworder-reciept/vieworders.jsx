@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { BASE_API_URL } from "../../../hooks/API";
 import ViewordersTablehead from "./vieworders-tablehead";
@@ -7,7 +7,7 @@ import ViewordersTablefooter from "./vieworders-tablefooter";
 import ViewordersSearchbar from "./vieworders-searchbar";
 import ViewordersTablepaiginaition from "./vieworders-tablepaiginaition";
 import "./vieworders.scss";
-import { errorAlert } from "../../../hooks/function-utils";
+import { errorAlert, functionUtils } from "../../../hooks/function-utils";
 import { useGetUserDetails } from "../../../hooks/function-utils";
 /**
  * Orders List Data object which is divided into table header, body and footer properties
@@ -81,8 +81,8 @@ const ViewOrders = () => {
   const [persistentCurrentPage, setPersistentCurrentPage] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
-  const [listCount, setListCount] = useState("10");
-  const [lastItemStore, setLastItemStore] = useState();
+  const [listCount, setListCount] = useState("2");
+  const [lastItemStore, setLastItemStore] = useState("0");
   const [lastItemId, setLastItemId] = useState("0");
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
@@ -93,11 +93,18 @@ const ViewOrders = () => {
    * it work by concatenating  `true` to the array when we need to refresh
    * */
   const [refreshData, setRefreshData] = useState([]);
+  let newDataFetch = useRef(false);
+
+  const resetFetchStatus = () => {
+    newDataFetch.current = false;
+  };
+  console.log("fetch status: ", newDataFetch.current);
 
   /**
    *  an helper function to always refresh the page
    * */
   const reloadServerData = () => {
+    newDataFetch.current = true;
     /** refresh the page so we can newly added users */
     setRefreshData(refreshData.concat(true));
   };
@@ -109,7 +116,7 @@ const ViewOrders = () => {
       await axios
         .get(`${BASE_API_URL}/api/v1/order/list.php`, {
           params: {
-            count: "20",
+            count: "10",
             "last-item-id": lastItemId,
           },
         })
@@ -126,8 +133,8 @@ const ViewOrders = () => {
              */
             let data = res.data.data;
             let oldData = rawData;
-            data["userName"] = userName;
-            data["userId"] = userId;
+            // data["userName"] = userName;
+            // data["userId"] = userId;
             let parentArray;
 
             /**
@@ -142,18 +149,25 @@ const ViewOrders = () => {
             if (
               res.data.message !== "No order found" &&
               (data !== null || data !== undefined) &&
-              Array.isArray(rawData)
+              Array.isArray(rawData) &&
+              lastItemId !== "0" &&
+              newDataFetch.current === false
             ) {
+              newDataFetch.current = false;
               /**
                * New data fetch is added to old data and cloned back to the data object to be passed to the handle parent pagination utility function
                */
+              console.log("New data");
               oldData = oldData.concat(data);
               data = [...oldData];
               /**
                * Utility - creates paginated pages for transversing
                */
+              console.log("Check: ", newDataFetch.current);
               parentArray = handleParentPaginationArray(data);
 
+              console.log("Last id before page no: ", lastItemId);
+              console.log("Check after: ", newDataFetch.current);
               /**
                * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
                */
@@ -179,6 +193,38 @@ const ViewOrders = () => {
                 document.getElementById("default-ordering_next").className =
                   "paginate_button page-item next";
               }
+              console.log("Last id before alert: ", lastItemId);
+              alert("Fired 1");
+            } else if (newDataFetch.current === true) {
+              /**
+               * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
+               */
+              let orderData = functionUtils.fetchStatus();
+
+              let persistentPage = [...currentPageArray?.page];
+
+              persistentPage = persistentPage.filter(
+                (item) =>
+                  item.id !== orderData.orderId ||
+                  item.order_ref !== orderData.orderRef
+              );
+
+              console.log(
+                "New Ui: ",
+                persistentPage,
+                orderData.orderId,
+                orderData.orderRef
+              );
+              setCurrentPageArray({
+                id: currentPageArray?.id,
+                page: persistentPage,
+              });
+              setPersistentCurrentPage({
+                id: currentPageArray?.id,
+                page: persistentPage,
+              });
+
+              alert("2");
             } else if (
               res.data.message === "No order found"
               // ||
@@ -212,6 +258,8 @@ const ViewOrders = () => {
               setPersistentCurrentPage({ id: 0, page: parentArray[0] });
               setLastItemStore(res.data["last-item-id"]);
               setRawData(data);
+
+              console.log("Last id initial run: ", lastItemId);
             }
           }
         })
@@ -223,15 +271,19 @@ const ViewOrders = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, listCount, lastItemId, refreshData]);
+  }, [listCount, lastItemId, refreshData]);
 
   useEffect(() => {}, [
+    userName,
+    userId,
     currentPageArray,
     persistentCurrentPage,
     rawData,
     lastItemStore,
+    newDataFetch,
   ]);
 
+  console.log("Last id outside: ", lastItemId);
   /**
    * Handle parent pagination array and children array creation
    */
@@ -336,6 +388,10 @@ const ViewOrders = () => {
           page: data[pageNumber + 1],
         });
       } else if (data.length === pageNumber + 1) {
+        /**
+         * Reset newDataFetch to false to enable adding of new data if any
+         */
+        resetFetchStatus();
         /**
          * At Last paginated page - check if pageNumber is greater than parent data array and fetch new data if any by setting a new last item id (The id set in lastItemStore when first axios call was made)
          */
