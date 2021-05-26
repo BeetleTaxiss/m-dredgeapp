@@ -50,6 +50,7 @@ const ViewordersSearchbar = ({
               </svg>
               <input
                 type="search"
+                id="page-filter"
                 className="form-control"
                 placeholder="Search..."
                 aria-controls="default-ordering"

@@ -73,8 +73,8 @@ const PageHeader = () => {
       ? "Impound Truck"
       : null;
   const breadCrumbsData = [
-    { text: "Dashboard", link: "/dashboard" },
-    { text: page, link: "#", active: true },
+    { text: "Dashboard", link: "/" },
+    { text: page, active: true },
   ];
   return (
     <div className="page-header">
