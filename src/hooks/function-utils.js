@@ -155,10 +155,10 @@ const Login = async (user, password, setLoading) => {
      * we will wait a little bit. This is to ensure that by the time we attempt
      * to read the login status, we will indeed have a value to work with
      */
-    // let n = 1500000000;
-    // while (n > 0) {
-    //   n--;
-    // }
+    let n = 1000000000;
+    while (n > 0) {
+      n--;
+    }
     return responseData;
   }
 };
@@ -1454,11 +1454,11 @@ export const functionUtils = {
         if (functionUtils.isElectronApp()) {
           window.location.reload();
         } else {
-          //window.location.reload();
-          history.push({
-            pathname: state?.from || successLocation,
-            state: response,
-          });
+          window.location.reload();
+          // history.push({
+          //   pathname: state?.from || successLocation,
+          //   state: response,
+          // });
         }
       } else {
         return false;
