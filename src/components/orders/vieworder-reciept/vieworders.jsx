@@ -194,7 +194,7 @@ const ViewOrders = () => {
                   "paginate_button page-item next";
               }
               console.log("Last id before alert: ", lastItemId);
-              alert("Fired 1");
+              // alert("Fired 1");
             } else if (newDataFetch.current === true) {
               /**
                * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
@@ -224,7 +224,7 @@ const ViewOrders = () => {
                 page: persistentPage,
               });
 
-              alert("2");
+              // alert("2");
             } else if (
               res.data.message === "No order found"
               // ||
