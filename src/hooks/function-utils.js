@@ -1418,10 +1418,11 @@ export const functionUtils = {
         if (functionUtils.isElectronApp()) {
           window.location.reload();
         } else {
-          history.push({
-            pathname: state?.from || successLocation,
-            state: response,
-          });
+          window.location.reload();
+          // history.push({
+          //   pathname: state?.from || successLocation,
+          //   state: response,
+          // });
         }
       } else {
         return false;
