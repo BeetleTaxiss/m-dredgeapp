@@ -81,7 +81,7 @@ const ViewOrders = () => {
   const [persistentCurrentPage, setPersistentCurrentPage] = useState();
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
-  const [listCount, setListCount] = useState("2");
+  const [listCount, setListCount] = useState("10");
   const [lastItemStore, setLastItemStore] = useState("0");
   const [lastItemId, setLastItemId] = useState("0");
 
@@ -116,7 +116,7 @@ const ViewOrders = () => {
       await axios
         .get(`${BASE_API_URL}/api/v1/order/list.php`, {
           params: {
-            count: "10",
+            count: "20",
             "last-item-id": lastItemId,
           },
         })
