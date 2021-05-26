@@ -173,9 +173,21 @@ export const useProductLocationPermission = (setUserLocationPermissions) => {
 
   /** Fetch user permissions and set it to state */
   Store.useStateAsync("permission").then((permission) => {
-    typeof setUserLocationPermissions === "function" &&
+    /**
+     * Check if the set State function was passed
+     */
+    if (typeof setUserLocationPermissions === "function") {
+      console.log("user permission: ", permission.productPermissions);
+      /**
+       * Set product permission object to a variable and loop over it to get value
+       */
+      let locationPermissionObj = permission.productPermissions;
+
+      for (const [key, value] of Object.entries(locationPermissionObj)) {
+      }
+
       setUserLocationPermissions(permission.productPermissions);
-    console.log("user permission: ", permission.productPermissions);
+    }
   });
 };
 
