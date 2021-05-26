@@ -8,7 +8,11 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 import AddUpdateProduct from "./add-update-product";
 
 import "./product.css";
-import { functionUtils, useGetUserDetails, loadAppSettingsAndCreateDynamicGloablMenu } from "../../hooks/function-utils";
+import {
+  functionUtils,
+  useGetUserDetails,
+  loadAppSettingsAndCreateDynamicGloablMenu,
+} from "../../hooks/function-utils";
 
 const Products = () => {
   const [productsList, setProductsList] = useState(["loading"]);
@@ -291,7 +295,7 @@ const Products = () => {
           reloadServerData();
           setShowUpdateProduct(false);
           setLoading(false);
-          
+
           /** refresh product permission whenever new product is added */
           loadAppSettingsAndCreateDynamicGloablMenu();
         }
