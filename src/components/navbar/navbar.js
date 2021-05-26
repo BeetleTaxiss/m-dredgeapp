@@ -128,7 +128,7 @@ const Navbar = ({ userPermission }) => {
          successAlert("User Alert","Logout successful");
 
           setTimeout(()=>{
-            window.location.reload();
+            window.location.href="/";
           }, 3000);
 
           // history.push({
