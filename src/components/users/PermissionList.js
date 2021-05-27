@@ -73,7 +73,7 @@ export const createUserPermissionListComponent = (userPermissionData) => {
  * @param {*} userPermissionList
  * @returns
  */
-export const createPermissionList = (userPermissionList) => {
+export const createPermissionList = (userPermissionList, gloabalMenuToUse=null) => {
   /**This contains all the permission we have loaded for user
    *  will hold all the permission and every update we make
    * */
@@ -84,8 +84,12 @@ export const createPermissionList = (userPermissionList) => {
     userPermissionList = functionUtils.parseUserPermission(userPermissionList);
   }
 
-  /** The central menu definition within our application */
-  const globalMenu = Menu;
+  /** 
+   * The central menu definition within our application. If `gloabalMenuToUse` is provided
+   * we will use this menu, which might must have contained additional dynamic  menu option aside from 
+   * the static values in the define in our `Menu.js` file. 
+   * */
+  const globalMenu = gloabalMenuToUse ??  Menu;
 
   /**
    * to create the userPermissionData, we will loop over the `globalPermissionList`

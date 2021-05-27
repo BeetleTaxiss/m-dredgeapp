@@ -11,6 +11,7 @@ import {
   functionUtils,
   successAlertWithFunction,
   useGetUserDetails,
+  useProductLocationPermission,
 } from "../../../hooks/function-utils";
 import CustomDetailedStats from "../../cards/CustomDetailedStats";
 
@@ -25,6 +26,13 @@ const OrderForm = () => {
   /** User Details state is passed to useGetUserDetails hook which makes an async call to the store (react persistent store manager) and get single store entries  */
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+  const [userLocationPermissions, setUserLocationPermissions] = useState();
+
+  /**
+   * Check for user's product-location permission and return given product/location
+   * @param {setUserLocationPermissions} setUserPermissions
+   */
+  useProductLocationPermission(setUserLocationPermissions);
 
   /**
    * use this state value to check when we have addeed or updated data and need to refresh
@@ -39,6 +47,13 @@ const OrderForm = () => {
     /** refresh the page so we can newly added users */
     setRefreshData(refreshData.concat(true));
   };
+
+  /**
+   * Update async values when avaliable
+   */
+  useEffect(() => {
+    console.log("Location permissions: ", userLocationPermissions);
+  }, [userLocationPermissions]);
 
   /** Fetch total orders statistics */
   useEffect(() => {

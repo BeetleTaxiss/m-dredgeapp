@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { functionUtils } from "../../../hooks/function-utils";
 import { ReactComponent as DeleteIcon } from "../../../assets/deleteIcon.svg";
 
-const ViewordersTableBody = ({ content, reloadData }) => {
+const ViewordersTableBody = ({ content, reloadData, userName, userId }) => {
   const title = "Are you sure you want to Delete this order ?";
   const warningAlert = (title, id, ref, userName, userId, reloadData) => {
     Swal.fire({
@@ -38,7 +38,7 @@ const ViewordersTableBody = ({ content, reloadData }) => {
             <td>{item.truck_no}</td>
             <td>{functionUtils.addCommaToNumbers(item.qty)}</td>
             <td>₦{functionUtils.addCommaToNumbers(item.total_price)}</td>
-            <td className="sorting_1">{item.qty}cm³</td>
+            <td className="sorting_1">{item.total_volume}cm³</td>
             <td>{item.order_ref}</td>
             <td className="text-center">
               <DeleteIcon
@@ -52,8 +52,8 @@ const ViewordersTableBody = ({ content, reloadData }) => {
                         title,
                         item.id,
                         item.order_ref,
-                        content.userName,
-                        content.userId,
+                        userName,
+                        userId,
                         reloadData
                       )
                 }

@@ -13,7 +13,11 @@ import { useUpdateOrderFormData } from "../../../hooks/useFormData";
 import { BASE_API_URL } from "../../../hooks/API";
 import Swal from "sweetalert2";
 import { FormDetails } from "../order-form/order-form-details";
-import { errorAlert, functionUtils } from "../../../hooks/function-utils";
+import {
+  errorAlert,
+  functionUtils,
+  useGetUserDetails,
+} from "../../../hooks/function-utils";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import LoadingButton from "../../general/loading-button";
@@ -26,6 +30,11 @@ const OrderReceipt = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [userName, setUserName] = useState();
+  const [userId, setUserId] = useState();
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(setUserName, setUserId);
 
   const handleChange = () => {
     // Get form values with document,getById
@@ -49,13 +58,11 @@ const OrderReceipt = () => {
     setTotalPrice(order.total_price);
   };
 
-  const handleUpdateOrder = () => {
+  const handleUpdateOrder = (userName, userId) => {
     const qtyValue = document.getElementById("qty").value;
     const truckNoValue = document.getElementById("truckNo").value;
     const orderId = order.id;
     const orderRef = order.order_ref;
-    const user = order.user;
-    const userId = order.user_id;
     const productId = order.product_id;
     const product = order.product;
     const productUnit = order.unit;
@@ -64,7 +71,7 @@ const OrderReceipt = () => {
     const updateOrderData = {
       "product-id": productId,
       product: product,
-      user: user,
+      user: userName,
       "user-id": userId,
       "order-id": orderId,
       "order-ref": orderRef,
@@ -109,13 +116,11 @@ const OrderReceipt = () => {
     // }
   };
 
-  const getUpdateOrderFormData = () => {
+  const getUpdateOrderFormData = (userName, userId) => {
     const qtyValue = document.getElementById("qty").value;
     const truckNoValue = document.getElementById("truckNo").value;
     const orderId = order.id;
     const orderRef = order.order_ref;
-    const user = order.user;
-    const userId = order.user_id;
     const productId = order.product_id;
     const product = order.product;
     const productUnit = order.unit;
@@ -124,7 +129,7 @@ const OrderReceipt = () => {
     const updateOrderData = {
       "product-id": productId,
       product: product,
-      user: user,
+      user: userName,
       "user-id": userId,
       "order-id": orderId,
       "order-ref": orderRef,
@@ -170,16 +175,14 @@ const OrderReceipt = () => {
     });
   };
 
-  const dispatchOrder = () => {
+  const dispatchOrder = (userName, userId) => {
     const orderId = order.id;
     const orderRef = order.order_ref;
-    const user = order.user;
-    const userId = order.user_id;
     const comment = document.getElementById("comment").value;
     const dispatchData = {
       "order-id": orderId,
       "order-ref": orderRef,
-      user: user,
+      user: userName,
       "user-id": userId,
       comment: comment,
     };
@@ -235,12 +238,15 @@ const OrderReceipt = () => {
     setOrder(state);
   }, []);
 
-  useEffect(() => {}, [order]);
+  useEffect(() => {}, [order, userName, userId]);
 
   return (
-    <div id="order-receipt-view" className="row invoice  layout-spacing layout-top-spacing">
+    <div
+      id="order-receipt-view"
+      className="row invoice  layout-spacing layout-top-spacing"
+    >
       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div  className="doc-container">
+        <div className="doc-container">
           <div className="row">
             <div className="col-xl-9">
               <div className="invoice-container">
@@ -295,7 +301,7 @@ const OrderReceipt = () => {
                 loading={loading}
                 dispatchOrder={() => {
                   setLoading(true);
-                  dispatchOrder();
+                  dispatchOrder(userName, userId);
                 }}
               />
               <OrderReceiptLinks
@@ -325,11 +331,11 @@ const OrderReceipt = () => {
           status={error}
           handleSubmit={() => {
             const validationStatus = functionUtils.validateFormInputs(
-              getUpdateOrderFormData()
+              getUpdateOrderFormData(userName, userId)
             );
             if (validationStatus === true) {
               setLoading(true);
-              handleUpdateOrder();
+              handleUpdateOrder(userName, userId);
             }
           }}
           handleChange={handleChange}
@@ -349,11 +355,11 @@ const printOrderReceiptOld = (
     .getElementById(orderReceiptLayer)
     .cloneNode(true);
 
-    /** get all the style links on our current page */
-    const links= document.getElementsByTagName("link");
-    const scripts= document.getElementsByTagName("script");
+  /** get all the style links on our current page */
+  const links = document.getElementsByTagName("link");
+  const scripts = document.getElementsByTagName("script");
 
-    console.log(scripts, "all scripts");
+  console.log(scripts, "all scripts");
 
   /** get the content to print without the links */
   let receiptContent = receiptContentLayer.innerHTML;
@@ -379,14 +385,14 @@ const printOrderReceiptOld = (
   for (let link of links) {
     console.log(link, "current link");
     printWindow.document.head.appendChild(link);
-  };
+  }
 
   /** append all the links to the print window */
   for (let script of scripts) {
     printWindow.document.head.appendChild(script);
-  };
+  }
 
- // printWindow.document.write(printCommand);
+  // printWindow.document.write(printCommand);
   printWindow.document.write("</head><body>");
   printWindow.document.write(receiptView);
   printWindow.document.write("</body></html>");
@@ -413,12 +419,11 @@ const printOrderReceipt = (
   orderReceiptLayer = "order-receipt-view",
   orderReceiptLayerLinks = "order-receipt-view-links"
 ) => {
-
-  /** 
-   * first scroll the window to top. This is to fix the bug of the 
+  /**
+   * first scroll the window to top. This is to fix the bug of the
    * pdf generated adding too much `marginTop` and cutting off receipt
    */
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 
   /** hide the links layer.  */
   const links = document.getElementById(orderReceiptLayerLinks);
@@ -427,7 +432,7 @@ const printOrderReceipt = (
   const receiptContentLayer = document.getElementById(orderReceiptLayer);
 
   const canvasOptions = {
-    scale:0.88,
+    scale: 0.88,
     //scale: 1,
     backgroundColor: "#ffffff",
   };
@@ -438,11 +443,10 @@ const printOrderReceipt = (
   };
 
   html2canvas(receiptContentLayer, canvasOptions).then((canvas) => {
-
     let imgData = canvas.toDataURL("image/png");
     let doc = new jsPDF(pdfOptions);
-    const marginTop= 30;
-    const marginLeft= 3;
+    const marginTop = 30;
+    const marginLeft = 3;
 
     doc.addImage(imgData, "JPEG", marginLeft, marginTop);
 

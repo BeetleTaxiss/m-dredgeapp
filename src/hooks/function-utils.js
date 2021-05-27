@@ -5,8 +5,6 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "./API";
 import TimelineNotification from "../components/production/timeline-notification";
 import { render } from "react-dom";
-import { batch } from "pullstate";
-import { Link } from "react-router-dom";
 
 import { useHistory } from "react-router-dom";
 import { StoreManager } from "react-persistent-store-manager";
@@ -16,6 +14,7 @@ import PageWrapper from "../components/general/page-wrapper";
 import { Route } from "react-router";
 import NavBar from "./../components/navbar/navbar";
 import { toggleBtnText } from "../components/production/production-capacity";
+import { Menu } from "./../Menu";
 
 // Alerts
 export const successAlert = (title, text, link, showBtn) => {
@@ -133,7 +132,7 @@ const Login = async (user, password, setLoading) => {
       return { status: false };
     }
 
-    /** login was successful add 1status=true to use for validation` */
+    /** login was successful add `status=true` to use for validation` */
     responseData = { ...responseData, status: true };
 
     /** update store */
@@ -150,9 +149,42 @@ const Login = async (user, password, setLoading) => {
       functionUtils.parseUserPermission(responseData.permission)
     );
     setLoading(false);
+
+    /**
+     * to ensure that the user session data is set before we reload screen
+     * we will wait a little bit. This is to ensure that by the time we attempt
+     * to read the login status, we will indeed have a value to work with
+     */
+    let n = 1000000000;
+    while (n > 0) {
+      n--;
+    }
     return responseData;
   }
 };
+
+/**
+ * Check for user's product-location permission and return given product/location
+ * @param {setUserLocationPermissions} setUserPermissions
+ */
+export const useProductLocationPermission = (setUserLocationPermissions) => {
+  /** fetch saved user settings informarion from store */
+  const Store = StoreManager(AppStore, Stores, "UserStore");
+
+  /** Fetch user permissions and set it to state */
+  Store.useStateAsync("permission").then((permission) => {
+    typeof setUserLocationPermissions === "function" &&
+      setUserLocationPermissions(permission.productPermissions);
+    console.log("user permission: ", permission.productPermissions);
+  });
+};
+
+/**
+ *  Retrive App settings from app persistent store
+ * @param { setUserTypesList} setUserTypesList
+ * @param {setMeasurementList} setMeasurementList
+ * @param {setUsersPermissions} setUsersPermissions
+ */
 
 export const useGetAppSettings = async (
   setUserTypesList,
@@ -219,6 +251,58 @@ export const useGetUserDetails = async (
   Store.useStateAsync("permission").then((permission) => {
     typeof setUserPermissions === "function" && setUserPermissions(permission);
   });
+};
+
+/**
+ * usee to load app settings. This function will load `measurements`, `userTypes`, and  `products`
+ * It will add the product loaded to the Menu.js static permission list to create a more dynamic
+ * permission. This is to enable us create a permssion list that is based on the available products
+ */
+export const loadAppSettingsAndCreateDynamicGloablMenu = (menu = Menu) => {
+  /** create a store  */
+  const Store = getAppSettingStoreInstance();
+
+  axios
+    .get(`${BASE_API_URL}/api/v1/system/app-settings.php`)
+    .then((response) => {
+      const data = response.data.data;
+
+      Store.update("measurements", data["measurement"]);
+      Store.update("userTypes", data["user_types"]);
+
+      /**
+       * before we assign menu to userPermission, we need to create an entry for products
+       * in the Menu list. Since product is a dunamic content that changes based on updates
+       */
+      const products = data["products"];
+      let productPermissions = {};
+
+      products.map((product) => {
+        /**
+         * we are not showing this permission item in our menu. This  simply to allow user to have access
+         * to specific product. So  we will set `showInMenu: false`
+         * @note: see `Menu.js`  `Menu` entry for details of similar implementation for dashboard items.
+         *  */
+        return (productPermissions[product.id] = {
+          text: product.product,
+          showInMenu: false,
+        });
+      });
+
+      /**
+       * assign to the  `menuListWithProductsEntry`. This variable will now both the tatic menu definition
+       * and the dynamic menus based on the numbers of products added to our application
+       *
+       */
+      const menuListWithProductsEntry = { ...menu, productPermissions };
+      Store.update(
+        "user_permission",
+        JSON.stringify(menuListWithProductsEntry)
+      );
+    })
+    .catch((error) => {
+      errorAlert("Oops!", "could not load settings. Check Internet connection");
+    });
 };
 
 // GENERATE RANDOM SERIAL NUMBER FUNCTION
@@ -1288,6 +1372,8 @@ export const functionUtils = {
    * @param  {order_ref} order_ref
    * ----------------------------------------------------------------------------------------------------------
    */
+  orderId: null,
+  orderRef: null,
   handleDeleteOrder: async (id, order_ref, userName, userId, reloadData) => {
     await axios
       .post(`${BASE_API_URL}/api/v1/order/delete.php`, {
@@ -1302,11 +1388,17 @@ export const functionUtils = {
         } else {
           successAlert("Order deleted successfully", res.data.message);
           reloadData();
+          console.log("Main  data: ", id, order_ref);
+          functionUtils.orderId = id;
+          functionUtils.orderRef = order_ref;
         }
       })
       .catch((error) => {
         errorAlert("Network Error", error);
       });
+  },
+  fetchStatus: () => {
+    return { orderId: functionUtils.orderId, orderRef: functionUtils.orderRef };
   },
   /** 8.
    * ----------------------------------------------------------------------------------------------------------
@@ -1350,6 +1442,7 @@ export const functionUtils = {
         if (functionUtils.isElectronApp()) {
           window.location.reload();
         } else {
+          //window.location.reload();
           history.push({
             pathname: state?.from || successLocation,
             state: response,
