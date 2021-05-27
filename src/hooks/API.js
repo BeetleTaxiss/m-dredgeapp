@@ -2,7 +2,7 @@
  * The Local test and development server. This is purely for local
  * testing of our application
  */
-// export const BASE_API_URL = "http://localhost/mdredge-server";
+ //export const BASE_API_URL = "http://localhost/mdredge-server";
 
 /**
  * The actual production server of our application. Before we push to
