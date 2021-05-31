@@ -4,11 +4,16 @@ import WidgetHeader from "../widget-header";
 import CustomTableListBody from "./custom-table-list-body";
 import CustomTableListHeader from "./custom-table-list-header";
 import { ReactComponent as NoTasks } from "../../../assets/noTasks.svg";
-const CustomTableList = ({ content, setLoad, filler }) => {
+const CustomTableList = ({ content, setLoad, filler, dropdown, change }) => {
   const arrayContent = Array.isArray(content.body);
   return (
     <div className="statbox widget box box-shadow col-md-12">
-      <WidgetHeader title={content.tableTitle} />
+      <WidgetHeader
+        title={content.tableTitle}
+        links={content.links}
+        dropdown={dropdown ? true : false}
+        change={change}
+      />
       <div className="widget-content widget-content-area">
         <div className="table-responsive">
           {content?.body[0] === "loading" ? (

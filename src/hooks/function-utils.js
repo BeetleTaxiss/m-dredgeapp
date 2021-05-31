@@ -165,30 +165,76 @@ const Login = async (user, password, setLoading) => {
 
 /**
  * Check for user's product-location permission and return given product/location
- * @param {setUserLocationPermissions} setUserPermissions
+ * @param {productPermissions} productPermissions
+ * @param {providedPermissionList } providedPermissionList
+ * @returns validatedProductPermissions
  */
-export const useProductLocationPermission = (setUserLocationPermissions) => {
-  /** fetch saved user settings informarion from store */
-  const Store = StoreManager(AppStore, Stores, "UserStore");
+export const validateProductLocationPermission = (
+  productPermissions,
+  providedPermissionList
+) => {
+  /**
+   * This block ensures the user product permission passed to the utility function are valid before looping over the said data (product permissions) and finally checks if the data values (product permissions values) gotten while looping are exactly the same with products in the product list from the database
+   */
+  let validatedProductPermissions;
+  /**
+   * Create validated product check list
+   */
+  let checkList = [];
 
-  /** Fetch user permissions and set it to state */
-  Store.useStateAsync("permission").then((permission) => {
-    /**
-     * Check if the set State function was passed
-     */
-    if (typeof setUserLocationPermissions === "function") {
-      console.log("user permission: ", permission.productPermissions);
-      /**
-       * Set product permission object to a variable and loop over it to get value
-       */
-      let locationPermissionObj = permission.productPermissions;
-
-      for (const [key, value] of Object.entries(locationPermissionObj)) {
+  if (productPermissions !== undefined) {
+    for (const [key, value] of Object.entries(productPermissions)) {
+      if (Array.isArray(providedPermissionList)) {
+        for (let i = 0; i < providedPermissionList.length; i++) {
+          /**
+           * check to validate if a user has a specific product permission and add the product to the check list
+           */
+          let check = providedPermissionList[i].product === value.text;
+          if (check) {
+            checkList.push(providedPermissionList[i]);
+          }
+        }
+        /**
+         * Set the validated product check list to the returned varaible for consumption
+         */
+        validatedProductPermissions = checkList;
       }
-
-      setUserLocationPermissions(permission.productPermissions);
     }
-  });
+  }
+
+  return validatedProductPermissions;
+};
+
+/**
+ * handles location/product changes in the table
+ */
+export const handleTableChange = (id, setProductId, setLastItemId) => {
+  console.log("Table changed");
+  if (id !== undefined && typeof setProductId === "function") {
+    setProductId(id);
+    typeof setLastItemId === "function" && setLastItemId("0");
+    // alert("Reloaded 2");
+  }
+};
+
+export const productDropdownForTable = (
+  productList,
+  setProductId,
+  setLastItemId
+) => {
+  let tableDropdown = [];
+
+  if (productList !== undefined && Array.isArray(productList)) {
+    productList.map((product) => {
+      const currentProductSetting = {
+        id: product.id,
+        text: product.product,
+        link: () => handleTableChange(product.id, setProductId, setLastItemId),
+      };
+      return (tableDropdown = tableDropdown.concat(currentProductSetting));
+    });
+    return tableDropdown;
+  }
 };
 
 /**
@@ -1180,8 +1226,8 @@ export const functionUtils = {
               successAlert(title, text, link);
               clearTimeout(restartMarker);
               document.getElementById("stop-marker").id = "stop-start-marker";
-              // window.location.reload();
-              history.push("/");
+              window.location.reload();
+              // history.push("/");
             }
           })
           .catch((error) => {
