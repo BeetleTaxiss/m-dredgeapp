@@ -12,6 +12,7 @@ import stockpiledImg from "../../assets/excavator3.jpg";
 import { ReactComponent as WetSandIcon } from "../../assets/rain-cloud.svg";
 import { ReactComponent as StockpliedIcon } from "../../assets/shine.svg";
 import { ReactComponent as StockIcon } from "../../assets/container.svg";
+import WidgetHeader from "../general/widget-header";
 
 const CustomDetailedStats = ({ data }) => {
   return (
@@ -126,9 +127,18 @@ const CustomDetailedStats = ({ data }) => {
                   className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 layout-spacing"
                 >
                   <div className="widget widget-one_hybrid widget-followers">
+                    <WidgetHeader
+                      links={item?.links}
+                      dropdown
+                      change
+                      paddingTopBottom={item?.paddingTopBottom}
+                    />
                     <div
                       className="widget-heading"
-                      style={{ marginBottom: "0px" }}
+                      style={{
+                        marginBottom: "0px",
+                        padding: `${item?.paddingTopBottom} 13px ${item?.paddingTopBottom}`,
+                      }}
                     >
                       <div className="w-title">
                         <div className="w-icon">
@@ -162,13 +172,6 @@ const CustomDetailedStats = ({ data }) => {
                             height: "300px",
                             width: "100%",
                             backgroundSize: "cover",
-                            // backgroundSize: item.followers
-                            //   ? "cover"
-                            //   : item.linkk
-                            //   ? "contain"
-                            //   : item.chat
-                            //   ? "contain"
-                            //   : "cover",
                             backgroundPosition: "center",
                             backgroundRepeat: "no-repeat",
                             borderRadius: "10px",

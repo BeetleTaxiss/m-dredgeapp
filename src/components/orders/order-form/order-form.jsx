@@ -6,6 +6,7 @@ import { FormDetails } from "./order-form-details";
 import WidgetHeader from "../../general/widget-header";
 import { BASE_API_URL } from "../../../hooks/API";
 import LoadingButton from "../../general/loading-button";
+import Chat from "../../../assets/container.svg";
 import {
   errorAlert,
   functionUtils,
@@ -75,9 +76,10 @@ const OrderForm = () => {
             detailedStatsResponseList.map((item, id) => {
               const total_stock = Math.round(item.stock);
               const detailedStatsSchema = {
-                chat: total_stock ? true : false,
+                icon: Chat,
                 stats: total_stock,
                 legend: total_stock ? "Total stock" : null,
+                array: true,
               };
 
               return (detailedStatsList =
