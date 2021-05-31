@@ -352,10 +352,19 @@ const ViewOrders = () => {
               /**
                * Enables the disabled Next Button incase new data is required to be fetched
                */
-              if (document.getElementById("default-ordering_next") !== null) {
-                document.getElementById("default-ordering_next").className =
-                  "paginate_button page-item next";
+              if (
+                data?.length < 11 &&
+                document.getElementById("default-ordering_next") !== null
+              ) {
+                document.getElementById("default-ordering_next").className +=
+                  " disabled";
+              } else {
+                if (document.getElementById("default-ordering_next") !== null) {
+                  document.getElementById("default-ordering_next").className =
+                    "paginate_button page-item next";
+                }
               }
+
               /**
                *  Side effects to ensure data is returned in a loop for next use
                */
