@@ -1631,7 +1631,6 @@ export const functionUtils = {
    * @returns
    */
   validateFormInputs: (formData, validationParam = null) => {
-    console.log("Form data in validation: ", formData);
     let formInputValue = true;
     /** Check if form data is undefined */
     if (formData === undefined || formData === null) {
@@ -1640,11 +1639,12 @@ export const functionUtils = {
 
     for (const [key, value] of Object.entries(formData)) {
       /** Convert value to string without spacing */
-      let stringValue = `${value}`;
-      let trimmedValue = stringValue.replace(/W+/, "");
-
+      // let stringValue = `${value}`;
+      //let trimmedValue = stringValue.replace(/W+/, "");
+      //alert(key + " = " + value);
+      
       /** Validate for select dropdowns */
-      if (trimmedValue === "Can't select this option") {
+      if (value === "Can't select this option") {
         const title = "Form Error",
           text = `${value}. Check the form for the dropdown and select a valid option `;
         errorAlert(title, text);
@@ -1652,9 +1652,10 @@ export const functionUtils = {
       }
 
       /** Validate for empty strings */
-      if (trimmedValue === "") {
+      if (value === "" || value===null) {
         const title = "Form Error",
-          text = `${key}: ${value} missing in your form`;
+          //text = `${key}: ${value} missing in your form`;
+          text = `${key} value is missing in your form`;
         errorAlert(title, text);
         return (formInputValue = false);
       }
@@ -1670,18 +1671,29 @@ export const functionUtils = {
       /** Validate for optional values */
       if (validationParam && validationParam[key]) {
         let { validationValue, validator, message } = validationParam[key];
-        console.log("Validation param: ", validationParam[key]);
 
         if (validationValue !== null && validator !== null) {
           message = message === null || message === undefined ? "" : message;
           switch (validator) {
+            
+            /** value must be greater than validationValue */
             case "gt":
-              if (value < validationValue) {
+              if (value <= validationValue) {
                 errorAlert("Form Error", message);
                 return (formInputValue = false);
               }
               break;
+
+              /** value must be equal to validationValue */
             case "eq":
+              if (value != validationValue) {
+                errorAlert("Form Error", message);
+                return (formInputValue = false);
+              }
+              break;
+
+              /*** value cannot be equal to validationValue*/
+              case "neq":
               if (value == validationValue) {
                 errorAlert("Form Error", message);
                 return (formInputValue = false);

@@ -1,28 +1,35 @@
-import React from "react";
+import Skeleton from "react-loading-skeleton";
 
 /**
  * 
  * @returns Display the Timer Display View
  */
-export const TimerDisplay = ({ circle }) => {
+export const TimerDisplay = (props) => {
+  
+  /** get the timer values */
+  const {timerHours, timerMinutes, timerSeconds} = props;
 
+  /** 
+   * get the timer function.  This is the function that updates our timer view
+   * This function is pased in from the main production page and utilizes 
+   * */ 
   return (
-    <div id={circle ? "cd-circle" : "cd-simple"}>
+    <div id={/**circle ? "cd-circle" : */"cd-simple"}>
       <div className="countdown" style={{ justifySelf: "center" }}>
         <div className="clock-count-container">
-          <h1 className="clock-val" id="clock-face-hours"></h1>
+          <h1 className="clock-val" id="clock-face-hours">{timerHours}</h1>
         </div>
         <h4 className="clock-text"> Hours </h4>
       </div>
       <div className="countdown" style={{ justifySelf: "center" }}>
         <div className="clock-count-container">
-          <h1 className="clock-val" id="clock-face-minutes"></h1>
+          <h1 className="clock-val" id="clock-face-minutes">{timerMinutes}</h1>
         </div>
         <h4 className="clock-text"> Minutes </h4>
       </div>
       <div className="countdown" style={{ justifySelf: "center" }}>
         <div className="clock-count-container">
-          <h1 className="clock-val" id="clock-face-seconds"></h1>
+          <h1 className="clock-val" id="clock-face-seconds">{timerSeconds}</h1>
         </div>
         <h4 className="clock-text"> Seconds </h4>
       </div>
@@ -30,30 +37,53 @@ export const TimerDisplay = ({ circle }) => {
   )
 }
 
-
 /**
  * Production Timeline view. Each time we update our production, we will write
  * updates to the production timeline
  * @returns
  */
-export const ProductionTimeline = () => {
-  return (
-    <div className="row" style={{ display: "flex", justifyContent: "center" }}>
-      <div
-        className="widget-content widget-content-area pb-1"
-        style={{ padding: "2rem" }}
-      >
-        <div
-          className="mt-container mx-auto"
-          id="timeline-notification-single"
-        >
-          Hello. Something on the Timeline
+export const ProductionTimeline = (props) => {
 
+  return (
+    <div className="row" style={{display: "flex", width:"80vw" }}>
+      <div className="widget-content widget-content-area pb-1" style={{width:"80vw"}} >
+        <div style={{width:"100%"}} className="mt-container mx-auto" id="timeline-notification-single">
+          <div className="timeline-line">
+          {/**props.timelineData ?? null*/}
+            <TimelineItem text="Hello there" dotColor={"secondary"} timeSpent={3000}/>
+            <TimelineItem text="Hello there" dotColor={"danger"} timeSpent={3000}/>
+            <TimelineItem text="Hello there" dotColor={"secondary"} timeSpent={3000}/>
+            <TimelineItem text="Hello there" dotColor={"warning"} timeSpent={3000} />
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+/**
+ * Individual timeline item entry
+ */
+export const TimelineItem=(props)=>{
+
+  const {time, dotColor, timeSpent, productionOutput, key, text}= props;
+  return (
+    <div key={key} style={{width: "100%"}}  className="item-timeline">
+          <p className="t-time">{time}</p>
+          <div className={`t-dot t-dot-${dotColor}`}></div>
+          <div className="t-text">
+            <p>{text}</p>
+            {timeSpent ? (
+              <span style={{display: "grid", gap: "2px",justifyContent: "flex-start" }}>
+                <p className="t-meta-time">{productionOutput}</p>
+                <p className="t-meta-time">Time since last input:</p>
+                <p className="t-meta-time">{timeSpent}</p>
+              </span>
+            ) : null}
+          </div>
+        </div>
+  )
+}
 
 
 /**
@@ -69,23 +99,12 @@ export const ProductionCapacitySlider = (props) => {
 
   const onCapacitySliderChange = props.onCapacitySliderChange ?? null;
 
-  const onCapacityInputChange = () => {
-
-    const capacitySlider = document.getElementById("production-capacity");
-    const capacityInput = document.getElementById("production-capacity-value");
-    capacitySlider.value= capacityInput.value.replace(/[%]/, "");
-  }
+  const onCapacityInputChange = props.onCapacityInputChange ?? null;
 
   return (
     <div
       className="shift-calculator-production-capacity-setter"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        margin: "3rem 0 2rem",
-        gap: "0.5rem",
-      }}
-    >
+      style={{display: "flex",alignItems: "center", margin: "3rem 0 2rem", gap: "0.5rem"}}>
       <input
         id="production-capacity"
         type="range"
@@ -93,17 +112,23 @@ export const ProductionCapacitySlider = (props) => {
         max="100"
         name="production-capacity"
         className="custom-range progress-range-counter slider"
+        style={{
+          WebkitAppearance:"none",
+          appearance:"none",
+        }}
         defaultValue={productionCapacity}
         onChange={() => onCapacitySliderChange ? onCapacitySliderChange() : null}
       />
-      <div className="range-count" style={{ borderRadius: "100px", display:"flex", flexDirection:"row", alignItems:"center"}}>
+      <div className="range-count" style={{ borderRadius: "100px", display: "flex", flexDirection: "row", alignItems: "center" }}>
         <input type="text" id="production-capacity-value"
           className="range-count-number"
-          style={{ borderRadius: "100px", width: "50px", height: "50px", textAlign: "center" }}
+          style={{ borderRadius: "100px", width: "60px", height: "60px", textAlign: "center", fontSize:"14pt", 
+          fontWeight:"bold", color:"rgb(66, 132, 255)" }}
           defaultValue={productionCapacity}
           onChange={() => onCapacityInputChange ? onCapacityInputChange() : null}
         />
-        <span className="range-count-unit">%</span>
+        <span className="range-count-unit"
+              style={{ fontSize:"14pt", fontWeight:"bold", color:"rgb(66, 132, 255)" }}>%</span>
       </div>
     </div>
   )
@@ -120,10 +145,13 @@ export const ProductionCapacitySlider = (props) => {
  */
 export const ProductionDistanceAndElevationFields = (props) => {
 
-  const { productId, elevation, distance, selectProductData } = props;
+  const { elevation, distance, selectProductData } = props;
 
   /** get event props   */
-  const { productOnChange, distanceOnOnChange, elevationOnChange } = props;
+  const { onProductChange, onDistanceChange, onElevationChange } = props;
+
+  /** seelct product can be hidden on some screen */
+  const hideProductSelectView= props.hideProductSelect===true ? "none" : "flex";
 
   /** create the product list options */
   const productOptions = selectProductData && selectProductData.map((product, key) => <option key={key} value={product.id}>{product.name}</option>);
@@ -131,32 +159,41 @@ export const ProductionDistanceAndElevationFields = (props) => {
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "2rem", width: "100%" }}>
-        <span style={{ padding: "1rem 1rem", borderRadius: "10px", width: "50%", backgroundColor: "rgba(235, 237, 242, 0.5)" }}>
 
-          <select id="production-product" type="text" defaultValue="Sand" className="form-control flatpickr flatpickr-input active"
-            onChange={() => productOnChange ? productOnChange() : null}>
+        <span style={{ display:hideProductSelectView, padding: "1rem 1rem", borderRadius: "10px", width: "50%", backgroundColor: "rgba(235, 237, 242, 0.5)" }}>
+          <select id="production-product" type="text"  className="form-control flatpickr flatpickr-input active"
+            onChange={() => onProductChange ? onProductChange() : null}>
             <option key={"selct-paroduct"} value={null}>Select a product</option>)
             {productOptions}
           </select>
-
         </span>
 
         <span style={{ padding: "1rem 1rem", borderRadius: "10px", width: "50%", backgroundColor: "rgba(235, 237, 242, 0.5)" }}>
-          <input id="production-pumping-distance" type="text" placeholder="Pumping Distance"
-            className="form-control flatpickr flatpickr-input" defaultValue={distance ?? 0}
-            onChange={() => distanceOnOnChange ? distanceOnOnChange() : null}
+          <input id="production-pumping-distance" type="text" placeholder="Pumping Distance in meters"
+            className="form-control flatpickr flatpickr-input" defaultValue={distance ?? null}
+            style={{textAlign: "center", fontSize:"14pt", fontWeight:"bold", color:"rgb(66, 132, 255)"}}
+            onChange={() => onDistanceChange ? onDistanceChange() : null}
           />
         </span>
+        {hideProductSelectView==="none" && 
+        <span style={{ padding: "1rem 1rem", borderRadius: "10px", width: "50%", backgroundColor: "rgba(235, 237, 242, 0.5)" }}>
+        <input id="production-pumping-elevation" type="text" placeholder="Pumping Elevation in meters"
+          className="form-control flatpickr flatpickr-input active" defaultValue={elevation ?? null}
+          style={{textAlign: "center", fontSize:"14pt", fontWeight:"bold", color:"rgb(66, 132, 255)"}}
+          onChange={() => onElevationChange ? onElevationChange() : null} />
+      </span>}
 
       </div>
-
+      {hideProductSelectView==="flex" && 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "2rem", width: "100%" }}>
         <span style={{ padding: "1rem 1rem", borderRadius: "10px", width: "100%", backgroundColor: "rgba(235, 237, 242, 0.5)" }}>
-          <input id="production-pumping-elevation" type="text" placeholder="Pumping Elevation"
-            className="form-control flatpickr flatpickr-input active" defaultValue={elevation ?? 0}
-            onChange={() => elevationOnChange ? elevationOnChange() : null} />
+          <input id="production-pumping-elevation" type="text" placeholder="Pumping Elevation in meters"
+            className="form-control flatpickr flatpickr-input active" defaultValue={elevation ?? null}
+            style={{textAlign: "center", fontSize:"14pt", fontWeight:"bold", color:"rgb(66, 132, 255)"}}
+            onChange={() => onElevationChange ? onElevationChange() : null} />
         </span>
       </div>
+      }
     </>
   )
 }
@@ -256,27 +293,34 @@ export const ProductionDateAndTimeFields = (props) => {
  * @returns 
  */
 export const StartNewProductionScreen = (props) => {
-  /** dummy data */
-  const data = [{
-    id: 1,
-    name: "Sand"
-  }];
+
+  /** get parameters  */
+  const {distance, elevation, dateFrom, dateTo, timeFrom, timeTo, productionCapacity}= props;
+
+  /** get the list of products we can show */
+  const selectProductData = props.selectProductData ?? [];
+
+  /** get events */
+  const {onStartClick, onCapacitySliderChange, onCapacityInputChange, onProductChange}= props;
 
   return (
     <div className="shift-calculator">
       <h2 id="title">Select your working Hours</h2>
       <form className="form-group mb-0">
         <div className="input-group" style={{ alignItems: "center", justifyContent: "center", gap: "2rem" }} >
-          <ProductionDistanceAndElevationFields elevation={20} distance={300} selectProductData={data} />
-          <ProductionDateAndTimeFields dateFrom={"09/22/2030"} />
+          <ProductionDistanceAndElevationFields elevation={elevation} distance={distance} selectProductData={selectProductData} 
+          onProductChange={onProductChange} />
+          <ProductionDateAndTimeFields dateFrom={dateFrom} dateTo={dateTo} timeFrom={timeFrom} timeTo={timeTo} />
         </div>
-        <ProductionCapacitySlider />
 
-        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-          <LoadingButton text="Start Shift" extraClass="shift-calculator-loading-btn" />
+        <ProductionCapacitySlider  productionCapacity={productionCapacity} 
+        onCapacitySliderChange={onCapacitySliderChange} 
+        onCapacityInputChange={onCapacityInputChange} 
+        />
+        <div  id="production-start-button" style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+          <StartButton text="Start Shift" extraClass="shift-calculator-loading-btn"  onClick={onStartClick} />
         </div>
       </form>
-
     </div>
   )
 }
@@ -288,31 +332,172 @@ export const StartNewProductionScreen = (props) => {
  */
 export const CurrentRunningProductionScreen = (props) => {
 
+  /** data for the production details and capacity slider section */
+  const {distance, elevation,  hideProductSelect, onDistanceChange, onElevationChange}= props;
+
+  /** capacity slider props */
+  const {productionCapacity, onCapacitySliderChange, onCapacityInputChange }= props;
+
+  /** get the timer data and function details  */
+  const {timerHours,  timerMinutes, timerSeconds, timerFunction}= props;
+  
+  /** get the buttons lick events */
+  const {onUpdateClick, onPauseClick, onStopClick}= props;
+
+  /** Get the timeline data information */
+  const {timelineData}= props;
+
+
   return (
     <>
-      <TimerDisplay {...props} />
-      <ProductionCapacitySlider {...props} />
-      <ProductionTimeline {...props} />
+      <div id="production-clock-face">
+
+        <TimerDisplay timerHours={timerHours} 
+        timerMinutes={timerMinutes} 
+        timerSeconds={timerSeconds} 
+        timerFunction={timerFunction} />
+
+      </div>
+      
+      <ProductionDistanceAndElevationFields distance={distance}  elevation={elevation} 
+      onDistanceChange={onDistanceChange} onElevationChange={onElevationChange} 
+      hideProductSelect={hideProductSelect}  />
+
+      <ProductionCapacitySlider productionCapacity={productionCapacity} 
+      onCapacitySliderChange={onCapacitySliderChange} 
+      onCapacityInputChange={onCapacityInputChange} 
+      />
+
+      <div id="production-action-buttons">
+      <CurrentRunningProductionButtons onUpdateClick={onUpdateClick}  onPauseClick={onPauseClick} onStopClick={onStopClick} />
+      </div>
+      <ProductionTimeline timelineData={timelineData} />
     </>
   )
 }
 
+/**
+ * Screen that show when we are still checking the production status 
+ * Once status is confirmed, we will show the start production screen
+ * @param {*} props 
+ * @returns 
+ */
+export const CheckingProductionStatusScreen = (props) => {
+  const title=props.title ?? "Checking production status. Please wait...";
+  return (
+    <>
+    <Skeleton count={1} height={200} circle={true}  />
+    <div style={{display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+      <h5>{title}</h5>
+    </div>
+    </>
+  )
+}
 
-export const LoadingButton = (props) => {
+/**
+ * The current running production action buttons
+ * @param {*} props 
+ * @returns 
+ */
+export const CurrentRunningProductionButtons = (props) => {
 
-  const {loading, text, extraClass, disabled, onClick} =props;
+  /** The component buttons click events */
+  const { onUpdateClick, onPauseClick, onStopClick } = props;
+
+  /** the buton disabled states . We will always enable button except otherwise*/
+  const updateDisabled = props.updateDisabled ?? false;
+  const pauseDisabled = props.pauseDisabled ?? false;
+  const stopDisabled = props.stopDisabled ?? false;
+
+  /** the button loading states. They will always be false except provided */
+  const updateLoading = props.updateLoading ?? false;
+  const pauseLoading = props.pauseLoading ?? false;
+  const stopLoading = props.stopLoading ?? false;
+
+  return (
+    <div style={{ display: "flex", width: "100%", justifyContent: "center", gap: "2rem", }}>
+      <div id="production-action-button-update">
+      <ActionButton text="Update Production" onClick={onUpdateClick} disabled={updateDisabled} loading={updateLoading} />
+      </div>
+      <div id="production-action-button-pause">
+      <ActionButton text="Pause" buttonType="pause" onClick={onPauseClick} disabled={pauseDisabled} loading={pauseLoading} />
+      </div>
+      <div id="production-action-button-stop">
+      <ActionButton text="Stop Production" buttonType="stop" onClick={onStopClick} disabled={stopDisabled} loading={stopLoading} />
+      </div>
+    </div>
+  )
+}
+
+/**
+ * This screen notifies user when there is a current running production. 
+ * Production cannnot start because a production is currently running 
+ */
+export const ProductionCannotStartScreen = (props) => {
+
+  /** The component buttons click events */
+  const { onGoToDashboardClick, onRefreshClick , message} = props;
+
+  return (
+    <>
+    <div style={{ display: "flex",  width: "100%", justifyContent: "center"}}>
+      <p>{message ?? null}</p>
+    </div>
+    <div style={{ display: "flex",  width: "100%", justifyContent: "center", gap: "2rem", }}>
+      <ActionButton text="Go to Dashboard" onClick={onGoToDashboardClick}  />
+      <ActionButton text="Refresh" buttonType="pause" onClick={onRefreshClick}  />
+    </div>
+    </>
+  )
+}
+
+/**
+ * The start button
+ * @param {*} props 
+ * @returns 
+ */
+export const StartButton = (props) => {
+
+  const { loading, text, extraClass, disabled, onClick } = props;
 
   /** create a loading indicator if loading */
-  const LoadingIndicator= ()=> loading ? <span className="spinner-grow text-white mr-2 align-self-center loader-sm" />: null; 
+  const LoadingIndicator = () => loading ? <span className="spinner-grow text-white mr-2 align-self-center loader-sm" /> : null;
 
   return (
     <button id="loading-btn" type="button" disabled={disabled}
       className={`mt-4 btn btn-primary ${extraClass && extraClass}`}
-      style={{display: "flex",alignItems: "center",justifyContent: "center",gap: "0.5rem"}}
-      onClick={()=> onClick && typeof onClick ==="function" ? onClick() : null}
-      >
-        <LoadingIndicator/>
-        {text?? "Submit" }
+      style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
+      onClick={() => onClick && typeof onClick === "function" ? onClick() : null}
+    >
+      <LoadingIndicator />
+      {text ?? "Submit"}
+    </button>
+  );
+};
+
+
+/**
+ * The start button
+ * @param {*} props 
+ * @returns 
+ */
+export const ActionButton = (props) => {
+  const { loading, text, extraClass, disabled, buttonType, onClick } = props;
+
+  /** create a loading indicator if loading */
+  const LoadingIndicator = () => loading ? <span className="spinner-grow text-white mr-2 align-self-center loader-sm" /> : null;
+
+  /** build the button class . default button to `mt-4 btn btn-primary` */
+  const buttonClass = buttonType === "pause" ? "mt-4 btn btn-warning" : buttonType === "stop" ? "mt-4 btn btn-danger" : "mt-4 btn btn-primary";
+
+  return (
+    <button id="stop-start-marker" type="button" disabled={disabled}
+      className={`${buttonClass} ${extraClass && extraClass}`}
+      style={{ width: "16rem", height: "3rem", fontSize: "1rem" }}
+      onClick={() => onClick && typeof onClick === "function" ? onClick() : null}
+    >
+      <LoadingIndicator />
+      {text ?? "Submit"}
     </button>
   );
 };
