@@ -8,7 +8,12 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 import AddUpdateMachinery from "./add-update-machinery";
 
 import "./machinery.css";
-import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
+import {
+  functionUtils,
+  productDropdownForTable,
+  useGetUserDetails,
+  validateProductLocationPermission,
+} from "../../hooks/function-utils";
 
 const Machinery = () => {
   const [machineryList, setMachineryList] = useState(["loading"]);
@@ -16,10 +21,24 @@ const Machinery = () => {
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+  const [products, setProducts] = useState();
+  const [userPermissions, setUserPermissions] = useState();
+  const [userProductPermission, setUserProductPermission] = useState();
+  const [productId, setProductId] = useState();
+
+  /**
+   * Optional paramaters not needed in the useGetUserDetails hook
+   */
+  const optionalParams = ["d", "7", "s", "w"];
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
-  useGetUserDetails(setUserName, setUserId);
-
+  useGetUserDetails(
+    setUserName,
+    setUserId,
+    ...optionalParams,
+    setUserPermissions
+  );
+  console.log("Product Id: ", productId);
   /**
    * use this state value to check when we have addeed or updated data and need to refresh
    * it work by concatenating  `true` to the array when we need to refresh
@@ -34,96 +53,175 @@ const Machinery = () => {
     setRefreshData(refreshData.concat(true));
   };
 
+  /**
+   * Fetch Product list from database and validate per user
+   */
+  useEffect(() => {
+    axios
+      .get(`${BASE_API_URL}/api/v1/product/list.php`)
+      .then((res) => {
+        if (res.data.error) {
+          errorAlert("Server Error Response", res.data.message);
+        } else {
+          let data = res.data.data;
+          /**
+           * Validated product data that is derived from a user's product permisssion
+           */
+          let validatedProductData;
+
+          /**
+           * This block ensures the validateProductLocationPermission utility is run when the user permission state hasn't be updated with actual data
+           */
+          if (userPermissions !== undefined || userPermissions !== null) {
+            /**
+             * utility function takes in a users permission and the product list from the database and validates what product permission the user has
+             */
+            validatedProductData = validateProductLocationPermission(
+              userPermissions?.productPermissions,
+              data
+            );
+
+            /**
+             * Set the validated product to state to make it globally accessiable
+             */
+            const tableDropdown = productDropdownForTable(
+              validatedProductData,
+              setProductId
+            );
+            console.log(
+              "Table dropdown: ",
+              tableDropdown,
+              validatedProductData
+            );
+            setUserProductPermission(tableDropdown);
+
+            /**
+             * "Select Product" option is added to product list to set it as the initial option a user views
+             */
+            validatedProductData?.unshift({
+              id: "0",
+              product: "Select Product",
+              price: 0,
+              validation: "Can't select this option",
+            });
+
+            /**
+             * Set the data to state for the product dropdown
+             */
+            setProducts(validatedProductData);
+          }
+        }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+      });
+  }, [userPermissions, productId]);
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
       let machineryListBody = [];
       try {
-        await axios
-          .get(`${BASE_API_URL}/api/v1/operations/machinery-list.php`)
-          .then((res) => {
-            if (res.data.error) {
-              let title = "Server Error Response",
-                text = res.data.message;
-              errorAlert(title, text);
-            } else {
-              const machineryListItems = res.data.data;
-              machineryListItems.map((item) => {
-                const machinery_id = parseInt(item.id),
-                  machinery_name = item.machinery_name,
-                  identification_no = item.identification_no,
-                  description = item.description;
+        const loadTableList = async () => {
+          await axios
+            .get(`${BASE_API_URL}/api/v1/operations/machinery-list.php`, {
+              params: {
+                // "select-all": 1,
+                "product-id":
+                  productId === undefined && userProductPermission !== undefined
+                    ? userProductPermission[0]?.id
+                    : productId,
+              },
+            })
+            .then((res) => {
+              if (res.data.error) {
+                let title = "Server Error Response",
+                  text = res.data.message;
+                errorAlert(title, text);
+              } else {
+                const machineryListItems = res.data.data;
+                machineryListItems.map((item) => {
+                  const machinery_id = parseInt(item.id),
+                    machinery_name = item.machinery_name,
+                    identification_no = item.identification_no,
+                    description = item.description;
 
-                const machineryItemData = {
-                  user: userName,
-                  user_id: userId,
-                  id: machinery_id,
-                  machinery_name: machinery_name,
-                  identification_no: identification_no,
-                  description: description,
-                };
+                  const machineryItemData = {
+                    user: userName,
+                    user_id: userId,
+                    id: machinery_id,
+                    machinery_name: machinery_name,
+                    identification_no: identification_no,
+                    description: description,
+                  };
 
-                const deleteMachineryItemData = {
-                  "machinery-id": machinery_id,
-                  user: userName,
-                  "user-id": userId,
-                };
+                  const deleteMachineryItemData = {
+                    "machinery-id": machinery_id,
+                    user: userName,
+                    "user-id": userId,
+                  };
 
-                const currentMachineryItem = {
-                  id: machinery_id,
-                  fields: [
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      item: machinery_name,
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      item: identification_no,
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      item: description,
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      editScroll: true,
-                      scrollLocation: "update-form",
-                      onClick: () => {
-                        setShowUpdateMachinery(true);
-                        setTimeout(() => {
-                          handleUpdateFormFields(machineryItemData);
-                        }, 500);
+                  const currentMachineryItem = {
+                    id: machinery_id,
+                    fields: [
+                      {
+                        class: "text-left",
+                        itemClass: "text-center",
+                        item: machinery_name,
                       },
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      delete: true,
-                      onClick: () =>
-                        warningAlert(
-                          `Are you sure you want to delete this machinery: ${machinery_name}`,
-                          deleteMachineryItemData
-                        ),
-                    },
-                  ],
-                };
+                      {
+                        class: "text-left",
+                        itemClass: "text-center",
+                        item: identification_no,
+                      },
+                      {
+                        class: "text-left",
+                        itemClass: "text-center",
+                        item: description,
+                      },
+                      {
+                        class: "text-left",
+                        itemClass: "text-center",
+                        editScroll: true,
+                        scrollLocation: "update-form",
+                        onClick: () => {
+                          setShowUpdateMachinery(true);
+                          setTimeout(() => {
+                            handleUpdateFormFields(machineryItemData);
+                          }, 500);
+                        },
+                      },
+                      {
+                        class: "text-left",
+                        itemClass: "text-center",
+                        delete: true,
+                        onClick: () =>
+                          warningAlert(
+                            `Are you sure you want to delete this machinery: ${machinery_name}`,
+                            deleteMachineryItemData
+                          ),
+                      },
+                    ],
+                  };
 
-                return (machineryListBody =
-                  machineryListBody.concat(currentMachineryItem));
-              });
-              setMachineryList(machineryListBody);
-            }
-          })
-          .catch((error) => {
-            console.log("API error: ", error);
-            let title = "Network Error",
-              text = error;
-            errorAlert(title, text);
-          });
+                  return (machineryListBody =
+                    machineryListBody.concat(currentMachineryItem));
+                });
+                setMachineryList(machineryListBody);
+              }
+            })
+            .catch((error) => {
+              console.log("API error: ", error);
+              let title = "Network Error",
+                text = error;
+              errorAlert(title, text);
+            });
+        };
+
+        /**
+         * Run axios call when product Id is valid and retrived
+         */
+        userPermissions !== undefined && loadTableList();
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log("Axios Error: ", error);
@@ -138,7 +236,7 @@ const Machinery = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, refreshData]);
+  }, [userName, userId, userProductPermission, refreshData]);
 
   useEffect(() => {}, [showUpdateMachinery]);
 
@@ -204,11 +302,13 @@ const Machinery = () => {
     const machinery_identification = document.getElementById(
       "machinery-identification"
     ).value;
+    const productId = parseInt(document.getElementById("product-id").value);
 
     const addMachineryData = {
       name: machinery_name,
       "identification-no": machinery_identification,
       description: machinery_description,
+      "product-id": productId,
     };
 
     axios
@@ -245,11 +345,14 @@ const Machinery = () => {
     const machinery_identification = document.getElementById(
       "machinery-identification"
     ).value;
+    const productId = parseInt(document.getElementById("product-id").value);
+
     const updateMachineryData = {
       "machinery-id": machinery_id,
       name: machinery_name,
       description: machinery_description,
       "identification-no": machinery_identification,
+      "product-id": productId,
     };
 
     axios
@@ -299,14 +402,25 @@ const Machinery = () => {
     const machinery_identification = document.getElementById(
       "machinery-identification"
     ).value;
+    const productId = parseInt(document.getElementById("product-id").value);
+    const productItem = products?.filter(({ id }) => id == productId);
 
-    const addMachineryData = {
-      name: machinery_name,
-      "identification-no": machinery_identification,
-      description: machinery_description,
-    };
-
-    return addMachineryData;
+    if (
+      products === null ||
+      products === undefined ||
+      products[0] === undefined
+    ) {
+      errorAlert("Network Error", "Refresh Page");
+    } else {
+      const addMachineryData = {
+        name: machinery_name,
+        "identification-no": machinery_identification,
+        description: machinery_description,
+        "product-id": productId,
+        validation: productItem[0].validation,
+      };
+      return addMachineryData;
+    }
   };
 
   /** Retrive update form data for client validation */
@@ -319,20 +433,43 @@ const Machinery = () => {
     const machinery_identification = document.getElementById(
       "machinery-identification"
     ).value;
-    const updateMachineryData = {
-      "machinery-id": machinery_id,
-      name: machinery_name,
-      description: machinery_description,
-      "identification-no": machinery_identification,
-    };
+    const productId = parseInt(document.getElementById("product-id").value);
+    const productItem = products?.filter(({ id }) => id == productId);
 
-    return updateMachineryData;
+    if (
+      products === null ||
+      products === undefined ||
+      products[0] === undefined
+    ) {
+      errorAlert("Network Error", "Refresh Page");
+    } else {
+      const updateMachineryData = {
+        "machinery-id": machinery_id,
+        name: machinery_name,
+        description: machinery_description,
+        "identification-no": machinery_identification,
+        "product-id": productId,
+        validation: productItem[0].validation,
+      };
+      return updateMachineryData;
+    }
   };
+  /**
+   * handles location/product changes in the table
+   */
+  // const handleTableChange = (e) => {
+  //   console.log("Table changed");
+  //   console.log(e, "target");
+
+  //   // reloadServerData()
+  // };
 
   const hideIdentificationField = () => {};
   /** machinery List Table Data */
   const machineryListTableData = {
-    tableTitle: "",
+    tableTitle: "Machinery List",
+    links: userProductPermission,
+
     header: [
       { class: "", title: "Machinery" },
       { class: "", title: "Identification" },
@@ -344,6 +481,14 @@ const Machinery = () => {
     body: machineryList,
   };
   const addUpdateMachineryformData = [
+    {
+      id: "product-id",
+      type: "select",
+      name: "product",
+      className: "form-control",
+      options: products,
+      required: true,
+    },
     {
       id: "user",
       type: "text",
@@ -439,6 +584,8 @@ const Machinery = () => {
             <CustomTableList
               content={machineryListTableData}
               filler="No machines added"
+              dropdown
+              change
             />
           </div>
         </div>

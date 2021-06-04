@@ -6,11 +6,15 @@ import { FormDetails } from "./order-form-details";
 import WidgetHeader from "../../general/widget-header";
 import { BASE_API_URL } from "../../../hooks/API";
 import LoadingButton from "../../general/loading-button";
+import Chat from "../../../assets/container.svg";
 import {
   errorAlert,
   functionUtils,
+  productDropdownForTable,
   successAlertWithFunction,
   useGetUserDetails,
+  useProductLocationPermission,
+  validateProductLocationPermission,
 } from "../../../hooks/function-utils";
 import CustomDetailedStats from "../../cards/CustomDetailedStats";
 
@@ -25,6 +29,9 @@ const OrderForm = () => {
   /** User Details state is passed to useGetUserDetails hook which makes an async call to the store (react persistent store manager) and get single store entries  */
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+  const [userPermissions, setUserPermissions] = useState();
+  const [userProductPermission, setUserProductPermission] = useState();
+  const [productId, setProductId] = useState();
 
   /**
    * use this state value to check when we have addeed or updated data and need to refresh
@@ -47,11 +54,18 @@ const OrderForm = () => {
     const response = async () => {
       let detailedStatsList = [];
       await axios
-        .get(`${BASE_API_URL}/api/v1/production/summary.php`)
+        .get(`${BASE_API_URL}/api/v1/production/summary.php`, {
+          params: {
+            "product-id":
+              productId === undefined && userProductPermission !== undefined
+                ? userProductPermission[0]?.id
+                : productId,
+          },
+        })
         .then((res) => {
           let detailedStatsResponseList;
           let detailedStatsResponse = res.data;
-          const stock = detailedStatsResponse?.stock[0]?.stock;
+          const stock = detailedStatsResponse?.stock.stock;
           detailedStatsResponseList = [{ stock }];
 
           if (res.data.error) {
@@ -62,9 +76,10 @@ const OrderForm = () => {
             detailedStatsResponseList.map((item, id) => {
               const total_stock = Math.round(item.stock);
               const detailedStatsSchema = {
-                chat: total_stock ? true : false,
+                icon: Chat,
                 stats: total_stock,
                 legend: total_stock ? "Total stock" : null,
+                array: true,
               };
 
               return (detailedStatsList =
@@ -77,12 +92,16 @@ const OrderForm = () => {
           errorAlert("Network Error", error);
         });
     };
-    response();
+
+    /**
+     * Run axios call when product Id is valid and retrived
+     */
+    userPermissions !== undefined && response();
 
     return () => {
       source.cancel();
     };
-  }, [userName, userId, refreshData]);
+  }, [userName, userId, userProductPermission, refreshData]);
 
   useEffect(() => {
     axios
@@ -91,23 +110,68 @@ const OrderForm = () => {
         if (res.data.error) {
           errorAlert("Server Error Response", res.data.message);
         } else {
-          const data = res.data.data;
-          data.unshift({
-            id: "0",
-            product: "Select Product",
-            price: 0,
-            validation: "Can't select this option",
-          });
-          setProducts(data);
+          let data = res.data.data;
+          /**
+           * Validated product data that is derived from a user's product permisssion
+           */
+          let validatedProductData;
+
+          /**
+           * This block ensures the validateProductLocationPermission utility is run when the user permission state hasn't be updated with actual data
+           */
+          if (userPermissions !== undefined || userPermissions !== null) {
+            /**
+             * utility function takes in a users permission and the product list from the database and validates what product permission the user has
+             */
+            validatedProductData = validateProductLocationPermission(
+              userPermissions?.productPermissions,
+              data
+            );
+
+            /**
+             * Set the validated product to state to make it globally accessiable
+             */
+            const tableDropdown = productDropdownForTable(
+              validatedProductData,
+              setProductId
+            );
+
+            setUserProductPermission(tableDropdown);
+
+            /**
+             * "Select Product" option is added to product list to set it as the initial option a user views
+             */
+            validatedProductData?.unshift({
+              id: "0",
+              product: "Select Product",
+              price: 0,
+              validation: "Can't select this option",
+            });
+
+            /**
+             * Set the data to state for the product dropdown
+             */
+            setProducts(validatedProductData);
+          }
         }
       })
       .catch((error) => {
         errorAlert("Network Error", error);
       });
-  }, []);
+  }, [userPermissions, productId]);
 
+  /**
+   * Optional paramaters not needed in the useGetUserDetails hook
+   */
+  const optionalParams = ["d", "7", "s", "w"];
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
-  useGetUserDetails(setUserName, setUserId);
+
+  useGetUserDetails(
+    setUserName,
+    setUserId,
+    ...optionalParams,
+    setUserPermissions
+  );
 
   const handleOrderChange = () => {
     // Get form values with document,getById
@@ -211,7 +275,11 @@ const OrderForm = () => {
     let { product } = productData;
 
     /** Error handler for product value */
-    if (product === null || product === undefined) {
+    if (
+      product === null ||
+      product === undefined ||
+      products[0] === undefined
+    ) {
       errorAlert("Network Error", "Refresh Page");
     } else {
       const addOrderData = {
@@ -244,7 +312,12 @@ const OrderForm = () => {
     <div id="basic" className="col-lg-12 layout-spacing">
       <div className="statbox widget box box-shadow">
         {/* HEADER TITLE FOR THE FORM */}
-        <WidgetHeader title="Make an order" />
+        <WidgetHeader
+          title="Make an order"
+          links={userProductPermission}
+          dropdown
+          change
+        />
         <div
           className="widget-content widget-content-area"
           style={{ padding: "3rem", display: "grid" }}

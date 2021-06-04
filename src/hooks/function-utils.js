@@ -5,8 +5,6 @@ import Swal from "sweetalert2";
 import { BASE_API_URL } from "./API";
 import TimelineNotification from "../components/production/timeline-notification";
 import { render } from "react-dom";
-import { batch } from "pullstate";
-import { Link } from "react-router-dom";
 
 import { useHistory } from "react-router-dom";
 import { StoreManager } from "react-persistent-store-manager";
@@ -16,6 +14,7 @@ import PageWrapper from "../components/general/page-wrapper";
 import { Route } from "react-router";
 import NavBar from "./../components/navbar/navbar";
 import { toggleBtnText } from "../components/production/production-capacity";
+import { Menu } from "./../Menu";
 
 // Alerts
 export const successAlert = (title, text, link, showBtn) => {
@@ -133,7 +132,7 @@ const Login = async (user, password, setLoading) => {
       return { status: false };
     }
 
-    /** login was successful add 1status=true to use for validation` */
+    /** login was successful add `status=true` to use for validation` */
     responseData = { ...responseData, status: true };
 
     /** update store */
@@ -150,9 +149,100 @@ const Login = async (user, password, setLoading) => {
       functionUtils.parseUserPermission(responseData.permission)
     );
     setLoading(false);
+
+    /**
+     * to ensure that the user session data is set before we reload screen
+     * we will wait a little bit. This is to ensure that by the time we attempt
+     * to read the login status, we will indeed have a value to work with
+     */
+    let n = 1000000000;
+    while (n > 0) {
+      n--;
+    }
     return responseData;
   }
 };
+
+/**
+ * Check for user's product-location permission and return given product/location
+ * @param {productPermissions} productPermissions
+ * @param {providedPermissionList } providedPermissionList
+ * @returns validatedProductPermissions
+ */
+export const validateProductLocationPermission = (
+  productPermissions,
+  providedPermissionList
+) => {
+  /**
+   * This block ensures the user product permission passed to the utility function are valid before looping over the said data (product permissions) and finally checks if the data values (product permissions values) gotten while looping are exactly the same with products in the product list from the database
+   */
+  let validatedProductPermissions;
+  /**
+   * Create validated product check list
+   */
+  let checkList = [];
+
+  if (productPermissions !== undefined) {
+    for (const [key, value] of Object.entries(productPermissions)) {
+      if (Array.isArray(providedPermissionList)) {
+        for (let i = 0; i < providedPermissionList.length; i++) {
+          /**
+           * check to validate if a user has a specific product permission and add the product to the check list
+           */
+          let check = providedPermissionList[i].product === value.text;
+          if (check) {
+            checkList.push(providedPermissionList[i]);
+          }
+        }
+        /**
+         * Set the validated product check list to the returned varaible for consumption
+         */
+        validatedProductPermissions = checkList;
+      }
+    }
+  }
+
+  return validatedProductPermissions;
+};
+
+/**
+ * handles location/product changes in the table
+ */
+export const handleTableChange = (id, setProductId, setLastItemId) => {
+  console.log("Table changed");
+  if (id !== undefined && typeof setProductId === "function") {
+    setProductId(id);
+    typeof setLastItemId === "function" && setLastItemId("0");
+    // alert("Reloaded 2");
+  }
+};
+
+export const productDropdownForTable = (
+  productList,
+  setProductId,
+  setLastItemId
+) => {
+  let tableDropdown = [];
+
+  if (productList !== undefined && Array.isArray(productList)) {
+    productList.map((product) => {
+      const currentProductSetting = {
+        id: product.id,
+        text: product.product,
+        link: () => handleTableChange(product.id, setProductId, setLastItemId),
+      };
+      return (tableDropdown = tableDropdown.concat(currentProductSetting));
+    });
+    return tableDropdown;
+  }
+};
+
+/**
+ *  Retrive App settings from app persistent store
+ * @param { setUserTypesList} setUserTypesList
+ * @param {setMeasurementList} setMeasurementList
+ * @param {setUsersPermissions} setUsersPermissions
+ */
 
 export const useGetAppSettings = async (
   setUserTypesList,
@@ -219,6 +309,58 @@ export const useGetUserDetails = async (
   Store.useStateAsync("permission").then((permission) => {
     typeof setUserPermissions === "function" && setUserPermissions(permission);
   });
+};
+
+/**
+ * usee to load app settings. This function will load `measurements`, `userTypes`, and  `products`
+ * It will add the product loaded to the Menu.js static permission list to create a more dynamic
+ * permission. This is to enable us create a permssion list that is based on the available products
+ */
+export const loadAppSettingsAndCreateDynamicGloablMenu = (menu = Menu) => {
+  /** create a store  */
+  const Store = getAppSettingStoreInstance();
+
+  axios
+    .get(`${BASE_API_URL}/api/v1/system/app-settings.php`)
+    .then((response) => {
+      const data = response.data.data;
+
+      Store.update("measurements", data["measurement"]);
+      Store.update("userTypes", data["user_types"]);
+
+      /**
+       * before we assign menu to userPermission, we need to create an entry for products
+       * in the Menu list. Since product is a dunamic content that changes based on updates
+       */
+      const products = data["products"];
+      let productPermissions = {};
+
+      products.map((product) => {
+        /**
+         * we are not showing this permission item in our menu. This  simply to allow user to have access
+         * to specific product. So  we will set `showInMenu: false`
+         * @note: see `Menu.js`  `Menu` entry for details of similar implementation for dashboard items.
+         *  */
+        return (productPermissions[product.id] = {
+          text: product.product,
+          showInMenu: false,
+        });
+      });
+
+      /**
+       * assign to the  `menuListWithProductsEntry`. This variable will now both the tatic menu definition
+       * and the dynamic menus based on the numbers of products added to our application
+       *
+       */
+      const menuListWithProductsEntry = { ...menu, productPermissions };
+      Store.update(
+        "user_permission",
+        JSON.stringify(menuListWithProductsEntry)
+      );
+    })
+    .catch((error) => {
+      errorAlert("Oops!", "could not load settings. Check Internet connection");
+    });
 };
 
 // GENERATE RANDOM SERIAL NUMBER FUNCTION
@@ -1084,8 +1226,8 @@ export const functionUtils = {
               successAlert(title, text, link);
               clearTimeout(restartMarker);
               document.getElementById("stop-marker").id = "stop-start-marker";
-              // window.location.reload();
-              history.push("/");
+              window.location.reload();
+              // history.push("/");
             }
           })
           .catch((error) => {
@@ -1358,6 +1500,7 @@ export const functionUtils = {
         if (functionUtils.isElectronApp()) {
           window.location.reload();
         } else {
+          //window.location.reload();
           history.push({
             pathname: state?.from || successLocation,
             state: response,

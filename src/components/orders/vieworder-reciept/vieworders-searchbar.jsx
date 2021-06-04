@@ -1,36 +1,10 @@
 import React from "react";
 
-const ViewordersSearchbar = ({
-  currentPageNumber,
-  handleCountChange,
-  handleSearchList,
-}) => {
+const ViewordersSearchbar = ({ handleSearchList, TableDropdown }) => {
   return (
     <div className="dt--top-section">
       <div className="row">
-        <div className="col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center">
-          {/* <div className="dataTables_length" id="default-ordering_length">
-            <label>
-              Results :{" "}
-              <select
-                id="order-list-count"
-                name="default-ordering_length"
-                aria-controls="default-ordering"
-                className="form-control"
-                onChange={() => {
-                  return handleCountChange && handleCountChange();
-                }}
-                disabled={currentPageNumber !== 1 ? true : false}
-              >
-                <option value="7">7</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-              </select>
-            </label>
-          </div> */}
-        </div>
-        <div className="col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3">
+        <div className="col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center mt-sm-0 mt-3">
           <div id="default-ordering_filter" className="dataTables_filter">
             <label>
               <svg
@@ -60,6 +34,9 @@ const ViewordersSearchbar = ({
               />
             </label>
           </div>
+        </div>
+        <div className="col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center">
+          <TableDropdown />
         </div>
       </div>
     </div>

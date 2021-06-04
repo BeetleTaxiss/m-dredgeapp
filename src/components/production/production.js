@@ -9,6 +9,7 @@ import {
   errorAlert,
   functionUtils,
   useGetUserDetails,
+  validateProductLocationPermission,
   warningAlert,
 } from "../../hooks/function-utils";
 import { BASE_API_URL } from "../../hooks/API";
@@ -31,9 +32,19 @@ export const Production = () => {
 
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+  const [userPermissions, setUserPermissions] = useState();
 
+  /**
+   * Optional paramaters not needed in the useGetUserDetails hook
+   */
+  const optionalParams = ["d", "7", "s", "w"];
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
-  useGetUserDetails(setUserName, setUserId);
+  useGetUserDetails(
+    setUserName,
+    setUserId,
+    ...optionalParams,
+    setUserPermissions
+  );
 
   useEffect(() => {}, [userName, userId]);
 
@@ -51,15 +62,35 @@ export const Production = () => {
               console.log("Products Error: ", res.data.error);
             } else {
               const data = res.data.data;
-              const newArray = data.unshift({
-                id: "0",
-                product: "Select Product",
-                price: 0,
-                validation: "Can't select this option",
-              });
-              console.log("New Array", newArray);
-              console.log("New Data", data);
-              setProducts(data);
+              /**
+               * Validated product data that is derived from a user's product permisssion
+               */
+              let validatedProductData;
+              /**
+               * This block ensures the validateProductLocationPermission utility is run when the user permission state hasn't be updated with actual data
+               */
+              if (userPermissions !== undefined || userPermissions !== null) {
+                /**
+                 * utility function takes in a users permission and the product list from the database and validates what product permission the user has
+                 */
+                validatedProductData = validateProductLocationPermission(
+                  userPermissions?.productPermissions,
+                  data
+                );
+                /**
+                 * "Select Product" option is added to product list to set it as the initial option a user views
+                 */
+                validatedProductData?.unshift({
+                  id: "0",
+                  product: "Select Product",
+                  price: 0,
+                  validation: "Can't select this option",
+                });
+                /**
+                 * Set the data to state for the product dropdown
+                 */
+                setProducts(validatedProductData);
+              }
             }
           })
           .catch((error) => {
@@ -80,7 +111,7 @@ export const Production = () => {
     return () => {
       source.cancel();
     };
-  }, [selectedDate, setSelectedDate, loading]);
+  }, [selectedDate, setSelectedDate, loading, userPermissions]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -183,7 +214,9 @@ export const Production = () => {
   console.log("New Time Line Items: ", timelineItems);
   // // timelineItems = newTimelineItems;
 
-  /** Retrive shift caLculator form values for client validation */
+  /**
+   * Retrive shift caLculator form values for client validation
+   * */
   // const getShiftFormData = () => {};
   const selectProductFormData = [
     {

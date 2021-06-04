@@ -1,12 +1,16 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
-const TaskAction = ({ links }) => {
+const TaskAction = ({ links, handleChange, change }) => {
+  const history = useHistory();
   return (
     <div className="task-action">
       <div className="dropdown">
         <Link
           className="dropdown-toggle"
+          onClick={(e) => {
+            e.preventDefault();
+          }}
           to="#"
           role="button"
           id="pendingTask"
@@ -38,7 +42,16 @@ const TaskAction = ({ links }) => {
           style={{ willChange: "transform" }}
         >
           {links?.map((item, i) => (
-            <Link key={i} className="dropdown-item" to={item.link}>
+            <Link
+              key={i}
+              className="dropdown-item"
+              onClick={(e) => {
+                e.preventDefault();
+                change ? item.link() : history.push(item.link);
+              }}
+              to="#"
+              data-product={item.text}
+            >
               {item.text}
             </Link>
           ))}

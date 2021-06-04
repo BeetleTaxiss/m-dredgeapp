@@ -1,0 +1,1 @@
+GET https://mdredge-server-api-dev.herokuapp.com/api/v1/operations/machinery-list.php?select-all=1

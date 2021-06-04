@@ -9,7 +9,9 @@ import CustomTableList from "../../general/custom-table-list/custom-table-list";
 import ImpoundTruckForm from "./ImpoundTruckForm";
 import {
   functionUtils,
+  productDropdownForTable,
   useGetUserDetails,
+  validateProductLocationPermission,
 } from "../../../hooks/function-utils";
 
 const ImpoundTruck = () => {
@@ -17,9 +19,22 @@ const ImpoundTruck = () => {
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+  const [userPermissions, setUserPermissions] = useState();
+  const [userProductPermission, setUserProductPermission] = useState();
+  const [productId, setProductId] = useState();
+
+  /**
+   * Optional paramaters not needed in the useGetUserDetails hook
+   */
+  const optionalParams = ["d", "7", "s", "w"];
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
-  useGetUserDetails(setUserName, setUserId);
+  useGetUserDetails(
+    setUserName,
+    setUserId,
+    ...optionalParams,
+    setUserPermissions
+  );
 
   /**
    * use this state value to check when we have addeed or updated data and need to refresh
@@ -35,13 +50,68 @@ const ImpoundTruck = () => {
     setRefreshData(refreshData.concat(true));
   };
 
+  /**
+   * Fetch Product list from database and validate per user
+   */
+  useEffect(() => {
+    axios
+      .get(`${BASE_API_URL}/api/v1/product/list.php`)
+      .then((res) => {
+        if (res.data.error) {
+          errorAlert("Server Error Response", res.data.message);
+        } else {
+          let data = res.data.data;
+          /**
+           * Validated product data that is derived from a user's product permisssion
+           */
+          let validatedProductData;
+
+          /**
+           * This block ensures the validateProductLocationPermission utility is run when the user permission state hasn't be updated with actual data
+           */
+          if (userPermissions !== undefined || userPermissions !== null) {
+            /**
+             * utility function takes in a users permission and the product list from the database and validates what product permission the user has
+             */
+            validatedProductData = validateProductLocationPermission(
+              userPermissions?.productPermissions,
+              data
+            );
+
+            /**
+             * Set the validated product to state to make it globally accessiable
+             */
+            const tableDropdown = productDropdownForTable(
+              validatedProductData,
+              setProductId
+            );
+
+            setUserProductPermission(tableDropdown);
+          }
+        }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+      });
+  }, [userPermissions, productId]);
+
+  /**
+   * Fetch Impounded list from DB
+   */
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
       let impoundTruckListBody = [];
       try {
         await axios
-          .get(`${BASE_API_URL}/api/v1/order/truck-impounded-list.php`)
+          .get(`${BASE_API_URL}/api/v1/order/truck-impounded-list.php`, {
+            params: {
+              "product-id":
+                productId === undefined && userProductPermission !== undefined
+                  ? userProductPermission[0]?.id
+                  : productId,
+            },
+          })
           .then((res) => {
             if (res.data.error) {
               let title = "Server Error Response",
@@ -122,12 +192,15 @@ const ImpoundTruck = () => {
       }
     };
 
-    response();
+    /**
+     * Run axios call when product Id is valid and retrived
+     */
+    userPermissions !== undefined && response();
 
     return () => {
       source.cancel();
     };
-  }, [userName, userId, refreshData]);
+  }, [userName, userId, userProductPermission, refreshData]);
 
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
@@ -194,6 +267,10 @@ const ImpoundTruck = () => {
       "truck-no": truck_no,
       "truck-description": truck_description,
       comment: impounded_comment,
+      "product-id":
+        productId === undefined && userProductPermission !== undefined
+          ? userProductPermission[0]?.id
+          : productId,
     };
 
     axios
@@ -287,7 +364,13 @@ const ImpoundTruck = () => {
         <Element id="update-form" name="update-form" />
         <div className="statbox widget box box-shadow">
           {/* HEADER TITLE FOR THE FORM */}
-          <WidgetHeader title="Impound Truck Information" />
+          <WidgetHeader
+            title="Impound Truck Information"
+            links={userProductPermission}
+            dropdown
+            change
+          />
+
           <div
             className="widget-content widget-content-area searchable-container list"
             style={{ display: "grid", padding: "2rem", gap: "2rem" }}

@@ -7,24 +7,21 @@ import {
   functionUtils,
   errorAlert,
   getUserStoreInstance,
-  getAppSettingStoreInstance,
+  loadAppSettingsAndCreateDynamicGloablMenu
 } from "../hooks/function-utils";
-
-import { StoreManager } from "react-persistent-store-manager";
-import { Stores, AppStore } from "./../state/store";
 import LoadingButton from "../components/general/loading-button";
 
 const LoginPage = () => {
-  const UserStore = getUserStoreInstance();
+
+  /** get user store */
+  const UserStore= getUserStoreInstance();
 
   /**
    * each time we load the login page, we must clear any existing user permission saved
    * during the last session. This is to force user to always login
    *  */
-  //  UserStore.update("permission", null);
-
-  /** create a store  */
-  const Store = getAppSettingStoreInstance();
+  //UserStore.update("permission", null);
+  //UserStore.update("login", false);
 
   const [user, setUsername] = useState({
     user: "",
@@ -93,30 +90,11 @@ const LoginPage = () => {
     holder: "Password",
   };
 
-  /** get the system settings only once we load */
+  /** get the system settings only once we load and create dynamoc global menu list based 
+   * on all products from db.
+   * */
   useEffect(() => {
-    axios
-      .get(`${BASE_API_URL}/api/v1/system/app-settings.php`)
-      .then((response) => {
-        const data = response.data.data;
-
-        Store.update("measurements", data["measurement"]);
-        Store.update("userTypes", data["user_types"]);
-
-        /** parse permissionList as object
-         * @todo the server might need to return a simpler permission list data
-         *  **/
-        const userPermissions = functionUtils.parseUserPermission(
-          data["user_permission"][0]["permission"]
-        );
-        Store.update("user_permission", userPermissions);
-      })
-      .catch((error) => {
-        errorAlert(
-          "Oops!",
-          "could not load settings. Check Internet connection"
-        );
-      });
+    loadAppSettingsAndCreateDynamicGloablMenu();
   }, [loading]);
 
   return (

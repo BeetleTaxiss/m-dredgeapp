@@ -7,6 +7,7 @@ import PostAccountForm from "../../fuel-issues/add-Fuel-Form";
 import {
   functionUtils,
   useGetUserDetails,
+  validateProductLocationPermission,
 } from "../../../hooks/function-utils";
 
 const PostAccount = () => {
@@ -15,6 +16,76 @@ const PostAccount = () => {
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
   const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState();
+  const [userPermissions, setUserPermissions] = useState();
+
+  /**
+   * Optional paramaters not needed in the useGetUserDetails hook
+   */
+  const optionalParams = ["d", "7", "s", "w"];
+
+  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  useGetUserDetails(
+    setUserName,
+    setUserId,
+    ...optionalParams,
+    setUserPermissions
+  );
+  /**
+   *  Update username, user id and loading state values for functions which need their values to run effectively
+   */
+  useEffect(() => {}, [userName, userId, loading]);
+
+  /**
+   * Fetch Product list from database and validate per user
+   */
+  useEffect(() => {
+    axios
+      .get(`${BASE_API_URL}/api/v1/product/list.php`)
+      .then((res) => {
+        if (res.data.error) {
+          errorAlert("Server Error Response", res.data.message);
+        } else {
+          let data = res.data.data;
+          /**
+           * Validated product data that is derived from a user's product permisssion
+           */
+          let validatedProductData;
+
+          /**
+           * This block ensures the validateProductLocationPermission utility is run when the user permission state hasn't be updated with actual data
+           */
+          if (userPermissions !== undefined || userPermissions !== null) {
+            /**
+             * utility function takes in a users permission and the product list from the database and validates what product permission the user has
+             */
+            validatedProductData = validateProductLocationPermission(
+              userPermissions?.productPermissions,
+              data
+            );
+
+            /**
+             * "Select Product" option is added to product list to set it as the initial option a user views
+             */
+            validatedProductData?.unshift({
+              id: "0",
+              product: "Select Product",
+              price: 0,
+              validation: "Can't select this option",
+            });
+
+            /**
+             * Set the data to state for the product dropdown
+             */
+            setProducts(validatedProductData);
+          }
+        }
+      })
+      .catch((error) => {
+        errorAlert("Network Error", error);
+      });
+  }, [userPermissions]);
+
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
@@ -87,15 +158,12 @@ const PostAccount = () => {
     };
   }, []);
 
-  useEffect(() => {}, [userName, userId, loading]);
-
-  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
-  useGetUserDetails(setUserName, setUserId);
   const handlePostAccount = (userName, userId) => {
     const amount = document.getElementById("amount").value;
     const narration = document.getElementById("narration").value;
     const debitValue = parseInt(document.getElementById("debit-id").value);
     const creditValue = parseInt(document.getElementById("credit-id").value);
+    const productId = parseInt(document.getElementById("product-id").value);
 
     const debitItem = debitAccount.filter(({ id }) => id === debitValue),
       creditItem = creditAccount.filter(({ id }) => id === creditValue),
@@ -113,6 +181,7 @@ const PostAccount = () => {
       "debit-account-id": debitValue,
       narration: narration,
       amount: amount,
+      "product-id": productId,
     };
 
     axios
@@ -142,14 +211,22 @@ const PostAccount = () => {
     const narration = document.getElementById("narration").value;
     const debitValue = parseInt(document.getElementById("debit-id").value);
     const creditValue = parseInt(document.getElementById("credit-id").value);
+    const productId = parseInt(document.getElementById("product-id").value);
 
     const debitItem = debitAccount?.filter(({ id }) => id === debitValue),
-      creditItem = creditAccount?.filter(({ id }) => id === creditValue);
+      creditItem = creditAccount?.filter(({ id }) => id === creditValue),
+      productItem = products?.filter(({ id }) => id == productId);
+
     if (
       creditAccount === null ||
       creditAccount === undefined ||
       debitAccount === null ||
-      debitAccount === undefined
+      debitAccount === undefined ||
+      products === null ||
+      products === undefined ||
+      creditAccount[0] === undefined ||
+      debitAccount[0] === undefined ||
+      products[0] === undefined
     ) {
       errorAlert("Network Error", "Refresh Page");
     } else {
@@ -160,6 +237,7 @@ const PostAccount = () => {
       const postAccountData = {
         user: userName,
         "user-id": userId,
+        "product-id": productId,
         "chart-id": chart_id,
         "credit-account": credit_account,
         "debit-account": debit_account,
@@ -167,7 +245,10 @@ const PostAccount = () => {
         "debit-account-id": debitValue,
         narration: narration,
         amount: amount,
-        validation: debitItem[0].validation || creditItem[0].validation,
+        validation:
+          debitItem[0].validation ||
+          creditItem[0].validation ||
+          productItem[0].validation,
       };
       return postAccountData;
     }
@@ -192,6 +273,14 @@ const PostAccount = () => {
     });
   };
   const postAccountFormData = [
+    {
+      id: "product-id",
+      type: "select",
+      name: "product",
+      className: "form-control",
+      options: products,
+      required: true,
+    },
     {
       id: "narration",
       type: "text",

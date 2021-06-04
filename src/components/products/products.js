@@ -8,7 +8,11 @@ import CustomTableList from "../general/custom-table-list/custom-table-list";
 import AddUpdateProduct from "./add-update-product";
 
 import "./product.css";
-import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
+import {
+  functionUtils,
+  useGetUserDetails,
+  loadAppSettingsAndCreateDynamicGloablMenu,
+} from "../../hooks/function-utils";
 
 const Products = () => {
   const [productsList, setProductsList] = useState(["loading"]);
@@ -203,6 +207,8 @@ const Products = () => {
             link = `<a href="/products">View Product List</a>`;
           successAlert(title, text, link);
           reloadServerData();
+          /** refresh product permission whenever new product is added */
+          loadAppSettingsAndCreateDynamicGloablMenu();
         }
       });
   };
@@ -240,6 +246,8 @@ const Products = () => {
           reloadServerData();
           setShowUpdateProduct(false);
           setLoading(false);
+          /** refresh product permission whenever new product is added */
+          loadAppSettingsAndCreateDynamicGloablMenu();
         }
       })
       .catch((error) => {
@@ -287,6 +295,9 @@ const Products = () => {
           reloadServerData();
           setShowUpdateProduct(false);
           setLoading(false);
+
+          /** refresh product permission whenever new product is added */
+          loadAppSettingsAndCreateDynamicGloablMenu();
         }
       })
       .catch((error) => {
