@@ -4,8 +4,23 @@ import WidgetHeader from "../widget-header";
 import CustomTableListBody from "./custom-table-list-body";
 import CustomTableListHeader from "./custom-table-list-header";
 import { ReactComponent as NoTasks } from "../../../assets/noTasks.svg";
-const CustomTableList = ({ content, setLoad, filler, dropdown, change }) => {
+import CustomTablePagination from "../custom-table-paiginaition";
+const CustomTableList = ({
+  content,
+  setLoad,
+  filler,
+  dropdown,
+  change,
+  search,
+  searchBoxValue,
+  searchFields,
+  handleSearchList,
+  footer,
+  ...rest
+}) => {
   const arrayContent = Array.isArray(content.body);
+  console.log("Body data: ", content);
+
   return (
     <div className="statbox widget box box-shadow col-md-12">
       <WidgetHeader
@@ -13,6 +28,9 @@ const CustomTableList = ({ content, setLoad, filler, dropdown, change }) => {
         links={content.links}
         dropdown={dropdown ? true : false}
         change={change}
+        search={search ? true : false}
+        searchBoxValue={searchBoxValue}
+        handleSearchList={handleSearchList}
       />
       <div className="widget-content widget-content-area">
         <div className="table-responsive">
@@ -50,11 +68,22 @@ const CustomTableList = ({ content, setLoad, filler, dropdown, change }) => {
           ) : (
             <table className="table table-bordered table-hover mb-4">
               <CustomTableListHeader content={content.header} />
-              <CustomTableListBody content={content.body} setLoad={setLoad} />
+              <CustomTableListBody
+                content={content.body?.page || content?.body}
+                setLoad={setLoad}
+              />
             </table>
           )}
         </div>
       </div>
+      {footer ? (
+        <CustomTablePagination
+          currentPageNumber={rest?.currentPageNumber}
+          totalPageNumbers={rest?.totalPageNumbers}
+          handleNextPagination={rest.handleNextPagination}
+          handlePrevPagination={rest.handlePrevPagination}
+        />
+      ) : null}
     </div>
   );
 };

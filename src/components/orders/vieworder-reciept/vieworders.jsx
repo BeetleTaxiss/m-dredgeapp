@@ -5,7 +5,7 @@ import ViewordersTablehead from "./vieworders-tablehead";
 import ViewordersTableBody from "./vieworders-body";
 import ViewordersTablefooter from "./vieworders-tablefooter";
 import ViewordersSearchbar from "./vieworders-searchbar";
-import ViewordersTablepaiginaition from "./vieworders-tablepaiginaition";
+import ViewordersTablepaiginaition from "../../general/custom-table-paiginaition";
 import "./vieworders.scss";
 import {
   errorAlert,
@@ -328,12 +328,7 @@ const ViewOrders = () => {
               });
 
               // alert("Fired 2");
-            } else if (
-              res.data.message === "No order found"
-              // ||
-              // res.data.data === null ||
-              // res.data.data === undefined
-            ) {
+            } else if (res.data.message === "No order found") {
               /**
                * Disables the enabled Next Button as new data is not available for fetching.
                */
@@ -565,7 +560,7 @@ const ViewOrders = () => {
    * handles current page filtering and searching of data using a persistent page state
    * @param {persistentCurrentPageArray} persistentCurrentPageArray
    */
-  const handleSearchList = (persistentCurrentPageArray) => {
+  const handleSearchList = (persistentCurrentPage) => {
     /**
      * Set the current page data from the persistent state to a variable
      */

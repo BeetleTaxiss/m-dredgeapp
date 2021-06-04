@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const ViewordersTablepaiginaition = ({
+const CustomTablePagination = ({
   currentPageNumber,
   totalPageNumbers,
   handleNextPagination,
@@ -8,7 +8,10 @@ const ViewordersTablepaiginaition = ({
 }) => {
   return (
     <div className="dt--bottom-section d-sm-flex justify-content-sm-between text-center">
-      <div className="dt--pages-count  mb-sm-0 mb-3">
+      <div
+        className="dt--pages-count  mb-sm-0 mb-3"
+        style={{ display: "flex", alignItems: "center" }}
+      >
         <div
           className="dataTables_info"
           id="default-ordering_info"
@@ -23,8 +26,9 @@ const ViewordersTablepaiginaition = ({
         <div
           className="dataTables_paginate paging_simple_numbers"
           id="default-ordering_paginate"
+          style={{ display: "flex", alignItems: "center" }}
         >
-          <ul className="pagination pagination-style-13 pagination-bordered mb-5">
+          <ul className="pagination pagination-style-13 pagination-bordered mt-3">
             <li
               className={`paginate_button page-item previous ${
                 currentPageNumber === 1 && "disabled"
@@ -112,4 +116,4 @@ const ViewordersTablepaiginaition = ({
   );
 };
 
-export default ViewordersTablepaiginaition;
+export default CustomTablePagination;

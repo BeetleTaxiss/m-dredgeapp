@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
@@ -9,12 +9,38 @@ import {
   useGetUserDetails,
   validateProductLocationPermission,
 } from "../../hooks/function-utils";
+import CustomTablePagination from "../general/custom-table-paiginaition";
+import CustomTableSearchbar from "../general/custom-table-searchbar";
+import {
+  handleNextPagination,
+  handleParentPaginationArray,
+  handlePrevPagination,
+  handleSearchList,
+  handleUpdatePaginatedUI,
+  TableDropdown,
+} from "../../hooks/paginator";
 
 const FuelIssueList = () => {
   const [fuelIssueList, setFuelIssueList] = useState(["loading"]);
   const [userPermissions, setUserPermissions] = useState();
   const [userProductPermission, setUserProductPermission] = useState();
   const [productId, setProductId] = useState();
+
+  //
+  const [listCount, setListCount] = useState("10");
+  const [lastItemStore, setLastItemStore] = useState("0");
+  const [lastItemId, setLastItemId] = useState("0");
+  //
+  const [rawData, setRawData] = useState();
+  const [currentPageArray, setCurrentPageArray] = useState(["loading"]);
+  const [persistentCurrentPage, setPersistentCurrentPage] = useState();
+  //
+  const [searchBoxValue, setSearchBoxValue] = useState();
+  /**
+   * use this state value to check when we have addeed or updated data and need to refresh
+   * it work by concatenating  `true` to the array when we need to refresh
+   * */
+  let newDataFetch = useRef(false);
 
   /**
    * Optional paramaters not needed in the useGetUserDetails hook
@@ -78,9 +104,12 @@ const FuelIssueList = () => {
       try {
         /** Fuel list to be appended to */
         let fuelIssueListBody = [];
+        let newfuelIssueListBody;
         await axios
           .get(`${BASE_API_URL}/api/v1/operations/fuel-issue-list.php`, {
             params: {
+              count: "20",
+              "last-item-id": lastItemId,
               "product-id":
                 productId === undefined && userProductPermission !== undefined
                   ? userProductPermission[0]?.id
@@ -93,67 +122,95 @@ const FuelIssueList = () => {
                 text = res.data.message;
               errorAlert(title, text);
             } else {
-              const fuelIssueItems = res.data.data;
-              fuelIssueItems.reverse().map((item) => {
-                /** Get required response data values */
-                const fuel_issue_user = item?.user;
-                const fuel_issue_user_id = item?.user_id;
-                const fuel_issue_id = item?.id;
-                const machinery_name = item?.machinery_name;
-                const fuel_issue_date = item?.date_in;
-                const fuel_issue_time = item?.time_in;
-                const qty_issued = item?.qty_issued;
-                const identification_no = item?.identification_no;
-                const description = item?.description;
+              const paginatedDataForUpdatingUI = (
+                fuelIssueItems,
+                newfuelIssueListBody
+              ) => {
+                newfuelIssueListBody = fuelIssueItems.map((item) => {
+                  /** Get required response data values */
 
-                const currentFuelIssueItem = {
-                  id: fuel_issue_id,
-                  fields: [
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      item: fuel_issue_date,
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      item: fuel_issue_time,
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      item: machinery_name,
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      item: identification_no,
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: "text-center",
-                      item: fuel_issue_user,
-                    },
-                    {
-                      class: "text-left",
-                      itemClass: `text-center ${
-                        machinery_name === "down"
-                          ? "shadow-none badge badge-warning"
-                          : "shadow-none badge badge-success"
-                      }`,
-                      item: functionUtils.addCommaToNumbers(qty_issued),
-                    },
-                  ],
-                };
+                  console.log("MAPPED DATA: ", item);
 
-                return (fuelIssueListBody =
-                  fuelIssueListBody.concat(currentFuelIssueItem));
-              });
-              setFuelIssueList(fuelIssueListBody);
+                  let page = item.map((subItem) => {
+                    /** Get required response data values */
+                    const fuel_issue_user = subItem?.user;
+                    const fuel_issue_user_id = subItem?.user_id;
+                    const fuel_issue_id = subItem?.id;
+                    const machinery_name = subItem?.machinery_name;
+                    const fuel_issue_date = subItem?.date_in;
+                    const fuel_issue_time = subItem?.time_in;
+                    const qty_issued = subItem?.qty_issued;
+                    const identification_no = subItem?.identification_no;
+                    const description = subItem?.description;
+
+                    const currentRow = {
+                      id: fuel_issue_id,
+                      fields: [
+                        {
+                          class: "text-left",
+                          itemClass: "text-center",
+                          item: fuel_issue_date,
+                        },
+                        {
+                          class: "text-left",
+                          itemClass: "text-center",
+                          item: fuel_issue_time,
+                        },
+                        {
+                          class: "text-left",
+                          itemClass: "text-center",
+                          item: machinery_name,
+                        },
+                        {
+                          class: "text-left",
+                          itemClass: "text-center",
+                          item: identification_no,
+                        },
+                        {
+                          class: "text-left",
+                          itemClass: "text-center",
+                          item: fuel_issue_user,
+                        },
+                        {
+                          class: "text-left",
+                          itemClass: `text-center ${
+                            machinery_name === "down"
+                              ? "shadow-none badge badge-warning"
+                              : "shadow-none badge badge-success"
+                          }`,
+                          item: functionUtils.addCommaToNumbers(qty_issued),
+                        },
+                      ],
+                    };
+                    return currentRow;
+                  });
+                  return page;
+                });
+                return newfuelIssueListBody;
+              };
+
+              handleUpdatePaginatedUI(
+                res,
+                rawData,
+                newDataFetch,
+                listCount,
+                lastItemId,
+                currentPageArray,
+                setRawData,
+                setCurrentPageArray,
+                setPersistentCurrentPage,
+                setFuelIssueList,
+                setLastItemStore,
+                handleParentPaginationArray,
+                newfuelIssueListBody,
+                paginatedDataForUpdatingUI
+              );
+              // alert("fired check 1");
             }
           })
           .catch((error) => {
             errorAlert("Network Error", error);
+            console.log("Error: ", error);
           });
       } catch (error) {
         if (axios.isCancel(error)) {
@@ -172,6 +229,24 @@ const FuelIssueList = () => {
       source.cancel();
     };
   }, [userProductPermission]);
+
+  useEffect(() => {
+    console.log("jkhjbdnvjlhkjgdvndnjkhj");
+  }, [
+    fuelIssueList,
+    currentPageArray,
+    persistentCurrentPage,
+    rawData,
+    lastItemStore,
+    newDataFetch,
+  ]);
+
+  useEffect(() => {
+    if (document.getElementById("page-filter") !== null) {
+      document.getElementById("page-filter").focus();
+    }
+  }, [searchBoxValue]);
+  console.log("UI DATA: ", fuelIssueList);
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const errorAlert = (title, text) => {
     Swal.fire({
@@ -195,7 +270,39 @@ const FuelIssueList = () => {
       { class: "", title: "Qty Issued" },
     ],
 
-    body: fuelIssueList,
+    body: currentPageArray,
+  };
+
+  //
+  const footerProp = {
+    currentPageNumber: currentPageArray?.id + 1,
+    totalPageNumbers: fuelIssueList?.length,
+    handleNextPagination: () =>
+      handleNextPagination(
+        fuelIssueList,
+        currentPageArray,
+        lastItemStore,
+        setCurrentPageArray,
+        setPersistentCurrentPage,
+        setLastItemId
+      ),
+    handlePrevPagination: () =>
+      handlePrevPagination(
+        fuelIssueList,
+        currentPageArray,
+        setCurrentPageArray,
+        setPersistentCurrentPage
+      ),
+  };
+
+  //
+  const searchFields = {
+    user: "user",
+    time_in: "time_in",
+    qty_issued: "qty_issued",
+    machinery_name: "machinery_name",
+    date_in: "date_in",
+    identification_no: "identification_no",
   };
 
   /** Fuel list component display */
@@ -205,6 +312,22 @@ const FuelIssueList = () => {
       filler="Your Fuel list is empty"
       dropdown
       change
+      search
+      searchBoxValue={searchBoxValue}
+      footer
+      handleSearchList={() => {
+        handleSearchList(
+          persistentCurrentPage,
+          setCurrentPageArray,
+          setSearchBoxValue,
+          searchFields
+        );
+        if (document.getElementById("page-filter") !== null) {
+          document.getElementById("page-filter").focus();
+          console.log("focus");
+        }
+      }}
+      {...footerProp}
     />
   );
   return <FuelListComponent />;
