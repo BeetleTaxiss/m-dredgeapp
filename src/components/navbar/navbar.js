@@ -12,7 +12,6 @@ import {
   getUserStoreInstance,
   getAppSettingStoreInstance,
   successAlert,
-  successAlertNoClick,
 } from "../../hooks/function-utils";
 
 const Navbar = ({ userPermission }) => {
@@ -126,7 +125,13 @@ const Navbar = ({ userPermission }) => {
            * force a page refresh. We will wait for few seconds to ensure that
            * all session clearing has properly taken effect
            */
-          successAlertNoClick("User Alert", "Logout successful");
+          const alertOptions = ["", "", ""];
+          successAlert(
+            "User Alert",
+            "Logout successful",
+            ...alertOptions,
+            false
+          );
 
           setTimeout(() => {
             window.location.href = "/";
