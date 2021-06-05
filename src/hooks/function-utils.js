@@ -22,7 +22,7 @@ export const successAlert = (
   text,
   link,
   showBtn,
-  clickOutside = false
+  clickOutside = true
 ) => {
   Swal.fire({
     icon: "success",

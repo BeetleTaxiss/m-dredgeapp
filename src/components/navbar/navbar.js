@@ -130,7 +130,7 @@ const Navbar = ({ userPermission }) => {
             "User Alert",
             "Logout successful",
             ...alertOptions,
-            true
+            false
           );
 
           setTimeout(() => {
