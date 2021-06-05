@@ -17,20 +17,23 @@ import { toggleBtnText } from "../components/production/production-capacity";
 import { Menu } from "./../Menu";
 
 // Alerts
-export const successAlert = (
-  title,
-  text,
-  link,
-  showBtn,
-  clickOutside = false
-) => {
+export const successAlert = (title, text, link, showBtn) => {
   Swal.fire({
     icon: "success",
     title: title,
     text: text,
     footer: link,
     showConfirmButton: showBtn ? true : false,
-    allowOutsideClick: clickOutside,
+  });
+};
+export const successAlertNoClick = (title, text, link, showBtn) => {
+  Swal.fire({
+    icon: "success",
+    title: title,
+    text: text,
+    footer: link,
+    showConfirmButton: showBtn ? true : false,
+    allowOutsideClick: true,
   });
 };
 
