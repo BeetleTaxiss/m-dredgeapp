@@ -71,6 +71,8 @@ export const handleUpdatePaginatedUI = (
    */
   let data = res?.data.data;
   console.log("New data from main component: ", data);
+  console.log("New data message: ", res.data.message);
+  console.log("New data ref: ", newDataFetch.current);
 
   let oldData = rawData;
   // data["userName"] = userName;
@@ -104,7 +106,8 @@ export const handleUpdatePaginatedUI = (
      * Utility - creates paginated pages for transversing
      */
     console.log("Check: ", newDataFetch.current);
-    parentArray = handleParentPaginationArray(data);
+    console.log("data: ", data);
+    parentArray = handleParentPaginationArray(data, listCount);
 
     let pageData;
     typeof paginatedDataForUpdatingUI === "function" &&
@@ -115,14 +118,18 @@ export const handleUpdatePaginatedUI = (
 
     console.log("Last id before page no: ", lastItemId);
     console.log("Check after: ", newDataFetch.current);
+
     /**
      * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
      */
+
     let newPageNumber = currentPageArray?.id + 1;
+
     setCurrentPageArray({
       id: newPageNumber,
       page: pageData[newPageNumber],
     });
+
     setPersistentCurrentPage({
       id: newPageNumber,
       page: pageData[newPageNumber],
@@ -141,16 +148,19 @@ export const handleUpdatePaginatedUI = (
         "paginate_button page-item next";
     }
     console.log("Last id before alert: ", lastItemId);
-    // alert("Fired 1");
+    alert("Fired 1");
   } else if (newDataFetch.current === true) {
     /**
      * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
      */
+    alert("Fired 2-1");
     console.log("Order dataL: ", data);
     let orderData = functionUtils.fetchStatus();
+    alert("Fired 2-2");
+    console.log("Order details: ", orderData);
 
     let persistentPage = [...currentPageArray?.page];
-
+    alert("Fired 2-3");
     persistentPage = persistentPage.filter(
       (item) =>
         item.id !== orderData.orderId || item.order_ref !== orderData.orderRef
@@ -166,20 +176,22 @@ export const handleUpdatePaginatedUI = (
       id: currentPageArray?.id,
       page: persistentPage,
     });
+    alert("Fired 2-4");
     setPersistentCurrentPage({
       id: currentPageArray?.id,
       page: persistentPage,
     });
 
-    // alert("Fired 2");
+    alert("Fired 2");
   } else if (res.data.message === "No order found") {
     /**
      * Disables the enabled Next Button as new data is not available for fetching.
      */
     if (document.getElementById("default-ordering_next") !== null) {
       document.getElementById("default-ordering_next").className += " disabled";
+      alert("Fired 3-1");
     }
-    // alert("Fired 3");
+    alert("Fired 3-2");
   } else {
     /**
      * Utility - creates paginated pages for transversing
@@ -405,8 +417,7 @@ export const handlePrevPagination = (
 export const handleSearchList = (
   persistentCurrentPage,
   setCurrentPageArray,
-  setSearchBoxValue,
-  searchFields
+  setSearchBoxValue
 ) => {
   console.log("search functionalities: ", persistentCurrentPage);
   console.log("search functionalities: ", setCurrentPageArray);
@@ -431,62 +442,34 @@ export const handleSearchList = (
    * filter current page data by testing for similar values in the date, qty, reference, total price, total volume and truck number
    */
 
-  // let filteredPage;
-  const customFilter = () => {
-    let rows = [];
-    currentPage?.map((item) => {
-      item.fields.map((field) => {
-        if (searchValue == "" || searchValue.length == 0) {
-          rows = [];
-        } else if (searchRegex.test(field.item) || field.item == searchValue) {
-          // let check = item.id == rows[0]?.id;
-          // console.log("check item: ", item.id);
-          // console.log("check array: ", rows[0]?.id);
-          // console.log("check: ", check);
-          rows = rows.map((row) => {
-            let check = item.id == row.id;
-            if (check) {
-              console.log("row check: ", row);
-              return (rows = []);
-            } else {
-              return (rows = rows.concat(item));
-            }
-          });
-          console.log("Main Rows: ");
-        }
-      });
-    });
-    return rows;
-  };
+  let filteredPage = [];
+  currentPage?.map((fieldsItem) => {
+    const { id, fields } = fieldsItem;
+    let check = false;
 
-  const filteredPage = customFilter();
+    for (let i = 0; i < fields.length; i++) {
+      check = searchRegex.test(fields[i]?.item);
+      console.log("item: ", fields[i]?.item);
+      if (check) {
+        filteredPage = filteredPage.concat(fieldsItem);
+        break;
+      }
+    }
+  });
+
+  console.log("Filtered page: ", filteredPage);
   /**
    * Set current page view based on the values gotten from the filtered page
    */
-  // if (filteredPage.length <= 0) {
-  //   setCurrentPageArray((state) => ({
-  //     ...state,
-  //     page: currentPage,
-  //   }));
-  //   // alert("Fired 1");
-  // } else {
-  //   setCurrentPageArray((state) => ({
-  //     ...state,
-  //     page: filteredPage,
-  //   }));
-  // }
   if (filteredPage.length <= 0) {
-    setCurrentPageArray({
-      id: persistentCurrentPage?.id,
+    setCurrentPageArray((state) => ({
+      ...state,
       page: currentPage,
-    });
-    // alert("Fired 1");
+    }));
   } else {
-    setCurrentPageArray({
-      id: persistentCurrentPage?.id,
+    setCurrentPageArray((state) => ({
+      ...state,
       page: filteredPage,
-    });
-    console.log("pagessss filtered: ", filteredPage, persistentCurrentPage?.id);
-    // alert("Fired 2");
+    }));
   }
 };

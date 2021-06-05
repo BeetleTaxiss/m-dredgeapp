@@ -27,7 +27,7 @@ const FuelIssueList = () => {
   const [productId, setProductId] = useState();
 
   //
-  const [listCount, setListCount] = useState("10");
+  const [listCount, setListCount] = useState("5");
   const [lastItemStore, setLastItemStore] = useState("0");
   const [lastItemId, setLastItemId] = useState("0");
   //
@@ -108,7 +108,7 @@ const FuelIssueList = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/operations/fuel-issue-list.php`, {
             params: {
-              count: "20",
+              count: "10",
               "last-item-id": lastItemId,
               "product-id":
                 productId === undefined && userProductPermission !== undefined
@@ -126,7 +126,7 @@ const FuelIssueList = () => {
                 fuelIssueItems,
                 newfuelIssueListBody
               ) => {
-                newfuelIssueListBody = fuelIssueItems.map((item) => {
+                newfuelIssueListBody = fuelIssueItems?.map((item) => {
                   /** Get required response data values */
 
                   console.log("MAPPED DATA: ", item);
@@ -228,7 +228,7 @@ const FuelIssueList = () => {
     return () => {
       source.cancel();
     };
-  }, [userProductPermission]);
+  }, [userProductPermission, lastItemId]);
 
   useEffect(() => {
     console.log("jkhjbdnvjlhkjgdvndnjkhj");
@@ -295,16 +295,6 @@ const FuelIssueList = () => {
       ),
   };
 
-  //
-  const searchFields = {
-    user: "user",
-    time_in: "time_in",
-    qty_issued: "qty_issued",
-    machinery_name: "machinery_name",
-    date_in: "date_in",
-    identification_no: "identification_no",
-  };
-
   /** Fuel list component display */
   const FuelListComponent = () => (
     <CustomTableList
@@ -319,8 +309,7 @@ const FuelIssueList = () => {
         handleSearchList(
           persistentCurrentPage,
           setCurrentPageArray,
-          setSearchBoxValue,
-          searchFields
+          setSearchBoxValue
         );
         if (document.getElementById("page-filter") !== null) {
           document.getElementById("page-filter").focus();
