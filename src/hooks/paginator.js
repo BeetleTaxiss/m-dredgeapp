@@ -19,8 +19,6 @@ const reloadServerData = (newDataFetch, refreshData, setRefreshData) => {
 
   /** refresh the page so we can newly added users */
   setRefreshData(refreshData.concat(true));
-
-  // alert("Reloaded");
 };
 
 /**
@@ -30,54 +28,81 @@ export const TableDropdown = (userProductPermission) => (
   <WidgetHeader links={userProductPermission} dropdown change />
 );
 
-/**-------------------------------------------------------------------
- *
- * @param {*} res
- * @param {*} rawData
- * @param {*} newDataFetch
- * @param {*} lastItemId
- * @param {*} currentPageArray
- * @param {*} setRawData
- * @param {*} setCurrentPageArray
- * @param {*} setPersistentCurrentPage
- * @param {*} setOrdersList
- * @param {*} setLastItemStore
- * @param {*} handleParentPaginationArray
- * ---------------------------------------------------------------------
+/**-----------------------------------------------------------------------------
+ * Transform paginated data to custom table fields and values for UI implementation
+ * @param {array} paginatedData
+ * @param {array} newTransformedPageData
+ * @param {function} currentRowData
+ * @returns newTransformedPageData
+ * -------------------------------------------------------------------------------
  */
+export const transformPageData = (
+  paginatedData,
+  newTransformedPageData,
+  currentRowData
+) => {
+  newTransformedPageData = paginatedData?.map((item) => {
+    /** Get required response data values */
+    let listRow = item.map((subItem) => {
+      /** Get required response data values */
+      const currentRow = currentRowData(subItem);
+      return currentRow;
+    });
+    return listRow;
+  });
+  return newTransformedPageData;
+};
 
-export const handleUpdatePaginatedUI = (
+/**
+ * ------------------------------------------------------------------------------
+ * Handles pagination processes such as
+ * - Updating table UI with pages
+ * - Add new paginated data from DB request
+ * - Update table UI when a list item is deleted
+ * - Disables next and previous buttons when no data is fetched from DB
+ * @param {array} res
+ * @param {array} rawData
+ * @param {Ref} newDataFetch
+ * @param {string/Integer} listCount
+ * @param {string/Integer} lastItemId
+ * @param {object} currentPage
+ * @param {function} setRawData
+ * @param {function} setCurrentPage
+ * @param {function} setPersistentCurrentPage
+ * @param {function} setPageUIList
+ * @param {function} setLastItemStore
+ * @param {function} Paginator
+ * @param {array} newTransformedPageData
+ * @param {object} currentRowData
+ * -------------------------------------------------------------------------------
+ */
+export const PaginationManager = (
   res,
   rawData,
   newDataFetch,
   listCount,
   lastItemId,
-  currentPageArray,
+  currentPage,
   setRawData,
-  setCurrentPageArray,
+  setCurrentPage,
   setPersistentCurrentPage,
-  setOrdersList,
+  setPageUIList,
   setLastItemStore,
-  handleParentPaginationArray,
-  fuelIssueListBody,
-  paginatedDataForUpdatingUI
+  Paginator,
+  newTransformedPageData,
+  currentRowData
 ) => {
   /**
    * Fetch New data from DB to be used for pagination, add username and userId properties to enable use when handling deleting, updating and dispatch functions.
    *
    * Also set old data to raw data, to ensure we can add new data to old data for extending paginated pages if last item id and new data is available
    *
-   * Inititate a parentArray variable which will take the returned value of the converted parent pagination array
+   * Inititate a paginatedData variable which will take the returned value of the converted parent pagination array
    */
   let data = res?.data.data;
-  console.log("New data from main component: ", data);
-  console.log("New data message: ", res.data.message);
-  console.log("New data ref: ", newDataFetch.current);
-
+  console.log("production data: ", data);
   let oldData = rawData;
-  // data["userName"] = userName;
-  // data["userId"] = userId;
-  let parentArray;
+  let paginatedData;
 
   /**
    * The code block below is divided into three parts/functionalities depending on usecase
@@ -91,41 +116,36 @@ export const handleUpdatePaginatedUI = (
   if (
     res.data.message !== "No order found" &&
     (data !== null || data !== undefined) &&
+    data[0] !== undefined &&
     Array.isArray(rawData) &&
     lastItemId !== "0" &&
     newDataFetch.current === false
   ) {
     newDataFetch.current = false;
-    /**
-     * New data fetch is added to old data and cloned back to the data object to be passed to the handle parent pagination utility function
+    /**----------------------------------SubItem------------------------------------------------------
+     * New data fetch is added to old data and cloned back to the data object to be passed to the handle     parent pagination utility function
+     * ------------------------------------------------------------------------------------------------
      */
-    console.log("New data");
     oldData = oldData.concat(data);
     data = [...oldData];
-    /**
-     * Utility - creates paginated pages for transversing
-     */
-    console.log("Check: ", newDataFetch.current);
-    console.log("data: ", data);
-    parentArray = handleParentPaginationArray(data, listCount);
+
+    //Utility - creates paginated pages for transversing
+
+    paginatedData = Paginator(data, listCount);
 
     let pageData;
-    typeof paginatedDataForUpdatingUI === "function" &&
-      (pageData = paginatedDataForUpdatingUI(parentArray, fuelIssueListBody));
+    typeof transformPageData === "function" &&
+      (pageData = transformPageData(
+        paginatedData,
+        newTransformedPageData,
+        currentRowData
+      ));
 
-    console.log("Beginning Paginated: ", parentArray);
-    console.log("Paginated pages: ", pageData);
+    //Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
 
-    console.log("Last id before page no: ", lastItemId);
-    console.log("Check after: ", newDataFetch.current);
+    let newPageNumber = currentPage?.id + 1;
 
-    /**
-     * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
-     */
-
-    let newPageNumber = currentPageArray?.id + 1;
-
-    setCurrentPageArray({
+    setCurrentPage({
       id: newPageNumber,
       page: pageData[newPageNumber],
     });
@@ -134,110 +154,99 @@ export const handleUpdatePaginatedUI = (
       id: newPageNumber,
       page: pageData[newPageNumber],
     });
-    /**
-     *  Side effects to ensure data is returned in a loop for next use
-     */
-    setOrdersList(pageData);
+
+    //Side effects to ensure data is returned in a loop for next use
+
+    setPageUIList(pageData);
     setLastItemStore(res.data["last-item-id"]);
     setRawData(data);
-    /**
-     * Enables the disabled Next Button incase new data is required to be fetched
-     */
+
+    //Enables the disabled Next Button incase new data is required to be fetched
+
     if (document.getElementById("default-ordering_next") !== null) {
       document.getElementById("default-ordering_next").className =
         "paginate_button page-item next";
     }
-    console.log("Last id before alert: ", lastItemId);
-    alert("Fired 1");
   } else if (newDataFetch.current === true) {
-    /**
+    /**----------------------------------SubItem------------------------------------------------------
      * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
+     * -----------------------------------------------------------------------------------------------
      */
-    alert("Fired 2-1");
-    console.log("Order dataL: ", data);
     let orderData = functionUtils.fetchStatus();
-    alert("Fired 2-2");
-    console.log("Order details: ", orderData);
 
-    let persistentPage = [...currentPageArray?.page];
-    alert("Fired 2-3");
+    let persistentPage = [...currentPage?.page];
+
     persistentPage = persistentPage.filter(
       (item) =>
         item.id !== orderData.orderId || item.order_ref !== orderData.orderRef
     );
 
-    console.log(
-      "New Ui: ",
-      persistentPage,
-      orderData.orderId,
-      orderData.orderRef
-    );
-    setCurrentPageArray({
-      id: currentPageArray?.id,
-      page: persistentPage,
-    });
-    alert("Fired 2-4");
-    setPersistentCurrentPage({
-      id: currentPageArray?.id,
+    setCurrentPage({
+      id: currentPage?.id,
       page: persistentPage,
     });
 
-    alert("Fired 2");
-  } else if (res.data.message === "No order found") {
-    /**
+    setPersistentCurrentPage({
+      id: currentPage?.id,
+      page: persistentPage,
+    });
+  } else if (data[0] === undefined) {
+    /**----------------------------------SubItem------------------------------------------------------
      * Disables the enabled Next Button as new data is not available for fetching.
+     * -----------------------------------------------------------------------------------------------
      */
     if (document.getElementById("default-ordering_next") !== null) {
       document.getElementById("default-ordering_next").className += " disabled";
-      alert("Fired 3-1");
     }
-    alert("Fired 3-2");
   } else {
-    /**
+    /**----------------------------------SubItem------------------------------------------------------
      * Utility - creates paginated pages for transversing
+     * -----------------------------------------------------------------------------------------------
      */
-    console.log("BeginningL: ", data);
-    parentArray = handleParentPaginationArray(data, listCount);
+    paginatedData = Paginator(data, listCount);
     let pageData;
-    typeof paginatedDataForUpdatingUI === "function" &&
-      (pageData = paginatedDataForUpdatingUI(parentArray, fuelIssueListBody));
+    typeof transformPageData === "function" &&
+      (pageData = transformPageData(
+        paginatedData,
+        newTransformedPageData,
+        currentRowData
+      ));
+    // Enables the disabled Next Button incase new data is required to be fetched
 
-    console.log("Beginning Paginated: ", parentArray);
-    console.log("Paginated pages: ", pageData);
-    /**
-     * Enables the disabled Next Button incase new data is required to be fetched
-     */
-    if (
-      data?.length < 11 &&
-      document.getElementById("default-ordering_next") !== null
-    ) {
-      document.getElementById("default-ordering_next").className += " disabled";
-    } else {
-      if (document.getElementById("default-ordering_next") !== null) {
-        document.getElementById("default-ordering_next").className =
-          "paginate_button page-item next";
-      }
+    if (document.getElementById("default-ordering_next") !== null) {
+      document.getElementById("default-ordering_next").className =
+        "paginate_button page-item next";
     }
+    // if (
+    //   data?.length < 11 &&
+    //   document.getElementById("default-ordering_next") !== null
+    // ) {
+    //   document.getElementById("default-ordering_next").className += " disabled";
+    // } else {
+    //   if (document.getElementById("default-ordering_next") !== null) {
+    //     document.getElementById("default-ordering_next").className =
+    //       "paginate_button page-item next";
+    //   }
+    // }
 
-    /**
-     *  Side effects to ensure data is returned in a loop for next use
-     */
-    setOrdersList(pageData);
-    setCurrentPageArray({ id: 0, page: pageData[0] });
+    // Side effects to ensure data is returned in a loop for next use
+    setPageUIList(pageData);
+    setCurrentPage({ id: 0, page: pageData[0] });
     setPersistentCurrentPage({ id: 0, page: pageData[0] });
     setLastItemStore(res.data["last-item-id"]);
     setRawData(data);
-
-    console.log("Last id initial run: ", lastItemId);
-    // alert("Fired 4");
   }
 };
 
 /**-------------------------------------------------------------------
- * Handle parent pagination array and children array creation
+ * Handle parent paginated array and children array creation
+ * @param {array} data
+ * @param {integer} listCount
+ * @returns array
  * -------------------------------------------------------------------
  */
-export const handleParentPaginationArray = (data, listCount) => {
+
+export const Paginator = (data, listCount) => {
   /**
    * When data items exceed ten in number, divide the total number by list count value/state and arrange results in a parent array
    */
@@ -250,7 +259,6 @@ export const handleParentPaginationArray = (data, listCount) => {
    */
   if (data?.length < 7 || data?.length < 10) {
     parentPaginationArray[0] = data;
-    // alert("Less than 10");
     return parentPaginationArray;
   } else {
     /**
@@ -284,7 +292,6 @@ export const handleParentPaginationArray = (data, listCount) => {
     if (typeof arrayLengthInt === "number") {
       for (let i = 0; i < data.length; i += subListCount) {
         parentPaginationArray.push(data.slice(i, i + subListCount));
-        // alert("Integer");
       }
       return parentPaginationArray;
     }
@@ -294,27 +301,28 @@ export const handleParentPaginationArray = (data, listCount) => {
     if (typeof arrayLengthFloat === "number") {
       for (let i = 0; i < data.length; i += subListCount) {
         parentPaginationArray.push(data.slice(i, i + subListCount));
-        // alert("Float");
       }
       return parentPaginationArray;
     }
   }
-  // return parentPaginationArray;
 };
 
 /**--------------------------------------------------------------------------
  * Next functionality that takes the parent data array, current page and last item id.
  * Parent data array is looped over and a new current page is created from the index of the parent data array by adding one (1) to its bracket notation
- * @param {data} data
- * @param {currentPage} currentPage
- * @param {lastItemStore} lastItemStore
+ * @param {array} data
+ * @param {object} currentPage
+ * @param {string} lastItemStore
+ * @param {function} setCurrentPage
+ * @param {function} setPersistentCurrentPage
+ * @param {function} setLastItemId
  * ---------------------------------------------------------------------------
  */
 export const handleNextPagination = (
   data,
   currentPage,
   lastItemStore,
-  setCurrentPageArray,
+  setCurrentPage,
   setPersistentCurrentPage,
   setLastItemId
 ) => {
@@ -334,7 +342,7 @@ export const handleNextPagination = (
        * Set new current page to state
        */
 
-      setCurrentPageArray({
+      setCurrentPage({
         id: pageNumber + 1,
         page: data[pageNumber + 1],
       });
@@ -359,16 +367,16 @@ export const handleNextPagination = (
 
 /**-------------------------------------------------------------------------------------
  * Previous functionality- Decrement paginated page already set to state by decreasing index value in bracket notion of parent data array
- * @param {data} data
- * @param {currentPage} currentPage
- * @param {setCurrentPageArray} setCurrentPageArray
- * @param {setPersistentCurrentPage} setPersistentCurrentPage
+ * @param {array} data
+ * @param {array} currentPage
+ * @param {function} setCurrentPage
+ * @param {function} setPersistentCurrentPage
  * -------------------------------------------------------------------------------------
  */
 export const handlePrevPagination = (
   data,
   currentPage,
-  setCurrentPageArray,
+  setCurrentPage,
   setPersistentCurrentPage
 ) => {
   /**
@@ -391,7 +399,7 @@ export const handlePrevPagination = (
    */
   for (let i = 0; i < data.length; i++) {
     if (pageNumber === i && i !== 0) {
-      setCurrentPageArray({
+      setCurrentPage({
         id: pageNumber - 1,
         page: data[pageNumber - 1],
       });
@@ -410,17 +418,16 @@ export const handlePrevPagination = (
 
 /**-----------------------------------------------------------------------------
  * handles current page filtering and searching of data using a persistent page state
- * @param {persistentCurrentPage} persistentCurrentPage
- * @param {setCurrentPageArray} setCurrentPageArray
+ * @param {object} persistentCurrentPage
+ * @param {function} setCurrentPage
+ * @param {function} setSearchBoxValue
  * ------------------------------------------------------------------------------
  */
 export const handleSearchList = (
   persistentCurrentPage,
-  setCurrentPageArray,
+  setCurrentPage,
   setSearchBoxValue
 ) => {
-  console.log("search functionalities: ", persistentCurrentPage);
-  console.log("search functionalities: ", setCurrentPageArray);
   /**
    * Set the current page data from the persistent state to a variable
    */
@@ -430,11 +437,11 @@ export const handleSearchList = (
    * Get value of search value and add it to a dynamic regex function which looks for similar case insensitive values globally when tested
    */
   let searchValue;
+
   if (document.getElementById("page-filter") !== null) {
     searchValue = document.getElementById("page-filter").value;
     setSearchBoxValue(searchValue);
     document.getElementById("page-filter").focus();
-    console.log("value: ", searchValue);
   }
   const searchRegex = new RegExp(searchValue, "ig");
 
@@ -449,7 +456,6 @@ export const handleSearchList = (
 
     for (let i = 0; i < fields.length; i++) {
       check = searchRegex.test(fields[i]?.item);
-      console.log("item: ", fields[i]?.item);
       if (check) {
         filteredPage = filteredPage.concat(fieldsItem);
         break;
@@ -457,17 +463,16 @@ export const handleSearchList = (
     }
   });
 
-  console.log("Filtered page: ", filteredPage);
   /**
    * Set current page view based on the values gotten from the filtered page
    */
   if (filteredPage.length <= 0) {
-    setCurrentPageArray((state) => ({
+    setCurrentPage((state) => ({
       ...state,
       page: currentPage,
     }));
   } else {
-    setCurrentPageArray((state) => ({
+    setCurrentPage((state) => ({
       ...state,
       page: filteredPage,
     }));

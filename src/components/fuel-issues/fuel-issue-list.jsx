@@ -9,15 +9,12 @@ import {
   useGetUserDetails,
   validateProductLocationPermission,
 } from "../../hooks/function-utils";
-import CustomTablePagination from "../general/custom-table-paiginaition";
-import CustomTableSearchbar from "../general/custom-table-searchbar";
 import {
   handleNextPagination,
-  handleParentPaginationArray,
+  Paginator,
   handlePrevPagination,
   handleSearchList,
-  handleUpdatePaginatedUI,
-  TableDropdown,
+  PaginationManager,
 } from "../../hooks/paginator";
 
 const FuelIssueList = () => {
@@ -26,28 +23,26 @@ const FuelIssueList = () => {
   const [userProductPermission, setUserProductPermission] = useState();
   const [productId, setProductId] = useState();
 
-  //
+  // Table item count and last item id from db (State)
   const [listCount, setListCount] = useState("5");
   const [lastItemStore, setLastItemStore] = useState("0");
   const [lastItemId, setLastItemId] = useState("0");
-  //
+
+  // Table data in State
   const [rawData, setRawData] = useState();
-  const [currentPageArray, setCurrentPageArray] = useState(["loading"]);
+  const [currentPage, setCurrentPage] = useState(["loading"]);
   const [persistentCurrentPage, setPersistentCurrentPage] = useState();
-  //
+
+  // Search input value (State)
   const [searchBoxValue, setSearchBoxValue] = useState();
-  /**
-   * use this state value to check when we have addeed or updated data and need to refresh
-   * it work by concatenating  `true` to the array when we need to refresh
-   * */
+
+  // Tracks if an item has been deleted from the table and sets it to true
   let newDataFetch = useRef(false);
 
-  /**
-   * Optional paramaters not needed in the useGetUserDetails hook
-   */
+  // Optional paramaters not needed in the useGetUserDetails hook
   const optionalParams = ["4", "8", "d", "7", "s", "w"];
 
-  /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
+  //Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for
   useGetUserDetails(...optionalParams, setUserPermissions);
 
   /**
@@ -102,9 +97,9 @@ const FuelIssueList = () => {
     const source = axios.CancelToken.source();
     const response = async () => {
       try {
-        /** Fuel list to be appended to */
-        let fuelIssueListBody = [];
-        let newfuelIssueListBody;
+        /** Fuel list variable to be to be used to update the table UI */
+        let newTransformedPageData;
+
         await axios
           .get(`${BASE_API_URL}/api/v1/operations/fuel-issue-list.php`, {
             params: {
@@ -122,95 +117,95 @@ const FuelIssueList = () => {
                 text = res.data.message;
               errorAlert(title, text);
             } else {
-              const paginatedDataForUpdatingUI = (
-                fuelIssueItems,
-                newfuelIssueListBody
-              ) => {
-                newfuelIssueListBody = fuelIssueItems?.map((item) => {
-                  /** Get required response data values */
+              /**
+               * Sets paginated data to custom table fields and values for table list rows
+               * @param {object} subItem
+               * @returns object
+               */
+              const currentRowData = (subItem) => {
+                /** Get required response data values */
+                const fuel_issue_user = subItem?.user;
+                const fuel_issue_user_id = subItem?.user_id;
+                const fuel_issue_id = subItem?.id;
+                const machinery_name = subItem?.machinery_name;
+                const fuel_issue_date = subItem?.date_in;
+                const fuel_issue_time = subItem?.time_in;
+                const qty_issued = subItem?.qty_issued;
+                const identification_no = subItem?.identification_no;
+                const description = subItem?.description;
 
-                  console.log("MAPPED DATA: ", item);
+                const currentRow = {
+                  id: fuel_issue_id,
+                  fields: [
+                    {
+                      class: "text-left",
+                      itemClass: "text-center",
+                      item: fuel_issue_date,
+                    },
+                    {
+                      class: "text-left",
+                      itemClass: "text-center",
+                      item: fuel_issue_time,
+                    },
+                    {
+                      class: "text-left",
+                      itemClass: "text-center",
+                      item: machinery_name,
+                    },
+                    {
+                      class: "text-left",
+                      itemClass: "text-center",
+                      item: identification_no,
+                    },
+                    {
+                      class: "text-left",
+                      itemClass: "text-center",
+                      item: fuel_issue_user,
+                    },
+                    {
+                      class: "text-left",
+                      itemClass: `text-center ${
+                        machinery_name === "down"
+                          ? "shadow-none badge badge-warning"
+                          : "shadow-none badge badge-success"
+                      }`,
+                      item: functionUtils.addCommaToNumbers(qty_issued),
+                    },
+                  ],
+                };
 
-                  let page = item.map((subItem) => {
-                    /** Get required response data values */
-                    const fuel_issue_user = subItem?.user;
-                    const fuel_issue_user_id = subItem?.user_id;
-                    const fuel_issue_id = subItem?.id;
-                    const machinery_name = subItem?.machinery_name;
-                    const fuel_issue_date = subItem?.date_in;
-                    const fuel_issue_time = subItem?.time_in;
-                    const qty_issued = subItem?.qty_issued;
-                    const identification_no = subItem?.identification_no;
-                    const description = subItem?.description;
-
-                    const currentRow = {
-                      id: fuel_issue_id,
-                      fields: [
-                        {
-                          class: "text-left",
-                          itemClass: "text-center",
-                          item: fuel_issue_date,
-                        },
-                        {
-                          class: "text-left",
-                          itemClass: "text-center",
-                          item: fuel_issue_time,
-                        },
-                        {
-                          class: "text-left",
-                          itemClass: "text-center",
-                          item: machinery_name,
-                        },
-                        {
-                          class: "text-left",
-                          itemClass: "text-center",
-                          item: identification_no,
-                        },
-                        {
-                          class: "text-left",
-                          itemClass: "text-center",
-                          item: fuel_issue_user,
-                        },
-                        {
-                          class: "text-left",
-                          itemClass: `text-center ${
-                            machinery_name === "down"
-                              ? "shadow-none badge badge-warning"
-                              : "shadow-none badge badge-success"
-                          }`,
-                          item: functionUtils.addCommaToNumbers(qty_issued),
-                        },
-                      ],
-                    };
-                    return currentRow;
-                  });
-                  return page;
-                });
-                return newfuelIssueListBody;
+                return currentRow;
               };
 
-              handleUpdatePaginatedUI(
+              /**
+               * -----------------------------------------------------------
+               * Handles pagination processes such as
+               * - Updating table UI with pages
+               * - Add new paginated data from DB request
+               * - Update table UI when a list item is deleted
+               * - Disables next and previous buttons when no data is fetched from DB
+               * ------------------------------------------------------------
+               */
+              PaginationManager(
                 res,
                 rawData,
                 newDataFetch,
                 listCount,
                 lastItemId,
-                currentPageArray,
+                currentPage,
                 setRawData,
-                setCurrentPageArray,
+                setCurrentPage,
                 setPersistentCurrentPage,
                 setFuelIssueList,
                 setLastItemStore,
-                handleParentPaginationArray,
-                newfuelIssueListBody,
-                paginatedDataForUpdatingUI
+                Paginator,
+                newTransformedPageData,
+                currentRowData
               );
-              // alert("fired check 1");
             }
           })
           .catch((error) => {
             errorAlert("Network Error", error);
-            console.log("Error: ", error);
           });
       } catch (error) {
         if (axios.isCancel(error)) {
@@ -230,23 +225,23 @@ const FuelIssueList = () => {
     };
   }, [userProductPermission, lastItemId]);
 
-  useEffect(() => {
-    console.log("jkhjbdnvjlhkjgdvndnjkhj");
-  }, [
+  // Update state values dynamically
+  useEffect(() => {}, [
     fuelIssueList,
-    currentPageArray,
+    currentPage,
     persistentCurrentPage,
     rawData,
     lastItemStore,
     newDataFetch,
   ]);
 
+  //This ensures the search input field is focused when it has a value
   useEffect(() => {
     if (document.getElementById("page-filter") !== null) {
       document.getElementById("page-filter").focus();
     }
   }, [searchBoxValue]);
-  console.log("UI DATA: ", fuelIssueList);
+
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const errorAlert = (title, text) => {
     Swal.fire({
@@ -270,27 +265,27 @@ const FuelIssueList = () => {
       { class: "", title: "Qty Issued" },
     ],
 
-    body: currentPageArray,
+    body: currentPage,
   };
 
-  //
+  //Properties for handling pagination processes such as next and previous functions
   const footerProp = {
-    currentPageNumber: currentPageArray?.id + 1,
+    currentPageNumber: currentPage?.id + 1,
     totalPageNumbers: fuelIssueList?.length,
     handleNextPagination: () =>
       handleNextPagination(
         fuelIssueList,
-        currentPageArray,
+        currentPage,
         lastItemStore,
-        setCurrentPageArray,
+        setCurrentPage,
         setPersistentCurrentPage,
         setLastItemId
       ),
     handlePrevPagination: () =>
       handlePrevPagination(
         fuelIssueList,
-        currentPageArray,
-        setCurrentPageArray,
+        currentPage,
+        setCurrentPage,
         setPersistentCurrentPage
       ),
   };
@@ -300,22 +295,18 @@ const FuelIssueList = () => {
     <CustomTableList
       content={fuelIssueListTableData}
       filler="Your Fuel list is empty"
-      dropdown
-      change
-      search
       searchBoxValue={searchBoxValue}
-      footer
       handleSearchList={() => {
         handleSearchList(
           persistentCurrentPage,
-          setCurrentPageArray,
+          setCurrentPage,
           setSearchBoxValue
         );
-        if (document.getElementById("page-filter") !== null) {
-          document.getElementById("page-filter").focus();
-          console.log("focus");
-        }
       }}
+      dropdown
+      change
+      search
+      footer
       {...footerProp}
     />
   );

@@ -1,8 +1,15 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../hooks/API";
 import { functionUtils, useGetUserDetails } from "../../hooks/function-utils";
+import {
+  handleNextPagination,
+  handlePrevPagination,
+  handleSearchList,
+  PaginationManager,
+  Paginator,
+} from "../../hooks/paginator";
 import { showLogItem } from "../cards/custom-activities-summary";
 import CustomTableList from "../general/custom-table-list/custom-table-list";
 
@@ -10,6 +17,22 @@ const ActivityReportList = () => {
   const [activityReportList, setActivityReportList] = useState(["loading"]);
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+
+  // Table item count and last item id from db (State)
+  const [listCount, setListCount] = useState("5");
+  const [lastItemStore, setLastItemStore] = useState("0");
+  const [lastItemId, setLastItemId] = useState("0");
+
+  // Table data in State
+  const [rawData, setRawData] = useState();
+  const [currentPage, setCurrentPage] = useState(["loading"]);
+  const [persistentCurrentPage, setPersistentCurrentPage] = useState();
+
+  // Search input value (State)
+  const [searchBoxValue, setSearchBoxValue] = useState();
+
+  // Tracks if an item has been deleted from the table and sets it to true
+  let newDataFetch = useRef(false);
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
@@ -31,27 +54,39 @@ const ActivityReportList = () => {
   useEffect(() => {
     const source = axios.CancelToken.source();
     const response = async () => {
-      let activityReportListBody = [];
+      /** Fuel list variable to be to be used to update the table UI */
+      let newTransformedPageData;
+
       try {
         await axios
-          .get(`${BASE_API_URL}/api/v1/task/list.php`)
+          .get(`${BASE_API_URL}/api/v1/task/list.php`, {
+            params: {
+              count: "10",
+              "last-item-id": lastItemId,
+            },
+          })
           .then((res) => {
             if (res.data.error) {
               let title = "Server Error Response",
                 text = res.data.message;
               errorAlert(title, text);
             } else {
-              const activityReportListItems = res.data.data;
-              activityReportListItems.reverse().map((item) => {
-                const user_name = item?.user,
-                  user_id = parseInt(item.user_id),
-                  date = item.date_in,
-                  work_week = item.work_week,
-                  completed_tasks = item.completed_task,
-                  ongoing_tasks = item.ongoing_task,
-                  next_week_tasks = item.next_week_task;
+              /**
+               * Sets paginated data to custom table fields and values for table list rows
+               * @param {object} subItem
+               * @returns object
+               */
+              const currentRowData = (subItem) => {
+                /** Get required response data values */
+                const user_name = subItem?.user,
+                  user_id = parseInt(subItem.user_id),
+                  date = subItem.date_in,
+                  work_week = subItem.work_week,
+                  completed_tasks = subItem.completed_task,
+                  ongoing_tasks = subItem.ongoing_task,
+                  next_week_tasks = subItem.next_week_task;
 
-                const task_id = parseInt(item.id);
+                const task_id = parseInt(subItem.id);
 
                 const singleActivityReportPopup = {
                   date: date,
@@ -61,7 +96,7 @@ const ActivityReportList = () => {
                   "tasks-completed": completed_tasks,
                   "tasks-ongoing": ongoing_tasks,
                   "nextweek-tasks": next_week_tasks,
-                  "approved-by": item.approved_by,
+                  "approved-by": subItem.approved_by,
                 };
                 const activityReportItemData = {
                   "user-id": userId,
@@ -71,7 +106,7 @@ const ActivityReportList = () => {
 
                 const increasedWidth = true;
 
-                const currentActivityReportItem = {
+                const currentRow = {
                   id: task_id,
                   fields: [
                     {
@@ -125,11 +160,34 @@ const ActivityReportList = () => {
                   ],
                 };
 
-                return (activityReportListBody = activityReportListBody.concat(
-                  currentActivityReportItem
-                ));
-              });
-              setActivityReportList(activityReportListBody);
+                return currentRow;
+              };
+
+              /**
+               * -----------------------------------------------------------
+               * Handles pagination processes such as
+               * - Updating table UI with pages
+               * - Add new paginated data from DB request
+               * - Update table UI when a list item is deleted
+               * - Disables next and previous buttons when no data is fetched from DB
+               * ------------------------------------------------------------
+               */
+              PaginationManager(
+                res,
+                rawData,
+                newDataFetch,
+                listCount,
+                lastItemId,
+                currentPage,
+                setRawData,
+                setCurrentPage,
+                setPersistentCurrentPage,
+                setActivityReportList,
+                setLastItemStore,
+                Paginator,
+                newTransformedPageData,
+                currentRowData
+              );
             }
           })
           .catch((error) => {
@@ -152,7 +210,24 @@ const ActivityReportList = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, refreshData]);
+  }, [userName, userId, lastItemId, refreshData]);
+
+  // Update state values dynamically
+  useEffect(() => {}, [
+    activityReportList,
+    currentPage,
+    persistentCurrentPage,
+    rawData,
+    lastItemStore,
+    newDataFetch,
+  ]);
+
+  //This ensures the search input field is focused when it has a value
+  useEffect(() => {
+    if (document.getElementById("page-filter") !== null) {
+      document.getElementById("page-filter").focus();
+    }
+  }, [searchBoxValue]);
 
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
@@ -203,7 +278,7 @@ const ActivityReportList = () => {
   };
   /** machinery List Table Data */
   const activityReportListTableData = {
-    tableTitle: "",
+    tableTitle: "Staff Activity Report",
     header: [
       { class: "", title: "Date" },
       { class: "", title: "Work week" },
@@ -215,12 +290,46 @@ const ActivityReportList = () => {
       { class: "", title: "" },
     ],
 
-    body: activityReportList,
+    body: currentPage,
   };
+
+  //Properties for handling pagination processes such as next and previous functions
+  const footerProp = {
+    currentPageNumber: currentPage?.id + 1,
+    totalPageNumbers: activityReportList?.length,
+    handleNextPagination: () =>
+      handleNextPagination(
+        activityReportList,
+        currentPage,
+        lastItemStore,
+        setCurrentPage,
+        setPersistentCurrentPage,
+        setLastItemId
+      ),
+    handlePrevPagination: () =>
+      handlePrevPagination(
+        activityReportList,
+        currentPage,
+        setCurrentPage,
+        setPersistentCurrentPage
+      ),
+  };
+
   return (
     <CustomTableList
       content={activityReportListTableData}
       filler="No Reports yet"
+      searchBoxValue={searchBoxValue}
+      handleSearchList={() => {
+        handleSearchList(
+          persistentCurrentPage,
+          setCurrentPage,
+          setSearchBoxValue
+        );
+      }}
+      search
+      footer
+      {...footerProp}
     />
   );
 };

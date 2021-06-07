@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { BASE_API_URL } from "../../../hooks/API";
@@ -8,12 +8,35 @@ import {
   functionUtils,
   useGetUserDetails,
 } from "../../../hooks/function-utils";
+import {
+  handleNextPagination,
+  handlePrevPagination,
+  handleSearchList,
+  PaginationManager,
+  Paginator,
+} from "../../../hooks/paginator";
 
 const WetSand = () => {
   const [wetsandList, setWetSandList] = useState(["loading"]);
 
   const [userName, setUserName] = useState();
   const [userId, setUserId] = useState();
+
+  // Table item count and last item id from db (State)
+  const [listCount, setListCount] = useState("5");
+  const [lastItemStore, setLastItemStore] = useState("0");
+  const [lastItemId, setLastItemId] = useState("0");
+
+  // Table data in State
+  const [rawData, setRawData] = useState();
+  const [currentPage, setCurrentPage] = useState(["loading"]);
+  const [persistentCurrentPage, setPersistentCurrentPage] = useState();
+
+  // Search input value (State)
+  const [searchBoxValue, setSearchBoxValue] = useState();
+
+  // Tracks if an item has been deleted from the table and sets it to true
+  let newDataFetch = useRef(false);
 
   /** Get user data from user store with custom hook and subscribe the state values to a useEffect to ensure delayed async fetch is accounted for  */
   useGetUserDetails(setUserName, setUserId);
@@ -37,12 +60,16 @@ const WetSand = () => {
     const response = async () => {
       try {
         /** Wet sand list to be appended to */
-        let wetSandListBody = [];
+        /** Fuel list variable to be to be used to update the table UI */
+        let newTransformedPageData;
+
         await axios
           .get(`${BASE_API_URL}/api/v1/production/list.php`, {
             params: {
               completed: "1",
               stockpiled: "0",
+              count: "10",
+              "last-item-id": lastItemId,
             },
           })
           .then((res) => {
@@ -51,22 +78,27 @@ const WetSand = () => {
                 text = res.data.message;
               errorAlert(title, text);
             } else {
-              const wetSandItems = res.data.data;
-              wetSandItems.map((item) => {
+              /**
+               * Sets paginated data to custom table fields and values for table list rows
+               * @param {object} subItem
+               * @returns object
+               */
+              const currentRowData = (subItem) => {
                 /** Get required response data values */
-                const production_id = item?.id;
-                const batch = item?.batch;
-                const total_qty_pumped = item?.total_qty_pumped;
-                const production_date = item?.production_date;
-                const production_start_time = item?.start_time;
-                const production_end_time = item?.end_time;
-                const production_capacity = item?.production_capacity;
+                /** Get required response data values */
+                const production_id = subItem?.id;
+                const batch = subItem?.batch;
+                const total_qty_pumped = subItem?.total_qty_pumped;
+                const production_date = subItem?.production_date;
+                const production_start_time = subItem?.start_time;
+                const production_end_time = subItem?.end_time;
+                const production_capacity = subItem?.production_capacity;
                 const pumping_distance_in_meters =
-                  item?.pumping_distance_in_meters;
+                  subItem?.pumping_distance_in_meters;
                 const duration_pumped_in_seconds =
-                  item?.duration_pumped_in_seconds;
+                  subItem?.duration_pumped_in_seconds;
                 /** Logic to get pumped quantity which is ready tobe stockpiled */
-                const date_in = item?.date_in;
+                const date_in = subItem?.date_in;
                 const new_date = moment().format("DD/MM/YYYY");
                 let stockpileReady = new_date > date_in ? true : false;
 
@@ -78,7 +110,7 @@ const WetSand = () => {
                   "batch-no": batch,
                 };
 
-                const currentWetSandItem = {
+                const currentRow = {
                   id: production_id,
                   fields: [
                     {
@@ -146,11 +178,34 @@ const WetSand = () => {
                     },
                   ],
                 };
+                return currentRow;
+              };
 
-                return (wetSandListBody =
-                  wetSandListBody.concat(currentWetSandItem));
-              });
-              setWetSandList(wetSandListBody);
+              /**
+               * -----------------------------------------------------------
+               * Handles pagination processes such as
+               * - Updating table UI with pages
+               * - Add new paginated data from DB request
+               * - Update table UI when a list item is deleted
+               * - Disables next and previous buttons when no data is fetched from DB
+               * ------------------------------------------------------------
+               */
+              PaginationManager(
+                res,
+                rawData,
+                newDataFetch,
+                listCount,
+                lastItemId,
+                currentPage,
+                setRawData,
+                setCurrentPage,
+                setPersistentCurrentPage,
+                setWetSandList,
+                setLastItemStore,
+                Paginator,
+                newTransformedPageData,
+                currentRowData
+              );
             }
           })
           .catch((error) => {
@@ -171,7 +226,25 @@ const WetSand = () => {
     return () => {
       source.cancel();
     };
-  }, [userName, userId, refreshData]);
+  }, [userName, userId, lastItemId, refreshData]);
+
+  // Update state values dynamically
+  useEffect(() => {}, [
+    wetsandList,
+    currentPage,
+    persistentCurrentPage,
+    rawData,
+    lastItemStore,
+    newDataFetch,
+  ]);
+
+  //This ensures the search input field is focused when it has a value
+  useEffect(() => {
+    if (document.getElementById("page-filter") !== null) {
+      document.getElementById("page-filter").focus();
+    }
+  }, [searchBoxValue]);
+
   /** Multipurpose success, error and warning pop-ups for handling and displaying errors, success and warning alerts */
   const successAlert = (title, text, link) => {
     Swal.fire({
@@ -245,7 +318,29 @@ const WetSand = () => {
       { class: "", title: "" },
     ],
 
-    body: wetsandList,
+    body: currentPage,
+  };
+
+  //Properties for handling pagination processes such as next and previous functions
+  const footerProp = {
+    currentPageNumber: currentPage?.id + 1,
+    totalPageNumbers: wetsandList?.length,
+    handleNextPagination: () =>
+      handleNextPagination(
+        wetsandList,
+        currentPage,
+        lastItemStore,
+        setCurrentPage,
+        setPersistentCurrentPage,
+        setLastItemId
+      ),
+    handlePrevPagination: () =>
+      handlePrevPagination(
+        wetsandList,
+        currentPage,
+        setCurrentPage,
+        setPersistentCurrentPage
+      ),
   };
 
   /** Wet sand list component display */
@@ -253,6 +348,17 @@ const WetSand = () => {
     <CustomTableList
       content={wetsandListTableData}
       filler="No production sessions"
+      searchBoxValue={searchBoxValue}
+      handleSearchList={() => {
+        handleSearchList(
+          persistentCurrentPage,
+          setCurrentPage,
+          setSearchBoxValue
+        );
+      }}
+      search
+      footer
+      {...footerProp}
     />
   );
   return <WetSandListComponent />;
