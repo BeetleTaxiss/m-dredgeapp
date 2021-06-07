@@ -121,23 +121,33 @@ const Navbar = ({ userPermission }) => {
           Store.update("permission", null);
           Store.update("login", false);
 
-          /** 
-           * force a page refresh. We will wait for few seconds to ensure that 
+          /**
+           * force a page refresh. We will wait for few seconds to ensure that
            * all session clearing has properly taken effect
-          */
-         successAlert("User Alert","Logout successful");
+           */
+          const alertOptions = ["", "", ""];
+          successAlert(
+            "User Alert",
+            "Logout successful",
+            ...alertOptions,
+            false
+          );
 
-          setTimeout(()=>{
-            window.location.href="/";
+          setTimeout(() => {
+            window.location.href = "/";
           }, 3000);
 
           // history.push({
           //   pathname: takeToPage,
           // });
         }
-      }).catch(e=>{
-        errorAlert("User Alert","Cannot logout. Please check network connection");
       })
+      .catch((e) => {
+        errorAlert(
+          "User Alert",
+          "Cannot logout. Please check network connection"
+        );
+      });
   };
 
   /** load the navigation bar when the systems loads and when the userPermission change */
