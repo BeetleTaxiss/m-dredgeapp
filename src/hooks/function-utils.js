@@ -1582,14 +1582,31 @@ export const functionUtils = {
       return JSON.parse(userPermission.replace(/"{/, "{").replace(/}"/, "}"));
     }
   },
-  /** Function to add comma after every third number in a number string */
+
+  /** 
+   * Function to add comma after every third number in a number string 
+   * */
   addCommaToNumbers: (number) => {
     if (!number) return 0;
+
+    /** 
+     * process the decimal value by spliting number into an array
+     * if number splits to an array of lenght=2, then this number has decimal place
+     *  */
+    const numberArr= number.toString().split(".");
+    let decimal=null;
+    if(numberArr.length ===2 ) {
+       number= numberArr[0];
+       
+       /** the second value is the decimal. we will save it for later use */
+       decimal= numberArr[1]
+    }
 
     if (typeof number !== "string") {
       /** Convert numbers to string */
       number = `${number}`;
     }
+    
     if (typeof number === "string") {
       number = number.split("");
       let newNumber = "",
@@ -1605,9 +1622,9 @@ export const functionUtils = {
           newNumber = number[i] + newNumber;
         }
       }
-      return newNumber;
+      return  decimal ? `${newNumber}.${decimal}` : newNumber;
     } else {
-      return number;
+      return number
     }
   },
 

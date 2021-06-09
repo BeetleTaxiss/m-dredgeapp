@@ -15,6 +15,7 @@ export interface ApiEndPoint {
     readonly stop: string,
     readonly getTracker: string,
     readonly updateTracker: string,
+    readonly updateTrackerData: string,
 }
 
 /**
@@ -31,7 +32,7 @@ export interface ProductionDataInterface {
     durationPausedInSeconds: number,
     productionCapacity: number | null,
     productionPaused: boolean,
-    timelineItems: Array<ReactElement> | null,
+    timelineItems: Array<object> | null,
     /** any other property at run time could be added */
     [propName: string]: any
 }
@@ -83,6 +84,7 @@ export const apiEndPoints: ApiEndPoint = {
     stop: `stop-marker.php`,
     getTracker: `get-production-tracker-state.php`,
     updateTracker: `update-production-tracker.php`,
+    updateTrackerData: `update-production-tracker-data.php`,
 }
 
 /** list of allowed API method verbs */
@@ -104,7 +106,7 @@ let productionData: ProductionDataInterface = {
     durationPumpedInSeconds: 0,
     durationPausedInSeconds: 0,
     productionPaused: false,
-    timelineItems: null,
+    timelineItems: [],
 }
 
 /**
@@ -140,7 +142,6 @@ export const setProductionData = (data: ProductionDataInterface): ProductionData
     return productionData
 }
 
-
 /**
  * Reset the productionData to the default state.
  * @Note: only use this at the end of a production session
@@ -158,9 +159,40 @@ export const resetProductionData = (): boolean => {
         durationPumpedInSeconds: 0,
         durationPausedInSeconds: 0,
         productionPaused: false,
-        timelineItems: null,
+        timelineItems: [],
     }
     return true;
+}
+
+/**
+ * Saves production data to local storage in JSOn format.
+ * 
+ * @param currentDate 
+ * @param storageKey 
+ * @param clockFaceValue
+ */
+export const hydrateProductionData = (currentDate: Date, clockFaceValue : TimePart,  storageKey: string ="hydrated-production-data") => {
+
+    productionData = { ...productionData, hydratedDate: currentDate, hydratedClock: clockFaceValue };
+    /** save information to session storage */
+    localStorage.setItem(storageKey, JSON.stringify(productionData));
+}
+
+/**
+ * Wake up hydrated production data. If data is found, we will need to prompt user to take
+ * 1. Till us the production is still running since the last time window abruptly closed
+ * 2. continue production if its is still running, or start a new production afresh
+ * @param storageKey 
+ */
+export const deHydrateProductionData = (storageKey: string ="hydrated-production-data"): ProductionDataInterface | null => {
+    const storedProductionData= localStorage.getItem(storageKey);
+    if(!storedProductionData)  return null;
+
+    /** 
+     * ensure that when we deHydrate, we must set `productionPaused: false` 
+     * so that timer can resume running when we start
+     * */
+    return ({...JSON.parse(storedProductionData),productionPaused: false})
 }
 
 /**
@@ -174,9 +206,6 @@ export const setProductionDataByKey = (key: string, value: any): boolean => {
     productionData[key] = value;
     return true
 }
-
-
-
 
 /**
  * get production running status. 
@@ -537,7 +566,6 @@ export const makeApiCall = (apiPoint: string, callData: object | null, method: s
 export const updateContainerView = (component: ReactElement, layer: string) => {
 
     const layerElement: HTMLElement | null = document.getElementById(layer);
-
     if (!layerElement || layerElement === null || layerElement === undefined) {
         return console.warn(`Layer ${layer} not loaded  or found in DOM tree`)
     } else {
