@@ -42,18 +42,8 @@ import { errorAlert, functionUtils, getUserStoreInstance, successAlert } from ".
 import moment from "moment";
 import Swal from "sweetalert2";
 
+
 export const Production = () => {
-
-  /** @todo we must get this by any means other than using state values */
-  const UserStore = getUserStoreInstance();
-  const user = "John";
-  const userId = 56;
-
-  /** @todo: this section must come from our store. Replace the product-id with value we get 
-   * from current user productPermissions 
-   * */
-  const selectProductData = [{ id: 8, name: "Sand" }];
-  const productPermission = { "product-id": 8 };
 
   const history = useHistory();
 
@@ -67,7 +57,9 @@ export const Production = () => {
     if (parseInt(capacityInput.value) > 100) {
       capacityInput.value = 100;
     }
-    capacitySlider.value = capacityInput.value.replace(/[%]/, "");
+    const value=capacityInput.value.replace(/[% | \D]/, "");
+    capacitySlider.value =value ;
+    capacityInput.value =value ;
     /** set productionData  */
     setProductionDataByKey("productionCapacity", capacityInput.value);
   }
@@ -101,6 +93,9 @@ export const Production = () => {
   const onProductChange = () => {
     const productId = document.getElementById("production-product").value;
 
+    /** value is saved when the screen loads for the first time  */
+    const selectProductData = getProductionDataByKey("selectProductData");
+
     for (let product of selectProductData) {
       const { id, name } = product;
 
@@ -118,7 +113,14 @@ export const Production = () => {
         setProductionDataByKey("productId", null);
       }
     }
+
+    /** display production validation screen */
+    updateMainContainerView(<CheckingProductionStatusScreen />);
+
+    /** validate if production is currently running */
+    validateProduction(productId)
   }
+
 
   /**
    * confirm dualogue 
@@ -161,7 +163,7 @@ export const Production = () => {
    * @param {*} route 
    */
   const loadRestartButton = (text = "Start New", route = "/#") => {
-
+    const selectProductData = getProductionDataByKey("selectProductData");
     /** reload the start production page afresh */
     const onClick = () => {
       updateMainContainerView(
@@ -209,17 +211,17 @@ export const Production = () => {
    * @param {*} actionData 
    * @param {*} timelineLayerId 
    */
-  const updateTimelineView = (action="start", actionData=null, timelineLayerId = "production-timeline") => {
+  const updateTimelineView = (action = "start", actionData = null, timelineLayerId = "production-timeline") => {
 
-    let timelineItems= getProductionDataByKey("timelineItems");
+    let timelineItems = getProductionDataByKey("timelineItems");
 
-    const newTimelineItems= timelineItems.concat({action, actionData});
+    const newTimelineItems = timelineItems.concat({ action, actionData });
 
     /** update production data */
-    setProductionDataByKey("timelineItems", newTimelineItems );
+    setProductionDataByKey("timelineItems", newTimelineItems);
 
     updateContainerView(
-  <ProductionTimeline  timelineItems={newTimelineItems} />,timelineLayerId)
+      <ProductionTimeline timelineItems={newTimelineItems} />, timelineLayerId)
   }
 
   /** hold reference to our timer interval function call */
@@ -282,7 +284,7 @@ export const Production = () => {
        * mmore than `10 seconds` as this runs every 10 seconds. 
        */
       try {
-        if(seconds % 10===0) {
+        if (seconds % 10 === 0) {
           hydrateProductionData(new Date(), clockFaceValue);
         }
       } catch (e) {
@@ -346,116 +348,20 @@ export const Production = () => {
   }
 
   /**
-   * Validate if there is currently a running production. If there is one, we will not allow production to proceed
-   * Before we commence production, we will check for two things:
-   * 1. Check if there is a currrent production seession. We cannot run multiple production at the same time.
-   * 2. Validate if there is an uncompleted pumping session. If we see any, we will prompt user to continues the abandoned 
-   * session.
-   */
-  const validateIfProductionIsInProgress = () => {
-
-    const apiPath = buildApiPath("getTracker");
-
-    /** Use only the product id  for this call */
-    const callData = { "product-id": productPermission["product-id"] };
-
-    makeApiCall(apiPath, callData, "get").then(response => {
-
-      const data = (response && response.data) ? response.data : null;
-
-      console.log(response, " validate data");
-
-      if (data && data.error) {
-        const msg = "There was an error. Please try again";
-        errorAlert("Error Alert", data.message ?? msg);
-      }
-
-      /** validate and check to see if production can move ahead.This must happen only when the status returned is `0` if status is `1`  
-       * If the status is `1`, we will perform two operations.
-       * 1. if there is an hydratedData and the batch_no and production_id matches the value retuened from the server, then we will resume production
-       * from where we stopped
-       * 2. if details does not match, we will notify that production is currently running and we cannot run multiple production
-      */
-      if (parseInt(data.status) === 1) {
-
-        const productionBatchFromServer = data["batch_no"] ?? null;
-        const productionIdFromServer = data["production_id"] ?? null;
-
-        /** get the if there is any hydrated information saved locally */
-        const hydratedData = deHydrateProductionData();
-
-        console.log(hydratedData, " hydrated data");
-
-        if (hydratedData) {
-          const { previousProductionId, previousBatchNo, hydratedClock } = hydratedData;
-
-          /** if this value corresponds to whhat we returned from server We will promt user to give information about the 
-           * paroduction status if the machine was stopped since the last time or not
-           */
-          if (previousBatchNo == productionBatchFromServer && previousProductionId == productionIdFromServer) {
-            /** we must resume this production as the local details matches with server response */
-            const msg = <div>
-                <h5>You have a pending production not yet completed. Please indicate what happen since last  pumping session</h5>
-                <p>Click on  <strong>"Continue"</strong> if  pumping machine never stops</p>
-                <p>Click on <strong>"Resume"</strong>  if machine stops and is now running</p>
-              </div>;
-
-            return (updateMainContainerView(
-              <ProductionExistScreen
-                message={msg}
-                onContinueClick={() => continueProductionFromLastSession(hydratedData)}
-                onResumeClick={() => resumeProductionFromLastSession(hydratedData)}
-                hydratedClock={hydratedClock}
-              />
-            ))
-          }
-        }
-
-        /** show production cannot start screen */
-        const msg = `Production is curerntly running. You cannot run multiple production at the same time. Please contact admin to 
-        manually end current production session`;
-        return (updateMainContainerView(
-          <ProductionCannotStartScreen message={msg}
-            onGoToDashboardClick={() => history.push("/")}
-            onRefreshClick={() => history.push("#")} />
-        ))
-
-      }
-
-
-      /** 
-       * If production is not currently running, we will show user the production startScreen
-       *  */
-      updateMainContainerView(
-        <StartNewProductionScreen
-          onCapacityInputChange={onCapacityInputChange}
-          onCapacitySliderChange={onCapacitySliderChange}
-          onStartClick={startProduction}
-          selectProductData={selectProductData}
-          onProductChange={onProductChange}
-          dateFrom={moment()}
-          dateTo={moment()}
-          timeFrom={moment()}
-        />);
-    });
-
-  }
-
-  /**
    * Resume production that was abaadoned from last pumping session. 
    * @Note: this will asume that machine was stopped  and will 
    * @param {*} hydratedData 
    */
-   const resumeProductionFromLastSession= async (hydratedData)=>{
+  const resumeProductionFromLastSession = async (hydratedData) => {
 
     const confirm = await confirmDialog("Are you sure machine was stopped since last session?", "Yes, proceed");
     if (!confirm.isConfirmed)
       return null;
 
-    const {hydratedClock, productionCapacity, pumpingElevationInMeters, pumpingDistanceInMeters } = hydratedData;
+    const { hydratedClock, productionCapacity, pumpingElevationInMeters, pumpingDistanceInMeters } = hydratedData;
 
     /** get the clock values */
-    const {hours, minutes, seconds}= hydratedClock;
+    const { hours, minutes, seconds } = hydratedClock;
 
     /** assign hydrated data as the productionData so that we can continue from where  we stopped   */
     setProductionData(hydratedData);
@@ -465,81 +371,82 @@ export const Production = () => {
 
     updateMainContainerView(
       <>
-      <CurrentRunningProductionScreen
-              onDistanceChange={onDistanceChange}
-              onElevationChange={onElevationChange}
-              onCapacityInputChange={onCapacityInputChange}
-              onCapacitySliderChange={onCapacitySliderChange}
-              hideProductSelect={true}
-              productionCapacity={productionCapacity}
-              elevation={pumpingElevationInMeters}
-              distance={pumpingDistanceInMeters}
+        <CurrentRunningProductionScreen
+          onDistanceChange={onDistanceChange}
+          onElevationChange={onElevationChange}
+          onCapacityInputChange={onCapacityInputChange}
+          onCapacitySliderChange={onCapacitySliderChange}
+          hideProductSelect={true}
+          productionCapacity={productionCapacity}
+          elevation={pumpingElevationInMeters}
+          distance={pumpingDistanceInMeters}
 
-              onUpdateClick={updateProduction}
-              onPauseClick={pauseProduction}
-              onStopClick={stopProduction}
+          onUpdateClick={updateProduction}
+          onPauseClick={pauseProduction}
+          onStopClick={stopProduction}
 
-              timerHours={hours}
-              timerMinutes={minutes}
-              timerSeconds={seconds} />
+          timerHours={hours}
+          timerMinutes={minutes}
+          timerSeconds={seconds} />
 
-            {timerFunction(hours, minutes, seconds)}
-            </>
+        {timerFunction(hours, minutes, seconds)}
+      </>
     );
 
-    setTimeout(()=>{
+    setTimeout(() => {
       updateTimelineView("wakeup", hydratedData);
     }, 2000)
   }
-   
+
 
   /**
    * Continue production from the last session. This function assumes that the engine was never stopped
    * so we will continue by adding all the time the application is not in session to the `durationPumpedInSeconds` 
    * @param {*} hydratedData 
    */
-  const continueProductionFromLastSession= async (hydratedData)=>{
+  const continueProductionFromLastSession = async (hydratedData) => {
 
     const confirm = await confirmDialog("Are you sure machine was not stopped since last session?", "Yes, proceed");
     if (!confirm.isConfirmed)
       return null;
 
-    const {hydratedClock, hydratedDate,  productionCapacity, pumpingElevationInMeters, pumpingDistanceInMeters } = hydratedData;
+    const { hydratedClock, hydratedDate, productionCapacity, pumpingElevationInMeters, pumpingDistanceInMeters } = hydratedData;
 
     /** get the clock values */
-    const {hours, minutes, seconds}= hydratedClock;
+    const { hours, minutes, seconds } = hydratedClock;
 
-   // const fromDateTimeObject = convertInputDateValueToDateObjectInLocalFormat(fromDate, getTimePartInLocalFormat(fromTime));
+    // const fromDateTimeObject = convertInputDateValueToDateObjectInLocalFormat(fromDate, getTimePartInLocalFormat(fromTime));
 
-   /** convert the hydrateDate string to a date object. */
-    const lastSessionDateObject= new Date(hydratedDate);
+    /** convert the hydrateDate string to a date object. */
+    const lastSessionDateObject = new Date(hydratedDate);
 
     /** get the current date and time */
-    const currentDateObject= new Date();
+    const currentDateObject = new Date();
 
     /**
      * get the time difference between the last time we pumped and now since we are of the opinion that pumping never stops,
      *  we will add the difference in seconds between the two date to our durationPumpedInSeconds. This is to ensure that the 
      * time that the system `shuts down` or `closed` was not lost in our calculation.
      */
-    const timeDifferenceInMs=currentDateObject.getTime()- lastSessionDateObject.getTime();
+    const timeDifferenceInMs = currentDateObject.getTime() - lastSessionDateObject.getTime();
 
     /** to convert ms to seconds, divide by 1000 */
-    const timeDifferenceInSeconds= Math.floor(timeDifferenceInMs/1000);
+    const timeDifferenceInSeconds = Math.floor(timeDifferenceInMs / 1000);
 
     /** 
      * Add the extra value to our `durationPumpedInSeconds`. for our tracking, we will add 
      * `durationPumpedInSecondsAfterWakeup` to store the value as a refrence
      *  */
-    const durationPumpedInSecondsAfterWakeup=hydratedData["durationPumpedInSeconds"] + timeDifferenceInSeconds;
+    const durationPumpedInSecondsAfterWakeup = hydratedData["durationPumpedInSeconds"] + timeDifferenceInSeconds;
 
     /** update production data with the new details  */
-    setProductionData({...hydratedData, 
-      durationPumpedInSeconds: durationPumpedInSecondsAfterWakeup, 
-      durationPumpedInSecondsAfterWakeup:timeDifferenceInSeconds,
+    setProductionData({
+      ...hydratedData,
+      durationPumpedInSeconds: durationPumpedInSecondsAfterWakeup,
+      durationPumpedInSecondsAfterWakeup: timeDifferenceInSeconds,
 
       /** this is the value before we canculate time difference. We keep this as a reference */
-      durationPumpedInSecondsBeforeWakeup: hydratedData["durationPumpedInSeconds"] 
+      durationPumpedInSecondsBeforeWakeup: hydratedData["durationPumpedInSeconds"]
     });
 
     /** monitor window status so we can hydrate `productionData` on window close */
@@ -549,34 +456,34 @@ export const Production = () => {
 
     updateMainContainerView(
       <>
-      <CurrentRunningProductionScreen
-              onDistanceChange={onDistanceChange}
-              onElevationChange={onElevationChange}
-              onCapacityInputChange={onCapacityInputChange}
-              onCapacitySliderChange={onCapacitySliderChange}
-              hideProductSelect={true}
-              productionCapacity={productionCapacity}
-              elevation={pumpingElevationInMeters}
-              distance={pumpingDistanceInMeters}
+        <CurrentRunningProductionScreen
+          onDistanceChange={onDistanceChange}
+          onElevationChange={onElevationChange}
+          onCapacityInputChange={onCapacityInputChange}
+          onCapacitySliderChange={onCapacitySliderChange}
+          hideProductSelect={true}
+          productionCapacity={productionCapacity}
+          elevation={pumpingElevationInMeters}
+          distance={pumpingDistanceInMeters}
 
-              onUpdateClick={updateProduction}
-              onPauseClick={pauseProduction}
-              onStopClick={stopProduction}
+          onUpdateClick={updateProduction}
+          onPauseClick={pauseProduction}
+          onStopClick={stopProduction}
 
-              timerHours={hours}
-              timerMinutes={minutes}
-              timerSeconds={seconds} />
+          timerHours={hours}
+          timerMinutes={minutes}
+          timerSeconds={seconds} />
 
-            {timerFunction(hours, minutes, seconds)}
-            </>
+        {timerFunction(hours, minutes, seconds)}
+      </>
     );
 
     /** wait a little bit. This is to ensure that the  */
-    setTimeout(()=>{
+    setTimeout(() => {
       updateTimelineView("wakeup", hydratedData);
     }, 2000)
   }
-  
+
 
   /**
    * Start a new  production sesion
@@ -586,11 +493,13 @@ export const Production = () => {
 
     const apiPath = buildApiPath("start");
 
-    /** get the production data saved in productionData. @Note: see the `onProductChange` 
-     * for details of how we save this production data. 
+    /** get the production data saved in productionData. @Note: see the `onProductChange`  and 
+     *  `useValidateIfProductionIsInProgress` methods  for details of how we save this production data. 
      */
     const product = getProductionDataByKey("product"); /** this value is set when we change product on the list. see `onProductChange` method aboove */
     const productId = getProductionDataByKey("productId");
+    const user = getProductionDataByKey("user");
+    const userId = getProductionDataByKey("userId");
 
     /**
      * we will get the rest of the data directly from the form for now. These data will be save to the `productionData` 
@@ -864,7 +773,6 @@ export const Production = () => {
 
         successAlert("Production Alert", data.message);
 
-        
         /**
          * update production data  with the new details returned from the server 
          */
@@ -898,7 +806,7 @@ export const Production = () => {
         setActionButtonState("update", "Update Production", false, false, updateProduction);
 
         /**  retrieve the output calculation returned from the server. We will show the server output first  */
-        const outputData={
+        const outputData = {
           batchStartTime: data["start_time"] ?? null,
           endTime: data["end_time"] ?? null,
           previousBatchNo: data["batch_no"] ?? null,
@@ -1040,9 +948,9 @@ export const Production = () => {
       if (data.error === false) {
 
         successAlert("Production Alert", data.message);
-        
+
         /**  retrieve the output calculation returned from the server. */
-        const outputData={
+        const outputData = {
           batchStartTime: data["start_time"] ?? null,
           endTime: data["end_time"] ?? null,
           previousBatchNo: data["batch_no"] ?? null,
@@ -1113,10 +1021,6 @@ export const Production = () => {
 
   }
 
-  /**
-   * Check if a production is running. 
-   */
-
   const Test = () => <CurrentRunningProductionScreen
     onDistanceChange={onDistanceChange}
     onElevationChange={onElevationChange}
@@ -1131,8 +1035,148 @@ export const Production = () => {
     onStopClick={stopProduction}
   />
 
-  validateIfProductionIsInProgress();
-  
+  /**
+   * A help function to validate production. Because we are not using state,this is implemented such that 
+   * we must wait for our user permission data to be provided before we can call this function
+   * @param {*} productId 
+   * @param {*} selectProductData 
+   * @returns 
+   */
+  const validateProduction = (productId=null, selectProductData=getProductionDataByKey("selectProductData")) => {
+
+    const apiPath = buildApiPath("getTracker");
+
+    if (!selectProductData || selectProductData.length <= 0) {
+      /** 
+       * we cannot allow user to view anything. User has not product permission
+       * @toto: we must implement notification here 
+       *  */
+      return null;
+    }
+
+    /** 
+     * for the start, we will pick the first  product user has the permission to see and validate
+     * each time user select new product, we will rerun the validation to see if such product is 
+     * currently in production. See `onProductChange()` method for the validation.
+     * */
+    const callData = { "product-id": productId ?? selectProductData[0].id };
+
+    makeApiCall(apiPath, callData, "get").then(response => {
+
+      const data = (response && response.data) ? response.data : null;
+      if (data && data.error) {
+        const msg = "There was an error. Please try again";
+        errorAlert("Error Alert", data.message ?? msg);
+      }
+
+      /** validate and check to see if production can move ahead.This must happen only when the status returned is `0` if status is `1`  
+       * If the status is `1`, we will perform two operations.
+       * 1. if there is an hydratedData and the batch_no and production_id matches the value retuened from the server, then we will resume production
+       * from where we stopped
+       * 2. if details does not match, we will notify that production is currently running and we cannot run multiple production
+      */
+      if (parseInt(data.status) === 1) {
+
+        const productionBatchFromServer = data["batch_no"] ?? null;
+        const productionIdFromServer = data["production_id"] ?? null;
+
+        /** get the if there is any hydrated information saved locally */
+        const hydratedData = deHydrateProductionData();
+
+        if (hydratedData) {
+          const { previousProductionId, previousBatchNo, hydratedClock } = hydratedData;
+
+          /** if this value corresponds to whhat we returned from server We will promt user to give information about the 
+           * paroduction status if the machine was stopped since the last time or not
+           */
+          if (previousBatchNo == productionBatchFromServer && previousProductionId == productionIdFromServer) {
+            /** we must resume this production as the local details matches with server response */
+            const msg = <div>
+              <h5>You have a pending production not yet completed. Please indicate what happen since last  pumping session</h5>
+              <p>Click on  <strong>"Continue"</strong> if  pumping machine never stops</p>
+              <p>Click on <strong>"Resume"</strong>  if machine stops and is now running</p>
+            </div>;
+
+            return (updateMainContainerView(
+              <ProductionExistScreen
+                message={msg}
+                onContinueClick={() => continueProductionFromLastSession(hydratedData)}
+                onResumeClick={() => resumeProductionFromLastSession(hydratedData)}
+                hydratedClock={hydratedClock}
+              />
+            ))
+          }
+        }
+
+        /** show production cannot start screen */
+        const msg = `Production is curerntly running. You cannot run multiple production at the same time. Please contact admin to 
+              manually end current production session`;
+        return (updateMainContainerView(
+          <ProductionCannotStartScreen message={msg}
+            onGoToDashboardClick={() => history.push("/")}
+            onRefreshClick={() => history.push("#")} />
+        ))
+
+      }
+      /** 
+       * If production is not currently running, we will show user the production startScreen
+       * @note
+       *  */
+      updateMainContainerView(
+        <StartNewProductionScreen
+        /** select first product or use productId */
+          productId={productId ?? selectProductData[0].id}
+          onCapacityInputChange={onCapacityInputChange}
+          onCapacitySliderChange={onCapacitySliderChange}
+          onStartClick={startProduction}
+          selectProductData={selectProductData}
+          onProductChange={onProductChange}
+          dateFrom={moment()}
+          dateTo={moment()}
+          timeFrom={moment()}
+        />);
+
+    });
+  }
+
+
+  /**
+*  Validate if there is currently a running production. If there is one, we will not allow production to proceed
+ * Before we commence production, we will check for two things:
+ * 1. Check if there is a currrent production seession. We cannot run multiple production at the same time.
+ * 2. Validate if there is an uncompleted pumping session. If we see any, we will prompt user to continues the abandoned 
+ * session.
+   * @param {*} productId 
+   */
+  const useValidateIfProductionIsInProgress = (productId = null) => {
+
+    const UserStore = getUserStoreInstance();
+
+    /** holds all product user have permission to pump */
+    let selectProductData = [];
+
+    /**  read user store infos and save to producttionData*/
+    UserStore.useStateAsync("user").then(user => { setProductionDataByKey("user", user) })
+    UserStore.useStateAsync("userId").then(userId => { setProductionDataByKey("userId", userId) })
+
+    UserStore.useStateAsync("permission").then(permission => {
+
+      if (permission && permission["productPermissions"]) {
+        for (let key in permission.productPermissions) {
+          selectProductData = selectProductData.concat({ id: key, name: permission.productPermissions[key].text })
+        }
+        /** sete a productData so we can reference it at a later time */
+        setProductionDataByKey("selectProductData", selectProductData);
+
+        /** we are calling this here so that the permission data to use is already available */
+        validateProduction()
+      }
+    });
+  }
+
+  /** * Check if a production is running */
+  useValidateIfProductionIsInProgress();
+
   return (
     /**
      * Always return the `MainProductionScreen`. This is the component that will control production view

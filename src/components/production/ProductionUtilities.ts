@@ -106,6 +106,7 @@ let productionData: ProductionDataInterface = {
     durationPumpedInSeconds: 0,
     durationPausedInSeconds: 0,
     productionPaused: false,
+    selectProductData:[],
     timelineItems: [],
 }
 
@@ -149,6 +150,8 @@ export const setProductionData = (data: ProductionDataInterface): ProductionData
  */
 export const resetProductionData = (): boolean => {
     productionData = {
+        user:productionData.user?? null,
+        userId:productionData.userId?? null,
         product: null,
         productId: null,
         startDate: null,
@@ -159,6 +162,7 @@ export const resetProductionData = (): boolean => {
         durationPumpedInSeconds: 0,
         durationPausedInSeconds: 0,
         productionPaused: false,
+        selectProductData:productionData.selectProductData?? [],
         timelineItems: [],
     }
     return true;

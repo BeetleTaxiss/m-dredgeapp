@@ -93,7 +93,7 @@ export const TimelineItem = (props) => {
 
     case ("start"):
       message = <>
-        <>Production started @  {batchStartTime}</>
+        <>Production of {product} started</>
         <p className="t-meta-time">Elevation: {pumpingElevationInMeters}</p>
         <p className="t-meta-time">Distance: {formatNumber(pumpingDistanceInMeters)}</p>
         <p className="t-meta-time">Production Capacity: {productionCapacity} %</p>
@@ -102,7 +102,7 @@ export const TimelineItem = (props) => {
 
     case ("update"):
       message = <>
-      <>Updated production parameter  @ {batchStartTime}</>
+      <>Updated production parameter</>
       <p className="t-meta-time">Production Capacity: {productionCapacity} %</p>
       <p className="t-meta-time">Elevation: {pumpingElevationInMeters}</p>
       <p className="t-meta-time">Distance: {formatNumber(pumpingDistanceInMeters)}</p>
@@ -158,7 +158,7 @@ export const TimelineItem = (props) => {
         <p className="t-meta-time">Elevation: {pumpingElevationInMeters}</p>
         <p className="t-meta-time">Distance: {formatNumber(pumpingDistanceInMeters)}</p>
         <p className="t-meta-time">Duration pumped in seconds: {formatNumber(durationPumpedInSeconds)}</p>
-        <p className="t-meta-time">total Qty Pumped: {formatNumber(totalQtyPumped)}</p>
+        <p className="t-meta-time">total Qty Pumped: {formatNumber(totalQtyPumped)} CM3</p>
       </>
       break;
 
@@ -239,7 +239,7 @@ export const ProductionCapacitySlider = (props) => {
  */
 export const ProductionDistanceAndElevationFields = (props) => {
 
-  const { elevation, distance, selectProductData } = props;
+  const { elevation, distance, selectProductData, productId } = props;
 
   /** get event props   */
   const { onProductChange, onDistanceChange, onElevationChange } = props;
@@ -248,7 +248,7 @@ export const ProductionDistanceAndElevationFields = (props) => {
   const hideProductSelectView = props.hideProductSelect === true ? "none" : "flex";
 
   /** create the product list options */
-  const productOptions = selectProductData && selectProductData.map((product, key) => <option key={key} value={product.id}>{product.name}</option>);
+  const productOptions = selectProductData && selectProductData.map((product, key) => <option key={key} selected={productId===product.id} value={product.id}>{product.name}</option>);
 
   return (
     <>
@@ -389,7 +389,7 @@ export const ProductionDateAndTimeFields = (props) => {
 export const StartNewProductionScreen = (props) => {
 
   /** get parameters  */
-  const { distance, elevation, dateFrom, dateTo, timeFrom, timeTo, productionCapacity } = props;
+  const {productId,  distance, elevation, dateFrom, dateTo, timeFrom, timeTo, productionCapacity } = props;
 
   /** get the list of products we can show */
   const selectProductData = props.selectProductData ?? [];
@@ -403,7 +403,7 @@ export const StartNewProductionScreen = (props) => {
       <form className="form-group mb-0">
         <div className="input-group" style={{ alignItems: "center", justifyContent: "center", gap: "2rem" }} >
           <ProductionDistanceAndElevationFields elevation={elevation} distance={distance} selectProductData={selectProductData}
-            onProductChange={onProductChange} />
+            onProductChange={onProductChange} productId={productId} />
           <ProductionDateAndTimeFields dateFrom={dateFrom} dateTo={dateTo} timeFrom={timeFrom} timeTo={timeTo} />
         </div>
 
