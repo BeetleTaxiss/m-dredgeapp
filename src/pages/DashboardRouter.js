@@ -18,13 +18,11 @@ export default function DashboardRouter() {
 
   const [userPermission, setUserPermission] = useState([]);
 
-  const [loads, setLoads] = useState(0);
-
   const Store = getUserStoreInstance();
 
     Store.useStateAsync("permission").then((permission) => {
-      console.log(permission, "permission collected");
-      console.log(history, "history");
+      // console.log(permission, "permission collected");
+      // console.log(history, "history");
         if (permission) {
           setUserPermission(permission)
         }

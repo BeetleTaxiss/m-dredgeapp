@@ -51,13 +51,12 @@ export const ProductionTimeline = ({ timelineItems }) => {
   });
 
   return (
-    <div className="row" style={{ display: "flex", width: "100%", padding: "25px", alignItems: "flex-start", justifyContent: "flex-start" }}>
-      <div className="widget-content widget-content-area pb-1" style={{ width: "80vw" }} >
-        <div style={{ width: "100%" }} className="mt-container mx-auto" id="timeline-notification-single">
+      <div className="widget-content widget-content-area pb-1" style={{ width: "100%", padding:20}} >
+        <div style={{ width: "100%", marginBottom:20 , borderStyle:"none", boxShadow:"none"}} id="timeline-notification-single">
           <div className="timeline-line" id="production-timeline" >
             {timelineList}
           </div>
-        </div>
+        
       </div>
     </div>
   );
@@ -203,7 +202,7 @@ export const ProductionCapacitySlider = (props) => {
         min="0"
         max="100"
         name="production-capacity"
-        className="production-slider"
+        className=" production-slider"
         style={{
           WebkitAppearance: "none",
           appearance: "none",
