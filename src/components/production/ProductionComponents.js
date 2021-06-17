@@ -203,7 +203,7 @@ export const ProductionCapacitySlider = (props) => {
         min="0"
         max="100"
         name="production-capacity"
-        className="custom-range progress-range-counter slider"
+        className="production-slider"
         style={{
           WebkitAppearance: "none",
           appearance: "none",

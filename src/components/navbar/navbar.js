@@ -122,6 +122,13 @@ const Navbar = ({ userPermission }) => {
           Store.update("login", false);
 
           /** 
+           * a quick fix to resolve issues on some browsers where user not taken to dashboard immediately after login 
+           * @todo: a better implementation must be provided later
+          */
+          localStorage.setItem("login", false);
+          localStorage.setItem("permission", null);
+
+          /** 
            * force a page refresh. We will wait for few seconds to ensure that 
            * all session clearing has properly taken effect
           */

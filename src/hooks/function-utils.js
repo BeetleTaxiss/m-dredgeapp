@@ -150,12 +150,19 @@ const Login = async (user, password, setLoading) => {
     );
     setLoading(false);
 
+    /** 
+     * a quick fix to resolve issues on some browsers where user not taken to dashboard immediately after login 
+     * @todo: a better implementation must be provided later
+    */
+    localStorage.setItem("login", true);
+    localStorage.setItem("permission", responseData.permission);
+    
     /**
      * to ensure that the user session data is set before we reload screen
      * we will wait a little bit. This is to ensure that by the time we attempt
      * to read the login status, we will indeed have a value to work with
      */
-    let n = 1000000000;
+    let n = 10000;
     while (n > 0) {
       n--;
     }
@@ -367,6 +374,15 @@ export const createUserAllowedRoutes = (
    * where "/" matches other routes, we must add this entry as the last  item in our router stack
    * */
   let defaultRoute = null;
+
+  // /** 
+  //  * at least one user permission must be provided before we can create menus 
+  //  * If permission is missing, we will return an empty 
+  //  * */
+  // if(Object.keys(userPermission).length<=0) {
+  //   return <>{null}</>
+  // }
+  //console.log(userPermission, "permission in create");
 
   /**
    * These are the valid routes this user can have access to within the application

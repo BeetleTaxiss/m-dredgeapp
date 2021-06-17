@@ -22,6 +22,8 @@ export default function App({ loginStatus }) {
   /** this will be set to true once we are able to secure valid login status */
   const [loginStatusValid, setLoginStatusValid] = useState(false);
 
+  const [forceRefresh, setForceRefresh] = useState(true);
+
   /** the default login view  */
   const LoginView = () => (
     <div className="App">
@@ -39,12 +41,14 @@ export default function App({ loginStatus }) {
    * the `loginStatus` is passed as property from `AppRouter` comp
    * */
   const createAppView = (loginStatus = false) => {
+    //(loginStatus + " : login status");
     if (loginStatus) {
       /**
        * set loginStatusValid. We set this state variable so that when the page refresh
        * we will still be able to track if user was login previously before we refresh
        */
       setLoginStatusValid(true);
+      setForceRefresh(false);
 
       setAppView(
         <div className="App" id="app-view">

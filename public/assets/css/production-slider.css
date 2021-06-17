@@ -1,0 +1,25 @@
+
+.production-slider{
+    -webkit-appearance: none;
+    appearance: none;
+    height: 60px;
+    width:100%;
+    cursor: pointer;
+}
+
+.production-slider::-webkit-slider-runnable-track{
+    height: 30px;
+    background-color:#f1f2f3;
+    border-radius: 20px;
+}
+.production-slider::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    margin-top: -15px;
+    height: 60px;
+    width: 60px;
+    border-radius: 60px;
+    background-color: #4361ee;
+    cursor: pointer;
+    opacity:1;
+    overflow: visible;
+}

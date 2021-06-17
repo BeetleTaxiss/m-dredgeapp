@@ -4,13 +4,15 @@ import { getUserStoreInstance } from "./hooks/function-utils";
 
 const AppRouter=()=> {
   
-  const UserStore = getUserStoreInstance();
+  //const UserStore = getUserStoreInstance();
 
-  const [loginStatus, setLoginStatus] = useState(false);
+  //const [loginStatus, setLoginStatus] = useState(false);
 
-  UserStore.useStateAsync("login").then((status) => {
-    setLoginStatus(status);
-  });
+  // UserStore.useStateAsync("login").then((status) => {
+  //   setLoginStatus(status);
+  // });
+
+  const loginStatus= localStorage.getItem("login");
 
   return <App loginStatus={loginStatus} />;
 }
