@@ -7,7 +7,7 @@ import { ReactComponent as DeleteIcon } from "../../../assets/deleteIcon.svg";
 import { ReactComponent as ReleaseIcon } from "../../../assets/releaseIcon.svg";
 import { functionUtils } from "../../../hooks/function-utils";
 const CustomTableListBody = ({ content, setLoad }) => {
-  console.log("BODY: ", content);
+  // console.log("BODY: ", content);
   return (
     <tbody>
       {content !== "loading" ? (

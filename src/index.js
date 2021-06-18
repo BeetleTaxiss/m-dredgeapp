@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "../src/assets/index.scss";
 // import App from "./components/admin/UserActivitiesLog";
+// import AppRouter from "../src/components/general/notifications";
 import AppRouter from "./AppRouter";
 import reportWebVitals from "./reportWebVitals";
 

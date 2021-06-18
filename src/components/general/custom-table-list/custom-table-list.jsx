@@ -19,7 +19,7 @@ const CustomTableList = ({
   ...rest
 }) => {
   const arrayContent = Array.isArray(content.body);
-  console.log("Body data: ", content);
+  // console.log("Body data: ", content);
 
   return (
     <div className="statbox widget box box-shadow col-md-12">

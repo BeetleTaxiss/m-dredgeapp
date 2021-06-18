@@ -5,17 +5,21 @@ import Swal from "sweetalert2";
 import { TaskActionButton } from "../general/task-action";
 import WidgetHeader from "../general/widget-header";
 import { showDetailedLogItem } from "./ShowDetailedLogItem";
-export const CustomActivitiesSummary = ({ data, popup }) => {
+export const CustomActivitiesSummary = ({ data, popup, dropdown, change }) => {
   return (
     <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
       <div className="widget widget-activity-four">
         <WidgetHeader
           title={data.widgetHeader.title}
           link={data.widgetHeader.link}
-          arrow
+          links={dropdown && data.widgetHeader.links}
+          dropdown={dropdown ? true : false}
+          change={change ? true : false}
+          arrow={!dropdown ? true : false}
         />
         <div className="widget-content">
           <Activities content={data?.activities} showItem={popup} />
+
           <TaskActionButton link={data.taskAction} />
         </div>
       </div>

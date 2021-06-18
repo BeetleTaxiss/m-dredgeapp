@@ -100,8 +100,10 @@ export const PaginationManager = (
    * Inititate a paginatedData variable which will take the returned value of the converted parent pagination array
    */
   let data = res?.data.data;
+  console.log("base data: ", res.data);
   console.log("production data: ", data);
   let oldData = rawData;
+  console.log("Old data: ", oldData);
   let paginatedData;
 
   /**
@@ -167,6 +169,7 @@ export const PaginationManager = (
       document.getElementById("default-ordering_next").className =
         "paginate_button page-item next";
     }
+    alert("Added to old data");
   } else if (newDataFetch.current === true) {
     /**----------------------------------SubItem------------------------------------------------------
      * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
@@ -198,6 +201,7 @@ export const PaginationManager = (
     if (document.getElementById("default-ordering_next") !== null) {
       document.getElementById("default-ordering_next").className += " disabled";
     }
+    alert("Not added to old data");
   } else {
     /**----------------------------------SubItem------------------------------------------------------
      * Utility - creates paginated pages for transversing
@@ -359,6 +363,7 @@ export const handleNextPagination = (
        * At Last paginated page - check if pageNumber is greater than parent data array and fetch new data if any by setting a new last item id (The id set in lastItemStore when first axios call was made)
        */
       if (lastItemStore !== undefined || lastItemStore !== null) {
+        alert(lastItemStore);
         setLastItemId(lastItemStore);
       }
     }

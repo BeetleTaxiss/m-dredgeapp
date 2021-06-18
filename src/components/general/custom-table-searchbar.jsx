@@ -1,7 +1,7 @@
 import React from "react";
 
 const CustomTableSearchbar = ({ handleSearchList, searchBoxValue }) => {
-  console.log("search function: ", handleSearchList);
+  // console.log("search function: ", handleSearchList);
   return (
     <div className="col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center mt-sm-0 mt-3">
       <div id="default-ordering_filter" className="dataTables_filter">
