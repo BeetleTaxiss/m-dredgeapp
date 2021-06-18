@@ -10,10 +10,6 @@ export const TimerDisplay = (props) => {
   /** get the timer values */
   const { timerHours, timerMinutes, timerSeconds } = props;
 
-  /** 
-   * get the timer function.  This is the function that updates our timer view
-   * This function is pased in from the main production page and utilizes 
-   * */
   return (
     <div id={/**circle ? "cd-circle" : */"cd-simple"}>
       <div className="countdown" style={{ justifySelf: "center" }}>
@@ -178,9 +174,8 @@ export const TimelineItem = (props) => {
 
 
 /**
- * The production slider measuring our production capacity.
- * This component wiil accept two major props 
- * `productionCapacity` and  `onCapacityChange`
+ * The production slider measuring our production capacity. This component wiil accept 3 major props:
+ * `productionCapacity` ,  `onCapacityChange` and `onCapacityInputChange`
  * @param {*} props 
  * @returns 
  */
@@ -544,6 +539,12 @@ export const ProductionCannotStartScreen = (props) => {
   )
 }
 
+/**
+ * When production is currently running but was not properly ended, the screen will notify 
+ * user to take the appropriate action to `resume` or `continue` the existing production.
+ * @param {*} props 
+ * @returns 
+ */
 export const ProductionExistScreen = (props) => {
 
   /** The component buttons click events */
@@ -566,7 +567,7 @@ export const ProductionExistScreen = (props) => {
 }
 
 /**
- * The start button
+ * The start button. 
  * @param {*} props 
  * @returns 
  */
@@ -591,7 +592,7 @@ export const StartButton = (props) => {
 
 
 /**
- * The start button
+ * This is the action button. It accepts `update`, `pause` or `stop` as the `buttonType` prop
  * @param {*} props 
  * @returns 
  */
