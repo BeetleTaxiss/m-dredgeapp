@@ -26,7 +26,7 @@ const StockpiledSand = () => {
   const [productId, setProductId] = useState();
 
   // Table item count and last item id from db (State)
-  const [listCount, setListCount] = useState("5");
+  const [listCount, setListCount] = useState("10");
   const [lastItemStore, setLastItemStore] = useState("0");
   const [lastItemId, setLastItemId] = useState("0");
 
@@ -125,7 +125,7 @@ const StockpiledSand = () => {
               completed: "1",
               stockpiled: "1",
               "added-to-stock": "0",
-              count: "10",
+              count: "50",
               "last-item-id": lastItemId,
               "product-id":
                 productId === undefined && userProductPermission !== undefined

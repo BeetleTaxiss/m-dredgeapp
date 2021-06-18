@@ -110,9 +110,9 @@ const ViewOrders = () => {
     setUserPermissions
   );
 
-  console.log("Product Id: ", productId);
+  // console.log("Product Id: ", productId);
   /**
-   * use this state value to check when we have addeed or updated data and need to refresh
+   * use this state value to check when we have added or updated data and need to refresh
    * it work by concatenating  `true` to the array when we need to refresh
    * */
   const [refreshData, setRefreshData] = useState([]);
@@ -121,7 +121,7 @@ const ViewOrders = () => {
   const resetFetchStatus = () => {
     newDataFetch.current = false;
   };
-  console.log("fetch status: ", newDataFetch.current);
+  // console.log("fetch status: ", newDataFetch.current);
 
   /**
    *  an helper function to always refresh the page
@@ -172,11 +172,11 @@ const ViewOrders = () => {
               setLastItemId
             );
 
-            console.log(
-              "Table dropdown: ",
-              tableDropdown,
-              validatedProductData
-            );
+            // console.log(
+            //   "Table dropdown: ",
+            //   tableDropdown,
+            //   validatedProductData
+            // );
             setUserProductPermission(tableDropdown);
 
             /**
@@ -211,7 +211,7 @@ const ViewOrders = () => {
       await axios
         .get(`${BASE_API_URL}/api/v1/order/list.php`, {
           params: {
-            count: "20",
+            count: "50",
             "last-item-id": lastItemId,
             // "select-all": 1,
             "product-id":
@@ -232,7 +232,7 @@ const ViewOrders = () => {
              * Inititate a parentArray variable which will take the returned value of the converted parent pagination array
              */
             let data = res.data.data;
-            console.log("New data: ", data);
+            // console.log("New data: ", data);
 
             let oldData = rawData;
             // data["userName"] = userName;
@@ -259,17 +259,17 @@ const ViewOrders = () => {
               /**
                * New data fetch is added to old data and cloned back to the data object to be passed to the handle parent pagination utility function
                */
-              console.log("New data");
+              // console.log("New data");
               oldData = oldData.concat(data);
               data = [...oldData];
               /**
                * Utility - creates paginated pages for transversing
                */
-              console.log("Check: ", newDataFetch.current);
+              // console.log("Check: ", newDataFetch.current);
               parentArray = handleParentPaginationArray(data);
 
-              console.log("Last id before page no: ", lastItemId);
-              console.log("Check after: ", newDataFetch.current);
+              // console.log("Last id before page no: ", lastItemId);
+              // console.log("Check after: ", newDataFetch.current);
               /**
                * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
                */
@@ -295,13 +295,13 @@ const ViewOrders = () => {
                 document.getElementById("default-ordering_next").className =
                   "paginate_button page-item next";
               }
-              console.log("Last id before alert: ", lastItemId);
+              // console.log("Last id before alert: ", lastItemId);
               // alert("Fired 1");
             } else if (newDataFetch.current === true) {
               /**
                * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
                */
-              console.log("Order dataL: ", data);
+              // console.log("Order dataL: ", data);
               let orderData = functionUtils.fetchStatus();
 
               let persistentPage = [...currentPageArray?.page];
@@ -312,12 +312,12 @@ const ViewOrders = () => {
                   item.order_ref !== orderData.orderRef
               );
 
-              console.log(
-                "New Ui: ",
-                persistentPage,
-                orderData.orderId,
-                orderData.orderRef
-              );
+              // console.log(
+              //   "New Ui: ",
+              //   persistentPage,
+              //   orderData.orderId,
+              //   orderData.orderRef
+              // );
               setCurrentPageArray({
                 id: currentPageArray?.id,
                 page: persistentPage,
@@ -326,6 +326,19 @@ const ViewOrders = () => {
                 id: currentPageArray?.id,
                 page: persistentPage,
               });
+
+              setOrdersList((state) => [
+                ...state,
+                (state[currentPageArray?.id] = persistentPage),
+              ]);
+
+              // setOrdersList((state) => {
+              //   const stateClone = [...state];
+              //   console.log("State clone before delete: ", stateClone);
+              //   stateClone[currentPageArray?.id] = persistentPage;
+              //   console.log("State clone: ", stateClone);
+              //   return stateClone;
+              // });
 
               // alert("Fired 2");
             } else if (res.data.message === "No order found") {
@@ -341,9 +354,9 @@ const ViewOrders = () => {
               /**
                * Utility - creates paginated pages for transversing
                */
-              console.log("BeginningL: ", data);
+              // console.log("BeginningL: ", data);
               parentArray = handleParentPaginationArray(data);
-              console.log("BeginningL: ", parentArray);
+              // console.log("BeginningL: ", parentArray);
               /**
                * Enables the disabled Next Button incase new data is required to be fetched
                */
@@ -369,7 +382,7 @@ const ViewOrders = () => {
               setLastItemStore(res.data["last-item-id"]);
               setRawData(data);
 
-              console.log("Last id initial run: ", lastItemId);
+              // console.log("Last id initial run: ", lastItemId);
               // alert("Fired 4");
             }
           }
@@ -399,7 +412,7 @@ const ViewOrders = () => {
     newDataFetch,
   ]);
 
-  console.log("Last id outside: ", lastItemId);
+  // console.log("Last id outside: ", lastItemId);
   /**
    * Handle parent pagination array and children array creation
    */

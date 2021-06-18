@@ -23,7 +23,7 @@ const Stock = () => {
   const [productId, setProductId] = useState();
 
   // Table item count and last item id from db (State)
-  const [listCount, setListCount] = useState("5");
+  const [listCount, setListCount] = useState("10");
   const [lastItemStore, setLastItemStore] = useState("0");
   const [lastItemId, setLastItemId] = useState("0");
 
@@ -99,7 +99,7 @@ const Stock = () => {
         await axios
           .get(`${BASE_API_URL}/api/v1/production/list-stock-entry.php`, {
             params: {
-              count: "10",
+              count: "50",
               "last-item-id": lastItemId,
               "product-id":
                 productId === undefined && userProductPermission !== undefined

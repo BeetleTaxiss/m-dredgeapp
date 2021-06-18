@@ -100,10 +100,10 @@ export const PaginationManager = (
    * Inititate a paginatedData variable which will take the returned value of the converted parent pagination array
    */
   let data = res?.data.data;
-  console.log("base data: ", res.data);
-  console.log("production data: ", data);
+  // console.log("base data: ", res.data);
+  // console.log("production data: ", data);
   let oldData = rawData;
-  console.log("Old data: ", oldData);
+  // console.log("Old data: ", oldData);
   let paginatedData;
 
   /**
@@ -169,10 +169,10 @@ export const PaginationManager = (
       document.getElementById("default-ordering_next").className =
         "paginate_button page-item next";
     }
-    alert("Added to old data");
+    // alert("Added to old data");
   } else if (newDataFetch.current === true) {
     /**----------------------------------SubItem------------------------------------------------------
-     * Sets currrent page by retriving new paginated parent array, adding an extra integer to the page id/number and setting new page data to state
+     * Handles when an item in the table/sub-array is deleted/removed and sets currrent page by filtering out the deleted item from the current page / current array using it's id or order ref then setting new filtered array/page data to both the current page state and pageUI/parent array state
      * -----------------------------------------------------------------------------------------------
      */
     let orderData = functionUtils.fetchStatus();
@@ -193,6 +193,18 @@ export const PaginationManager = (
       id: currentPage?.id,
       page: persistentPage,
     });
+
+    setPageUIList((state) => [
+      ...state,
+      (state[currentPage?.id] = persistentPage),
+    ]);
+
+    // setPageUIList((state) => {
+    //   const stateClone = [...state];
+    //   stateClone[currentPage?.id] = persistentPage;
+    //   console.log("State clone: ", stateClone);
+    //   return stateClone;
+    // });
   } else if (data[0] === undefined) {
     /**----------------------------------SubItem------------------------------------------------------
      * Disables the enabled Next Button as new data is not available for fetching.
@@ -201,7 +213,7 @@ export const PaginationManager = (
     if (document.getElementById("default-ordering_next") !== null) {
       document.getElementById("default-ordering_next").className += " disabled";
     }
-    alert("Not added to old data");
+    // alert("Not added to old data");
   } else {
     /**----------------------------------SubItem------------------------------------------------------
      * Utility - creates paginated pages for transversing
@@ -217,21 +229,17 @@ export const PaginationManager = (
       ));
     // Enables the disabled Next Button incase new data is required to be fetched
 
-    if (document.getElementById("default-ordering_next") !== null) {
-      document.getElementById("default-ordering_next").className =
-        "paginate_button page-item next";
+    if (
+      data?.length < 11 &&
+      document.getElementById("default-ordering_next") !== null
+    ) {
+      document.getElementById("default-ordering_next").className += " disabled";
+    } else {
+      if (document.getElementById("default-ordering_next") !== null) {
+        document.getElementById("default-ordering_next").className =
+          "paginate_button page-item next";
+      }
     }
-    // if (
-    //   data?.length < 11 &&
-    //   document.getElementById("default-ordering_next") !== null
-    // ) {
-    //   document.getElementById("default-ordering_next").className += " disabled";
-    // } else {
-    //   if (document.getElementById("default-ordering_next") !== null) {
-    //     document.getElementById("default-ordering_next").className =
-    //       "paginate_button page-item next";
-    //   }
-    // }
 
     // Side effects to ensure data is returned in a loop for next use
     setPageUIList(pageData);
@@ -363,7 +371,7 @@ export const handleNextPagination = (
        * At Last paginated page - check if pageNumber is greater than parent data array and fetch new data if any by setting a new last item id (The id set in lastItemStore when first axios call was made)
        */
       if (lastItemStore !== undefined || lastItemStore !== null) {
-        alert(lastItemStore);
+        // alert(lastItemStore);
         setLastItemId(lastItemStore);
       }
     }
