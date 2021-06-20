@@ -10,7 +10,6 @@ import {
   StartButton,
   ActionButton,
   ProductionTimeline,
-  TimelineItem,
 } from "./ProductionComponents";
 import {
   makeApiCall,
@@ -63,6 +62,7 @@ export const Production = () => {
     /** set productionData  */
     setProductionDataByKey("productionCapacity", capacityInput.value);
   }
+  
   /**
    * change the input value when the capacity slider value changes
    */
@@ -1091,19 +1091,15 @@ export const Production = () => {
            */
           if (previousBatchNo == productionBatchFromServer && previousProductionId == productionIdFromServer) {
             /** we must resume this production as the local details matches with server response */
-            const msg = <div>
-              <h5>You have a pending production not yet completed. Please indicate what happen since last  pumping session</h5>
-              <p>Click on  <strong>"Continue"</strong> if  pumping machine never stops</p>
-              <p>Click on <strong>"Resume"</strong>  if machine stops and is now running</p>
-            </div>;
 
             return (updateMainContainerView(
               <ProductionExistScreen
-                message={msg}
+                title="You have a pending production not yet completed. Please indicate what happen since last  pumping session"
+                continueText={`Click on  "Continue" if  pumping machine never stops`}
+                resumeText={`Click on "Resume"  if machine stops and is now running`}
                 onContinueClick={() => continueProductionFromLastSession(hydratedData)}
                 onResumeClick={() => resumeProductionFromLastSession(hydratedData)}
-                hydratedClock={hydratedClock}
-              />
+                hydratedClock={hydratedClock}/>
             ))
           }
         }

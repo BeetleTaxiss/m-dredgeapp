@@ -525,11 +525,10 @@ export const ProductionCannotStartScreen = (props) => {
 
   /** The component buttons click events */
   const { onGoToDashboardClick, onRefreshClick, message } = props;
-
   return (
     <>
       <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-        <p>{message ?? null}</p>
+      <NotificationsWarning>{message}</NotificationsWarning>
       </div>
       <div style={{ display: "flex", width: "100%", justifyContent: "center", gap: "2rem", }}>
         <ActionButton text="Go to Dashboard" onClick={onGoToDashboardClick} />
@@ -548,14 +547,20 @@ export const ProductionCannotStartScreen = (props) => {
 export const ProductionExistScreen = (props) => {
 
   /** The component buttons click events */
-  const { onContinueClick, onResumeClick, message } = props;
+  const { onContinueClick, onResumeClick, title, continueText, resumeText} = props;
 
   const { hours, minutes, seconds } = props.hydratedClock ?? { hours: null, minutes: null, seconds: null }
 
   return (
     <>
-      <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-        <p>{message ?? null}</p>
+      <div style={{ display: "flex", width: "100%", justifyContent: "center", flexDirection:"column" }}>
+      <div><h5>{title ?? `Notification`}</h5> </div>
+
+      <div style={{display: "flex",justifyContent: "center",alignItems: "center",padding: "3rem"}}>
+          <NotificationsPrimary color="primary" icon={true}>{continueText}</NotificationsPrimary>
+          <NotificationsWarning color="warning" icon={true}>{resumeText}</NotificationsWarning>
+        </div>
+
       </div>
       <TimerDisplay timerHours={hours} timerMinutes={minutes} timerSeconds={seconds} />
       <div style={{ display: "flex", width: "100%", justifyContent: "center", gap: "2rem", }}>
@@ -616,6 +621,98 @@ export const ActionButton = (props) => {
     </button>
   );
 };
+
+/**
+ * Show the warning notification
+ * @param {*} param0 
+ * @returns 
+ */
+export const NotificationsWarning = ({ text, icon, color, showClose, children }) => {
+  return (<div>
+      <div className={`alert ${
+          icon && "alert-icon-left"
+        } alert-light-${color} mb-4`}
+        role="alert"
+      >
+        {showClose && (
+          <button
+            type="button"
+            className="close"
+            dataDismiss="alert"
+            ariaLabel="Close"
+          >
+            {" "}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              dataDismiss="alert"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-x close"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        )}
+        {icon}
+        {children ?? text}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Show primary notification with side icon
+ * @param {*} param
+ * @returns 
+ */
+export const NotificationsPrimary = ({ text, icon, color, showClose, children }) => {
+  return (
+    <div>
+      <div
+        class={`alert ${
+          icon && "alert-arrow-left  alert-icon-left"
+        } alert-light-${color} mb-4`}
+        role="alert"
+      >
+        {showClose && (
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              data-dismiss="alert"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="feather feather-x close"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        )}
+        {icon}
+        {children ?? text}
+      </div>
+    </div>
+  );
+};
+
 
 /**
  * This section is the main production view. This is the actual display application user 
