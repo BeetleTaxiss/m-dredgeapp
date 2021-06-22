@@ -47,12 +47,12 @@ export const ProductionTimeline = ({ timelineItems }) => {
   });
 
   return (
-      <div className="widget-content widget-content-area pb-1" style={{ width: "100%", padding:20}} >
-        <div style={{ width: "100%", marginBottom:20 , borderStyle:"none", boxShadow:"none"}} id="timeline-notification-single">
-          <div className="timeline-line" id="production-timeline" >
-            {timelineList}
-          </div>
-        
+    <div className="widget-content widget-content-area pb-1" style={{ width: "100%", padding: 20 }} >
+      <div style={{ width: "100%", marginBottom: 20, borderStyle: "none", boxShadow: "none" }} id="timeline-notification-single">
+        <div className="timeline-line" id="production-timeline">
+          {timelineList}
+        </div>
+
       </div>
     </div>
   );
@@ -63,24 +63,24 @@ export const ProductionTimeline = ({ timelineItems }) => {
  */
 export const TimelineItem = (props) => {
 
-  const { action, key} = props;
+  const { action, key } = props;
 
   const {
-    product, batchStartTime, endTime, productionCapacity, pumpingElevationInMeters, pumpingDistanceInMeters,  totalQtyPumped,
+    product, batchStartTime, endTime, productionCapacity, pumpingElevationInMeters, pumpingDistanceInMeters, totalQtyPumped,
     durationPumpedInSecondsAfterWakeup, previousBatchNo, durationPumpedInSeconds, durationPausedInSeconds,
   } = props.data;
-  
-  const dotColor = action === "start" || action === "resume" ? "success" : 
-  action === "update" ? "primary" : 
-  action === "pause" ? "warning" : 
-  action === "wakeup" ? "success" : 
-  action === "output" ? "black" : 
-  action === "stop" ? "danger" : 
-  "primary";
-  
-  const formatNumber=functionUtils.addCommaToNumbers;
-  
-  
+
+  const dotColor = action === "start" || action === "resume" ? "success" :
+    action === "update" ? "primary" :
+      action === "pause" ? "warning" :
+        action === "wakeup" ? "success" :
+          action === "output" ? "black" :
+            action === "stop" ? "danger" :
+              "primary";
+
+  const formatNumber = functionUtils.addCommaToNumbers;
+
+
   /** create a description based on the action performed */
   let message = "";
 
@@ -97,15 +97,15 @@ export const TimelineItem = (props) => {
 
     case ("update"):
       message = <>
-      <>Updated production parameter</>
-      <p className="t-meta-time">Production Capacity: {productionCapacity} %</p>
-      <p className="t-meta-time">Elevation: {pumpingElevationInMeters}</p>
-      <p className="t-meta-time">Distance: {formatNumber(pumpingDistanceInMeters)}</p>
-    </>
+        <>Updated production parameter</>
+        <p className="t-meta-time">Production Capacity: {productionCapacity} %</p>
+        <p className="t-meta-time">Elevation: {pumpingElevationInMeters}</p>
+        <p className="t-meta-time">Distance: {formatNumber(pumpingDistanceInMeters)}</p>
+      </>
       break;
 
-      case ("output"):
-        message = <>
+    case ("output"):
+      message = <>
         <>Production Output @ {endTime}</>
         <p className="t-meta-time">Batch Start Time: {batchStartTime}</p>
         <p className="t-meta-time">Batch Number: {previousBatchNo}</p>
@@ -115,7 +115,7 @@ export const TimelineItem = (props) => {
         <p className="t-meta-time">Duration pumped in seconds: {formatNumber(durationPumpedInSeconds)}</p>
         <p className="t-meta-time">total Qty Pumped: {formatNumber(totalQtyPumped)} CM3</p>
       </>
-        break;
+      break;
 
     case ("pause"):
       message = <>
@@ -148,7 +148,7 @@ export const TimelineItem = (props) => {
       message = <>
         <>Production stopped @ {endTime}</>
         <p className="t-meta-time">Batch Start Time: {batchStartTime}</p>
-        <p className="t-meta-time">Batch Number: {previousBatchNo}</p>
+        <p  style={{minWidth:300}}>Batch Number: {previousBatchNo}</p>
         <p className="t-meta-time">Production Capacity: {productionCapacity} %</p>
         <p className="t-meta-time">Elevation: {pumpingElevationInMeters}</p>
         <p className="t-meta-time">Distance: {formatNumber(pumpingDistanceInMeters)}</p>
@@ -162,11 +162,11 @@ export const TimelineItem = (props) => {
   }
 
   return (
-    <div key={key} className="item-timeline" style={{ paddingRight: "50px", paddingLeft: "50px" }}>
+    <div key={key} className="item-timeline" style={{ paddingRight: "50px", paddingLeft: "50px"}}>
       <p className={`t-time ${dotColor}`} style={{ marginRight: "10px" }}>{action}</p>
       <div className={`t-dot t-dot-${dotColor}`}></div>
-      <div className="t-text">
-        <h6>{message}</h6>
+      <div className="t-text" >
+        <h5 >{message}</h5>
       </div>
     </div>
   )
@@ -242,7 +242,7 @@ export const ProductionDistanceAndElevationFields = (props) => {
   const hideProductSelectView = props.hideProductSelect === true ? "none" : "flex";
 
   /** create the product list options */
-  const productOptions = selectProductData && selectProductData.map((product, key) => <option key={key} selected={productId===product.id} value={product.id}>{product.name}</option>);
+  const productOptions = selectProductData && selectProductData.map((product, key) => <option key={key} selected={productId === product.id} value={product.id}>{product.name}</option>);
 
   return (
     <>
@@ -383,7 +383,7 @@ export const ProductionDateAndTimeFields = (props) => {
 export const StartNewProductionScreen = (props) => {
 
   /** get parameters  */
-  const {productId,  distance, elevation, dateFrom, dateTo, timeFrom, timeTo, productionCapacity } = props;
+  const { productId, distance, elevation, dateFrom, dateTo, timeFrom, timeTo, productionCapacity } = props;
 
   /** get the list of products we can show */
   const selectProductData = props.selectProductData ?? [];
@@ -528,7 +528,7 @@ export const ProductionCannotStartScreen = (props) => {
   return (
     <>
       <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-      <NotificationsWarning>{message}</NotificationsWarning>
+        <NotificationsWarning>{message}</NotificationsWarning>
       </div>
       <div style={{ display: "flex", width: "100%", justifyContent: "center", gap: "2rem", }}>
         <ActionButton text="Go to Dashboard" onClick={onGoToDashboardClick} />
@@ -547,19 +547,50 @@ export const ProductionCannotStartScreen = (props) => {
 export const ProductionExistScreen = (props) => {
 
   /** The component buttons click events */
-  const { onContinueClick, onResumeClick, title, continueText, resumeText} = props;
+  const { onContinueClick, onResumeClick, title, continueText, resumeText } = props;
 
   const { hours, minutes, seconds } = props.hydratedClock ?? { hours: null, minutes: null, seconds: null }
 
+  const warningIcon = <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="feather feather-alert-triangle"
+  >
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+    <line x1="12" y1="9" x2="12" y2="13"></line>
+    <line x1="12" y1="17" x2="12" y2="17"></line>
+  </svg>;
+
+  const bellIcon=<svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      class="feather feather-bell"
+    >
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+    </svg>;
+
   return (
     <>
-      <div style={{ display: "flex", width: "100%", justifyContent: "center", flexDirection:"column" }}>
-      <div><h5>{title ?? `Notification`}</h5> </div>
+      <div style={{ display: "flex", width: "100%", justifyContent: "center", flexDirection: "column" }}>
+        <div><h5>{title ?? `Notification`}</h5> </div>
 
-      <div style={{display: "flex",justifyContent: "center",alignItems: "center",padding: "3rem"}}>
-          <NotificationsPrimary color="primary" icon={true}>{continueText}</NotificationsPrimary>
-          <NotificationsWarning color="warning" icon={true}>{resumeText}</NotificationsWarning>
-        </div>
+        <NotificationsPrimary style={{ margin: "50px" }} color="primary" icon={bellIcon}>{continueText}</NotificationsPrimary>
+        <NotificationsWarning color="danger" icon={warningIcon}>{resumeText}</NotificationsWarning>
 
       </div>
       <TimerDisplay timerHours={hours} timerMinutes={minutes} timerSeconds={seconds} />
@@ -629,41 +660,40 @@ export const ActionButton = (props) => {
  */
 export const NotificationsWarning = ({ text, icon, color, showClose, children }) => {
   return (<div>
-      <div className={`alert ${
-          icon && "alert-icon-left"
-        } alert-light-${color} mb-4`}
-        role="alert"
-      >
-        {showClose && (
-          <button
-            type="button"
-            className="close"
+    <div className={`alert ${icon && "alert-icon-left"
+      } alert-light-${color} mb-4`}
+      role="alert"
+    >
+      {showClose && (
+        <button
+          type="button"
+          className="close"
+          dataDismiss="alert"
+          ariaLabel="Close"
+        >
+          {" "}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
             dataDismiss="alert"
-            ariaLabel="Close"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="feather feather-x close"
           >
-            {" "}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              dataDismiss="alert"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="feather feather-x close"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        )}
-        {icon}
-        {children ?? text}
-      </div>
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      )}
+      {icon}
+      {children ?? text}
     </div>
+  </div>
   );
 };
 
@@ -676,9 +706,8 @@ export const NotificationsPrimary = ({ text, icon, color, showClose, children })
   return (
     <div>
       <div
-        class={`alert ${
-          icon && "alert-arrow-left  alert-icon-left"
-        } alert-light-${color} mb-4`}
+        class={`alert ${icon && "alert-arrow-left  alert-icon-left"
+          } alert-light-${color} mb-4`}
         role="alert"
       >
         {showClose && (
