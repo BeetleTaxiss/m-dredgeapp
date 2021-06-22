@@ -195,7 +195,7 @@ export const Production = () => {
           /** validate elevation and distance. we pass `false` so production dats is not updated */
           onElevationChange={onElevationChange}
           onDistanceChange={onDistanceChange}
-          
+
           onCapacityInputChange={onCapacityInputChange}
           onCapacitySliderChange={onCapacitySliderChange}
           onStartClick={startProduction}
@@ -749,6 +749,17 @@ export const Production = () => {
 
     const totalQtyPumped = computeTotalQtyPumped(totalDurationPumpedInSeconds);
 
+    /** 
+     * before we can perform an update, any of the following parameters must have changed
+     * If nothign hs changed since last batch, there is no need to update production parameters
+     */
+        if (productionData.previousProductionCapacity===productionData.productionCapacity && 
+          productionData.previousPumpingDistanceInMeters===productionData.pumpingDistanceInMeters  &&
+          productionData.previousPumpingElevationInMeters===productionData.pumpingElevationInMeters
+          ) {
+            return errorAlert("Nothing has changed. You must update any of the production parameters before you can proceed")
+        }
+
     const callData = {
       /** data for new production to start */
       user: productionData["user"],
@@ -771,11 +782,6 @@ export const Production = () => {
       "duration-paused-in-seconds": productionData["durationPausedInSeconds"],
     };
 
-    /** 
-     * since we are stopping the last production session and starting a new one, we will grab all the information  about the 
-     * last production batch  and usee to compute both the total qty pumped and start a new production session
-     */
-
     /** validate inputs to ensure we have all  */
     let validationStatus = functionUtils.validateFormInputs(callData);
 
@@ -791,12 +797,11 @@ export const Production = () => {
     validationStatus = functionUtils.validateFormInputs(callData, extraValidator);
     if (!validationStatus) return false;
 
+
     /** disable the update button while we make call */
     setActionButtonState("update", "Updating", true, true, updateProduction);
 
     makeApiCall(apiPath, callData, "post").then(response => {
-
-      console.log(response, "update response");
 
       const data = (response && response.data) ? response.data : null;
 

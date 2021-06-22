@@ -523,7 +523,7 @@ export const computeTotalDurationPumpedInSeconds = (fromDate: string, toDate: st
  * @returns 
  */
 export const computeTotalQtyPumped = (durationsPumpedInSeconds: number,): number | null => {
-    return 5000;
+    return 1;
 }
 
 /**
