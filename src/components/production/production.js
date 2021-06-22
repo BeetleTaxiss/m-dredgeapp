@@ -75,14 +75,38 @@ export const Production = () => {
     setProductionDataByKey("productionCapacity", capacitySlider.value);
   }
 
-  const onDistanceChange = (layerId = "production-pumping-distance") => {
+  /**
+   * Update productionData when distance value changes
+   * @param {*} layerId 
+   */
+  const onDistanceChange = (updateProdutionData= true, layerId = "production-pumping-distance") => {
     /** set productionData  */
-    const value = document.getElementById(layerId).value;
+    const el = document.getElementById(layerId);
+    el.value=el.value.replace(/[\D]/, "");
+    const value = el.value;
+
+    if(value==="" || value===0) {
+      setProductionDataByKey("pumpingDistanceInMeters", "");
+      return errorAlert("Distance cannot be empty or zero");
+    }
+
     setProductionDataByKey("pumpingDistanceInMeters", value);
   }
 
-  const onElevationChange = (layerId = "production-pumping-elevation") => {
-    const value = document.getElementById(layerId).value;
+  /**
+   * Update productionData when the elevation changes
+   * @param {*} layerId 
+   */
+  const onElevationChange = (updateProdutionData= true, layerId = "production-pumping-elevation") => {
+    const el = document.getElementById(layerId);
+    el.value=el.value.replace(/[\D]/, "");
+    const value = el.value;
+
+    if(value==="") {
+      setProductionDataByKey("pumpingElevationInMeters", "");
+      return errorAlert("Pumping elevation cannot be empty");
+    }
+
     /** set productionData  */
     setProductionDataByKey("pumpingElevationInMeters", value);
   }
@@ -168,6 +192,10 @@ export const Production = () => {
     const onClick = () => {
       updateMainContainerView(
         <StartNewProductionScreen
+          /** validate elevation and distance. we pass `false` so production dats is not updated */
+          onElevationChange={onElevationChange}
+          onDistanceChange={onDistanceChange}
+          
           onCapacityInputChange={onCapacityInputChange}
           onCapacitySliderChange={onCapacitySliderChange}
           onStartClick={startProduction}
@@ -749,8 +777,18 @@ export const Production = () => {
      */
 
     /** validate inputs to ensure we have all  */
-    const validationStatus = functionUtils.validateFormInputs(callData);
+    let validationStatus = functionUtils.validateFormInputs(callData);
 
+    if (!validationStatus) return false;
+
+    /** do some extra validations  */
+    const extraValidator = {
+      //"start-date": { validationValue: callData["production-date"], validator: "eq", message: "start date cannot be less or more than the current date" },
+      "production-capacity": { validationValue: 0, validator: "gt", message: "production capacity must be greater than zero" },
+      "pumping-distance-in-meters": { validationValue: 0, validator: "gt", message: "pumping distance cannot be zero" },
+    };
+
+    validationStatus = functionUtils.validateFormInputs(callData, extraValidator);
     if (!validationStatus) return false;
 
     /** disable the update button while we make call */
@@ -1042,7 +1080,7 @@ export const Production = () => {
    * @param {*} selectProductData 
    * @returns 
    */
-  const validateProduction = (productId=null, selectProductData=getProductionDataByKey("selectProductData")) => {
+  const validateProduction = async (productId=null, selectProductData=getProductionDataByKey("selectProductData")) => {
 
     const apiPath = buildApiPath("getTracker");
 
@@ -1061,7 +1099,7 @@ export const Production = () => {
      * */
     const callData = { "product-id": productId ?? selectProductData[0].id };
 
-    makeApiCall(apiPath, callData, "get").then(response => {
+    makeApiCall(apiPath, callData, "get").then(async(response) => {
 
       const data = (response && response.data) ? response.data : null;
       if (data && data.error) {
@@ -1081,7 +1119,8 @@ export const Production = () => {
         const productionIdFromServer = data["production_id"] ?? null;
 
         /** get the if there is any hydrated information saved locally */
-        const hydratedData = deHydrateProductionData();
+        const hydratedData = await deHydrateProductionData();
+        console.log(hydratedData, "hydrated data found");
 
         if (hydratedData) {
           const { previousProductionId, previousBatchNo, hydratedClock } = hydratedData;
@@ -1120,16 +1159,21 @@ export const Production = () => {
        *  */
       updateMainContainerView(
         <StartNewProductionScreen
+        /** validate elevation and distance. we pass `false` so production dats is not updated
+         */
+        onElevationChange={onElevationChange}
+        onDistanceChange={onDistanceChange}
+
         /** select first product or use productId */
-          productId={productId ?? selectProductData[0].id}
-          onCapacityInputChange={onCapacityInputChange}
-          onCapacitySliderChange={onCapacitySliderChange}
-          onStartClick={startProduction}
-          selectProductData={selectProductData}
-          onProductChange={onProductChange}
-          dateFrom={moment()}
-          dateTo={moment()}
-          timeFrom={moment()}
+        productId={productId ?? selectProductData[0].id}
+        onCapacityInputChange={onCapacityInputChange}
+        onCapacitySliderChange={onCapacitySliderChange}
+        onStartClick={startProduction}
+        selectProductData={selectProductData}
+        onProductChange={onProductChange}
+        dateFrom={moment()}
+        dateTo={moment()}
+        timeFrom={moment()}
         />);
 
     });

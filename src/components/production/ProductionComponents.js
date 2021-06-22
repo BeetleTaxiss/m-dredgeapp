@@ -108,7 +108,7 @@ export const TimelineItem = (props) => {
       message = <>
         <>Production Output @ {endTime}</>
         <p className="t-meta-time">Batch Start Time: {batchStartTime}</p>
-        <p className="t-meta-time">Batch Number: {previousBatchNo}</p>
+        <p className="t-meta-time" style={{minWidth:300}}>Batch Number: {previousBatchNo}</p>
         <p className="t-meta-time">Production Capacity: {productionCapacity} %</p>
         <p className="t-meta-time">Elevation: {pumpingElevationInMeters}</p>
         <p className="t-meta-time">Distance: {formatNumber(pumpingDistanceInMeters)}</p>
@@ -126,7 +126,7 @@ export const TimelineItem = (props) => {
 
     case ("resume"):
       message = <>
-        <>Productionn resumed</>
+        <>Production resumed</>
         <p className="t-meta-time">Resumed at Capacity: {productionCapacity} %</p>
         <p className="t-meta-time">Duration Paused in seconds: {formatNumber(durationPausedInSeconds)}</p>
       </>
@@ -139,7 +139,7 @@ export const TimelineItem = (props) => {
         <p className="t-meta-time">Resume Elevation: {pumpingElevationInMeters}</p>
         <p className="t-meta-time">Resume Distance: {formatNumber(pumpingDistanceInMeters)}</p>
         {durationPumpedInSecondsAfterWakeup && (
-          <p className="t-meta-time">Duration since shutdown: {durationPumpedInSecondsAfterWakeup}</p>
+          <p className="t-meta-time" style={{minWidth:300}}>Duration since shutdown in seconds: {durationPumpedInSecondsAfterWakeup}</p>
         )}
       </>
       break;
@@ -148,11 +148,11 @@ export const TimelineItem = (props) => {
       message = <>
         <>Production stopped @ {endTime}</>
         <p className="t-meta-time">Batch Start Time: {batchStartTime}</p>
-        <p  style={{minWidth:300}}>Batch Number: {previousBatchNo}</p>
+        <p  className="t-meta-time" style={{minWidth:300}}>Batch Number: {previousBatchNo}</p>
         <p className="t-meta-time">Production Capacity: {productionCapacity} %</p>
         <p className="t-meta-time">Elevation: {pumpingElevationInMeters}</p>
         <p className="t-meta-time">Distance: {formatNumber(pumpingDistanceInMeters)}</p>
-        <p className="t-meta-time">Duration pumped in seconds: {formatNumber(durationPumpedInSeconds)}</p>
+        <p className="t-meta-time" style={{minWidth:300}}>Duration pumped in seconds: {formatNumber(durationPumpedInSeconds)}</p>
         <p className="t-meta-time">total Qty Pumped: {formatNumber(totalQtyPumped)} CM3</p>
       </>
       break;
@@ -389,15 +389,20 @@ export const StartNewProductionScreen = (props) => {
   const selectProductData = props.selectProductData ?? [];
 
   /** get events */
-  const { onStartClick, onCapacitySliderChange, onCapacityInputChange, onProductChange } = props;
+  const { onStartClick, onCapacitySliderChange, onCapacityInputChange, onProductChange, onElevationChange, onDistanceChange } = props;
 
   return (
     <div className="shift-calculator">
       <h2 id="title">Select your working Hours</h2>
       <form className="form-group mb-0">
         <div className="input-group" style={{ alignItems: "center", justifyContent: "center", gap: "2rem" }} >
-          <ProductionDistanceAndElevationFields elevation={elevation} distance={distance} selectProductData={selectProductData}
-            onProductChange={onProductChange} productId={productId} />
+          <ProductionDistanceAndElevationFields elevation={elevation} distance={distance} 
+          selectProductData={selectProductData}
+            onProductChange={onProductChange} 
+            onElevationChange={onElevationChange}
+            onDistanceChange={onDistanceChange}
+            productId={productId} 
+            />
           <ProductionDateAndTimeFields dateFrom={dateFrom} dateTo={dateTo} timeFrom={timeFrom} timeTo={timeTo} />
         </div>
 
@@ -528,7 +533,7 @@ export const ProductionCannotStartScreen = (props) => {
   return (
     <>
       <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-        <NotificationsWarning>{message}</NotificationsWarning>
+        <NotificationsPrimary style={{ margin: "50px" }} color="primary">{message}</NotificationsPrimary>
       </div>
       <div style={{ display: "flex", width: "100%", justifyContent: "center", gap: "2rem", }}>
         <ActionButton text="Go to Dashboard" onClick={onGoToDashboardClick} />

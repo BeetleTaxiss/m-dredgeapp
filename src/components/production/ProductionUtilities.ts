@@ -3,6 +3,8 @@ import axios from "axios";
 import { BASE_API_URL } from "./../../hooks/API";
 import { render } from "react-dom";
 import reactDOMServer from "react-dom/server";
+import localforage from "localforage";
+
 
 
 /**
@@ -169,34 +171,56 @@ export const resetProductionData = (): boolean => {
 }
 
 /**
- * Saves production data to local storage in JSOn format.
+ * Saves production data to local storage in JSON format.
+ * 
+ * Wake up hydrated production data. If data is found, we will need to prompt user to:
+ * 1. Tell us the production is still running since the last time window abruptly closed
+ * 2. continue production if its is still running, or start a new production afresh
  * 
  * @param currentDate 
  * @param storageKey 
  * @param clockFaceValue
  */
-export const hydrateProductionData = (currentDate: Date, clockFaceValue : TimePart,  storageKey: string ="hydrated-production-data") => {
-
-    productionData = { ...productionData, hydratedDate: currentDate, hydratedClock: clockFaceValue };
-    /** save information to session storage */
-    localStorage.setItem(storageKey, JSON.stringify(productionData));
-}
 
 /**
- * Wake up hydrated production data. If data is found, we will need to prompt user to take
- * 1. Till us the production is still running since the last time window abruptly closed
+ * Saves production data to local storage in JSON format.
+ * 
+ * Wake up hydrated production data. If data is found, we will need to prompt user to:
+ * 1. Tell us the production is still running since the last time window abruptly closed
+ * 2. continue production if its is still running, or start a new production afresh
+ * 
+ * @param currentDate 
+ * @param clockFaceValue 
+ * @param storageKey 
+ * @param storageKeyTimelineItems 
+ */
+export const hydrateProductionData = async (currentDate: Date, clockFaceValue : TimePart,  storageKey: string ="hydrated-production-data", storageKeyTimelineItems: string ="hydrated-production-data-timeline-items") => {
+
+    productionData = { ...productionData, hydratedDate: currentDate, hydratedClock: clockFaceValue };
+
+    /** save  all production information to session storage except the `timelineItems` props  */
+    await localforage.setItem(storageKey, JSON.stringify(productionData));
+}   
+
+/**
+ * Wake up hydrated production data. If data is found, we will need to prompt user to:
+ * 1. Tell us the production is still running since the last time window abruptly closed
  * 2. continue production if its is still running, or start a new production afresh
  * @param storageKey 
  */
-export const deHydrateProductionData = (storageKey: string ="hydrated-production-data"): ProductionDataInterface | null => {
-    const storedProductionData= localStorage.getItem(storageKey);
+export const deHydrateProductionData = async (storageKey: string ="hydrated-production-data", storageKeyTimelineItems: string ="hydrated-production-data-timeline-items")=> {
+    
+    const storedProductionData : string | null = await localforage.getItem(storageKey);
+
     if(!storedProductionData)  return null;
 
     /** 
      * ensure that when we deHydrate, we must set `productionPaused: false` 
      * so that timer can resume running when we start
+     * 
+     * Also add back the `timelineItems` seperated during hydration
      * */
-    return ({...JSON.parse(storedProductionData),productionPaused: false})
+    return ({...JSON.parse(storedProductionData), productionPaused: false})
 }
 
 /**
