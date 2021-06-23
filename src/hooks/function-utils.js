@@ -82,7 +82,31 @@ export const validateForm = (errors) => {
   return valid;
 };
 
-// Login function to
+
+/** This variable tracks the loginStatus for the user */
+let loginStatus=false;
+
+/**
+ * Get the login status of current user. Usualy called withing the login page
+ */
+export const getLoginStatus=()=>{
+  return loginStatus;
+}
+
+/** reset the application login status 
+ */
+export const resetLoginStatus=()=>{
+  loginStatus=false;
+}
+
+/**
+ * Login user and set all the necessary session varaibales
+ * Sets the loginStatus variable to true if login is successful. 
+ * 
+ * The `loginStatus` variable will be utilize on the `App.js` file to validate 
+ * if user login was indeed successful before we create the user dashboard views
+ * 
+ */
 const Login = async (user, password, setLoading) => {
   const data = JSON.stringify({ user, password });
 
@@ -150,19 +174,22 @@ const Login = async (user, password, setLoading) => {
     );
     setLoading(false);
 
+    /** set loginStatus here. See `App.js` for usage implementation */
+    loginStatus= true;
+
     /** 
      * a quick fix to resolve issues on some browsers where user not taken to dashboard immediately after login 
      * @todo: a better implementation must be provided later
     */
     localStorage.setItem("login", true);
-    localStorage.setItem("permission", responseData.permission);
     
     /**
      * to ensure that the user session data is set before we reload screen
      * we will wait a little bit. This is to ensure that by the time we attempt
-     * to read the login status, we will indeed have a value to work with
+     * 
+     * @note: we have been able
      */
-    let n = 10000;
+    let n = 100000000;
     while (n > 0) {
       n--;
     }

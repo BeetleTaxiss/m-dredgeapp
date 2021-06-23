@@ -8,6 +8,14 @@ import {
 } from "./../hooks/function-utils";
 import { useLocation, useHistory } from "react-router";
 
+/**
+ * Create the allowed routes and pages that users can see. It is the actual component 
+ * that handles the creation of the menu bar links that user can have access to base
+ * on their permission level. 
+ * 
+ * For the actual dashboard content creation, see the `Dashboard` (`dashboard.js`) component . 
+ * @returns 
+ */
 export default function DashboardRouter() {
 
   const { state } = useLocation();

@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch, Route} from "react-router";
-//import { BrowserRouter as Router } from "react-router-dom";
 import DashboardRouter from "./pages/DashboardRouter";
 import LoginPage from "./pages/login-page";
-import  AppRouter  from "./AppRouter";
-import {functionUtils} from "./hooks/function-utils";
+import {functionUtils, getUserStoreInstance, getLoginStatus} from "./hooks/function-utils";
 import {MemoryRouter, BrowserRouter} from "react-router-dom";
+import { render } from "react-dom";
 
-export default function App({ loginStatus }) {
+export default function App() {
 
   /** 
    * If we are within electron enviroment, we will use `MemoryRouter`
@@ -15,19 +14,55 @@ export default function App({ loginStatus }) {
    * The memory router is to avoid the blank screen error in electron
    *  */
   const Router = functionUtils.isElectronApp()? MemoryRouter : BrowserRouter;
+  
+  /** 
+   * Check login status every five seconds to know when user login is valid.
+   * This is just reading the loginStatus variable defined in the   `Login` method 
+   * of `function-utils.js` file. What this does is ensure that we can cap[ture login status once 
+   * it's successful
+   * 
+   * A variable to hold our login checker interval calls
+   * 
+   */
+  let loginChecker;
+  /** first clear the interval incase this is a refresh */
+  clearInterval(loginChecker);
+  loginChecker= setInterval(()=>{
+    const login = getLoginStatus();
+    if(login) {
+      renderAppView(createAppView(login))
+      clearInterval(loginChecker);
+    }
+  }, 5000);
+  
+
+  /** 
+   * render the dashboard or a normal app view. This will change our view from login page 
+   * to the application dashboard once user login is successful.
+   */
+  const renderAppView=(component, layer="root")=>{
+
+    const layerElement= document.getElementById(layer);
     
-  /** hold the current view user will see */
-  const [appView, setAppView] = useState([]);
+    if (!layerElement || layerElement === null || layerElement === undefined) {
+        return console.warn(`Layer ${layer} not loaded  or found in DOM tree`)
+    } else {
+      //const renderString= reactDomServer.renderToString(component);
+      try{
+        render(component, layerElement)
+      } catch(e) {
+        /** do nothing */
+        console.log(e.message, "error rendering")
+      }
+    }
+  }
 
-  /** this will be set to true once we are able to secure valid login status */
-  const [loginStatusValid, setLoginStatusValid] = useState(false);
-
-  const [forceRefresh, setForceRefresh] = useState(true);
-
-  /** the default login view  */
+  /** 
+   * the default login view. We will always show this when user open app
+   *  */
   const LoginView = () => (
-    <div className="App">
-      <Router forceRefresh={true}>
+    <div className="App" id="app-view">
+      <Router>
         <Switch>
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/" component={LoginPage} />
@@ -40,41 +75,24 @@ export default function App({ loginStatus }) {
    * create appView based on if user is logged in or not
    * the `loginStatus` is passed as property from `AppRouter` comp
    * */
-  const createAppView = (loginStatus = false) => {
-    //(loginStatus + " : login status");
-    if (loginStatus) {
-      /**
-       * set loginStatusValid. We set this state variable so that when the page refresh
-       * we will still be able to track if user was login previously before we refresh
-       */
-      setLoginStatusValid(true);
-      setForceRefresh(false);
+  const createAppView = (loginStatus = false, saveToState=true) => {
 
-      setAppView(
-        <div className="App" id="app-view">
-          <Router>
-            <Switch>
-              <DashboardRouter />
-            </Switch>
-          </Router>
-        </div>
-      );
+    const DashboardView=()=>
+      <div className="App" id="app-view">
+      <Router>
+        <Switch>
+          <DashboardRouter />
+        </Switch>
+      </Router>
+    </div>;
+
+if (loginStatus) {;
+      return <DashboardView/>
     } else {
-      /**
-       * This user is not log in yet, or the user refresh and we are
-       * still trying to get the login status from our async store.
-       * what we will do is to wait a little while before setting `appView`
-       * @todo implement this delay view feature
-       */
-      //setTimeout(()=>{
-      setAppView(<LoginView />);
-      //}, 3000);
-    }
+       return <LoginView/>
+      }
   };
 
-  useEffect(() => {
-    createAppView(loginStatus);
-  }, [loginStatus]);
-
-  return <>{appView}</>;
+/** always show the `LoginView` by default  */
+  return <><LoginView/></>;
 }
