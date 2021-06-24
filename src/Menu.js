@@ -69,6 +69,7 @@ import MenuGroupFourDummy from "./components/cards/menu-group-four-dummy";
  * @param userMenu
  */
 export const createUserRoutes = (userMenu, addDefaultRoutes = true) => {
+  
   if (typeof userMenu !== "object") {
     alert("user permission provide must be an object");
     return console.error("user permission provide must be an object");
@@ -189,6 +190,7 @@ export const createDefaultRoutes = () => {
  * @returns 
  */
 export const createUserMenu = (userMenu) => {
+  
   if (typeof userMenu !== "object") {
     alert("user permission provide must be an object");
     return console.error("user permission provide must be an object");

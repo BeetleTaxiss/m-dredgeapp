@@ -89,7 +89,31 @@ export const validateForm = (errors) => {
   return valid;
 };
 
-// Login function to
+
+/** This variable tracks the loginStatus for the user */
+let loginStatus=false;
+
+/**
+ * Get the login status of current user. Usualy called withing the login page
+ */
+export const getLoginStatus=()=>{
+  return loginStatus;
+}
+
+/** reset the application login status 
+ */
+export const resetLoginStatus=()=>{
+  loginStatus=false;
+}
+
+/**
+ * Login user and set all the necessary session varaibales
+ * Sets the loginStatus variable to true if login is successful. 
+ * 
+ * The `loginStatus` variable will be utilize on the `App.js` file to validate 
+ * if user login was indeed successful before we create the user dashboard views
+ * 
+ */
 const Login = async (user, password, setLoading) => {
   const data = JSON.stringify({ user, password });
 
@@ -157,12 +181,22 @@ const Login = async (user, password, setLoading) => {
     );
     setLoading(false);
 
+    /** set loginStatus here. See `App.js` for usage implementation */
+    loginStatus= true;
+
+    /** 
+     * a quick fix to resolve issues on some browsers where user not taken to dashboard immediately after login 
+     * @todo: a better implementation must be provided later
+    */
+    localStorage.setItem("login", true);
+    
     /**
      * to ensure that the user session data is set before we reload screen
      * we will wait a little bit. This is to ensure that by the time we attempt
-     * to read the login status, we will indeed have a value to work with
+     * 
+     * @note: we have been able
      */
-    let n = 1000000000;
+    let n = 100000000;
     while (n > 0) {
       n--;
     }
@@ -432,6 +466,15 @@ export const createUserAllowedRoutes = (
    * where "/" matches other routes, we must add this entry as the last  item in our router stack
    * */
   let defaultRoute = null;
+
+  // /** 
+  //  * at least one user permission must be provided before we can create menus 
+  //  * If permission is missing, we will return an empty 
+  //  * */
+  // if(Object.keys(userPermission).length<=0) {
+  //   return <>{null}</>
+  // }
+  //console.log(userPermission, "permission in create");
 
   /**
    * These are the valid routes this user can have access to within the application
@@ -1647,14 +1690,31 @@ export const functionUtils = {
       return JSON.parse(userPermission.replace(/"{/, "{").replace(/}"/, "}"));
     }
   },
-  /** Function to add comma after every third number in a number string */
+
+  /** 
+   * Function to add comma after every third number in a number string 
+   * */
   addCommaToNumbers: (number) => {
     if (!number) return 0;
+
+    /** 
+     * process the decimal value by spliting number into an array
+     * if number splits to an array of lenght=2, then this number has decimal place
+     *  */
+    const numberArr= number.toString().split(".");
+    let decimal=null;
+    if(numberArr.length ===2 ) {
+       number= numberArr[0];
+       
+       /** the second value is the decimal. we will save it for later use */
+       decimal= numberArr[1]
+    }
 
     if (typeof number !== "string") {
       /** Convert numbers to string */
       number = `${number}`;
     }
+    
     if (typeof number === "string") {
       number = number.split("");
       let newNumber = "",
@@ -1670,9 +1730,9 @@ export const functionUtils = {
           newNumber = number[i] + newNumber;
         }
       }
-      return newNumber;
+      return  decimal ? `${newNumber}.${decimal}` : newNumber;
     } else {
-      return number;
+      return number
     }
   },
 
@@ -1696,7 +1756,6 @@ export const functionUtils = {
    * @returns
    */
   validateFormInputs: (formData, validationParam = null) => {
-    console.log("Form data in validation: ", formData);
     let formInputValue = true;
     /** Check if form data is undefined */
     if (formData === undefined || formData === null) {
@@ -1705,11 +1764,12 @@ export const functionUtils = {
 
     for (const [key, value] of Object.entries(formData)) {
       /** Convert value to string without spacing */
-      let stringValue = `${value}`;
-      let trimmedValue = stringValue.replace(/W+/, "");
-
+      // let stringValue = `${value}`;
+      //let trimmedValue = stringValue.replace(/W+/, "");
+      //alert(key + " = " + value);
+      
       /** Validate for select dropdowns */
-      if (trimmedValue === "Can't select this option") {
+      if (value === "Can't select this option") {
         const title = "Form Error",
           text = `${value}. Check the form for the dropdown and select a valid option `;
         errorAlert(title, text);
@@ -1717,9 +1777,10 @@ export const functionUtils = {
       }
 
       /** Validate for empty strings */
-      if (trimmedValue === "") {
+      if (value === "" || value===null) {
         const title = "Form Error",
-          text = `${key}: ${value} missing in your form`;
+          //text = `${key}: ${value} missing in your form`;
+          text = `${key} value is missing in your form`;
         errorAlert(title, text);
         return (formInputValue = false);
       }
@@ -1735,18 +1796,29 @@ export const functionUtils = {
       /** Validate for optional values */
       if (validationParam && validationParam[key]) {
         let { validationValue, validator, message } = validationParam[key];
-        console.log("Validation param: ", validationParam[key]);
 
         if (validationValue !== null && validator !== null) {
           message = message === null || message === undefined ? "" : message;
           switch (validator) {
+            
+            /** value must be greater than validationValue */
             case "gt":
-              if (value < validationValue) {
+              if (value <= validationValue) {
                 errorAlert("Form Error", message);
                 return (formInputValue = false);
               }
               break;
+
+              /** value must be equal to validationValue */
             case "eq":
+              if (value != validationValue) {
+                errorAlert("Form Error", message);
+                return (formInputValue = false);
+              }
+              break;
+
+              /*** value cannot be equal to validationValue*/
+              case "neq":
               if (value == validationValue) {
                 errorAlert("Form Error", message);
                 return (formInputValue = false);

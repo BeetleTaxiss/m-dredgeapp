@@ -4,6 +4,15 @@ import PageWrapper from "../components/general/page-wrapper";
 import { createUserDashboard } from "./../Menu";
 import { functionUtils, getUserStoreInstance } from "./../hooks/function-utils";
 
+/**
+ * This component is responsible for creating our actul dashboard contents 
+ * This is does not include the routes permission as that is handle by the 
+ * `DashboardRouter` component. 
+ * 
+ * What this component does is to create the actual contents that we can see 
+ * on each user dashboard based on that user deashboard permission level
+ * @returns 
+ */
 export default function  Dashboard ()  {
   /** use this function to always validate if a user is logged in */
   functionUtils.useValidateLogin("/login");
