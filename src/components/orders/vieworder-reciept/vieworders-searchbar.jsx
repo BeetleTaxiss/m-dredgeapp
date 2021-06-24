@@ -1,10 +1,13 @@
 import React from "react";
 
-const ViewordersSearchbar = ({ handleSearchList, TableDropdown }) => {
+const ViewordersSearchbar = ({ handleSearchList, TableDropdown, title }) => {
   return (
     <div className="dt--top-section">
       <div className="row">
-        <div className="col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center mt-sm-0 mt-3">
+        <div className="col-6 col-sm-4 d-flex justify-content-sm-start justify-content-center">
+          <h5>{title}</h5>
+        </div>
+        <div className="col-6 col-sm-4 d-flex justify-content-sm-center justify-content-center mt-sm-0 mt-3">
           <div id="default-ordering_filter" className="dataTables_filter">
             <label>
               <svg
@@ -35,7 +38,7 @@ const ViewordersSearchbar = ({ handleSearchList, TableDropdown }) => {
             </label>
           </div>
         </div>
-        <div className="col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center">
+        <div className="col-6 col-sm-4 d-flex justify-content-sm-end justify-content-center">
           <TableDropdown />
         </div>
       </div>

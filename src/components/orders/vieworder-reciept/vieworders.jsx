@@ -14,7 +14,7 @@ import {
   validateProductLocationPermission,
 } from "../../../hooks/function-utils";
 import { useGetUserDetails } from "../../../hooks/function-utils";
-import WidgetHeader from "../../general/widget-header";
+import TaskAction from "../../general/task-action";
 /**
  * Orders List Data object which is divided into table header, body and footer properties
  */
@@ -619,9 +619,7 @@ const ViewOrders = () => {
   /**
    *  Widget Header for table dropdown to be passed as a property to the Search bar component
    */
-  const TableDropdown = () => (
-    <WidgetHeader links={userProductPermission} dropdown change />
-  );
+  const TableDropdown = () => <TaskAction links={userProductPermission} />;
   return (
     <div className="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
       <div className="widget-content widget-content-area br-6">
@@ -631,6 +629,7 @@ const ViewOrders = () => {
         >
           {/* BEGINNING OF VIEW ORDERS SEARCH BAR */}
           <ViewordersSearchbar
+            title="Order List"
             handleSearchList={() => handleSearchList(persistentCurrentPage)}
             TableDropdown={TableDropdown}
           />
